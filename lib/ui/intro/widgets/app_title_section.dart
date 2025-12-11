@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/ui/widgets/animated_content.dart';
+
+class AppTitleSection extends StatelessWidget {
+  final Animation<double> animation;
+
+  const AppTitleSection({
+    super.key,
+    required this.animation,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        AnimatedContent(
+          animation: animation,
+          child: const Text(
+            AppStrings.introTitle,
+            style: AppTextStyles.appTitle,
+          ),
+        ),
+        const SizedBox(height: 16),
+        AnimatedContent(
+          animation: animation,
+          child: const Text(
+            AppStrings.introDescription,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.tagline,
+          ),
+        ),
+      ],
+    );
+  }
+}
