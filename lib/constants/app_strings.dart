@@ -104,7 +104,15 @@ class AppStrings {
   static const String given = 'Given';
   static const String next = 'Next';
   static const String removeVaccine = 'Remove vaccine';
-  
+
+  // Map Screen
+  static const String petServices = 'Pet Services';
+  static const String gettingYourLocation = 'Getting your location...';
+  static const String retry = 'Retry';
+  static const String petServicesFoundNearby = 'pet services found nearby';
+  static const String open = 'Open';
+  static const String closed = 'Closed';
+
   // Private constructor to prevent instantiation
   AppStrings._();
 }

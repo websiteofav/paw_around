@@ -62,4 +62,25 @@ class AppTextStyles {
     color: AppColors.textSecondary,
     letterSpacing: 0.3,
   );
+
+  // AppBar Title Style
+  static const TextStyle appBarTitle = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+    color: AppColors.navigationText,
+  );
+
+  // Body Text Style
+  static const TextStyle bodyText = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.normal,
+    color: AppColors.textPrimary,
+  );
+
+  // Error Text Style
+  static const TextStyle errorText = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.normal,
+    color: Colors.red,
+  );
 }
