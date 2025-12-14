@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "716405823878",
+    "project_id": "paw-around-f487d",
+    "storage_bucket": "paw-around-f487d.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:716405823878:android:ead69e8db5a3a0914a3407",
+        "android_client_info": {
+          "package_name": "com.example.paw_around"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "716405823878-qqp5jkrfjl6hi5d12kcoiopuias3q1ur.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.paw_around",
+            "certificate_hash": "257f5677518d76b4db87c31fa62cc8b7dd2a8772"
+          }
+        },
+        {
+          "client_id": "716405823878-4vvsubn280m0bd26hbp7md3gct31t37f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCiB5Fip21n6SXYOYkhLoXn5IgMcRYZKpw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "716405823878-4vvsubn280m0bd26hbp7md3gct31t37f.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "716405823878-rumov85k1846ue8a54s74s2s76hn4rj6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pawAround"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

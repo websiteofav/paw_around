@@ -113,6 +113,31 @@ class AppStrings {
   static const String open = 'Open';
   static const String closed = 'Closed';
 
+  // Community Screen
+  static const String lost = 'Lost';
+  static const String found = 'Found';
+  static const String reportLostPet = 'Report Lost Pet';
+  static const String reportFoundPet = 'Report Found Pet';
+  static const String createPost = 'Create Post';
+  static const String petDescription = 'Pet Description';
+  static const String color = 'Color';
+  static const String location = 'Location';
+  static const String contactPhone = 'Contact Phone';
+  static const String selectPostType = 'Select Post Type';
+  static const String describeThePet = 'Describe the pet (size, markings, etc.)';
+  static const String enterContactPhone = 'Enter contact phone number';
+  static const String postCreatedSuccessfully = 'Post created successfully!';
+  static const String noPostsYet = 'No posts yet';
+  static const String beTheFirstToPost = 'Be the first to help a lost pet find its way home!';
+  static const String markAsResolved = 'Mark as Resolved';
+  static const String getDirections = 'Get Directions';
+  static const String callOwner = 'Call Owner';
+  static const String kmAway = 'km away';
+  static const String ago = 'ago';
+  static const String useCurrentLocation = 'Use Current Location';
+  static const String lastSeenAt = 'Last seen at';
+  static const String foundAt = 'Found at';
+
   // Private constructor to prevent instantiation
   AppStrings._();
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,12 +8,18 @@ import 'package:paw_around/bloc/onboarding/onboarding_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/firebase_options.dart';
 import 'package:paw_around/repositories/places_repository.dart';
 import 'package:paw_around/router/app_router.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // Initialize Hive
   await Hive.initFlutter();

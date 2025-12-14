@@ -30,6 +30,8 @@ class AppRoutes {
   static const String lostPetDetails = '/home/community/lost-pet';
   static const String foundPetDetails = '/home/community/found-pet';
   static const String createAlert = '/home/community/create-alert';
+  static const String createPost = '/community/create';
+  static const String postDetail = '/community/:id';
 
   // Deep Link Routes
   static const String vetLocation = '/vet/:vetId';

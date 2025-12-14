@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hive_ce_flutter/hive_flutter.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/repositories/community_repository.dart';
 import 'package:paw_around/repositories/places_repository.dart';
 import 'package:paw_around/repositories/vaccine_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
@@ -28,6 +29,7 @@ Future<void> init() async {
   sl.registerLazySingleton<VaccineRepository>(() => VaccineRepository());
   sl.registerLazySingleton<PetRepository>(() => PetRepository());
   sl.registerLazySingleton<PlacesRepository>(() => PlacesRepository());
+  sl.registerLazySingleton<CommunityRepository>(() => CommunityRepository());
 
   // Initialize repositories
   await sl<VaccineRepository>().init();
