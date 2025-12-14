@@ -7,8 +7,6 @@ import 'package:paw_around/bloc/pets/pets_state.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
-import 'package:paw_around/core/di/service_locator.dart';
-import 'package:paw_around/repositories/vaccine_repository.dart';
 
 class VaccineFormButtons extends StatelessWidget {
   const VaccineFormButtons({super.key});
@@ -42,7 +40,7 @@ class VaccineFormButtons extends StatelessWidget {
     );
   }
 
-  void _saveVaccine(BuildContext context, VaccineFormState formState) async {
+  void _saveVaccine(BuildContext context, VaccineFormState formState) {
     context.read<PetsBloc>().add(const ValidateVaccineForm());
 
     if (formState.isValid) {
@@ -54,30 +52,17 @@ class VaccineFormButtons extends StatelessWidget {
         setReminder: formState.setReminder,
       );
 
-      try {
-        // Save vaccine to master list (persistent storage)
-        final vaccineRepository = sl<VaccineRepository>();
-        await vaccineRepository.addVaccine(vaccine);
+      // Show success message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.vaccineAddedSuccessfully),
+          backgroundColor: Colors.green,
+        ),
+      );
 
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.vaccineAddedSuccessfully),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // Return vaccine data to the calling screen
-        Navigator.of(context).pop(vaccine);
-      } catch (e) {
-        // Show error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error saving vaccine: ${e.toString()}'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      // Return vaccine data to the calling screen
+      // Vaccine will be saved when pet is saved (embedded in pet document)
+      Navigator.of(context).pop(vaccine);
     }
   }
 }

@@ -1,95 +1,143 @@
+import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'auth_event.dart';
-import 'auth_state.dart';
+import 'package:paw_around/bloc/auth/auth_event.dart';
+import 'package:paw_around/bloc/auth/auth_state.dart';
+import 'package:paw_around/constants/app_routes.dart';
+import 'package:paw_around/repositories/auth_repository.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthBloc() : super(const AuthInitial()) {
+  final AuthRepository _authRepository;
+  StreamSubscription<User?>? _authSubscription;
+
+  AuthBloc({required AuthRepository authRepository})
+      : _authRepository = authRepository,
+        super(const AuthInitial()) {
+    on<CheckAuthStatus>(_onCheckAuthStatus);
     on<TogglePasswordVisibility>(_onTogglePasswordVisibility);
     on<LoginWithEmail>(_onLoginWithEmail);
+    on<SignupWithEmail>(_onSignupWithEmail);
+    on<ForgotPassword>(_onForgotPassword);
+    on<SignOut>(_onSignOut);
     on<LoginWithGoogle>(_onLoginWithGoogle);
     on<LoginWithApple>(_onLoginWithApple);
-    on<ForgotPassword>(_onForgotPassword);
-    on<SignupWithEmail>(_onSignupWithEmail);
+
+    // Listen to auth state changes
+    _authSubscription = _authRepository.authStateChanges.listen((user) {
+      add(CheckAuthStatus());
+    });
   }
 
-  void _onTogglePasswordVisibility(
-    TogglePasswordVisibility event,
-    Emitter<AuthState> emit,
-  ) {
-    emit(AuthPasswordVisibilityToggled(
-      isPasswordVisible: !state.isPasswordVisible,
+  void _onCheckAuthStatus(CheckAuthStatus event, Emitter<AuthState> emit) {
+    final user = _authRepository.currentUser;
+    if (user != null) {
+      emit(Authenticated(user: user, isPasswordVisible: state.isPasswordVisible));
+    } else {
+      emit(Unauthenticated(isPasswordVisible: state.isPasswordVisible));
+    }
+  }
+
+  void _onTogglePasswordVisibility(TogglePasswordVisibility event, Emitter<AuthState> emit) {
+    emit(AuthPasswordVisibilityToggled(isPasswordVisible: !state.isPasswordVisible));
+  }
+
+  Future<void> _onLoginWithEmail(LoginWithEmail event, Emitter<AuthState> emit) async {
+    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
+
+    try {
+      await _authRepository.signInWithEmail(
+        email: event.email.trim(),
+        password: event.password,
+      );
+      // Auth state listener will emit Authenticated
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(
+        errorMessage: _authRepository.getAuthErrorMessage(e),
+        isPasswordVisible: state.isPasswordVisible,
+      ));
+    } catch (e) {
+      emit(AuthError(
+        errorMessage: 'An unexpected error occurred. Please try again.',
+        isPasswordVisible: state.isPasswordVisible,
+      ));
+    }
+  }
+
+  Future<void> _onSignupWithEmail(SignupWithEmail event, Emitter<AuthState> emit) async {
+    // Validate passwords match
+
+    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
+
+    try {
+      await _authRepository.signUpWithEmail(
+        email: event.email.trim(),
+        password: event.password,
+      );
+
+      // Update display name
+      if (event.fullName.isNotEmpty) {
+        await _authRepository.updateDisplayName(event.fullName.trim());
+      }
+      // Auth state listener will emit Authenticated
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(
+        errorMessage: _authRepository.getAuthErrorMessage(e),
+        isPasswordVisible: state.isPasswordVisible,
+      ));
+    } catch (e) {
+      emit(AuthError(
+        errorMessage: 'An unexpected error occurred. Please try again.',
+        isPasswordVisible: state.isPasswordVisible,
+      ));
+    }
+  }
+
+  Future<void> _onForgotPassword(ForgotPassword event, Emitter<AuthState> emit) async {
+    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
+
+    try {
+      await _authRepository.sendPasswordResetEmail(event.email.trim());
+      emit(AuthSuccess(
+        message: 'Password reset email sent. Please check your inbox.',
+        isPasswordVisible: state.isPasswordVisible,
+      ));
+    } on FirebaseAuthException catch (e) {
+      emit(AuthError(
+        errorMessage: _authRepository.getAuthErrorMessage(e),
+        isPasswordVisible: state.isPasswordVisible,
+      ));
+    } catch (e) {
+      emit(AuthError(
+        errorMessage: 'Failed to send reset email. Please try again.',
+        isPasswordVisible: state.isPasswordVisible,
+      ));
+    }
+  }
+
+  Future<void> _onSignOut(SignOut event, Emitter<AuthState> emit) async {
+    await _authRepository.signOut();
+    // Auth state listener will emit Unauthenticated
+  }
+
+  void _onLoginWithGoogle(LoginWithGoogle event, Emitter<AuthState> emit) {
+    // TODO: Implement Google Sign-In later
+    emit(AuthError(
+      errorMessage: 'Google Sign-In not implemented yet.',
+      isPasswordVisible: state.isPasswordVisible,
     ));
   }
 
-  void _onLoginWithEmail(
-    LoginWithEmail event,
-    Emitter<AuthState> emit,
-  ) {
-    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
-
-    // TODO: Implement actual email login logic
-    // For now, simulate success after a delay
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!isClosed) {
-        emit(AuthSuccess(isPasswordVisible: state.isPasswordVisible));
-      }
-    });
+  void _onLoginWithApple(LoginWithApple event, Emitter<AuthState> emit) {
+    // TODO: Implement Apple Sign-In later
+    emit(AuthError(
+      errorMessage: 'Apple Sign-In not implemented yet.',
+      isPasswordVisible: state.isPasswordVisible,
+    ));
   }
 
-  void _onLoginWithGoogle(
-    LoginWithGoogle event,
-    Emitter<AuthState> emit,
-  ) {
-    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
-
-    // TODO: Implement Google login logic
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!isClosed) {
-        emit(AuthSuccess(isPasswordVisible: state.isPasswordVisible));
-      }
-    });
-  }
-
-  void _onLoginWithApple(
-    LoginWithApple event,
-    Emitter<AuthState> emit,
-  ) {
-    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
-
-    // TODO: Implement Apple login logic
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!isClosed) {
-        emit(AuthSuccess(isPasswordVisible: state.isPasswordVisible));
-      }
-    });
-  }
-
-  void _onForgotPassword(
-    ForgotPassword event,
-    Emitter<AuthState> emit,
-  ) {
-    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
-
-    // TODO: Implement forgot password logic
-    Future.delayed(const Duration(seconds: 1), () {
-      if (!isClosed) {
-        emit(AuthSuccess(isPasswordVisible: state.isPasswordVisible));
-      }
-    });
-  }
-
-  void _onSignupWithEmail(
-    SignupWithEmail event,
-    Emitter<AuthState> emit,
-  ) {
-    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
-
-    // TODO: Implement signup logic
-    // For now, simulate success after a delay
-    Future.delayed(const Duration(seconds: 2), () {
-      if (!isClosed) {
-        emit(AuthSuccess(isPasswordVisible: state.isPasswordVisible));
-      }
-    });
+  @override
+  Future<void> close() {
+    _authSubscription?.cancel();
+    return super.close();
   }
 }

@@ -1,34 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hive_ce/hive.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 
-part 'pet_model.g.dart';
-
-@HiveType(typeId: 1)
 class PetModel extends Equatable {
-  @HiveField(0)
   final String id;
-  @HiveField(1)
   final String name;
-  @HiveField(2)
   final String species;
-  @HiveField(3)
   final String breed;
-  @HiveField(4)
   final String gender;
-  @HiveField(5)
   final DateTime dateOfBirth;
-  @HiveField(6)
   final double weight;
-  @HiveField(7)
   final String notes;
-  @HiveField(8)
   final String? imagePath;
-  @HiveField(9)
   final List<VaccineModel> vaccines;
-  @HiveField(10)
   final DateTime createdAt;
-  @HiveField(11)
   final DateTime updatedAt;
 
   const PetModel({
@@ -106,7 +91,46 @@ class PetModel extends Equatable {
     );
   }
 
-  // Convert to JSON
+  // Convert to Firestore map
+  Map<String, dynamic> toFirestore() {
+    return {
+      'name': name,
+      'species': species,
+      'breed': breed,
+      'gender': gender,
+      'dateOfBirth': Timestamp.fromDate(dateOfBirth),
+      'weight': weight,
+      'notes': notes,
+      'imagePath': imagePath,
+      'vaccines': vaccines.map((v) => v.toFirestore()).toList(),
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
+    };
+  }
+
+  // Create from Firestore document
+  factory PetModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return PetModel(
+      id: doc.id,
+      name: data['name'] as String? ?? '',
+      species: data['species'] as String? ?? '',
+      breed: data['breed'] as String? ?? '',
+      gender: data['gender'] as String? ?? '',
+      dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
+      weight: (data['weight'] as num?)?.toDouble() ?? 0.0,
+      notes: data['notes'] as String? ?? '',
+      imagePath: data['imagePath'] as String?,
+      vaccines: (data['vaccines'] as List<dynamic>?)
+              ?.map((v) => VaccineModel.fromFirestore(v as Map<String, dynamic>))
+              .toList() ??
+          [],
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+    );
+  }
+
+  // Convert to JSON (for compatibility)
   Map<String, dynamic> toJson() {
     return {
       'id': id,

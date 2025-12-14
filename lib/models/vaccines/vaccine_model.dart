@@ -1,25 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:hive_ce/hive.dart';
 
-part 'vaccine_model.g.dart';
-
-@HiveType(typeId: 0)
 class VaccineModel extends Equatable {
-  @HiveField(0)
   final String id;
-  @HiveField(1)
   final String vaccineName;
-  @HiveField(2)
   final DateTime dateGiven;
-  @HiveField(3)
   final DateTime nextDueDate;
-  @HiveField(4)
   final String notes;
-  @HiveField(5)
   final bool setReminder;
-  @HiveField(6)
   final DateTime createdAt;
-  @HiveField(7)
   final DateTime updatedAt;
 
   const VaccineModel({
@@ -77,7 +66,35 @@ class VaccineModel extends Equatable {
     );
   }
 
-  // Convert to JSON
+  // Convert to Firestore map (for embedding in pet document)
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id': id,
+      'vaccineName': vaccineName,
+      'dateGiven': Timestamp.fromDate(dateGiven),
+      'nextDueDate': Timestamp.fromDate(nextDueDate),
+      'notes': notes,
+      'setReminder': setReminder,
+      'createdAt': Timestamp.fromDate(createdAt),
+      'updatedAt': Timestamp.fromDate(updatedAt),
+    };
+  }
+
+  // Create from Firestore map (for reading from pet document)
+  factory VaccineModel.fromFirestore(Map<String, dynamic> data) {
+    return VaccineModel(
+      id: data['id'] as String,
+      vaccineName: data['vaccineName'] as String,
+      dateGiven: (data['dateGiven'] as Timestamp).toDate(),
+      nextDueDate: (data['nextDueDate'] as Timestamp).toDate(),
+      notes: data['notes'] as String? ?? '',
+      setReminder: data['setReminder'] as bool? ?? false,
+      createdAt: (data['createdAt'] as Timestamp).toDate(),
+      updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+    );
+  }
+
+  // Convert to JSON (for compatibility)
   Map<String, dynamic> toJson() {
     return {
       'id': id,

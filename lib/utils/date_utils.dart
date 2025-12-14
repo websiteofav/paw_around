@@ -148,6 +148,22 @@ class AppDateUtils {
     }
   }
 
+  /// Get short relative time string for cards (e.g., "2d ago", "3h ago")
+  static String getRelativeTimeShort(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inDays > 0) {
+      return '${difference.inDays}d ago';
+    } else if (difference.inHours > 0) {
+      return '${difference.inHours}h ago';
+    } else if (difference.inMinutes > 0) {
+      return '${difference.inMinutes}m ago';
+    } else {
+      return 'Just now';
+    }
+  }
+
   /// Get relative time for future dates (e.g., "in 2 days", "in 3 hours")
   static String getRelativeFutureTime(DateTime futureDateTime) {
     final now = DateTime.now();
@@ -318,5 +334,4 @@ class AppDateUtils {
       return '${formatDateShort(startDate)} - ${formatDateShort(endDate)}';
     }
   }
-
 }

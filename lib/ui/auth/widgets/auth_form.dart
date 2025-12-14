@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/core/error/error_handler.dart';
 import 'package:paw_around/ui/widgets/common_text_field.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/bloc/auth/auth_state.dart';
+import 'package:paw_around/utils/validators.dart';
 
 enum AuthType { login, signup }
 
 class AuthForm extends StatefulWidget {
   final AuthType authType;
-  final VoidCallback? onSuccess;
 
   const AuthForm({
     super.key,
     required this.authType,
-    this.onSuccess,
   });
 
   @override
@@ -24,6 +27,7 @@ class AuthForm extends StatefulWidget {
 }
 
 class _AuthFormState extends State<AuthForm> {
+  final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -40,16 +44,29 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Input Fields
-        _buildInputFields(),
-
-        const SizedBox(height: 24),
-
-        // Submit Button
-        _buildSubmitButton(),
-      ],
+    return BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is Authenticated) {
+          context.go(AppRoutes.home);
+        } else if (state is AuthError) {
+          ErrorHandler.handleError(
+            context,
+            AuthFailure(state.errorMessage),
+          );
+        } else if (state is AuthSuccess && state.message != null) {
+          ErrorHandler.showSuccess(context, state.message!);
+        }
+      },
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            _buildInputFields(),
+            const SizedBox(height: 24),
+            _buildSubmitButton(),
+          ],
+        ),
+      ),
     );
   }
 
@@ -64,6 +81,7 @@ class _AuthFormState extends State<AuthForm> {
                 controller: _fullNameController,
                 hintText: AppStrings.fullName,
                 keyboardType: TextInputType.name,
+                validator: Validators.fullName,
               ),
               const SizedBox(height: 16),
             ],
@@ -73,6 +91,7 @@ class _AuthFormState extends State<AuthForm> {
               controller: _emailController,
               hintText: AppStrings.emailAddress,
               keyboardType: TextInputType.emailAddress,
+              validator: Validators.email,
             ),
 
             const SizedBox(height: 16),
@@ -83,18 +102,40 @@ class _AuthFormState extends State<AuthForm> {
               hintText: AppStrings.password,
               isPassword: true,
               isPasswordVisible: state.isPasswordVisible,
-              forgotPasswordText: widget.authType == AuthType.login ? AppStrings.forgotPassword : null,
-              onForgotPasswordPressed: widget.authType == AuthType.login
-                  ? () {
-                      context.read<AuthBloc>().add(
-                            ForgotPassword(email: _emailController.text),
-                          );
-                    }
-                  : null,
               onToggleVisibility: () {
                 context.read<AuthBloc>().add(TogglePasswordVisibility());
               },
+              validator: widget.authType == AuthType.signup
+                  ? Validators.password
+                  : (value) => Validators.required(value, 'Password'),
             ),
+
+            // Forgot Password (only for login)
+            if (widget.authType == AuthType.login) ...[
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    if (_emailController.text.trim().isEmpty) {
+                      ErrorHandler.handleError(
+                        context,
+                        const AuthFailure('Please enter your email first'),
+                      );
+                      return;
+                    }
+                    context.read<AuthBloc>().add(
+                          ForgotPassword(email: _emailController.text),
+                        );
+                  },
+                  child: Text(
+                    AppStrings.forgotPassword,
+                    style: AppTextStyles.bodyText.copyWith(
+                      color: AppColors.secondary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
 
             // Confirm Password Field (only for signup)
             if (widget.authType == AuthType.signup) ...[
@@ -107,6 +148,7 @@ class _AuthFormState extends State<AuthForm> {
                 onToggleVisibility: () {
                   context.read<AuthBloc>().add(TogglePasswordVisibility());
                 },
+                validator: (value) => Validators.confirmPassword(value, _passwordController.text),
               ),
             ],
           ],
@@ -140,7 +182,7 @@ class _AuthFormState extends State<AuthForm> {
                     ),
                   )
                 : Text(
-                    widget.authType == AuthType.login ? AppStrings.logIn : 'Sign Up',
+                    widget.authType == AuthType.login ? AppStrings.logIn : AppStrings.signUp,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -153,18 +195,22 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void _handleSubmit() {
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
     if (widget.authType == AuthType.login) {
       context.read<AuthBloc>().add(
             LoginWithEmail(
-              email: _emailController.text,
+              email: _emailController.text.trim(),
               password: _passwordController.text,
             ),
           );
     } else {
       context.read<AuthBloc>().add(
             SignupWithEmail(
-              fullName: _fullNameController.text,
-              email: _emailController.text,
+              fullName: _fullNameController.text.trim(),
+              email: _emailController.text.trim(),
               password: _passwordController.text,
               confirmPassword: _confirmPasswordController.text,
             ),

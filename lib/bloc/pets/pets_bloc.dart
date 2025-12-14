@@ -1,23 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/bloc/pets/pets_event.dart';
 import 'package:paw_around/bloc/pets/pets_state.dart';
+import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/upcoming_vaccine_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
-import 'package:paw_around/repositories/vaccine_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
-import 'package:paw_around/services/image_service.dart';
+import 'package:paw_around/services/storage_service.dart';
 
 class PetsBloc extends Bloc<PetsEvent, PetsState> {
-  final VaccineRepository _vaccineRepository;
   final PetRepository _petRepository;
 
   PetsBloc({
-    required VaccineRepository vaccineRepository,
     required PetRepository petRepository,
-  })  : _vaccineRepository = vaccineRepository,
-        _petRepository = petRepository,
+  })  : _petRepository = petRepository,
         super(const PetFormState()) {
     // Pet Management
     on<LoadPets>(_onLoadPets);
@@ -46,18 +42,18 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     on<RemoveVaccineFromPetForm>(_onRemoveVaccineFromPetForm);
   }
 
-  void _onLoadPets(LoadPets event, Emitter<PetsState> emit) async {
+  Future<void> _onLoadPets(LoadPets event, Emitter<PetsState> emit) async {
     emit(const PetsLoading());
 
     try {
-      final pets = _petRepository.getAllPets();
+      final pets = await _petRepository.getAllPets();
       emit(PetsLoaded(pets: pets));
     } catch (e) {
       emit(PetsError(message: e.toString()));
     }
   }
 
-  void _onAddPet(AddPet event, Emitter<PetsState> emit) async {
+  Future<void> _onAddPet(AddPet event, Emitter<PetsState> emit) async {
     try {
       if (state is! PetFormState) {
         emit(const PetsError(message: 'No form data available'));
@@ -98,25 +94,28 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
 
       // Check if we're editing an existing pet
       final existingPet = event.petToEdit;
+      final storageService = sl<StorageService>();
 
-      String petId;
       String? imagePath;
 
       if (existingPet != null) {
         // Editing existing pet
-        petId = existingPet.id;
-
         // Handle image update
-        if (formState.imagePath != null && formState.imagePath != existingPet.imagePath) {
-          // New image selected, save it
-          imagePath = await ImageService.savePetImage(petId, XFile(formState.imagePath!));
+        if (formState.imagePath != null &&
+            formState.imagePath != existingPet.imagePath &&
+            !formState.imagePath!.startsWith('http')) {
+          // New local image selected, upload to Firebase Storage
+          imagePath = await storageService.uploadPetImage(
+            localPath: formState.imagePath!,
+            petId: existingPet.id,
+          );
           if (imagePath == null) {
-            emit(PetsError(message: 'Failed to save pet image'));
+            emit(const PetsError(message: 'Failed to upload pet image'));
             return;
           }
         } else {
-          // Keep existing image
-          imagePath = existingPet.imagePath;
+          // Keep existing image (either URL or null)
+          imagePath = formState.imagePath ?? existingPet.imagePath;
         }
 
         // Create updated pet
@@ -133,18 +132,21 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
           updatedAt: DateTime.now(),
         );
 
-        // Update pet in Hive
+        // Update pet in Firestore
         await _petRepository.updatePet(updatedPet);
         emit(PetUpdated(pet: updatedPet));
       } else {
-        // Adding new pet
-        petId = DateTime.now().millisecondsSinceEpoch.toString();
+        // Adding new pet - generate temporary ID for image upload
+        final tempPetId = DateTime.now().millisecondsSinceEpoch.toString();
 
-        // Save image if one was selected
-        if (formState.imagePath != null) {
-          imagePath = await ImageService.savePetImage(petId, XFile(formState.imagePath!));
+        // Upload image if one was selected
+        if (formState.imagePath != null && !formState.imagePath!.startsWith('http')) {
+          imagePath = await storageService.uploadPetImage(
+            localPath: formState.imagePath!,
+            petId: tempPetId,
+          );
           if (imagePath == null) {
-            emit(PetsError(message: 'Failed to save pet image'));
+            emit(const PetsError(message: 'Failed to upload pet image'));
             return;
           }
         }
@@ -162,29 +164,21 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
           vaccines: formState.vaccines,
         );
 
-        // Save pet to Hive
-        await _petRepository.addPet(pet);
-        emit(PetAdded(pet: pet));
+        // Save pet to Firestore
+        final docId = await _petRepository.addPet(pet);
+
+        // Create pet with the actual Firestore document ID
+        final savedPet = pet.copyWith(id: docId);
+        emit(PetAdded(pet: savedPet));
       }
     } catch (e) {
       emit(PetsError(message: e.toString()));
     }
   }
 
-  void _onUpdatePet(UpdatePet event, Emitter<PetsState> emit) async {
-    try {
-      // TODO: Update pet in local storage or API
-
-      emit(PetUpdated(pet: event.pet));
-    } catch (e) {
-      emit(PetsError(message: e.toString()));
-    }
-  }
-
-  void _onDeletePet(DeletePet event, Emitter<PetsState> emit) async {
+  Future<void> _onDeletePet(DeletePet event, Emitter<PetsState> emit) async {
     try {
       await _petRepository.deletePet(event.petId);
-
       emit(PetDeleted(petId: event.petId));
     } catch (e) {
       emit(PetsError(message: e.toString()));
@@ -387,26 +381,17 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
   // Pet Form Vaccine Management
   void _onAddVaccineToPetForm(AddVaccineToPetForm event, Emitter<PetsState> emit) {
     if (state is PetFormState) {
-      // Simply add vaccine to form state - no Hive save needed
       final currentState = state as PetFormState;
       final updatedVaccines = List<VaccineModel>.from(currentState.vaccines)..add(event.vaccine);
       emit(currentState.copyWith(vaccines: updatedVaccines));
     }
   }
 
-  void _onRemoveVaccineFromPetForm(RemoveVaccineFromPetForm event, Emitter<PetsState> emit) async {
+  void _onRemoveVaccineFromPetForm(RemoveVaccineFromPetForm event, Emitter<PetsState> emit) {
     if (state is PetFormState) {
-      try {
-        // Remove vaccine from Hive
-        await _vaccineRepository.deleteVaccine(event.vaccineId);
-
-        // Update form state
-        final currentState = state as PetFormState;
-        final updatedVaccines = currentState.vaccines.where((vaccine) => vaccine.id != event.vaccineId).toList();
-        emit(currentState.copyWith(vaccines: updatedVaccines));
-      } catch (e) {
-        emit(PetsError(message: e.toString()));
-      }
+      final currentState = state as PetFormState;
+      final updatedVaccines = currentState.vaccines.where((vaccine) => vaccine.id != event.vaccineId).toList();
+      emit(currentState.copyWith(vaccines: updatedVaccines));
     }
   }
 
@@ -414,14 +399,14 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     final now = DateTime.now();
     final thirtyDaysFromNow = now.add(const Duration(days: 30));
 
-    final upcomingVaccines = <UpcomingVaccineModel>[];
+    final upcomingVaccineList = <UpcomingVaccineModel>[];
 
     for (final pet in pets) {
       for (final vaccine in pet.vaccines) {
         // Include vaccines due in the next 30 days (or overdue)
         if (vaccine.nextDueDate.isBefore(thirtyDaysFromNow) &&
             vaccine.nextDueDate.isAfter(now.subtract(const Duration(days: 1)))) {
-          upcomingVaccines.add(UpcomingVaccineModel(
+          upcomingVaccineList.add(UpcomingVaccineModel(
             vaccine: vaccine,
             petName: pet.name,
             petId: pet.id,
@@ -431,8 +416,8 @@ class PetsBloc extends Bloc<PetsEvent, PetsState> {
     }
 
     // Sort by date (soonest first)
-    upcomingVaccines.sort((a, b) => a.vaccine.nextDueDate.compareTo(b.vaccine.nextDueDate));
+    upcomingVaccineList.sort((a, b) => a.vaccine.nextDueDate.compareTo(b.vaccine.nextDueDate));
 
-    return upcomingVaccines;
+    return upcomingVaccineList;
   }
 }

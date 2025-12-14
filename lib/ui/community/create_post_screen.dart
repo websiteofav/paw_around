@@ -11,7 +11,12 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
+import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/location_service.dart';
+import 'package:paw_around/services/storage_service.dart';
+import 'package:paw_around/ui/widgets/common_button.dart';
+import 'package:paw_around/ui/widgets/common_text_field.dart';
+import 'package:paw_around/utils/validators.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -34,6 +39,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   double? _latitude;
   double? _longitude;
   bool _isLoadingLocation = false;
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -75,13 +81,35 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     setState(() => _isLoadingLocation = false);
   }
 
-  void _submitPost() {
+  Future<void> _submitPost() async {
     if (!_formKey.currentState!.validate()) return;
     if (_latitude == null || _longitude == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please set a location')),
+        const SnackBar(content: Text(AppStrings.pleaseSetLocation)),
       );
       return;
+    }
+
+    setState(() => _isSubmitting = true);
+
+    final currentUser = sl<AuthRepository>().currentUser;
+    String? imageUrl;
+
+    // Upload image to Firebase Storage if selected
+    if (_imagePath != null) {
+      final storageService = sl<StorageService>();
+      imageUrl = await storageService.uploadPostImage(
+        localPath: _imagePath!,
+        userId: currentUser?.uid ?? 'anonymous',
+      );
+
+      if (imageUrl == null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to upload image. Please try again.')),
+        );
+        setState(() => _isSubmitting = false);
+        return;
+      }
     }
 
     final post = LostFoundPost(
@@ -91,16 +119,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       breed: _breedController.text.trim(),
       color: _colorController.text.trim(),
       petDescription: _descriptionController.text.trim(),
-      imagePath: _imagePath,
+      imagePath: imageUrl,
       latitude: _latitude!,
       longitude: _longitude!,
       locationName: _locationController.text.trim(),
       contactPhone: _phoneController.text.trim(),
-      userId: 'current_user', // TODO: Replace with actual user ID
+      userId: currentUser?.uid ?? '',
+      userName: currentUser?.displayName ?? 'Anonymous',
       createdAt: DateTime.now(),
     );
 
-    context.read<CommunityBloc>().add(CreatePost(post));
+    if (mounted) {
+      context.read<CommunityBloc>().add(CreatePost(post));
+    }
   }
 
   @override
@@ -108,11 +139,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return BlocListener<CommunityBloc, CommunityState>(
       listener: (context, state) {
         if (state is PostCreated) {
+          setState(() => _isSubmitting = false);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(AppStrings.postCreatedSuccessfully)),
           );
           context.pop();
         } else if (state is CommunityError) {
+          setState(() => _isSubmitting = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(state.message)),
           );
@@ -136,17 +169,44 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 const SizedBox(height: 16),
                 _buildImagePicker(),
                 const SizedBox(height: 16),
-                _buildTextField(_petNameController, AppStrings.petName, true),
+                CommonTextField(
+                  controller: _petNameController,
+                  hintText: AppStrings.petName,
+                  labelText: AppStrings.petName,
+                  validator: (value) => Validators.required(value, AppStrings.petName),
+                ),
                 const SizedBox(height: 12),
-                _buildTextField(_breedController, AppStrings.breed, true),
+                CommonTextField(
+                  controller: _breedController,
+                  hintText: AppStrings.breed,
+                  labelText: AppStrings.breed,
+                  validator: (value) => Validators.required(value, AppStrings.breed),
+                ),
                 const SizedBox(height: 12),
-                _buildTextField(_colorController, AppStrings.color, true),
+                CommonTextField(
+                  controller: _colorController,
+                  hintText: AppStrings.color,
+                  labelText: AppStrings.color,
+                  validator: (value) => Validators.required(value, AppStrings.color),
+                ),
                 const SizedBox(height: 12),
-                _buildTextField(_descriptionController, AppStrings.petDescription, true, maxLines: 3),
+                CommonTextField(
+                  controller: _descriptionController,
+                  hintText: AppStrings.describeThePet,
+                  labelText: AppStrings.petDescription,
+                  maxLines: 3,
+                  validator: (value) => Validators.required(value, AppStrings.petDescription),
+                ),
                 const SizedBox(height: 12),
                 _buildLocationField(),
                 const SizedBox(height: 12),
-                _buildTextField(_phoneController, AppStrings.contactPhone, true, keyboardType: TextInputType.phone),
+                CommonTextField(
+                  controller: _phoneController,
+                  hintText: AppStrings.enterContactPhone,
+                  labelText: AppStrings.contactPhone,
+                  keyboardType: TextInputType.phone,
+                  validator: Validators.phone,
+                ),
                 const SizedBox(height: 24),
                 _buildSubmitButton(),
               ],
@@ -222,67 +282,30 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Widget _buildTextField(
-    TextEditingController controller,
-    String label,
-    bool required, {
-    int maxLines = 1,
-    TextInputType? keyboardType,
-  }) {
-    return TextFormField(
-      controller: controller,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-      validator: required ? (value) => value == null || value.isEmpty ? 'Required' : null : null,
-    );
-  }
-
   Widget _buildLocationField() {
-    return Row(
-      children: [
-        Expanded(
-          child: TextFormField(
-            controller: _locationController,
-            decoration: InputDecoration(
-              labelText: AppStrings.location,
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              filled: true,
-              fillColor: Colors.white,
-            ),
-            validator: (v) => v == null || v.isEmpty ? 'Required' : null,
-          ),
-        ),
-        const SizedBox(width: 8),
-        IconButton(
-          onPressed: _isLoadingLocation ? null : _getCurrentLocation,
-          icon: _isLoadingLocation
-              ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.my_location, color: AppColors.primary),
-        ),
-      ],
+    return CommonTextField(
+      controller: _locationController,
+      hintText: AppStrings.useCurrentLocation,
+      labelText: AppStrings.location,
+      validator: (value) => Validators.required(value, AppStrings.location),
+      suffixIcon: IconButton(
+        onPressed: _isLoadingLocation ? null : _getCurrentLocation,
+        icon: _isLoadingLocation
+            ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+            : const Icon(Icons.my_location, color: AppColors.primary),
+      ),
     );
   }
 
   Widget _buildSubmitButton() {
     return BlocBuilder<CommunityBloc, CommunityState>(
       builder: (context, state) {
-        final isLoading = state is PostCreating;
-        return ElevatedButton(
+        final isLoading = _isSubmitting || state is PostCreating;
+        return CommonButton(
+          text: AppStrings.createPost,
           onPressed: isLoading ? null : _submitPost,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          ),
-          child: isLoading
-              ? const CircularProgressIndicator(color: Colors.white)
-              : const Text(AppStrings.createPost, style: TextStyle(fontSize: 16, color: Colors.white)),
+          isLoading: isLoading,
+          variant: ButtonVariant.primary,
         );
       },
     );

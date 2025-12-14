@@ -14,6 +14,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     on<SelectPost>(_onSelectPost);
     on<ClearSelectedPost>(_onClearSelectedPost);
     on<MarkPostResolved>(_onMarkPostResolved);
+    on<DeletePost>(_onDeletePost);
   }
 
   Future<void> _onLoadPosts(LoadPosts event, Emitter<CommunityState> emit) async {
@@ -55,6 +56,16 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
   Future<void> _onMarkPostResolved(MarkPostResolved event, Emitter<CommunityState> emit) async {
     try {
       await _repository.markAsResolved(event.postId);
+      add(LoadPosts());
+    } catch (e) {
+      emit(CommunityError(e.toString()));
+    }
+  }
+
+  Future<void> _onDeletePost(DeletePost event, Emitter<CommunityState> emit) async {
+    try {
+      await _repository.deletePost(event.postId);
+      emit(PostDeleted());
       add(LoadPosts());
     } catch (e) {
       emit(CommunityError(e.toString()));

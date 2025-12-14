@@ -137,6 +137,14 @@ class AppStrings {
   static const String useCurrentLocation = 'Use Current Location';
   static const String lastSeenAt = 'Last seen at';
   static const String foundAt = 'Found at';
+  static const String postedBy = 'Posted by';
+  static const String posted = 'Posted';
+  static const String deletePost = 'Delete Post';
+  static const String deletePostConfirmation =
+      'Are you sure you want to delete this post? This action cannot be undone.';
+  static const String postDeletedSuccessfully = 'Post deleted successfully';
+  static const String required = 'Required';
+  static const String pleaseSetLocation = 'Please set a location';
 
   // Private constructor to prevent instantiation
   AppStrings._();

@@ -55,6 +55,10 @@ class AppColors {
   static const Color navigationIcon = Colors.white;
   static const Color navigationBorder = Color(0xFF1565C0); // Darker blue for border
 
+  // Error Colors
+  static const Color error = Color(0xFFD32F2F);
+  static const Color white = Colors.white;
+
   // Private constructor to prevent instantiation
   AppColors._();
 }

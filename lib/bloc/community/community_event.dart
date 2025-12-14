@@ -35,3 +35,11 @@ class MarkPostResolved extends CommunityEvent {
   @override
   List<Object?> get props => [postId];
 }
+
+class DeletePost extends CommunityEvent {
+  final String postId;
+  const DeletePost(this.postId);
+
+  @override
+  List<Object?> get props => [postId];
+}

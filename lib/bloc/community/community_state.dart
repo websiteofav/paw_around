@@ -53,3 +53,5 @@ class PostCreated extends CommunityState {
   @override
   List<Object?> get props => [post];
 }
+
+class PostDeleted extends CommunityState {}

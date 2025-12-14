@@ -1,4 +1,13 @@
-abstract class AuthEvent {}
+import 'package:equatable/equatable.dart';
+
+abstract class AuthEvent extends Equatable {
+  const AuthEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class CheckAuthStatus extends AuthEvent {}
 
 class TogglePasswordVisibility extends AuthEvent {}
 
@@ -6,7 +15,10 @@ class LoginWithEmail extends AuthEvent {
   final String email;
   final String password;
 
-  LoginWithEmail({required this.email, required this.password});
+  const LoginWithEmail({required this.email, required this.password});
+
+  @override
+  List<Object?> get props => [email, password];
 }
 
 class LoginWithGoogle extends AuthEvent {}
@@ -16,7 +28,10 @@ class LoginWithApple extends AuthEvent {}
 class ForgotPassword extends AuthEvent {
   final String email;
 
-  ForgotPassword({required this.email});
+  const ForgotPassword({required this.email});
+
+  @override
+  List<Object?> get props => [email];
 }
 
 class SignupWithEmail extends AuthEvent {
@@ -25,10 +40,15 @@ class SignupWithEmail extends AuthEvent {
   final String password;
   final String confirmPassword;
 
-  SignupWithEmail({
+  const SignupWithEmail({
     required this.fullName,
     required this.email,
     required this.password,
     required this.confirmPassword,
   });
+
+  @override
+  List<Object?> get props => [fullName, email, password, confirmPassword];
 }
+
+class SignOut extends AuthEvent {}

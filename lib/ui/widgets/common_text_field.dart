@@ -4,75 +4,80 @@ import 'package:paw_around/constants/app_colors.dart';
 class CommonTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
+  final String? labelText;
   final TextInputType? keyboardType;
   final bool isPassword;
-  final String? forgotPasswordText;
-  final VoidCallback? onForgotPasswordPressed;
   final bool isPasswordVisible;
   final VoidCallback? onToggleVisibility;
+  final String? Function(String?)? validator;
+  final int maxLines;
+  final Widget? suffixIcon;
 
   const CommonTextField({
     super.key,
     required this.controller,
     required this.hintText,
+    this.labelText,
     this.keyboardType,
     this.isPassword = false,
-    this.forgotPasswordText,
-    this.onForgotPasswordPressed,
     this.isPasswordVisible = false,
     this.onToggleVisibility,
+    this.validator,
+    this.maxLines = 1,
+    this.suffixIcon,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.patternColor),
-      ),
-      child: TextField(
-        controller: controller,
-        keyboardType: keyboardType,
-        obscureText: isPassword ? !isPasswordVisible : false,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: const TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 16,
-          ),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-          suffixIcon: isPassword ? _buildPasswordSuffix() : null,
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      obscureText: isPassword ? !isPasswordVisible : false,
+      validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      maxLines: isPassword ? 1 : maxLines,
+      decoration: InputDecoration(
+        hintText: hintText,
+        labelText: labelText,
+        hintStyle: const TextStyle(
+          color: AppColors.textSecondary,
+          fontSize: 16,
         ),
+        filled: true,
+        fillColor: AppColors.background,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.patternColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.patternColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: AppColors.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.red, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        suffixIcon: isPassword ? _buildPasswordSuffix() : suffixIcon,
       ),
     );
   }
 
   Widget? _buildPasswordSuffix() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (forgotPasswordText != null && onForgotPasswordPressed != null)
-          TextButton(
-            onPressed: onForgotPasswordPressed,
-            child: Text(
-              forgotPasswordText!,
-              style: const TextStyle(
-                color: AppColors.secondary,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        IconButton(
-          onPressed: onToggleVisibility,
-          icon: Icon(
-            isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ],
+    return IconButton(
+      onPressed: onToggleVisibility,
+      icon: Icon(
+        isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+        color: AppColors.textSecondary,
+      ),
     );
   }
 }

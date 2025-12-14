@@ -2,14 +2,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
+import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/firebase_options.dart';
-import 'package:paw_around/repositories/places_repository.dart';
+import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/router/app_router.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 
@@ -21,8 +20,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Initialize Hive
-  await Hive.initFlutter();
+  // Initialize service locator
   await init();
   await dotenv.load(fileName: ".env");
 
@@ -41,14 +39,11 @@ class MainApp extends StatelessWidget {
           create: (context) => OnboardingBloc(),
         ),
         BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(),
+          create: (context) => AuthBloc(
+            authRepository: sl<AuthRepository>(),
+          )..add(CheckAuthStatus()),
         ),
-        BlocProvider<PlacesBloc>(
-          create: (context) => PlacesBloc(
-            placesRepository: sl<PlacesRepository>(),
-          ),
-        ),
-        // Feature blocs are provided at feature level
+        // Feature blocs (CommunityBloc, PetsBloc, PlacesBloc) are provided in ShellRoute
       ],
       child: MaterialApp.router(
         title: AppStrings.appName,

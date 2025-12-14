@@ -16,6 +16,7 @@ class LostFoundPost extends Equatable {
   final String locationName;
   final String contactPhone;
   final String userId;
+  final String userName;
   final DateTime createdAt;
   final bool isResolved;
 
@@ -32,6 +33,7 @@ class LostFoundPost extends Equatable {
     required this.locationName,
     required this.contactPhone,
     required this.userId,
+    this.userName = 'Anonymous',
     required this.createdAt,
     this.isResolved = false,
   });
@@ -53,6 +55,7 @@ class LostFoundPost extends Equatable {
       locationName: data['locationName'] ?? '',
       contactPhone: data['contactPhone'] ?? '',
       userId: data['userId'] ?? '',
+      userName: data['userName'] ?? 'Anonymous',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       isResolved: data['isResolved'] ?? false,
     );
@@ -72,6 +75,7 @@ class LostFoundPost extends Equatable {
       'locationName': locationName,
       'contactPhone': contactPhone,
       'userId': userId,
+      'userName': userName,
       'createdAt': Timestamp.fromDate(createdAt),
       'isResolved': isResolved,
     };
@@ -91,6 +95,7 @@ class LostFoundPost extends Equatable {
     String? locationName,
     String? contactPhone,
     String? userId,
+    String? userName,
     DateTime? createdAt,
     bool? isResolved,
   }) {
@@ -107,6 +112,7 @@ class LostFoundPost extends Equatable {
       locationName: locationName ?? this.locationName,
       contactPhone: contactPhone ?? this.contactPhone,
       userId: userId ?? this.userId,
+      userName: userName ?? this.userName,
       createdAt: createdAt ?? this.createdAt,
       isResolved: isResolved ?? this.isResolved,
     );
@@ -124,5 +130,5 @@ class LostFoundPost extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, type, petName, latitude, longitude, createdAt];
+  List<Object?> get props => [id, type, petName, userId, userName, latitude, longitude, createdAt];
 }

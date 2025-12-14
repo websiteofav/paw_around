@@ -10,8 +10,7 @@ import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/utils/date_utils.dart';
-import 'package:paw_around/core/di/service_locator.dart';
-import 'package:paw_around/repositories/vaccine_repository.dart';
+import 'package:paw_around/constants/vaccine_constants.dart';
 
 class PetVaccinesList extends StatelessWidget {
   const PetVaccinesList({super.key});
@@ -90,11 +89,8 @@ class PetVaccinesList extends StatelessWidget {
 
   Widget _buildVaccineDropdown(BuildContext context) {
     try {
-      final vaccineRepository = sl<VaccineRepository>();
-      final allVaccines = vaccineRepository.getAllVaccines();
-
-      // Get unique vaccine names from all vaccines
-      final uniqueVaccineNames = allVaccines.map((v) => v.vaccineName).toSet().toList()..sort();
+      // Get common vaccine names from constants
+      final vaccineNames = VaccineConstants.allVaccines;
 
       return Container(
         decoration: BoxDecoration(
@@ -143,7 +139,7 @@ class PetVaccinesList extends StatelessWidget {
                 child: Divider(height: 1),
               ),
               // Existing vaccines
-              ...uniqueVaccineNames.map((vaccineName) {
+              ...vaccineNames.map((vaccineName) {
                 return DropdownMenuItem<String>(
                   value: vaccineName,
                   child: Row(

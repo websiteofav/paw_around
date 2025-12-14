@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/core/error/failures.dart';
 
+export 'failures.dart';
+
 class ErrorHandler {
   static void handleError(BuildContext context, Failure failure) {
     String message;
@@ -15,6 +17,9 @@ class ErrorHandler {
       case ValidationFailure:
         message = 'Validation error: ${failure.message}';
         break;
+      case AuthFailure:
+        message = failure.message;
+        break;
       default:
         message = 'An unexpected error occurred: ${failure.message}';
     }
@@ -23,7 +28,7 @@ class ErrorHandler {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,
-        duration: const Duration(seconds: 4),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

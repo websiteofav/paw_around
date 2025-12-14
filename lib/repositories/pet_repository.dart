@@ -1,58 +1,77 @@
-import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/repositories/auth_repository.dart';
 
 class PetRepository {
-  static const String _boxName = 'pets';
-  late Box<PetModel> _box;
+  final FirebaseFirestore _firestore;
+  final AuthRepository _authRepository;
 
-  PetRepository();
+  PetRepository({
+    FirebaseFirestore? firestore,
+    required AuthRepository authRepository,
+  })  : _firestore = firestore ?? FirebaseFirestore.instance,
+        _authRepository = authRepository;
 
-  Future<void> init() async {
-    // Check if box is already open, if not open it
-    if (Hive.isBoxOpen(_boxName)) {
-      _box = Hive.box<PetModel>(_boxName);
-    } else {
-      _box = await Hive.openBox<PetModel>(_boxName);
+  // Get reference to current user's pets collection
+  CollectionReference<Map<String, dynamic>> get _petsRef {
+    final userId = _authRepository.currentUser?.uid;
+    if (userId == null) {
+      throw Exception('User not authenticated');
     }
+    return _firestore.collection('users').doc(userId).collection('pets');
   }
 
-  // Get all pets
-  List<PetModel> getAllPets() {
-    return _box.values.toList();
+  // Get all pets for current user
+  Future<List<PetModel>> getAllPets() async {
+    final snapshot = await _petsRef.orderBy('createdAt', descending: true).get();
+    return snapshot.docs.map((doc) => PetModel.fromFirestore(doc)).toList();
+  }
+
+  // Get pets stream for real-time updates
+  Stream<List<PetModel>> getPetsStream() {
+    return _petsRef.orderBy('createdAt', descending: true).snapshots().map(
+          (snapshot) => snapshot.docs.map((doc) => PetModel.fromFirestore(doc)).toList(),
+        );
   }
 
   // Get pet by ID
-  PetModel? getPetById(String id) {
-    return _box.get(id);
+  Future<PetModel?> getPetById(String id) async {
+    final doc = await _petsRef.doc(id).get();
+    if (doc.exists) {
+      return PetModel.fromFirestore(doc);
+    }
+    return null;
   }
 
   // Add pet
-  Future<void> addPet(PetModel pet) async {
-    await _box.put(pet.id, pet);
+  Future<String> addPet(PetModel pet) async {
+    final docRef = await _petsRef.add(pet.toFirestore());
+    return docRef.id;
   }
 
   // Update pet
   Future<void> updatePet(PetModel pet) async {
-    await _box.put(pet.id, pet);
+    await _petsRef.doc(pet.id).update(pet.toFirestore());
   }
 
   // Delete pet
   Future<void> deletePet(String id) async {
-    // Vaccines are stored with the pet, so deleting the pet removes them too
-    await _box.delete(id);
+    await _petsRef.doc(id).delete();
   }
 
   // Get pets by species
-  List<PetModel> getPetsBySpecies(String species) {
-    return _box.values.where((pet) => pet.species == species).toList();
+  Future<List<PetModel>> getPetsBySpecies(String species) async {
+    final snapshot = await _petsRef.where('species', isEqualTo: species).get();
+    return snapshot.docs.map((doc) => PetModel.fromFirestore(doc)).toList();
   }
 
-  // Get pets with upcoming vaccines
-  List<PetModel> getPetsWithUpcomingVaccines() {
+  // Get pets with upcoming vaccines (within 30 days)
+  Future<List<PetModel>> getPetsWithUpcomingVaccines() async {
+    final pets = await getAllPets();
     final now = DateTime.now();
     final thirtyDaysFromNow = now.add(const Duration(days: 30));
 
-    return _box.values.where((pet) {
+    return pets.where((pet) {
       return pet.vaccines.any((vaccine) {
         return vaccine.nextDueDate.isAfter(now) && vaccine.nextDueDate.isBefore(thirtyDaysFromNow);
       });
@@ -60,25 +79,28 @@ class PetRepository {
   }
 
   // Get pets with overdue vaccines
-  List<PetModel> getPetsWithOverdueVaccines() {
+  Future<List<PetModel>> getPetsWithOverdueVaccines() async {
+    final pets = await getAllPets();
     final now = DateTime.now();
-    return _box.values.where((pet) {
+
+    return pets.where((pet) {
       return pet.vaccines.any((vaccine) => vaccine.nextDueDate.isBefore(now));
     }).toList();
   }
 
   // Get pet count
-  int getPetCount() {
-    return _box.length;
+  Future<int> getPetCount() async {
+    final snapshot = await _petsRef.count().get();
+    return snapshot.count ?? 0;
   }
 
-  // Clear all pets
+  // Clear all pets (use with caution)
   Future<void> clearAllPets() async {
-    await _box.clear();
-  }
-
-  // Close the box
-  Future<void> close() async {
-    await _box.close();
+    final snapshot = await _petsRef.get();
+    final batch = _firestore.batch();
+    for (final doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+    await batch.commit();
   }
 }
