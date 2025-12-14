@@ -51,3 +51,6 @@ android/local.properties
 # Environment files
 .env
 *.env
+
+# Secrets
+ios/Runner/Secrets.xcconfig

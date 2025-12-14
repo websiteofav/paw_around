@@ -16,7 +16,7 @@
         <!-- Permissions for google_maps_flutter -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC7UPSqiPSHH0GLz7e6fEx1_QAUgY7d-DY" />
+            android:value="${GOOGLE_MAPS_API_KEY}" />
 
         <activity
             android:name=".MainActivity"
