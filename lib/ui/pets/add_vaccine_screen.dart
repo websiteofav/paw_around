@@ -1,43 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:paw_around/bloc/pets/pets_bloc.dart';
-import 'package:paw_around/bloc/pets/pets_event.dart';
-import 'package:paw_around/bloc/pets/pets_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
-import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
-import 'package:paw_around/ui/pets/widgets/vaccine_date_field.dart';
-import 'package:paw_around/ui/pets/widgets/vaccine_reminder_section.dart';
-import 'package:paw_around/ui/pets/widgets/vaccine_form_buttons.dart';
+import 'package:paw_around/models/vaccines/vaccine_model.dart';
+import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/common_form_field.dart';
 
-class AddVaccineScreen extends StatelessWidget {
+class AddVaccineScreen extends StatefulWidget {
   const AddVaccineScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const _AddVaccineView();
-  }
+  State<AddVaccineScreen> createState() => _AddVaccineScreenState();
 }
 
-class _AddVaccineView extends StatefulWidget {
-  const _AddVaccineView();
+class _AddVaccineScreenState extends State<AddVaccineScreen> {
+  final TextEditingController _vaccineNameController = TextEditingController();
+  final TextEditingController _notesController = TextEditingController();
 
-  @override
-  State<_AddVaccineView> createState() => _AddVaccineViewState();
-}
+  DateTime? _dateGiven;
+  DateTime? _nextDueDate;
+  bool _setReminder = true;
 
-class _AddVaccineViewState extends State<_AddVaccineView> {
-  late TextEditingController _vaccineNameController;
-  late TextEditingController _notesController;
-
-  @override
-  void initState() {
-    super.initState();
-    _vaccineNameController = TextEditingController();
-    _notesController = TextEditingController();
-  }
+  final Map<String, String> _errors = {};
 
   @override
   void dispose() {
@@ -46,14 +30,55 @@ class _AddVaccineViewState extends State<_AddVaccineView> {
     super.dispose();
   }
 
+  bool _validate() {
+    _errors.clear();
+
+    if (_vaccineNameController.text.isEmpty) {
+      _errors['vaccineName'] = 'Please enter vaccine name';
+    }
+    if (_dateGiven == null) {
+      _errors['dateGiven'] = 'Please select date given';
+    }
+    if (_nextDueDate == null) {
+      _errors['nextDueDate'] = 'Please select next due date';
+    }
+
+    setState(() {});
+    return _errors.isEmpty;
+  }
+
+  void _saveVaccine() {
+    if (!_validate()) {
+      return;
+    }
+
+    final vaccine = VaccineModel.create(
+      vaccineName: _vaccineNameController.text,
+      dateGiven: _dateGiven!,
+      nextDueDate: _nextDueDate!,
+      notes: _notesController.text,
+      setReminder: _setReminder,
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(AppStrings.vaccineAddedSuccessfully),
+        backgroundColor: Colors.green,
+      ),
+    );
+
+    // Return the vaccine to the parent screen
+    context.pop(vaccine);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           AppStrings.addVaccine,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.navigationText,
             fontWeight: FontWeight.bold,
           ),
@@ -63,103 +88,79 @@ class _AddVaccineViewState extends State<_AddVaccineView> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pushNamed(AppRoutes.home),
+          onPressed: () => context.pop(),
         ),
       ),
-      body: BlocListener<PetsBloc, PetsState>(
-        listener: (context, state) {
-          if (state is VaccineAdded) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(AppStrings.vaccineAddedSuccessfully),
-                backgroundColor: Colors.green,
-              ),
-            );
-            context.pushNamed(AppRoutes.home);
-          } else if (state is PetsError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        },
-        child: BlocBuilder<PetsBloc, PetsState>(
-          builder: (context, state) {
-            if (state is VaccineFormState) {
-              return _buildForm(context, state);
-            }
-            return const Center(child: CircularProgressIndicator());
-          },
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            // Syringe Icon
+            _buildSyringeIcon(),
+            const SizedBox(height: 24),
+
+            // Vaccine Name
+            CommonFormField(
+              label: AppStrings.vaccineName,
+              controller: _vaccineNameController,
+              onChanged: (_) => setState(() => _errors.remove('vaccineName')),
+              validator: (value) => _errors['vaccineName'],
+            ),
+            const SizedBox(height: 16),
+
+            // Date Given
+            _buildDateField(
+              label: AppStrings.dateGiven,
+              selectedDate: _dateGiven,
+              error: _errors['dateGiven'],
+              onTap: () => _selectDateGiven(),
+            ),
+            const SizedBox(height: 16),
+
+            // Next Due Date
+            _buildDateField(
+              label: AppStrings.nextDueDate,
+              selectedDate: _nextDueDate,
+              error: _errors['nextDueDate'],
+              onTap: () => _selectNextDueDate(),
+            ),
+            const SizedBox(height: 16),
+
+            // Notes
+            CommonFormField(
+              label: AppStrings.notes,
+              controller: _notesController,
+              hintText: 'Optional',
+              maxLines: 3,
+            ),
+            const SizedBox(height: 24),
+
+            // Reminder Toggle
+            _buildReminderSection(),
+            const SizedBox(height: 32),
+
+            // Action Buttons
+            Row(
+              children: [
+                Expanded(
+                  child: CommonButton(
+                    text: AppStrings.cancel,
+                    onPressed: () => context.pop(),
+                    variant: ButtonVariant.outline,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: CommonButton(
+                    text: AppStrings.saveVaccine,
+                    onPressed: _saveVaccine,
+                    variant: ButtonVariant.primary,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildForm(BuildContext context, VaccineFormState formState) {
-    // Sync controllers with BLoC state
-    if (_vaccineNameController.text != formState.vaccineName) {
-      _vaccineNameController.text = formState.vaccineName;
-    }
-    if (_notesController.text != formState.notes) {
-      _notesController.text = formState.notes;
-    }
-
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          // Syringe Icon
-          _buildSyringeIcon(),
-          const SizedBox(height: 24),
-
-          // Vaccine Name
-          CommonFormField(
-            label: AppStrings.vaccineName,
-            controller: _vaccineNameController,
-            onChanged: (value) => context.read<PetsBloc>().add(
-                  UpdateVaccineFormField(field: 'vaccineName', value: value),
-                ),
-            validator: (value) => formState.errors['vaccineName'],
-          ),
-          const SizedBox(height: 16),
-
-          // Date Given
-          VaccineDateField(
-            label: AppStrings.dateGiven,
-            selectedDate: formState.dateGiven,
-            onTap: () => _selectDateGiven(context),
-          ),
-          const SizedBox(height: 16),
-
-          // Next Due Date
-          VaccineDateField(
-            label: AppStrings.nextDueDate,
-            selectedDate: formState.nextDueDate,
-            onTap: () => _selectNextDueDate(context),
-          ),
-          const SizedBox(height: 16),
-
-          // Notes
-          CommonFormField(
-            label: AppStrings.notes,
-            controller: _notesController,
-            hintText: 'Optional',
-            maxLines: 3,
-            onChanged: (value) => context.read<PetsBloc>().add(
-                  UpdateVaccineFormField(field: 'notes', value: value),
-                ),
-          ),
-          const SizedBox(height: 24),
-
-          // Reminder Notification
-          const VaccineReminderSection(),
-          const SizedBox(height: 32),
-
-          // Action Buttons
-          const VaccineFormButtons(),
-        ],
       ),
     );
   }
@@ -180,7 +181,124 @@ class _AddVaccineViewState extends State<_AddVaccineView> {
     );
   }
 
-  void _selectDateGiven(BuildContext context) async {
+  Widget _buildDateField({
+    required String label,
+    required DateTime? selectedDate,
+    required String? error,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textPrimary,
+          ),
+        ),
+        const SizedBox(height: 8),
+        GestureDetector(
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: error != null ? Colors.red : const Color(0xFFE0E0E0),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    selectedDate != null ? _formatDate(selectedDate) : 'Select Date',
+                    style: TextStyle(
+                      color: selectedDate != null ? AppColors.textPrimary : AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.calendar_today, color: AppColors.primary),
+              ],
+            ),
+          ),
+        ),
+        if (error != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              error,
+              style: const TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildReminderSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE0E0E0)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.notifications_active,
+              color: AppColors.primary,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          const Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppStrings.reminderNotification,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  AppStrings.getNotifiedBeforeNextDose,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch(
+            value: _setReminder,
+            onChanged: (value) => setState(() => _setReminder = value),
+            activeColor: AppColors.primary,
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
+  }
+
+  Future<void> _selectDateGiven() async {
     final date = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -189,11 +307,14 @@ class _AddVaccineViewState extends State<_AddVaccineView> {
     );
 
     if (date != null) {
-      context.read<PetsBloc>().add(SelectVaccineDateGiven(date: date));
+      setState(() {
+        _dateGiven = date;
+        _errors.remove('dateGiven');
+      });
     }
   }
 
-  void _selectNextDueDate(BuildContext context) async {
+  Future<void> _selectNextDueDate() async {
     final date = await showDatePicker(
       context: context,
       initialDate: DateTime.now().add(const Duration(days: 365)),
@@ -202,7 +323,10 @@ class _AddVaccineViewState extends State<_AddVaccineView> {
     );
 
     if (date != null) {
-      context.read<PetsBloc>().add(SelectVaccineNextDueDate(date: date));
+      setState(() {
+        _nextDueDate = date;
+        _errors.remove('nextDueDate');
+      });
     }
   }
 }

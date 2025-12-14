@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
-import 'package:paw_around/bloc/pets/pets_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/constants/app_colors.dart';
@@ -38,7 +40,7 @@ class AppRouter {
   static final GoRouter _router = GoRouter(
     initialLocation: AppRoutes.login,
     debugLogDiagnostics: false,
-    refreshListenable: _authNotifier, // <-- Add this line
+    refreshListenable: _authNotifier,
     redirect: (context, state) {
       final authRepository = sl<AuthRepository>();
       final isLoggedIn = authRepository.isLoggedIn;
@@ -105,8 +107,8 @@ class AppRouter {
                   repository: sl<CommunityRepository>(),
                 ),
               ),
-              BlocProvider<PetsBloc>(
-                create: (_) => PetsBloc(
+              BlocProvider<PetListBloc>(
+                create: (_) => PetListBloc(
                   petRepository: sl<PetRepository>(),
                 ),
               ),
@@ -130,17 +132,22 @@ class AppRouter {
             ),
           ),
 
-          // Add Pet Route
+          // Add Pet Route - Creates fresh PetFormBloc each time
           GoRoute(
             path: AppRoutes.addPet,
             name: AppRoutes.addPet,
             builder: (context, state) {
               final petToEdit = state.extra as PetModel?;
-              return AddPetScreen(petToEdit: petToEdit);
+              return BlocProvider(
+                create: (_) => PetFormBloc(
+                  petRepository: sl<PetRepository>(),
+                )..add(InitializeForm(petToEdit: petToEdit)),
+                child: AddPetScreen(petToEdit: petToEdit),
+              );
             },
           ),
 
-          // Add Vaccine Route
+          // Add Vaccine Route - Uses parent PetFormBloc
           GoRoute(
             path: AppRoutes.addVaccine,
             name: AppRoutes.addVaccine,

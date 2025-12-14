@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:paw_around/bloc/pets/pets_bloc.dart';
-import 'package:paw_around/bloc/pets/pets_event.dart';
-import 'package:paw_around/bloc/pets/pets_state.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -17,7 +19,7 @@ import 'package:paw_around/ui/pets/widgets/pet_vaccines_list.dart';
 import 'package:paw_around/ui/widgets/common_form_field.dart';
 
 class AddPetScreen extends StatelessWidget {
-  final PetModel? petToEdit; // Optional pet for editing mode
+  final PetModel? petToEdit;
 
   const AddPetScreen({super.key, this.petToEdit});
 
@@ -52,26 +54,7 @@ class _AddPetViewState extends State<_AddPetView> {
     _breedController = TextEditingController(text: pet?.breed ?? '');
     _weightController = TextEditingController(text: pet?.weight.toString() ?? '');
     _notesController = TextEditingController(text: pet?.notes ?? '');
-
-    // Initialize form with pet data if editing
-    if (pet != null) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        context.read<PetsBloc>().add(UpdatePetFormField(field: 'name', value: pet.name));
-        context.read<PetsBloc>().add(UpdatePetFormField(field: 'breed', value: pet.breed));
-        context.read<PetsBloc>().add(UpdatePetFormField(field: 'weight', value: pet.weight.toString()));
-        context.read<PetsBloc>().add(UpdatePetFormField(field: 'notes', value: pet.notes));
-        context.read<PetsBloc>().add(SelectPetSpecies(species: pet.species));
-        context.read<PetsBloc>().add(SelectPetGender(gender: pet.gender));
-        context.read<PetsBloc>().add(SelectPetDateOfBirth(date: pet.dateOfBirth));
-        if (pet.imagePath != null) {
-          context.read<PetsBloc>().add(SelectPetImage(imagePath: pet.imagePath));
-        }
-        // Add existing vaccines to form
-        for (final vaccine in pet.vaccines) {
-          context.read<PetsBloc>().add(AddVaccineToPetForm(vaccine: vaccine));
-        }
-      });
-    }
+    // Form initialization is handled by the router via InitializeForm event
   }
 
   @override
@@ -86,83 +69,77 @@ class _AddPetViewState extends State<_AddPetView> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-        canPop: true,
-        onPopInvokedWithResult: (didPop, result) async {
-          if (didPop) return;
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          return;
+        }
 
-          // Handle back button/swipe gesture
-          if (context.canPop()) {
-            context.pop();
-          } else {
-            context.pushNamed(AppRoutes.home);
-          }
-        },
-        child: Scaffold(
-          backgroundColor: AppColors.background,
-          appBar: AppBar(
-            title: Text(
-              widget.petToEdit != null ? 'Edit Pet' : AppStrings.addPet,
-              style: const TextStyle(
-                color: AppColors.navigationText,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            backgroundColor: AppColors.navigationBackground,
-            elevation: 0,
-            centerTitle: true,
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () {
-                if (context.canPop()) {
-                  context.pop();
-                } else {
-                  context.pushNamed(AppRoutes.home);
-                }
-              },
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.pushNamed(AppRoutes.home);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: Text(
+            widget.petToEdit != null ? 'Edit Pet' : AppStrings.addPet,
+            style: const TextStyle(
+              color: AppColors.navigationText,
+              fontWeight: FontWeight.w600,
             ),
           ),
-          body: BlocListener<PetsBloc, PetsState>(
-            listener: (context, state) {
-              if (state is PetAdded) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content:
-                        Text(widget.petToEdit != null ? 'Pet updated successfully!' : AppStrings.petAddedSuccessfully),
-                    backgroundColor: Colors.green,
-                  ),
-                );
+          backgroundColor: AppColors.navigationBackground,
+          elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              if (context.canPop()) {
+                context.pop();
+              } else {
                 context.pushNamed(AppRoutes.home);
-              } else if (state is PetUpdated) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Pet updated successfully!'),
-                    backgroundColor: Colors.green,
-                  ),
-                );
-                context.pushNamed(AppRoutes.home);
-              } else if (state is PetsError) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(state.message),
-                    backgroundColor: Colors.red,
-                  ),
-                );
               }
             },
-            child: BlocBuilder<PetsBloc, PetsState>(
-              builder: (context, state) {
-                if (state is PetFormState) {
-                  return _buildForm(context, state);
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
-            ),
           ),
-        ));
+        ),
+        body: BlocListener<PetFormBloc, PetFormState>(
+          listener: (context, state) {
+            if (state.status == PetFormStatus.success) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    widget.petToEdit != null ? 'Pet updated successfully!' : AppStrings.petAddedSuccessfully,
+                  ),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              // Refresh pet list in parent bloc
+              context.read<PetListBloc>().add(const LoadPetList());
+              context.pushNamed(AppRoutes.home);
+            } else if (state.status == PetFormStatus.error && state.errorMessage != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage!),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
+          },
+          child: BlocBuilder<PetFormBloc, PetFormState>(
+            builder: (context, state) {
+              return _buildForm(context, state);
+            },
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buildForm(BuildContext context, PetFormState formState) {
-    // Sync controllers with BLoC state
+    // Sync controllers with BLoC state only if they differ
     if (_nameController.text != formState.name) {
       _nameController.text = formState.name;
     }
@@ -176,79 +153,83 @@ class _AddPetViewState extends State<_AddPetView> {
       _notesController.text = formState.notes;
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          // Pet Photo Section
-          const PetPhotoSelection(),
-          const SizedBox(height: 24),
+    return Stack(
+      children: [
+        SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              // Pet Photo Section
+              const PetPhotoSelection(),
+              const SizedBox(height: 24),
 
-          // Pet Name
-          CommonFormField(
-            label: AppStrings.petName,
-            controller: _nameController,
-            onChanged: (value) => context.read<PetsBloc>().add(
-                  UpdatePetFormField(field: 'name', value: value),
-                ),
-            validator: (value) => formState.errors['name'],
+              // Pet Name
+              CommonFormField(
+                label: AppStrings.petName,
+                controller: _nameController,
+                onChanged: (value) => context.read<PetFormBloc>().add(UpdateName(value)),
+                validator: (value) => formState.errors['name'],
+              ),
+              const SizedBox(height: 16),
+
+              // Species Dropdown
+              const SpeciesDropdown(),
+              const SizedBox(height: 16),
+
+              // Breed
+              CommonFormField(
+                label: AppStrings.breed,
+                controller: _breedController,
+                onChanged: (value) => context.read<PetFormBloc>().add(UpdateBreed(value)),
+                validator: (value) => formState.errors['breed'],
+              ),
+              const SizedBox(height: 16),
+
+              // Gender Selection
+              const GenderSelection(),
+              const SizedBox(height: 16),
+
+              // Date of Birth
+              const DateOfBirthField(),
+              const SizedBox(height: 16),
+
+              // Weight
+              CommonFormField(
+                label: AppStrings.weight,
+                controller: _weightController,
+                keyboardType: TextInputType.number,
+                onChanged: (value) => context.read<PetFormBloc>().add(UpdateWeight(value)),
+                validator: (value) => formState.errors['weight'],
+              ),
+              const SizedBox(height: 16),
+
+              // Notes
+              CommonFormField(
+                label: AppStrings.notes,
+                controller: _notesController,
+                maxLines: 3,
+                onChanged: (value) => context.read<PetFormBloc>().add(UpdateNotes(value)),
+              ),
+              const SizedBox(height: 24),
+
+              // Vaccinations Section
+              const PetVaccinesList(),
+              const SizedBox(height: 32),
+
+              // Action Buttons
+              PetFormButtons(petToEdit: widget.petToEdit),
+            ],
           ),
-          const SizedBox(height: 16),
-
-          // Species Dropdown
-          const SpeciesDropdown(),
-          const SizedBox(height: 16),
-
-          // Breed
-          CommonFormField(
-            label: AppStrings.breed,
-            controller: _breedController,
-            onChanged: (value) => context.read<PetsBloc>().add(
-                  UpdatePetFormField(field: 'breed', value: value),
-                ),
-            validator: (value) => formState.errors['breed'],
+        ),
+        // Loading overlay
+        if (formState.status == PetFormStatus.saving)
+          Container(
+            color: Colors.black26,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
           ),
-          const SizedBox(height: 16),
-
-          // Gender Selection
-          const GenderSelection(),
-          const SizedBox(height: 16),
-
-          // Date of Birth
-          const DateOfBirthField(),
-          const SizedBox(height: 16),
-
-          // Weight
-          CommonFormField(
-            label: AppStrings.weight,
-            controller: _weightController,
-            keyboardType: TextInputType.number,
-            onChanged: (value) => context.read<PetsBloc>().add(
-                  UpdatePetFormField(field: 'weight', value: value),
-                ),
-            validator: (value) => formState.errors['weight'],
-          ),
-          const SizedBox(height: 16),
-
-          // Notes
-          CommonFormField(
-            label: AppStrings.notes,
-            controller: _notesController,
-            maxLines: 3,
-            onChanged: (value) => context.read<PetsBloc>().add(
-                  UpdatePetFormField(field: 'notes', value: value),
-                ),
-          ),
-          const SizedBox(height: 24),
-
-          // Vaccinations Section
-          const PetVaccinesList(),
-          const SizedBox(height: 32),
-
-          // Action Buttons
-          PetFormButtons(petToEdit: widget.petToEdit),
-        ],
-      ),
+      ],
     );
   }
 }

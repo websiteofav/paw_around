@@ -4,8 +4,8 @@ import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/bloc/home/home_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
-import 'package:paw_around/bloc/pets/pets_bloc.dart';
-import 'package:paw_around/bloc/pets/pets_state.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/ui/home/widgets/appointment_cards.dart';
 import 'package:paw_around/ui/home/widgets/pet_profile_cards.dart';
@@ -35,10 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         centerTitle: true,
       ),
-      body: BlocBuilder<PetsBloc, PetsState>(
+      body: BlocBuilder<PetListBloc, PetListState>(
         builder: (context, state) {
           List<PetModel> pets = [];
-          if (state is PetsLoaded) {
+          if (state is PetListLoaded) {
             pets = state.pets;
           }
 

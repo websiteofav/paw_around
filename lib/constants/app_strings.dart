@@ -104,6 +104,8 @@ class AppStrings {
   static const String given = 'Given';
   static const String next = 'Next';
   static const String removeVaccine = 'Remove vaccine';
+  static const String reminderNotification = 'Reminder Notification';
+  static const String getNotifiedBeforeNextDose = 'Get notified before the next dose is due';
 
   // Map Screen
   static const String petServices = 'Pet Services';

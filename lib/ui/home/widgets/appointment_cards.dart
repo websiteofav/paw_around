@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:paw_around/bloc/pets/pets_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -14,7 +14,7 @@ class AppointmentCards extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final upcomingVaccines = context.read<PetsBloc>().getUpcomingVaccines(pets);
+    final upcomingVaccines = context.read<PetListBloc>().getUpcomingVaccines(pets);
 
     return Container(
       padding: const EdgeInsets.all(20),

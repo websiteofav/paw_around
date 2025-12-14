@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'dart:ui';
-import 'package:paw_around/bloc/pets/pets_bloc.dart';
-import 'package:paw_around/bloc/pets/pets_event.dart';
-import 'package:paw_around/bloc/pets/pets_state.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -17,34 +16,32 @@ class PetVaccinesList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PetsBloc, PetsState>(
+    return BlocBuilder<PetFormBloc, PetFormState>(
       builder: (context, state) {
-        if (state is PetFormState) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    AppStrings.vaccinations,
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              spacing: 8,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  AppStrings.vaccinations,
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
-                  _buildVaccineDropdown(context),
-                ],
-              ),
-              const SizedBox(height: 12),
+                ),
+                _buildVaccineDropdown(context),
+              ],
+            ),
+            const SizedBox(height: 12),
 
-              // Vaccines List
-              if (state.vaccines.isEmpty) _buildEmptyState() else _buildVaccinesList(context, state.vaccines),
-            ],
-          );
-        }
-        return const SizedBox.shrink();
+            // Vaccines List
+            if (state.vaccines.isEmpty) _buildEmptyState() else _buildVaccinesList(context, state.vaccines),
+          ],
+        );
       },
     );
   }
@@ -88,17 +85,17 @@ class PetVaccinesList extends StatelessWidget {
   }
 
   Widget _buildVaccineDropdown(BuildContext context) {
-    try {
-      // Get common vaccine names from constants
-      final vaccineNames = VaccineConstants.allVaccines;
+    final vaccineNames = VaccineConstants.allVaccines;
 
-      return Container(
+    return Expanded(
+      child: Container(
         decoration: BoxDecoration(
           border: Border.all(color: AppColors.primary),
           borderRadius: BorderRadius.circular(8),
         ),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
+            isExpanded: true,
             hint: const Padding(
               padding: EdgeInsets.all(8.0),
               child: Text(
@@ -150,21 +147,25 @@ class PetVaccinesList extends StatelessWidget {
                         size: 16,
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        vaccineName,
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 14,
+                      Flexible(
+                        child: Text(
+                          vaccineName,
+                          style: const TextStyle(
+                            color: AppColors.textPrimary,
+                            fontSize: 14,
+                          ),
+                          overflow: TextOverflow.visible,
                         ),
-                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 );
-              }).toList(),
+              }),
             ],
             onChanged: (String? value) {
-              if (value == null) return;
+              if (value == null) {
+                return;
+              }
 
               if (value == 'add_new') {
                 _navigateToAddVaccine(context);
@@ -181,25 +182,8 @@ class PetVaccinesList extends StatelessWidget {
             ),
           ),
         ),
-      );
-    } catch (e) {
-      // Fallback to simple button if repository is not available
-      return TextButton.icon(
-        onPressed: () => _navigateToAddVaccine(context),
-        icon: const Icon(
-          Icons.add,
-          color: AppColors.primary,
-          size: 20,
-        ),
-        label: const Text(
-          AppStrings.addVaccine,
-          style: TextStyle(
-            color: AppColors.primary,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      );
-    }
+      ),
+    );
   }
 
   Widget _buildVaccinesList(BuildContext context, List<VaccineModel> vaccines) {
@@ -311,7 +295,6 @@ class PetVaccinesList extends StatelessWidget {
   }
 
   void _addExistingVaccine(BuildContext context, String vaccineName) {
-    // Create a new vaccine based on the selected vaccine name from master list
     final now = DateTime.now();
     final nextYear = DateTime(now.year + 1, now.month, now.day);
 
@@ -323,21 +306,18 @@ class PetVaccinesList extends StatelessWidget {
       setReminder: true,
     );
 
-    // Add the vaccine to the pet form
-    context.read<PetsBloc>().add(AddVaccineToPetForm(vaccine: newVaccine));
+    context.read<PetFormBloc>().add(AddVaccine(newVaccine));
   }
 
   void _navigateToAddVaccine(BuildContext context) async {
-    // Navigate to Add Vaccine screen and wait for result
     final result = await context.pushNamed(AppRoutes.addVaccine);
 
-    // If user saved a vaccine, add it to the pet form
     if (result is VaccineModel) {
-      context.read<PetsBloc>().add(AddVaccineToPetForm(vaccine: result));
+      context.read<PetFormBloc>().add(AddVaccine(result));
     }
   }
 
   void _removeVaccine(BuildContext context, String vaccineId) {
-    context.read<PetsBloc>().add(RemoveVaccineFromPetForm(vaccineId: vaccineId));
+    context.read<PetFormBloc>().add(RemoveVaccine(vaccineId));
   }
 }

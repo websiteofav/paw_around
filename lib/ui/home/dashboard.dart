@@ -5,8 +5,8 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/bloc/home/home_event.dart';
 import 'package:paw_around/bloc/home/home_state.dart';
-import 'package:paw_around/bloc/pets/pets_bloc.dart';
-import 'package:paw_around/bloc/pets/pets_event.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/community_screen.dart';
@@ -24,7 +24,7 @@ class _DashboardState extends State<Dashboard> {
   void initState() {
     super.initState();
     // Load pets when dashboard is shown
-    context.read<PetsBloc>().add(const LoadPets());
+    context.read<PetListBloc>().add(const LoadPetList());
   }
 
   @override

@@ -1,9 +1,10 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:paw_around/bloc/pets/pets_bloc.dart';
-import 'package:paw_around/bloc/pets/pets_event.dart';
-import 'package:paw_around/bloc/pets/pets_state.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
+import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/services/image_service.dart';
 
 class PetPhotoSelection extends StatelessWidget {
@@ -11,7 +12,7 @@ class PetPhotoSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PetsBloc, PetsState>(
+    return BlocBuilder<PetFormBloc, PetFormState>(
       builder: (context, state) {
         return Center(
           child: GestureDetector(
@@ -24,27 +25,7 @@ class PetPhotoSelection extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
               ),
-              child: state is PetFormState && state.imagePath != null
-                  ? ClipOval(
-                      child: Image.file(
-                        File(state.imagePath!),
-                        width: 120,
-                        height: 120,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.camera_alt,
-                            size: 40,
-                            color: Color(0xFFFFD700),
-                          );
-                        },
-                      ),
-                    )
-                  : const Icon(
-                      Icons.camera_alt,
-                      size: 40,
-                      color: Color(0xFFFFD700),
-                    ),
+              child: _buildImageContent(state.imagePath),
             ),
           ),
         );
@@ -52,10 +33,57 @@ class PetPhotoSelection extends StatelessWidget {
     );
   }
 
+  Widget _buildImageContent(String? imagePath) {
+    if (imagePath == null) {
+      return const Icon(
+        Icons.camera_alt,
+        size: 40,
+        color: Color(0xFFFFD700),
+      );
+    }
+
+    // Check if it's a network URL
+    if (imagePath.startsWith('http')) {
+      return ClipOval(
+        child: CachedNetworkImage(
+          imageUrl: imagePath,
+          width: 120,
+          height: 120,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => const Center(
+            child: CircularProgressIndicator(),
+          ),
+          errorWidget: (context, url, error) => const Icon(
+            Icons.camera_alt,
+            size: 40,
+            color: Color(0xFFFFD700),
+          ),
+        ),
+      );
+    }
+
+    // Local file
+    return ClipOval(
+      child: Image.file(
+        File(imagePath),
+        width: 120,
+        height: 120,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) {
+          return const Icon(
+            Icons.camera_alt,
+            size: 40,
+            color: Color(0xFFFFD700),
+          );
+        },
+      ),
+    );
+  }
+
   void _selectImage(BuildContext context) {
     ImageService.pickPetImage().then((image) {
       if (image != null) {
-        context.read<PetsBloc>().add(SelectPetImage(imagePath: image.path));
+        context.read<PetFormBloc>().add(SelectImage(image.path));
       }
     });
   }
