@@ -148,6 +148,23 @@ class AppStrings {
   static const String required = 'Required';
   static const String pleaseSetLocation = 'Please set a location';
 
+  // Profile Screen
+  static const String myPets = 'My Pets';
+  static const String myPosts = 'My Posts';
+  static const String savedPlaces = 'Saved Places';
+  static const String notificationSettings = 'Notification Settings';
+  static const String editProfile = 'Edit Profile';
+  static const String upgradeToPremium = 'Upgrade to Premium';
+  static const String helpAndSupport = 'Help & Support';
+  static const String privacyPolicy = 'Privacy Policy';
+  static const String logout = 'Logout';
+  static const String appVersion = 'Version';
+  static const String pets = 'pets';
+  static const String posts = 'posts';
+  static const String activity = 'Activity';
+  static const String settings = 'Settings';
+  static const String account = 'Account';
+
   // Private constructor to prevent instantiation
   AppStrings._();
 }

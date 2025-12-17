@@ -10,7 +10,8 @@ import 'package:paw_around/utils/date_utils.dart';
 
 class PetProfileCards extends StatelessWidget {
   final List<PetModel> pets;
-  const PetProfileCards({super.key, required this.pets});
+  final bool isFromProfile;
+  const PetProfileCards({super.key, required this.pets, this.isFromProfile = false});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class PetProfileCards extends StatelessWidget {
               },
             ),
           ),
-          Expanded(flex: 1, child: _buildAddPetCard(context)),
+          if (!isFromProfile) Expanded(flex: 1, child: _buildAddPetCard(context)),
         ],
       ),
     );

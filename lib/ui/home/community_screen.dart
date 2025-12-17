@@ -28,6 +28,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text(AppStrings.communityTitle, style: AppTextStyles.appBarTitle),
         backgroundColor: AppColors.navigationBackground,
         elevation: 0,

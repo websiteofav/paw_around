@@ -10,7 +10,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/community_screen.dart';
-import 'package:paw_around/ui/home/profile_screen.dart';
+import 'package:paw_around/ui/profile/profile_screen.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
