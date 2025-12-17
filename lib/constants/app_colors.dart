@@ -1,63 +1,79 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Primary Colors
-  static const Color primary = Color(0xFF2196F3); // Blue
-  static const Color primaryLight = Color(0xFF64B5F6);
-  static const Color primaryDark = Color(0xFF1976D2);
+  // Primary Colors (Green theme)
+  static const Color primary = Color(0xFF5CBF7A);
+  static const Color primaryLight = Color(0xFF8DD4A0);
+  static const Color primaryDark = Color(0xFF3E8F5A);
 
-  // Secondary Colors
-  static const Color secondary = Color(0xFFFFD700); // Gold
+  // Secondary Colors (Gold for premium)
+  static const Color secondary = Color(0xFFFFD700);
   static const Color secondaryLight = Color(0xFFFFF59D);
   static const Color secondaryDark = Color(0xFFF57F17);
 
   // Background Colors
-  static const Color background = Colors.white;
-  static const Color surface = Color(0xFFF5F5F5);
+  static const Color background = Color(0xFFFAFAF8);
+  static const Color surface = Color(0xFFFFFFFF);
 
   // Text Colors
-  static const Color textPrimary = Color(0xFF333333);
-  static const Color textSecondary = Color(0xFF666666);
-  static const Color textLight = Color(0xFF999999);
+  static const Color textPrimary = Color(0xFF1F2937);
+  static const Color textSecondary = Color(0xFF6B7280);
+  static const Color textLight = Color(0xFF9CA3AF);
+  static const Color textDisabled = Color(0xFF9CA3AF);
 
-  // Pattern Colors
-  static const Color patternColor = Color(0xFFE0E0E0);
+  // Border Colors
+  static const Color border = Color(0xFFE5E7EB);
+  static const Color inputBorder = Color(0xFFE5E7EB);
 
-  // Shadow Colors
-  static const Color shadowColor = Color(0xFF20B2AA);
+  // Status Colors
+  static const Color error = Color(0xFFEF4444);
+  static const Color success = Color(0xFF22C55E);
+  static const Color warning = Color(0xFFF59E0B);
 
-  // Onboarding Colors
-  static const Color onboardingBackground = Colors.white;
-  static const Color onboardingText = Color(0xFF333333);
-  static const Color onboardingButton = Color(0xFF2196F3); // Blue
-  static const Color onboardingButtonText = Colors.white;
-  static const Color onboardingDotActive = Color(0xFF2196F3); // Blue
-  static const Color onboardingDotInactive = Color(0xFFCCCCCC);
-  static const Color onboardingMapBlue = Color(0xFFE3F2FD);
-  static const Color onboardingCalendarBlue = Color(0xFFE1F5FE);
-  static const Color onboardingWarningYellow = Color(0xFFFFF59D);
-  static const Color onboardingWarningRed = Color(0xFFE57373);
+  // Premium / Accent Colors
+  static const Color gold = Color(0xFFD4AF37);
+  static const Color goldSoftBg = Color(0xFFFFF7D6);
+
+  // Icon Background Colors
+  static const Color iconBgLight = Color(0xFFE8F5E9);
+  static const Color iconBgBeige = Color(0xFFFFF7E6);
+
+  // Utility Colors
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color patternColor = Color(0xFFE5E7EB);
+  static const Color shadowColor = Color(0xFF5CBF7A);
+  static const Color divider = Color(0xFFE5E7EB);
 
   // Authentication Colors
-  static const Color authBackground = Colors.white;
-  static const Color authTextPrimary = Color(0xFF333333);
-  static const Color authTextSecondary = Color(0xFF666666);
-  static const Color authButtonBackground = Colors.white;
-  static const Color authButtonBorder = Color(0xFFE0E0E0);
-  static const Color authPrimaryButton = Color(0xFF2196F3);
-  static const Color authLinkColor = Color(0xFF8D6E63); // Orange-brown
-  static const Color authInputBorder = Color(0xFFE0E0E0);
-  static const Color authInputBackground = Colors.white;
+  static const Color authBackground = Color(0xFFFAFAF8);
+  static const Color authTextPrimary = Color(0xFF1F2937);
+  static const Color authTextSecondary = Color(0xFF6B7280);
+  static const Color authButtonBackground = Color(0xFFFFFFFF);
+  static const Color authButtonBorder = Color(0xFFE5E7EB);
+  static const Color authPrimaryButton = Color(0xFF5CBF7A);
+  static const Color authLinkColor = Color(0xFF5CBF7A);
+  static const Color authInputBorder = Color(0xFFE5E7EB);
+  static const Color authInputBackground = Color(0xFFFFFFFF);
 
   // Navigation Colors
-  static const Color navigationBackground = Color(0xFF1877F2); // Facebook blue
-  static const Color navigationText = Colors.white;
-  static const Color navigationIcon = Colors.white;
-  static const Color navigationBorder = Color(0xFF1565C0); // Darker blue for border
+  static const Color navigationBackground = Color(0xFFFFFFFF);
+  static const Color navigationActive = Color(0xFF5CBF7A);
+  static const Color navigationInactive = Color(0xFF9CA3AF);
+  static const Color navigationText = Color(0xFF1F2937);
+  static const Color navigationIcon = Color(0xFF9CA3AF);
+  static const Color navigationBorder = Color(0xFFE5E7EB);
 
-  // Error Colors
-  static const Color error = Color(0xFFD32F2F);
-  static const Color white = Colors.white;
+  // Onboarding Colors
+  static const Color onboardingBackground = Color(0xFFFFFFFF);
+  static const Color onboardingText = Color(0xFF1F2937);
+  static const Color onboardingButton = Color(0xFF5CBF7A);
+  static const Color onboardingButtonText = Color(0xFFFFFFFF);
+  static const Color onboardingDotActive = Color(0xFF5CBF7A);
+  static const Color onboardingDotInactive = Color(0xFFE5E7EB);
+  static const Color onboardingMapBlue = Color(0xFFE8F5E9);
+  static const Color onboardingCalendarBlue = Color(0xFFE8F5E9);
+  static const Color onboardingWarningYellow = Color(0xFFFFF7D6);
+  static const Color onboardingWarningRed = Color(0xFFEF4444);
 
   // Private constructor to prevent instantiation
   AppColors._();

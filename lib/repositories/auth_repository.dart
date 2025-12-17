@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthRepository {
   final FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   AuthRepository({FirebaseAuth? firebaseAuth}) : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
 
@@ -13,6 +15,12 @@ class AuthRepository {
 
   /// Check if user is logged in
   bool get isLoggedIn => currentUser != null;
+
+  /// Phone Authentication - Store verification ID
+  String? _verificationId;
+
+  /// Get stored verification ID
+  String? get verificationId => _verificationId;
 
   /// Sign in with email and password
   Future<UserCredential> signInWithEmail({
@@ -49,6 +57,68 @@ class AuthRepository {
   /// Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     await _firebaseAuth.sendPasswordResetEmail(email: email);
+  }
+
+  /// Verify phone number - sends OTP
+  Future<void> verifyPhoneNumber({
+    required String phoneNumber,
+    required Function(String verificationId) onCodeSent,
+    required Function(String error) onError,
+    required Function(PhoneAuthCredential credential) onAutoVerified,
+  }) async {
+    await _firebaseAuth.verifyPhoneNumber(
+      phoneNumber: phoneNumber,
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // Auto-verification on Android
+        onAutoVerified(credential);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        onError(getAuthErrorMessage(e));
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        _verificationId = verificationId;
+        onCodeSent(verificationId);
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
+      },
+    );
+  }
+
+  /// Sign in with OTP code
+  Future<UserCredential> signInWithOTP({
+    required String verificationId,
+    required String smsCode,
+  }) async {
+    final credential = PhoneAuthProvider.credential(
+      verificationId: verificationId,
+      smsCode: smsCode,
+    );
+    return await _firebaseAuth.signInWithCredential(credential);
+  }
+
+  /// Sign in with phone credential (for auto-verification)
+  Future<UserCredential> signInWithPhoneCredential(PhoneAuthCredential credential) async {
+    return await _firebaseAuth.signInWithCredential(credential);
+  }
+
+  /// Sign in with Google
+  Future<UserCredential> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw Exception('Google sign in cancelled');
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      return await _firebaseAuth.signInWithCredential(credential);
+    } catch (e) {
+      throw Exception('Failed to sign in with Google: $e');
+    }
   }
 
   /// Get Firebase Auth error message - user-friendly messages

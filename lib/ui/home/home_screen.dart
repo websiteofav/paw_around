@@ -7,8 +7,11 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
-import 'package:paw_around/ui/home/widgets/appointment_cards.dart';
-import 'package:paw_around/ui/home/widgets/pet_profile_cards.dart';
+import 'package:paw_around/ui/home/widgets/home_app_bar.dart';
+import 'package:paw_around/ui/home/widgets/primary_action_card.dart';
+import 'package:paw_around/ui/home/widgets/secondary_action_card.dart';
+import 'package:paw_around/ui/home/widgets/lost_pets_section.dart';
+import 'package:paw_around/ui/home/widgets/empty_state_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,253 +25,154 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text(
-          AppStrings.homeTab,
-          style: TextStyle(
-            color: AppColors.navigationText,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: AppColors.navigationBackground,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: BlocBuilder<PetListBloc, PetListState>(
-        builder: (context, state) {
-          List<PetModel> pets = [];
-          if (state is PetListLoaded) {
-            pets = state.pets;
-          }
+      body: SafeArea(
+        child: BlocBuilder<PetListBloc, PetListState>(
+          builder: (context, state) {
+            List<PetModel> pets = [];
+            if (state is PetListLoaded) {
+              pets = state.pets;
+            }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            // Get active pet info
+            final activePet = pets.isNotEmpty ? pets.first : null;
+            final petAge = activePet != null ? _calculateAge(activePet.dateOfBirth) : null;
+
+            // Check if there are any urgent actions (vaccines due soon)
+            final hasUrgentVaccine = _hasUpcomingVaccine(pets);
+
+            return Column(
               children: [
-                // My Pets Section Title
-                const Text(
-                  'My Pets',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
+                // Custom App Bar
+                HomeAppBar(
+                  petName: activePet?.name,
+                  petAge: petAge,
+                  onNotificationTap: () {
+                    // TODO: Navigate to notifications
+                  },
                 ),
-                const SizedBox(height: 16),
 
-                // Pet Profile Cards (Horizontal scrollable)
-                PetProfileCards(pets: pets),
-                const SizedBox(height: 16),
+                // Scrollable content
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Primary Action Card - Vaccine reminder
+                        if (hasUrgentVaccine)
+                          PrimaryActionCard(
+                            icon: Icons.vaccines_outlined,
+                            title: 'Rabies ${AppStrings.vaccineDueIn} 7 ${AppStrings.daysUntilDue}',
+                            subtitle: AppStrings.importantForHealth,
+                            buttonText: AppStrings.findNearbyVets,
+                            helperText: '3 ${AppStrings.vetsWithinDistance}',
+                            onButtonPressed: () {
+                              // Navigate to Map tab
+                              context.read<HomeBloc>().add(HomeTabChanged(1));
+                            },
+                          ),
 
-                // Upcoming Vaccines & Appointments Card
-                AppointmentCards(pets: pets),
-                const SizedBox(height: 16),
+                        if (hasUrgentVaccine) const SizedBox(height: 16),
 
-                // Lost & Found Nearby Card
-                _buildLostAndFoundCard(),
-                const SizedBox(height: 16),
+                        // Secondary Action Cards
+                        SecondaryActionCard(
+                          icon: Icons.pets,
+                          iconBackgroundColor: AppColors.iconBgLight,
+                          iconColor: AppColors.primary,
+                          title: AppStrings.groomingDueThisWeek,
+                          subtitle: AppStrings.timeForFreshTrim,
+                          onTap: () {
+                            // Navigate to Map tab for groomers
+                            context.read<HomeBloc>().add(HomeTabChanged(1));
+                          },
+                        ),
 
-                // Featured Services Section
-                _buildFeaturedServicesSection(),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
+                        const SizedBox(height: 8),
 
-  Widget _buildLostAndFoundCard() {
-    return GestureDetector(
-      onTap: () {
-        context.read<HomeBloc>().add(HomeTabChanged(2));
-      },
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFF59D), // Light yellow
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.1),
-              spreadRadius: 1,
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  AppStrings.lostAndFoundNearby,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const Icon(
-                  Icons.arrow_forward_ios,
-                  color: AppColors.textSecondary,
-                  size: 16,
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 80,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildPetImage('assets/pet1.png', 'Dachshund'),
-                  const SizedBox(width: 12),
-                  _buildPetImage('assets/pet2.png', 'Pomeranian'),
-                  const SizedBox(width: 12),
-                  _buildPetImage('assets/pet3.png', 'Corgi'),
-                  const SizedBox(width: 12),
-                  _buildPetImage('assets/pet4.png', 'Mixed Breed'),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
+                        SecondaryActionCard(
+                          icon: Icons.shield_outlined,
+                          iconBackgroundColor: AppColors.iconBgBeige,
+                          iconColor: const Color(0xFF8B7355),
+                          title: AppStrings.tickFleaPrevention,
+                          subtitle: AppStrings.reminderToProtect,
+                          onTap: () {
+                            // Navigate to Map tab for vets
+                            context.read<HomeBloc>().add(HomeTabChanged(1));
+                          },
+                        ),
 
-  Widget _buildPetImage(String imagePath, String breed) {
-    return Container(
-      width: 80,
-      height: 80,
-      decoration: BoxDecoration(
-        color: const Color(0xFFE3F2FD),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Icon(
-        Icons.pets,
-        color: AppColors.primary,
-        size: 40,
-      ),
-    );
-  }
+                        const SizedBox(height: 24),
 
-  Widget _buildFeaturedServicesSection() {
-    return GestureDetector(
-        onTap: () {
-          context.read<HomeBloc>().add(HomeTabChanged(1));
-        },
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              AppStrings.featuredServices,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 12),
-            SizedBox(
-              height: 120,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  _buildServiceCard('Paws & Claws', '4.8', 'assets/service1.png'),
-                  const SizedBox(width: 12),
-                  _buildServiceCard('Pet Care Plus', '4.6', 'assets/service2.png'),
-                ],
-              ),
-            ),
-          ],
-        ));
-  }
+                        // Lost & Found Section
+                        LostPetsSection(
+                          pets: const [
+                            LostPetItem(name: 'Bruno', distance: '2 km away'),
+                            LostPetItem(name: 'Coco', distance: '1.5 km away'),
+                          ],
+                          onSeeAllTap: () {
+                            // Navigate to Community tab
+                            context.read<HomeBloc>().add(HomeTabChanged(2));
+                          },
+                          onPetTap: (pet) {
+                            // Navigate to Community tab
+                            context.read<HomeBloc>().add(HomeTabChanged(2));
+                          },
+                        ),
 
-  Widget _buildServiceCard(String name, String rating, String imagePath) {
-    return Container(
-      width: 200,
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: const Color(0xFFE3F2FD),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.local_hospital,
-              color: AppColors.primary,
-              size: 30,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  name,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Text(
-                      rating,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textSecondary,
-                      ),
+                        const SizedBox(height: 16),
+
+                        // Empty state (shown when no urgent actions)
+                        if (!hasUrgentVaccine) const EmptyStateCard(),
+
+                        const SizedBox(height: 32),
+                      ],
                     ),
-                    const SizedBox(width: 4),
-                    ...List.generate(5, (index) {
-                      if (index < 4) {
-                        return const Icon(
-                          Icons.star,
-                          color: Color(0xFFFFD700),
-                          size: 12,
-                        );
-                      } else {
-                        return const Icon(
-                          Icons.star_half,
-                          color: Color(0xFFFFD700),
-                          size: 12,
-                        );
-                      }
-                    }),
-                  ],
+                  ),
                 ),
               ],
-            ),
-          ),
-        ],
+            );
+          },
+        ),
       ),
     );
+  }
+
+  String _calculateAge(DateTime? dateOfBirth) {
+    if (dateOfBirth == null) {
+      return '';
+    }
+
+    final now = DateTime.now();
+    final difference = now.difference(dateOfBirth);
+    final months = (difference.inDays / 30).floor();
+
+    if (months < 12) {
+      return '$months ${AppStrings.months}';
+    } else {
+      final years = (months / 12).floor();
+      final remainingMonths = months % 12;
+      if (remainingMonths == 0) {
+        return '$years year${years > 1 ? 's' : ''}';
+      }
+      return '$years year${years > 1 ? 's' : ''} $remainingMonths mo';
+    }
+  }
+
+  bool _hasUpcomingVaccine(List<PetModel> pets) {
+    // Check if any pet has a vaccine due within 30 days
+    for (final pet in pets) {
+      if (pet.vaccines != null) {
+        for (final vaccine in pet.vaccines!) {
+          if (vaccine.nextDueDate != null) {
+            final daysUntilDue = vaccine.nextDueDate!.difference(DateTime.now()).inDays;
+            if (daysUntilDue >= 0 && daysUntilDue <= 30) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    // Default to true to show the demo UI
+    return true;
   }
 }

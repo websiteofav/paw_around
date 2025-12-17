@@ -37,19 +37,16 @@ class _DashboardState extends State<Dashboard> {
           backgroundColor: AppColors.background,
           body: _getTabContent(currentIndex),
           bottomNavigationBar: Container(
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.navigationBackground,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(0),
-                topRight: Radius.circular(0),
-                bottomLeft: Radius.circular(20),
-                bottomRight: Radius.circular(20),
+              border: const Border(
+                top: BorderSide(color: AppColors.border, width: 1),
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.navigationBorder,
-                  offset: Offset(0, -2),
-                  blurRadius: 4,
+                  color: Colors.black.withValues(alpha: 0.04),
+                  offset: const Offset(0, -2),
+                  blurRadius: 8,
                 ),
               ],
             ),
@@ -132,23 +129,19 @@ class _DashboardState extends State<Dashboard> {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? Colors.white.withValues(alpha: 0.2) : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               isSelected ? activeIcon : icon,
-              color: isSelected ? Colors.white : AppColors.navigationIcon,
-              size: isSelected ? 26 : 24,
+              color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive,
+              size: 24,
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.white : AppColors.navigationText,
+                color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive,
                 fontSize: 12,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
               ),

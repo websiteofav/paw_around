@@ -3,8 +3,9 @@ class AppRoutes {
   static const String splash = '/';
   static const String intro = '/intro';
   static const String onboarding = '/onboarding';
+  static const String phoneLogin = '/phone-login';
+  static const String otpVerification = '/otp-verification';
   static const String login = '/login';
-  static const String signup = '/signup';
   static const String home = '/home';
 
   // Home Tab Routes

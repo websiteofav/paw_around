@@ -22,11 +22,33 @@ class AppStrings {
   // Onboarding Page 3
   static const String onboarding3Title = 'Alert nearby pet parents instantly if your pet goes missing';
 
-  // Authentication Screen
-  static const String welcomeBack = 'Welcome Back?';
-  static const String loginInstruction = 'Log in to continue caring for your pet.';
+  // Authentication Screen - Phone Login
+  static const String welcomeToPawAround = 'Welcome to Paw Around';
+  static const String authSubtitle = "Caring for your pet's health, every step of the way";
+  static const String phoneNumber = 'Phone Number';
+  static const String continueButton = 'Continue';
+  static const String orContinueWith = 'or continue with';
   static const String continueWithGoogle = 'Continue with Google';
   static const String continueWithApple = 'Continue with Apple';
+  static const String continueWithEmail = 'Continue with Email';
+  static const String termsText = 'By continuing, you agree to our';
+  static const String termsOfService = 'Terms of Service';
+  static const String and = 'and';
+  static const String privacyPolicyLink = 'Privacy Policy';
+
+  // OTP Verification Screen
+  static const String verifyYourNumber = 'Verify your number';
+  static const String otpSentTo = 'We sent a 6-digit code to';
+  static const String enterCode = 'Enter code';
+  static const String verify = 'Verify';
+  static const String didntReceiveCode = "Didn't receive the code?";
+  static const String resendOTP = 'Resend OTP';
+  static const String invalidOTP = 'Invalid OTP. Please try again.';
+  static const String otpSentSuccessfully = 'OTP sent successfully';
+
+  // Legacy Auth Strings (for email login)
+  static const String welcomeBack = 'Welcome Back?';
+  static const String loginInstruction = 'Log in to continue caring for your pet.';
   static const String orSeparator = 'or';
   static const String emailAddress = 'Email Address';
   static const String password = 'Password';
@@ -147,6 +169,22 @@ class AppStrings {
   static const String postDeletedSuccessfully = 'Post deleted successfully';
   static const String required = 'Required';
   static const String pleaseSetLocation = 'Please set a location';
+
+  // Home Screen - New Design
+  static const String findNearbyVets = 'Find nearby vets';
+  static const String vetsWithinDistance = 'vets within 2 km';
+  static const String importantForHealth = "Important for your pet's health";
+  static const String groomingDueThisWeek = 'Grooming due this week';
+  static const String timeForFreshTrim = 'Time for a fresh trim';
+  static const String tickFleaPrevention = 'Tick & Flea Prevention';
+  static const String reminderToProtect = 'Reminder to protect your pet';
+  static const String lostPetsNearYou = 'Lost pets near you';
+  static const String seeAll = 'See all';
+  static const String allSetForNow = 'All set for now';
+  static const String wellNotifyWhenDue = "We'll notify you when something is due.";
+  static const String months = 'months';
+  static const String daysUntilDue = 'days';
+  static const String vaccineDueIn = 'vaccine due in';
 
   // Profile Screen
   static const String myPets = 'My Pets';

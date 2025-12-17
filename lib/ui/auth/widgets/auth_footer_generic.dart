@@ -62,10 +62,11 @@ class AuthFooterGeneric extends StatelessWidget {
   void _handleNavigation(BuildContext context) {
     switch (footerType) {
       case AuthFooterType.login:
-        context.pushNamed(AppRoutes.signup);
+        context.pushNamed(AppRoutes.phoneLogin);
         break;
       case AuthFooterType.signup:
-        context.pushNamed(AppRoutes.login);
+        // Go back to phone login screen
+        context.pop();
         break;
     }
   }

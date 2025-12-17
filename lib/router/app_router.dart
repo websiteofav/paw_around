@@ -19,7 +19,8 @@ import 'package:paw_around/ui/community/create_post_screen.dart';
 import 'package:paw_around/ui/community/post_detail_screen.dart';
 import 'package:paw_around/ui/home/dashboard.dart';
 import 'package:paw_around/ui/auth/login_screen.dart';
-import 'package:paw_around/ui/auth/signup_screen.dart';
+import 'package:paw_around/ui/auth/phone_login_screen.dart';
+import 'package:paw_around/ui/auth/otp_screen.dart';
 import 'package:paw_around/ui/onboarding/onboarding_screen.dart';
 import 'package:paw_around/ui/intro/intro_screen.dart';
 import 'package:paw_around/ui/pets/add_pet_screen.dart';
@@ -38,13 +39,15 @@ class AppRouter {
   static final _authNotifier = AuthNotifier();
 
   static final GoRouter _router = GoRouter(
-    initialLocation: AppRoutes.login,
+    initialLocation: AppRoutes.phoneLogin,
     debugLogDiagnostics: false,
     refreshListenable: _authNotifier,
     redirect: (context, state) {
       final authRepository = sl<AuthRepository>();
       final isLoggedIn = authRepository.isLoggedIn;
-      final isAuthRoute = state.matchedLocation == AppRoutes.login || state.matchedLocation == AppRoutes.signup;
+      final isAuthRoute = state.matchedLocation == AppRoutes.phoneLogin ||
+          state.matchedLocation == AppRoutes.otpVerification ||
+          state.matchedLocation == AppRoutes.login;
       final isPublicRoute = state.matchedLocation == AppRoutes.splash ||
           state.matchedLocation == AppRoutes.intro ||
           state.matchedLocation == AppRoutes.onboarding;
@@ -56,7 +59,7 @@ class AppRouter {
 
       // If user is not logged in and trying to access protected routes
       if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
-        return AppRoutes.login;
+        return AppRoutes.phoneLogin;
       }
 
       // No redirect needed
@@ -85,16 +88,26 @@ class AppRouter {
         builder: (context, state) => const OnboardingScreen(),
       ),
 
-      // Authentication Routes
+      // Authentication Routes - Phone Login (Primary)
+      GoRoute(
+        path: AppRoutes.phoneLogin,
+        name: AppRoutes.phoneLogin,
+        builder: (context, state) => const PhoneLoginScreen(),
+      ),
+      GoRoute(
+        path: AppRoutes.otpVerification,
+        name: AppRoutes.otpVerification,
+        builder: (context, state) {
+          final phoneNumber = state.extra as String? ?? '';
+          return OTPScreen(phoneNumber: phoneNumber);
+        },
+      ),
+
+      // Authentication Routes - Email Login (Alternative)
       GoRoute(
         path: AppRoutes.login,
         name: AppRoutes.login,
         builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.signup,
-        name: AppRoutes.signup,
-        builder: (context, state) => const SignupScreen(),
       ),
 
       // ============ AUTHENTICATED ROUTES (ShellRoute) ============
