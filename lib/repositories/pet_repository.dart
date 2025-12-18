@@ -136,4 +136,118 @@ class PetRepository {
       return pet.tickFleaSettings?.isDueSoon == true || pet.tickFleaSettings?.isOverdue == true;
     }).toList();
   }
+
+  // Mark vaccine as done - updates dateGiven and recalculates nextDueDate
+  Future<void> markVaccineAsDone(String petId, String vaccineId) async {
+    final pet = await getPetById(petId);
+    if (pet == null) {
+      return;
+    }
+
+    final updatedVaccines = pet.vaccines.map((v) {
+      if (v.id == vaccineId) {
+        final now = DateTime.now();
+        // Calculate next due date based on original interval
+        final originalInterval = v.nextDueDate.difference(v.dateGiven).inDays;
+        return v.copyWith(
+          dateGiven: now,
+          nextDueDate: now.add(Duration(days: originalInterval > 0 ? originalInterval : 365)),
+          snoozedUntil: null,
+          updatedAt: now,
+        );
+      }
+      return v;
+    }).toList();
+
+    await _petsRef.doc(petId).update({
+      'vaccines': updatedVaccines.map((v) => v.toFirestore()).toList(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
+  // Snooze vaccine for specified days
+  Future<void> snoozeVaccine(String petId, String vaccineId, int days) async {
+    final pet = await getPetById(petId);
+    if (pet == null) {
+      return;
+    }
+
+    final snoozedUntil = DateTime.now().add(Duration(days: days));
+    final updatedVaccines = pet.vaccines.map((v) {
+      if (v.id == vaccineId) {
+        return v.copyWith(
+          snoozedUntil: snoozedUntil,
+          updatedAt: DateTime.now(),
+        );
+      }
+      return v;
+    }).toList();
+
+    await _petsRef.doc(petId).update({
+      'vaccines': updatedVaccines.map((v) => v.toFirestore()).toList(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
+  // Mark grooming as done
+  Future<void> markGroomingAsDone(String petId) async {
+    final pet = await getPetById(petId);
+    if (pet == null || pet.groomingSettings == null) {
+      return;
+    }
+
+    final updatedSettings = pet.groomingSettings!.copyWith(
+      lastDate: DateTime.now(),
+      snoozedUntil: null,
+      updatedAt: DateTime.now(),
+    );
+
+    await updateGroomingSettings(petId, updatedSettings);
+  }
+
+  // Snooze grooming for specified days
+  Future<void> snoozeGrooming(String petId, int days) async {
+    final pet = await getPetById(petId);
+    if (pet == null || pet.groomingSettings == null) {
+      return;
+    }
+
+    final updatedSettings = pet.groomingSettings!.copyWith(
+      snoozedUntil: DateTime.now().add(Duration(days: days)),
+      updatedAt: DateTime.now(),
+    );
+
+    await updateGroomingSettings(petId, updatedSettings);
+  }
+
+  // Mark tick & flea as done
+  Future<void> markTickFleaAsDone(String petId) async {
+    final pet = await getPetById(petId);
+    if (pet == null || pet.tickFleaSettings == null) {
+      return;
+    }
+
+    final updatedSettings = pet.tickFleaSettings!.copyWith(
+      lastDate: DateTime.now(),
+      snoozedUntil: null,
+      updatedAt: DateTime.now(),
+    );
+
+    await updateTickFleaSettings(petId, updatedSettings);
+  }
+
+  // Snooze tick & flea for specified days
+  Future<void> snoozeTickFlea(String petId, int days) async {
+    final pet = await getPetById(petId);
+    if (pet == null || pet.tickFleaSettings == null) {
+      return;
+    }
+
+    final updatedSettings = pet.tickFleaSettings!.copyWith(
+      snoozedUntil: DateTime.now().add(Duration(days: days)),
+      updatedAt: DateTime.now(),
+    );
+
+    await updateTickFleaSettings(petId, updatedSettings);
+  }
 }

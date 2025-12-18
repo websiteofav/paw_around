@@ -8,6 +8,7 @@ class VaccineModel extends Equatable {
   final DateTime nextDueDate;
   final String notes;
   final bool setReminder;
+  final DateTime? snoozedUntil;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -18,6 +19,7 @@ class VaccineModel extends Equatable {
     required this.nextDueDate,
     required this.notes,
     required this.setReminder,
+    this.snoozedUntil,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -29,6 +31,7 @@ class VaccineModel extends Equatable {
     required DateTime nextDueDate,
     required String notes,
     required bool setReminder,
+    DateTime? snoozedUntil,
   }) {
     final now = DateTime.now();
     return VaccineModel(
@@ -38,6 +41,7 @@ class VaccineModel extends Equatable {
       nextDueDate: nextDueDate,
       notes: notes,
       setReminder: setReminder,
+      snoozedUntil: snoozedUntil,
       createdAt: now,
       updatedAt: now,
     );
@@ -51,6 +55,7 @@ class VaccineModel extends Equatable {
     DateTime? nextDueDate,
     String? notes,
     bool? setReminder,
+    DateTime? snoozedUntil,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -61,6 +66,7 @@ class VaccineModel extends Equatable {
       nextDueDate: nextDueDate ?? this.nextDueDate,
       notes: notes ?? this.notes,
       setReminder: setReminder ?? this.setReminder,
+      snoozedUntil: snoozedUntil ?? this.snoozedUntil,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -75,6 +81,7 @@ class VaccineModel extends Equatable {
       'nextDueDate': Timestamp.fromDate(nextDueDate),
       'notes': notes,
       'setReminder': setReminder,
+      'snoozedUntil': snoozedUntil != null ? Timestamp.fromDate(snoozedUntil!) : null,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
@@ -89,6 +96,7 @@ class VaccineModel extends Equatable {
       nextDueDate: (data['nextDueDate'] as Timestamp).toDate(),
       notes: data['notes'] as String? ?? '',
       setReminder: data['setReminder'] as bool? ?? false,
+      snoozedUntil: (data['snoozedUntil'] as Timestamp?)?.toDate(),
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
@@ -103,6 +111,7 @@ class VaccineModel extends Equatable {
       'nextDueDate': nextDueDate.toIso8601String(),
       'notes': notes,
       'setReminder': setReminder,
+      'snoozedUntil': snoozedUntil?.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -117,12 +126,17 @@ class VaccineModel extends Equatable {
       nextDueDate: DateTime.parse(json['nextDueDate'] as String),
       notes: json['notes'] as String,
       setReminder: json['setReminder'] as bool,
+      snoozedUntil: json['snoozedUntil'] != null ? DateTime.parse(json['snoozedUntil'] as String) : null,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
   }
 
   // Helper methods
+  bool get isSnoozed {
+    return snoozedUntil != null && snoozedUntil!.isAfter(DateTime.now());
+  }
+
   bool get isOverdue {
     return nextDueDate.isBefore(DateTime.now());
   }
@@ -168,6 +182,7 @@ class VaccineModel extends Equatable {
         nextDueDate,
         notes,
         setReminder,
+        snoozedUntil,
         createdAt,
         updatedAt,
       ];

@@ -209,6 +209,40 @@ class AppStrings {
   static const String addGroomingDetails = 'Add grooming schedule';
   static const String addTickFleaDetails = 'Add treatment schedule';
 
+  // Action Card Detail Screen
+  static const String vaccine = 'Vaccine';
+  static const String whyThisMatters = 'Why this matters';
+  static const String whatYouCanDoNow = 'What you can do now';
+  static const String learnMore = 'Learn more';
+  static const String markAsDone = 'Mark as done';
+  static const String snooze = 'Snooze';
+  static const String dueSoon = 'Due soon';
+  static const String overdue = 'Overdue';
+  static const String forPet = 'For';
+  static const String findGroomers = 'Find groomers';
+  static const String viewTreatmentOptions = 'View treatment options';
+  static const String vetsAvailableNearby = '3 vets available within 2 km';
+  static const String groomersAvailableNearby = '3 groomers available within 2 km';
+  static const String treatmentOptionsAvailable = 'Treatment options available';
+  static const String noNearbyServices = 'No nearby services found. Try expanding your search.';
+  static const String vaccineExplanation =
+      'Rabies vaccination is essential to protect your pet and is required by law in many places.';
+  static const String groomingExplanation =
+      'Regular grooming keeps your pet healthy, comfortable, and helps prevent skin issues and matting.';
+  static const String tickFleaExplanation =
+      'Tick and flea prevention protects your pet from parasites that can cause serious health problems.';
+
+  // Snooze Options
+  static const String snoozeFor3Days = 'Snooze for 3 days';
+  static const String snoozeFor7Days = 'Snooze for 7 days';
+  static const String snoozeAction = 'Snooze this reminder';
+
+  // Mark as Done
+  static const String confirmMarkDone = 'Mark as completed?';
+  static const String markDoneDescription = 'This will update the last completed date and calculate the next due date.';
+  static const String confirm = 'Confirm';
+  static const String markedAsDone = 'Marked as done';
+
   // Profile Screen
   static const String myPets = 'My Pets';
   static const String myPosts = 'My Posts';

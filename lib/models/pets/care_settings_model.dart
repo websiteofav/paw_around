@@ -65,11 +65,13 @@ extension CareFrequencyExtension on CareFrequency {
 class CareSettingsModel extends Equatable {
   final CareFrequency frequency;
   final DateTime? lastDate;
+  final DateTime? snoozedUntil;
   final DateTime updatedAt;
 
   const CareSettingsModel({
     required this.frequency,
     this.lastDate,
+    this.snoozedUntil,
     required this.updatedAt,
   });
 
@@ -77,6 +79,7 @@ class CareSettingsModel extends Equatable {
     return CareSettingsModel(
       frequency: CareFrequency.none,
       lastDate: null,
+      snoozedUntil: null,
       updatedAt: DateTime.now(),
     );
   }
@@ -84,11 +87,13 @@ class CareSettingsModel extends Equatable {
   CareSettingsModel copyWith({
     CareFrequency? frequency,
     DateTime? lastDate,
+    DateTime? snoozedUntil,
     DateTime? updatedAt,
   }) {
     return CareSettingsModel(
       frequency: frequency ?? this.frequency,
       lastDate: lastDate ?? this.lastDate,
+      snoozedUntil: snoozedUntil ?? this.snoozedUntil,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
@@ -132,11 +137,15 @@ class CareSettingsModel extends Equatable {
   /// Check if reminder is enabled
   bool get hasReminder => frequency != CareFrequency.none;
 
+  /// Check if action is snoozed
+  bool get isSnoozed => snoozedUntil != null && snoozedUntil!.isAfter(DateTime.now());
+
   /// Convert to Firestore map
   Map<String, dynamic> toFirestore() {
     return {
       'frequency': frequency.toFirestoreValue(),
       'lastDate': lastDate != null ? Timestamp.fromDate(lastDate!) : null,
+      'snoozedUntil': snoozedUntil != null ? Timestamp.fromDate(snoozedUntil!) : null,
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
   }
@@ -149,6 +158,7 @@ class CareSettingsModel extends Equatable {
     return CareSettingsModel(
       frequency: CareFrequencyExtension.fromString(data['frequency'] as String?),
       lastDate: (data['lastDate'] as Timestamp?)?.toDate(),
+      snoozedUntil: (data['snoozedUntil'] as Timestamp?)?.toDate(),
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
@@ -158,6 +168,7 @@ class CareSettingsModel extends Equatable {
     return {
       'frequency': frequency.toFirestoreValue(),
       'lastDate': lastDate?.toIso8601String(),
+      'snoozedUntil': snoozedUntil?.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
@@ -170,10 +181,11 @@ class CareSettingsModel extends Equatable {
     return CareSettingsModel(
       frequency: CareFrequencyExtension.fromString(json['frequency'] as String?),
       lastDate: json['lastDate'] != null ? DateTime.parse(json['lastDate'] as String) : null,
+      snoozedUntil: json['snoozedUntil'] != null ? DateTime.parse(json['snoozedUntil'] as String) : null,
       updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : DateTime.now(),
     );
   }
 
   @override
-  List<Object?> get props => [frequency, lastDate, updatedAt];
+  List<Object?> get props => [frequency, lastDate, snoozedUntil, updatedAt];
 }
