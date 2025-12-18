@@ -233,6 +233,13 @@ class PetModel extends Equatable {
     return vaccines.where((vaccine) => vaccine.nextDueDate.isBefore(now)).toList();
   }
 
+  /// Check if pet supports medical care (vaccines, tick & flea)
+  /// Only dogs and cats support full medical care
+  bool get supportsMedicalCare {
+    final speciesLower = species.toLowerCase();
+    return speciesLower == 'dog' || speciesLower == 'cat';
+  }
+
   @override
   List<Object?> get props => [
         id,

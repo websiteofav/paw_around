@@ -83,14 +83,17 @@ class _HomeScreenState extends State<HomeScreen> {
       return _buildWelcomeState();
     }
 
-    // State 2: Pet exists but no vaccines
-    final hasVaccines = activePet!.vaccines.isNotEmpty;
-    if (!hasVaccines) {
+    // For "Other" pet types, skip vaccine setup reminder
+    final supportsMedicalCare = activePet!.supportsMedicalCare;
+
+    // State 2: Pet exists but no vaccines (only for dog/cat)
+    final hasVaccines = activePet.vaccines.isNotEmpty;
+    if (supportsMedicalCare && !hasVaccines) {
       return _buildSetupReminderState(activePet);
     }
 
-    // State 3 & 4: Pet and vaccines exist
-    final hasUpcomingVaccine = _hasUpcomingVaccine(pets);
+    // State 3 & 4: Pet and vaccines exist (or Other pet type)
+    final hasUpcomingVaccine = supportsMedicalCare && _hasUpcomingVaccine(pets);
     return _buildNormalState(pets, activePet, hasUpcomingVaccine);
   }
 
@@ -114,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
           SetupReminderCard(
             petName: pet.name,
             onAddVaccinePressed: () {
-              context.push(AppRoutes.addVaccine);
+              context.push(AppRoutes.addVaccine, extra: pet);
             },
           ),
           const SizedBox(height: 24),
@@ -128,14 +131,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // State 3 & 4: Normal state with action cards or all-set state
   Widget _buildNormalState(List<PetModel> pets, PetModel activePet, bool hasUpcomingVaccine) {
+    // Check if pet supports medical care (vaccines, tick & flea)
+    final supportsMedicalCare = activePet.supportsMedicalCare;
+
     // Check care settings (filter out snoozed)
     final hasGroomingSettings = activePet.groomingSettings?.hasReminder == true;
-    final hasTickFleaSettings = activePet.tickFleaSettings?.hasReminder == true;
+    final hasTickFleaSettings = supportsMedicalCare && activePet.tickFleaSettings?.hasReminder == true;
     final groomingSnoozed = activePet.groomingSettings?.isSnoozed == true;
     final tickFleaSnoozed = activePet.tickFleaSettings?.isSnoozed == true;
     final groomingDueSoon = !groomingSnoozed &&
         (activePet.groomingSettings?.isDueSoon == true || activePet.groomingSettings?.isOverdue == true);
-    final tickFleaDueSoon = !tickFleaSnoozed &&
+    final tickFleaDueSoon = supportsMedicalCare &&
+        !tickFleaSnoozed &&
         (activePet.tickFleaSettings?.isDueSoon == true || activePet.tickFleaSettings?.isOverdue == true);
 
     // Determine if we have any urgent actions (excluding snoozed)
@@ -192,42 +199,44 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 8),
           ],
 
-          // Tick & Flea Card (hide if snoozed)
-          if (hasTickFleaSettings && !tickFleaSnoozed) ...[
-            SecondaryActionCard(
-              icon: Icons.shield_outlined,
-              iconBackgroundColor: tickFleaDueSoon ? AppColors.iconBgBeige : AppColors.border,
-              iconColor: tickFleaDueSoon ? const Color(0xFF8B7355) : AppColors.textSecondary,
-              title: tickFleaDueSoon ? AppStrings.tickFleaPrevention : AppStrings.tickFleaPrevention,
-              subtitle: tickFleaDueSoon ? AppStrings.reminderToProtect : _getTickFleaSubtitle(activePet),
-              onTap: () {
-                if (tickFleaDueSoon) {
-                  // Navigate to detail screen
-                  context.push(
-                    AppRoutes.actionDetail,
-                    extra: ActionCardData(
-                      actionType: ActionType.tickFlea,
-                      pet: activePet,
-                    ),
-                  );
-                } else {
-                  // Navigate to settings
+          // Tick & Flea Card (only for dogs and cats, hide if snoozed)
+          if (supportsMedicalCare) ...[
+            if (hasTickFleaSettings && !tickFleaSnoozed) ...[
+              SecondaryActionCard(
+                icon: Icons.shield_outlined,
+                iconBackgroundColor: tickFleaDueSoon ? AppColors.iconBgBeige : AppColors.border,
+                iconColor: tickFleaDueSoon ? const Color(0xFF8B7355) : AppColors.textSecondary,
+                title: tickFleaDueSoon ? AppStrings.tickFleaPrevention : AppStrings.tickFleaPrevention,
+                subtitle: tickFleaDueSoon ? AppStrings.reminderToProtect : _getTickFleaSubtitle(activePet),
+                onTap: () {
+                  if (tickFleaDueSoon) {
+                    // Navigate to detail screen
+                    context.push(
+                      AppRoutes.actionDetail,
+                      extra: ActionCardData(
+                        actionType: ActionType.tickFlea,
+                        pet: activePet,
+                      ),
+                    );
+                  } else {
+                    // Navigate to settings
+                    context.push(AppRoutes.tickFleaSettings, extra: activePet);
+                  }
+                },
+              ),
+            ] else if (!hasTickFleaSettings) ...[
+              // No tick/flea settings - show add card
+              SecondaryActionCard(
+                icon: Icons.shield_outlined,
+                iconBackgroundColor: AppColors.iconBgBeige,
+                iconColor: const Color(0xFF8B7355),
+                title: AppStrings.addTickFleaDetails,
+                subtitle: AppStrings.reminderToProtect,
+                onTap: () {
                   context.push(AppRoutes.tickFleaSettings, extra: activePet);
-                }
-              },
-            ),
-          ] else if (!hasTickFleaSettings) ...[
-            // No tick/flea settings - show add card
-            SecondaryActionCard(
-              icon: Icons.shield_outlined,
-              iconBackgroundColor: AppColors.iconBgBeige,
-              iconColor: const Color(0xFF8B7355),
-              title: AppStrings.addTickFleaDetails,
-              subtitle: AppStrings.reminderToProtect,
-              onTap: () {
-                context.push(AppRoutes.tickFleaSettings, extra: activePet);
-              },
-            ),
+                },
+              ),
+            ],
           ],
 
           const SizedBox(height: 24),

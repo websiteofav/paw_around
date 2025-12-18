@@ -91,13 +91,17 @@ class AppStrings {
 
   // Pet Management
   static const String species = 'Species';
+  static const String petType = 'Pet type';
   static const String gender = 'Gender';
+  static const String genderOptional = 'Gender (optional)';
   static const String dateOfBirth = 'Date of Birth';
+  static const String birthdateOrAge = 'Birthdate OR Age';
   static const String weight = 'Weight (kg)';
   static const String notes = 'Notes';
   static const String addPhoto = 'Add Photo';
   static const String selectSpecies = 'Select Species';
   static const String selectGender = 'Select Gender';
+  static const String selectDate = 'Select date';
   static const String dog = 'Dog';
   static const String cat = 'Cat';
   static const String bird = 'Bird';
@@ -106,9 +110,17 @@ class AppStrings {
   static const String male = 'Male';
   static const String female = 'Female';
   static const String savePet = 'Save Pet';
+  static const String saveAndContinue = 'Save & continue';
   static const String cancel = 'Cancel';
   static const String addVaccine = 'Add Vaccine';
   static const String addVaccineFor = 'Add Vaccine for';
+  static const String petTypeOtherHelper = 'Some care reminders are currently available only for dogs and cats.';
+  static const String lessThan1Year = 'Less than 1 year';
+  static const String oneToThreeYears = '1-3 years';
+  static const String threeToSevenYears = '3-7 years';
+  static const String moreThan7Years = '7+ years';
+  static const String pleaseEnterBirthdateOrAge = 'Please enter either birthdate or age';
+  static const String addYourPet = 'Add your pet';
 
   // Vaccine Management
   static const String vaccineName = 'Vaccine Name';
@@ -128,6 +140,16 @@ class AppStrings {
   static const String removeVaccine = 'Remove vaccine';
   static const String reminderNotification = 'Reminder Notification';
   static const String getNotifiedBeforeNextDose = 'Get notified before the next dose is due';
+
+  // Vaccines Setup Screen
+  static const String vaccines = 'Vaccines';
+  static const String notAdded = 'Not added';
+  static const String addDate = 'Add date';
+  static const String edit = 'Edit';
+  static const String lastGivenOn = 'Last given on';
+  static const String lastGivenDate = 'Last given date';
+  static const String vaccinesForDogsCatsOnly = 'Vaccines are currently available only for dogs and cats.';
+  static const String vaccineSaved = 'Vaccine saved successfully!';
 
   // Map Screen
   static const String petServices = 'Pet Services';
@@ -250,15 +272,23 @@ class AppStrings {
   static const String notificationSettings = 'Notification Settings';
   static const String editProfile = 'Edit Profile';
   static const String upgradeToPremium = 'Upgrade to Premium';
-  static const String helpAndSupport = 'Help & Support';
+  static const String helpAndSupport = 'Help & support';
   static const String privacyPolicy = 'Privacy Policy';
-  static const String logout = 'Logout';
+  static const String logout = 'Log out';
   static const String appVersion = 'Version';
   static const String pets = 'pets';
   static const String posts = 'posts';
   static const String activity = 'Activity';
   static const String settings = 'Settings';
   static const String account = 'Account';
+  static const String addAnotherPet = 'Add another pet';
+  static const String accountSettings = 'Account settings';
+  static const String logOutConfirmTitle = 'Log out?';
+  static const String logOutConfirmMessage = 'You will need to sign in again to access Paw Around.';
+  static const String monthsOld = 'months old';
+  static const String yearsOld = 'years old';
+  static const String noPetsAddedYet = 'No pets added yet';
+  static const String addFirstPetToStart = 'Add your first pet to get started';
 
   // Private constructor to prevent instantiation
   AppStrings._();

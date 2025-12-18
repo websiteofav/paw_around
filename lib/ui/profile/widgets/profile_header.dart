@@ -4,94 +4,83 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 
 class ProfileHeader extends StatelessWidget {
-  final int petCount;
-  final int postCount;
+  final VoidCallback? onEditTap;
 
   const ProfileHeader({
     super.key,
-    required this.petCount,
-    required this.postCount,
+    this.onEditTap,
   });
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
     final displayName = user?.displayName ?? 'Pet Parent';
-    final email = user?.email ?? '';
     final photoUrl = user?.photoURL;
 
     return Container(
-      padding: const EdgeInsets.all(24),
-      child: Column(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
         children: [
-          // Profile Avatar
+          // Circular avatar with paw icon
           Container(
-            width: 100,
-            height: 100,
+            width: 64,
+            height: 64,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.primary.withValues(alpha: 0.1),
-              border: Border.all(
-                color: AppColors.primary,
-                width: 3,
-              ),
+              color: AppColors.primary.withValues(alpha: 0.15),
             ),
             child: ClipOval(
               child: photoUrl != null
                   ? Image.network(
                       photoUrl,
-                      width: 100,
-                      height: 100,
+                      width: 64,
+                      height: 64,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
-                        return _buildDefaultAvatar(displayName);
+                        return _buildPawIcon();
                       },
                     )
-                  : _buildDefaultAvatar(displayName),
+                  : _buildPawIcon(),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(width: 16),
 
-          // Display Name
-          Text(
-            displayName,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+          // User name
+          Expanded(
+            child: Text(
+              displayName,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
-          const SizedBox(height: 4),
 
-          // Email
-          Text(
-            email,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          const SizedBox(height: 16),
-
-          // Stats Row
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: BoxDecoration(
-              color: AppColors.surface,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildStatItem(petCount, AppStrings.pets),
-                Container(
-                  width: 1,
-                  height: 24,
-                  color: AppColors.textLight,
-                  margin: const EdgeInsets.symmetric(horizontal: 20),
+          // Edit button
+          GestureDetector(
+            onTap: onEditTap,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Text(
+                AppStrings.edit,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textSecondary,
                 ),
-                _buildStatItem(postCount, AppStrings.posts),
-              ],
+              ),
             ),
           ),
         ],
@@ -99,46 +88,16 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
-  Widget _buildDefaultAvatar(String name) {
-    final initials = name.isNotEmpty
-        ? name.split(' ').map((word) => word.isNotEmpty ? word[0] : '').take(2).join().toUpperCase()
-        : 'PP';
-
+  Widget _buildPawIcon() {
     return Container(
-      width: 100,
-      height: 100,
+      width: 64,
+      height: 64,
       alignment: Alignment.center,
-      color: AppColors.primary.withValues(alpha: 0.2),
-      child: Text(
-        initials,
-        style: const TextStyle(
-          fontSize: 36,
-          fontWeight: FontWeight.bold,
-          color: AppColors.primary,
-        ),
+      child: Icon(
+        Icons.pets,
+        size: 32,
+        color: AppColors.primary,
       ),
-    );
-  }
-
-  Widget _buildStatItem(int count, String label) {
-    return Column(
-      children: [
-        Text(
-          count.toString(),
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: AppColors.primary,
-          ),
-        ),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSecondary,
-          ),
-        ),
-      ],
     );
   }
 }

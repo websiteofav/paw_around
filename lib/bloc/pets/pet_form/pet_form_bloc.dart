@@ -104,21 +104,13 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
       errors['name'] = 'Pet name is required';
     }
     if (state.species.isEmpty) {
-      errors['species'] = 'Species is required';
-    }
-    if (state.breed.isEmpty) {
-      errors['breed'] = 'Breed is required';
+      errors['species'] = 'Pet type is required';
     }
     if (state.gender.isEmpty) {
       errors['gender'] = 'Gender is required';
     }
     if (state.dateOfBirth == null) {
-      errors['dateOfBirth'] = 'Date of birth is required';
-    }
-    if (state.weight.isEmpty) {
-      errors['weight'] = 'Weight is required';
-    } else if (double.tryParse(state.weight) == null) {
-      errors['weight'] = 'Invalid weight';
+      errors['dateOfBirth'] = 'Age or birthdate is required';
     }
 
     final isValid = errors.isEmpty;
@@ -167,10 +159,10 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
         final updatedPet = existingPet.copyWith(
           name: state.name,
           species: state.species,
-          breed: state.breed,
+          breed: state.breed.isNotEmpty ? state.breed : existingPet.breed,
           gender: state.gender,
           dateOfBirth: state.dateOfBirth!,
-          weight: double.parse(state.weight),
+          weight: state.weight.isNotEmpty ? double.tryParse(state.weight) ?? existingPet.weight : existingPet.weight,
           notes: state.notes,
           imagePath: imagePath,
           vaccines: state.vaccines,
@@ -200,10 +192,10 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
         final pet = PetModel.create(
           name: state.name,
           species: state.species,
-          breed: state.breed,
+          breed: state.breed.isNotEmpty ? state.breed : '',
           gender: state.gender,
           dateOfBirth: state.dateOfBirth!,
-          weight: double.parse(state.weight),
+          weight: state.weight.isNotEmpty ? double.tryParse(state.weight) ?? 0.0 : 0.0,
           notes: state.notes,
           imagePath: imagePath,
           vaccines: state.vaccines,

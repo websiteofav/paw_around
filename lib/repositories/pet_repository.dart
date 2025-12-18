@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 
 class PetRepository {
@@ -117,6 +118,32 @@ class PetRepository {
   Future<void> updateTickFleaSettings(String petId, CareSettingsModel settings) async {
     await _petsRef.doc(petId).update({
       'tickFleaSettings': settings.toFirestore(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
+  // Update or add a vaccine for a pet
+  Future<void> updateVaccine(String petId, VaccineModel vaccine) async {
+    final pet = await getPetById(petId);
+    if (pet == null) {
+      return;
+    }
+
+    final updatedVaccines = List<VaccineModel>.from(pet.vaccines);
+    final existingIndex = updatedVaccines.indexWhere(
+      (v) => v.vaccineName.toLowerCase() == vaccine.vaccineName.toLowerCase(),
+    );
+
+    if (existingIndex >= 0) {
+      // Update existing vaccine
+      updatedVaccines[existingIndex] = vaccine;
+    } else {
+      // Add new vaccine
+      updatedVaccines.add(vaccine);
+    }
+
+    await _petsRef.doc(petId).update({
+      'vaccines': updatedVaccines.map((v) => v.toFirestore()).toList(),
       'updatedAt': Timestamp.now(),
     });
   }

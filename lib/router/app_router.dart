@@ -27,6 +27,7 @@ import 'package:paw_around/ui/pets/add_pet_screen.dart';
 import 'package:paw_around/ui/pets/add_vaccine_screen.dart';
 import 'package:paw_around/ui/pets/grooming_settings_screen.dart';
 import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
+import 'package:paw_around/ui/pets/vaccines_setup_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 
 /// Notifies GoRouter when auth state changes
@@ -163,12 +164,13 @@ class AppRouter {
             },
           ),
 
-          // Add Vaccine Route - Uses parent PetFormBloc
+          // Add Vaccine Route - Accepts optional pet for vaccine type filtering
           GoRoute(
             path: AppRoutes.addVaccine,
             name: AppRoutes.addVaccine,
             builder: (context, state) {
-              return const AddVaccineScreen();
+              final pet = state.extra as PetModel?;
+              return AddVaccineScreen(pet: pet);
             },
           ),
 
@@ -204,6 +206,14 @@ class AppRouter {
             builder: (context, state) {
               final pet = state.extra as PetModel;
               return TickFleaSettingsScreen(pet: pet);
+            },
+          ),
+          GoRoute(
+            path: AppRoutes.vaccinesSetup,
+            name: 'vaccinesSetup',
+            builder: (context, state) {
+              final pet = state.extra as PetModel;
+              return VaccinesSetupScreen(pet: pet);
             },
           ),
 

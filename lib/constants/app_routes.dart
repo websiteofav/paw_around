@@ -19,6 +19,7 @@ class AppRoutes {
   static const String addVaccine = '/add-vaccine';
   static const String groomingSettings = '/pets/grooming-settings';
   static const String tickFleaSettings = '/pets/tick-flea-settings';
+  static const String vaccinesSetup = '/pets/vaccines-setup';
   static const String actionDetail = '/action-detail';
 
   // Profile Sub-routes
