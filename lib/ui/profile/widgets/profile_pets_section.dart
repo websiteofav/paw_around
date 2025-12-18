@@ -115,7 +115,7 @@ class ProfilePetsSection extends StatelessWidget {
   Widget _buildPetRow(BuildContext context, PetModel pet) {
     return InkWell(
       onTap: () {
-        context.pushNamed(AppRoutes.addPet, extra: pet);
+        context.pushNamed(AppRoutes.petOverview, extra: pet);
       },
       borderRadius: BorderRadius.circular(12),
       child: Padding(

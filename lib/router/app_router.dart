@@ -10,6 +10,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/repositories/community_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
@@ -28,6 +29,7 @@ import 'package:paw_around/ui/pets/add_vaccine_screen.dart';
 import 'package:paw_around/ui/pets/grooming_settings_screen.dart';
 import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/vaccines_setup_screen.dart';
+import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 
 /// Notifies GoRouter when auth state changes
@@ -164,12 +166,28 @@ class AppRouter {
             },
           ),
 
-          // Add Vaccine Route - Accepts optional pet for vaccine type filtering
+          // Pet Overview Route
+          GoRoute(
+            path: AppRoutes.petOverview,
+            name: AppRoutes.petOverview,
+            builder: (context, state) {
+              final pet = state.extra as PetModel;
+              return PetOverviewScreen(pet: pet);
+            },
+          ),
+
+          // Add Vaccine Route - Accepts optional pet and vaccine for editing
           GoRoute(
             path: AppRoutes.addVaccine,
             name: AppRoutes.addVaccine,
             builder: (context, state) {
-              final pet = state.extra as PetModel?;
+              final extra = state.extra;
+              if (extra is Map<String, dynamic>) {
+                final pet = extra['pet'] as PetModel?;
+                final vaccine = extra['vaccine'] as VaccineModel?;
+                return AddVaccineScreen(pet: pet, vaccineToEdit: vaccine);
+              }
+              final pet = extra as PetModel?;
               return AddVaccineScreen(pet: pet);
             },
           ),

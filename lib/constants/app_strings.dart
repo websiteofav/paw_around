@@ -113,6 +113,7 @@ class AppStrings {
   static const String saveAndContinue = 'Save & continue';
   static const String cancel = 'Cancel';
   static const String addVaccine = 'Add Vaccine';
+  static const String editVaccine = 'Edit Vaccine';
   static const String addVaccineFor = 'Add Vaccine for';
   static const String petTypeOtherHelper = 'Some care reminders are currently available only for dogs and cats.';
   static const String lessThan1Year = 'Less than 1 year';
@@ -289,6 +290,16 @@ class AppStrings {
   static const String yearsOld = 'years old';
   static const String noPetsAddedYet = 'No pets added yet';
   static const String addFirstPetToStart = 'Add your first pet to get started';
+
+  // Pet Overview Screen
+  static const String editPetDetails = 'Edit pet details';
+  static const String someCareDue = 'Some care due';
+  static const String allCaughtUp = 'All caught up';
+  static const String comingUp = 'coming up';
+  static const String upcomingSoon = 'Upcoming soon';
+  static const String nextDoseSoon = 'Next dose soon';
+  static const String notSet = 'Not set';
+  static const String noVaccinesAdded = 'No vaccines added';
 
   // Private constructor to prevent instantiation
   AppStrings._();

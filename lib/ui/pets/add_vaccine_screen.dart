@@ -12,8 +12,9 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 
 class AddVaccineScreen extends StatefulWidget {
   final PetModel? pet;
+  final VaccineModel? vaccineToEdit;
 
-  const AddVaccineScreen({super.key, this.pet});
+  const AddVaccineScreen({super.key, this.pet, this.vaccineToEdit});
 
   @override
   State<AddVaccineScreen> createState() => _AddVaccineScreenState();
@@ -28,6 +29,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
   bool _setReminder = true;
 
   final Map<String, String> _errors = {};
+  bool _isEditMode = false;
 
   List<VaccineMasterData> get _availableVaccines {
     if (widget.pet != null) {
@@ -35,6 +37,30 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
     }
     // Fallback to all vaccines if no pet specified
     return [...VaccineConstants.dogVaccines, ...VaccineConstants.catVaccines];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFromVaccine();
+  }
+
+  void _initializeFromVaccine() {
+    if (widget.vaccineToEdit != null) {
+      _isEditMode = true;
+      final vaccine = widget.vaccineToEdit!;
+
+      // Find the matching VaccineMasterData
+      _selectedVaccine = _availableVaccines.firstWhere(
+        (v) => v.name.toLowerCase() == vaccine.vaccineName.toLowerCase(),
+        orElse: () => _availableVaccines.first,
+      );
+
+      _dateGiven = vaccine.dateGiven;
+      _nextDueDate = vaccine.nextDueDate;
+      _notesController.text = vaccine.notes;
+      _setReminder = vaccine.setReminder;
+    }
   }
 
   @override
@@ -116,9 +142,9 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
-          AppStrings.addVaccine,
-          style: TextStyle(
+        title: Text(
+          _isEditMode ? AppStrings.editVaccine : AppStrings.addVaccine,
+          style: const TextStyle(
             color: AppColors.navigationText,
             fontWeight: FontWeight.bold,
           ),
