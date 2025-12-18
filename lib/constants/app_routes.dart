@@ -17,6 +17,8 @@ class AppRoutes {
   // Pet Management Routes
   static const String addPet = '/add-pet';
   static const String addVaccine = '/add-vaccine';
+  static const String groomingSettings = '/pets/grooming-settings';
+  static const String tickFleaSettings = '/pets/tick-flea-settings';
 
   // Profile Sub-routes
   static const String editPet = '/home/profile/edit-pet';

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 
 class PetModel extends Equatable {
@@ -13,6 +14,8 @@ class PetModel extends Equatable {
   final String notes;
   final String? imagePath;
   final List<VaccineModel> vaccines;
+  final CareSettingsModel? groomingSettings;
+  final CareSettingsModel? tickFleaSettings;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -27,6 +30,8 @@ class PetModel extends Equatable {
     required this.notes,
     this.imagePath,
     this.vaccines = const [],
+    this.groomingSettings,
+    this.tickFleaSettings,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -42,6 +47,8 @@ class PetModel extends Equatable {
     required String notes,
     String? imagePath,
     List<VaccineModel> vaccines = const [],
+    CareSettingsModel? groomingSettings,
+    CareSettingsModel? tickFleaSettings,
   }) {
     final now = DateTime.now();
     return PetModel(
@@ -55,6 +62,8 @@ class PetModel extends Equatable {
       notes: notes,
       imagePath: imagePath,
       vaccines: vaccines,
+      groomingSettings: groomingSettings,
+      tickFleaSettings: tickFleaSettings,
       createdAt: now,
       updatedAt: now,
     );
@@ -72,6 +81,8 @@ class PetModel extends Equatable {
     String? notes,
     String? imagePath,
     List<VaccineModel>? vaccines,
+    CareSettingsModel? groomingSettings,
+    CareSettingsModel? tickFleaSettings,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -86,6 +97,8 @@ class PetModel extends Equatable {
       notes: notes ?? this.notes,
       imagePath: imagePath ?? this.imagePath,
       vaccines: vaccines ?? this.vaccines,
+      groomingSettings: groomingSettings ?? this.groomingSettings,
+      tickFleaSettings: tickFleaSettings ?? this.tickFleaSettings,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -103,6 +116,8 @@ class PetModel extends Equatable {
       'notes': notes,
       'imagePath': imagePath,
       'vaccines': vaccines.map((v) => v.toFirestore()).toList(),
+      'groomingSettings': groomingSettings?.toFirestore(),
+      'tickFleaSettings': tickFleaSettings?.toFirestore(),
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
@@ -125,6 +140,12 @@ class PetModel extends Equatable {
               ?.map((v) => VaccineModel.fromFirestore(v as Map<String, dynamic>))
               .toList() ??
           [],
+      groomingSettings: data['groomingSettings'] != null
+          ? CareSettingsModel.fromFirestore(data['groomingSettings'] as Map<String, dynamic>)
+          : null,
+      tickFleaSettings: data['tickFleaSettings'] != null
+          ? CareSettingsModel.fromFirestore(data['tickFleaSettings'] as Map<String, dynamic>)
+          : null,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
@@ -143,6 +164,8 @@ class PetModel extends Equatable {
       'notes': notes,
       'imagePath': imagePath,
       'vaccines': vaccines.map((v) => v.toJson()).toList(),
+      'groomingSettings': groomingSettings?.toJson(),
+      'tickFleaSettings': tickFleaSettings?.toJson(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
     };
@@ -163,6 +186,12 @@ class PetModel extends Equatable {
       vaccines:
           (json['vaccines'] as List<dynamic>?)?.map((v) => VaccineModel.fromJson(v as Map<String, dynamic>)).toList() ??
               [],
+      groomingSettings: json['groomingSettings'] != null
+          ? CareSettingsModel.fromJson(json['groomingSettings'] as Map<String, dynamic>)
+          : null,
+      tickFleaSettings: json['tickFleaSettings'] != null
+          ? CareSettingsModel.fromJson(json['tickFleaSettings'] as Map<String, dynamic>)
+          : null,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
     );
@@ -216,6 +245,8 @@ class PetModel extends Equatable {
         notes,
         imagePath,
         vaccines,
+        groomingSettings,
+        tickFleaSettings,
         createdAt,
         updatedAt,
       ];

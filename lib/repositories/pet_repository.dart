@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 
@@ -102,5 +103,37 @@ class PetRepository {
       batch.delete(doc.reference);
     }
     await batch.commit();
+  }
+
+  // Update grooming settings for a pet
+  Future<void> updateGroomingSettings(String petId, CareSettingsModel settings) async {
+    await _petsRef.doc(petId).update({
+      'groomingSettings': settings.toFirestore(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
+  // Update tick & flea settings for a pet
+  Future<void> updateTickFleaSettings(String petId, CareSettingsModel settings) async {
+    await _petsRef.doc(petId).update({
+      'tickFleaSettings': settings.toFirestore(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
+  // Get pets with upcoming grooming (due within 7 days)
+  Future<List<PetModel>> getPetsWithUpcomingGrooming() async {
+    final pets = await getAllPets();
+    return pets.where((pet) {
+      return pet.groomingSettings?.isDueSoon == true || pet.groomingSettings?.isOverdue == true;
+    }).toList();
+  }
+
+  // Get pets with upcoming tick/flea treatment (due within 7 days)
+  Future<List<PetModel>> getPetsWithUpcomingTickFlea() async {
+    final pets = await getAllPets();
+    return pets.where((pet) {
+      return pet.tickFleaSettings?.isDueSoon == true || pet.tickFleaSettings?.isOverdue == true;
+    }).toList();
   }
 }

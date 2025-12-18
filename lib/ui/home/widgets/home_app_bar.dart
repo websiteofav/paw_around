@@ -20,36 +20,53 @@ class HomeAppBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       color: AppColors.background,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Spacer(),
+          // Left: Paw icon in circular background
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.iconBgLight,
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: const Icon(
+              Icons.pets,
+              color: AppColors.primary,
+              size: 22,
+            ),
+          ),
+
           // Center: Title and subtitle
-          Column(
-            children: [
-              const Text(
-                AppStrings.homeTab,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textPrimary,
-                ),
-              ),
-              if (petName != null && petAge != null)
-                Text(
-                  '$petName · $petAge',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: AppColors.textSecondary,
+          Expanded(
+            child: Column(
+              children: [
+                const Text(
+                  AppStrings.homeTab,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
                   ),
                 ),
-            ],
+                if (petName != null && petAge != null)
+                  Text(
+                    '$petName · $petAge',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+              ],
+            ),
           ),
-          const Spacer(),
+
           // Right: Notification bell
           GestureDetector(
             onTap: onNotificationTap,
             child: Container(
-              padding: const EdgeInsets.all(8),
+              width: 44,
+              height: 44,
+              alignment: Alignment.center,
               child: const Icon(
                 Icons.notifications_outlined,
                 color: AppColors.textPrimary,

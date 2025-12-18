@@ -186,6 +186,29 @@ class AppStrings {
   static const String daysUntilDue = 'days';
   static const String vaccineDueIn = 'vaccine due in';
 
+  // Home Screen - Empty States
+  static const String welcomeToPawAroundHome = 'Welcome to Paw Around';
+  static const String addPetToGetStarted =
+      "To get started, add your pet and we'll take care of reminders for vaccines, grooming, and health.";
+  static const String addYourFirstPet = 'Add your first pet';
+  static const String completeHealthDetails = "Complete %s's health details";
+  static const String addVaccineDetails = 'Add vaccine details';
+
+  // Care Settings Screens
+  static const String grooming = 'Grooming';
+  static const String frequency = 'Frequency';
+  static const String noReminder = 'No reminder';
+  static const String everyWeek = 'Every week';
+  static const String everyMonth = 'Every month';
+  static const String every3Months = 'Every 3 months';
+  static const String lastGrooming = 'Last grooming';
+  static const String lastTreatment = 'Last treatment';
+  static const String save = 'Save';
+  static const String today = 'Today';
+  static const String settingsSaved = 'Settings saved successfully';
+  static const String addGroomingDetails = 'Add grooming schedule';
+  static const String addTickFleaDetails = 'Add treatment schedule';
+
   // Profile Screen
   static const String myPets = 'My Pets';
   static const String myPosts = 'My Posts';
