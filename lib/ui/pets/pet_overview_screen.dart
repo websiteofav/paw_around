@@ -219,7 +219,7 @@ class PetOverviewScreen extends StatelessWidget {
           // Vaccine list
           if (pet.vaccines.isEmpty)
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Text(
                 AppStrings.noVaccinesAdded,
                 style: TextStyle(
@@ -241,7 +241,55 @@ class PetOverviewScreen extends StatelessWidget {
                 ],
               );
             }),
+
+          // Add vaccine row
+          const Divider(height: 1, color: AppColors.border),
+          _buildAddVaccineRow(context),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAddVaccineRow(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        context.pushNamed(
+          AppRoutes.addVaccine,
+          extra: {'pet': pet},
+        );
+      },
+      borderRadius: const BorderRadius.only(
+        bottomLeft: Radius.circular(16),
+        bottomRight: Radius.circular(16),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.primary.withValues(alpha: 0.15),
+              ),
+              child: const Icon(
+                Icons.add,
+                size: 18,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              AppStrings.addVaccine,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                color: AppColors.primary,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

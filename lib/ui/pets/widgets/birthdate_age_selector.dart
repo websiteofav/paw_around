@@ -100,10 +100,18 @@ class BirthdateAgeSelector extends StatelessWidget {
   }
 
   void _selectAgeRange(BuildContext context, int minYears, int maxYears) {
-    // Calculate a birthdate in the middle of the range
     final now = DateTime.now();
-    final avgYears = (minYears + maxYears) ~/ 2;
-    final birthDate = DateTime(now.year - avgYears, now.month, now.day);
+    DateTime birthDate;
+
+    if (minYears == 0 && maxYears == 1) {
+      // Less than 1 year: set to 6 months ago
+      birthDate = DateTime(now.year, now.month - 6, now.day);
+    } else {
+      // Other ranges: use middle of range
+      final avgYears = (minYears + maxYears) ~/ 2;
+      birthDate = DateTime(now.year - avgYears, now.month, now.day);
+    }
+
     context.read<PetFormBloc>().add(SelectDateOfBirth(birthDate));
   }
 

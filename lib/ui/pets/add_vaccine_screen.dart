@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/vaccine_constants.dart';
@@ -126,15 +129,22 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
 
     await sl<PetRepository>().updateVaccine(widget.pet!.id, vaccine);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(AppStrings.vaccineAddedSuccessfully),
-        backgroundColor: AppColors.success,
-      ),
-    );
+    // Refresh pet list so Home screen and other screens update
+    if (context.mounted) {
+      context.read<PetListBloc>().add(const LoadPetList());
+    }
 
-    // Return the vaccine to the parent screen
-    context.pop(vaccine);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.vaccineAddedSuccessfully),
+          backgroundColor: AppColors.success,
+        ),
+      );
+
+      // Return the vaccine to the parent screen
+      context.pop(vaccine);
+    }
   }
 
   @override
