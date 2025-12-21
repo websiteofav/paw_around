@@ -211,11 +211,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(_post?.petName ?? '', style: AppTextStyles.appTitle()),
+          Text(_post?.petName ?? '', style: AppTextStyles.boldStyle700(fontSize: 32, letterSpacing: 1.2)),
           const SizedBox(height: 8),
-          Text('${_post?.breed ?? ''} • ${_post?.color ?? ''}', style: AppTextStyles.cardSubtitle()),
+          Text('${_post?.breed ?? ''} • ${_post?.color ?? ''}',
+              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary)),
           const SizedBox(height: 16),
-          Text(_post?.petDescription ?? '', style: AppTextStyles.bodyText()),
+          Text(_post?.petDescription ?? '', style: AppTextStyles.regularStyle400()),
           const SizedBox(height: 24),
           _buildInfoRow(Icons.person_outline, AppStrings.postedBy, _post?.userName ?? ''),
           const SizedBox(height: 12),
@@ -265,8 +266,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: AppTextStyles.cardSubtitle(fontSize: 12)),
-            Text(value, style: AppTextStyles.bodyText()),
+            Text(label, style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary)),
+            Text(value, style: AppTextStyles.regularStyle400()),
           ],
         ),
       ],

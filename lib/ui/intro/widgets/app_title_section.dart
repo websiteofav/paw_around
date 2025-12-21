@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/animated_content.dart';
@@ -19,7 +20,7 @@ class AppTitleSection extends StatelessWidget {
           animation: animation,
           child: Text(
             AppStrings.introTitle,
-            style: AppTextStyles.appTitle(),
+            style: AppTextStyles.boldStyle700(fontSize: 32, fontColor: AppColors.primary, letterSpacing: 1.2),
           ),
         ),
         const SizedBox(height: 16),
@@ -28,7 +29,7 @@ class AppTitleSection extends StatelessWidget {
           child: Text(
             AppStrings.introDescription,
             textAlign: TextAlign.center,
-            style: AppTextStyles.tagline(),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary, letterSpacing: 0.3),
           ),
         ),
       ],

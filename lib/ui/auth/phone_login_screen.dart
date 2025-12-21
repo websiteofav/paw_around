@@ -4,6 +4,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/ui/auth/widgets/auth_logo.dart';
@@ -46,13 +47,9 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               const SizedBox(height: 32),
 
               // Title
-              const Text(
+              Text(
                 AppStrings.welcomeToPawAround,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+                style: AppTextStyles.semiBoldTextStyle(fontSize: 24),
                 textAlign: TextAlign.center,
               ),
 
@@ -144,7 +141,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
         const SizedBox(height: 8),
         IntlPhoneField(
           decoration: InputDecoration(
-            hintText: '(555) 000-0000',
+            hintText: '9990000000',
             hintStyle: const TextStyle(
               color: AppColors.textSecondary,
             ),
@@ -164,7 +161,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
-          initialCountryCode: 'US',
+          initialCountryCode: 'IN',
           dropdownTextStyle: const TextStyle(
             fontSize: 16,
             color: AppColors.textPrimary,

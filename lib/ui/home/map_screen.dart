@@ -75,7 +75,7 @@ class _MapScreenState extends State<MapScreen> {
       automaticallyImplyLeading: false,
       title: Text(
         AppStrings.petServices,
-        style: AppTextStyles.appBarTitle(),
+        style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.navigationText),
       ),
       backgroundColor: AppColors.navigationBackground,
       elevation: 0,
@@ -114,7 +114,7 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           const Icon(Icons.error_outline, size: 60, color: Colors.red),
           const SizedBox(height: 16),
-          Text(message, style: AppTextStyles.bodyText()),
+          Text(message, style: AppTextStyles.regularStyle400()),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _loadCurrentLocation,
@@ -132,7 +132,7 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           const Icon(Icons.location_searching, size: 60, color: AppColors.primary),
           const SizedBox(height: 16),
-          Text(AppStrings.gettingYourLocation, style: AppTextStyles.bodyText()),
+          Text(AppStrings.gettingYourLocation, style: AppTextStyles.regularStyle400()),
         ],
       ),
     );

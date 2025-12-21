@@ -124,14 +124,14 @@ class PostCard extends StatelessWidget {
         Expanded(
           child: Text(
             post.petName,
-            style: AppTextStyles.cardTitle(),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 18),
             overflow: TextOverflow.ellipsis,
           ),
         ),
         if (distanceKm != null)
           Text(
             '${distanceKm!.toStringAsFixed(1)} ${AppStrings.kmAway}',
-            style: AppTextStyles.cardSubtitle(),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
           ),
       ],
     );
@@ -144,12 +144,12 @@ class PostCard extends StatelessWidget {
         if (post.breed.isNotEmpty)
           Text(
             '${post.breed} • ${post.color}',
-            style: AppTextStyles.cardSubtitle(),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
           ),
         const SizedBox(height: 4),
         Text(
           post.petDescription,
-          style: AppTextStyles.bodyText(fontSize: 14),
+          style: AppTextStyles.regularStyle400(fontSize: 14),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
@@ -167,7 +167,7 @@ class PostCard extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               post.userName,
-              style: AppTextStyles.cardSubtitle(),
+              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
             ),
           ],
         ),
@@ -179,13 +179,13 @@ class PostCard extends StatelessWidget {
             Expanded(
               child: Text(
                 post.locationName,
-                style: AppTextStyles.cardSubtitle(),
+                style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             Text(
               AppDateUtils.getRelativeTimeShort(post.createdAt),
-              style: AppTextStyles.cardSubtitle(),
+              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
             ),
           ],
         ),

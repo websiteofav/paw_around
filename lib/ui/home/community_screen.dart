@@ -29,7 +29,8 @@ class _CommunityScreenState extends State<CommunityScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text(AppStrings.communityTitle, style: AppTextStyles.appBarTitle()),
+        title: Text(AppStrings.communityTitle,
+            style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.navigationText)),
         backgroundColor: AppColors.navigationBackground,
         elevation: 0,
         centerTitle: true,
@@ -69,11 +70,11 @@ class _CommunityScreenState extends State<CommunityScreen> {
           children: [
             const Icon(Icons.pets, size: 80, color: AppColors.textLight),
             const SizedBox(height: 16),
-            Text(AppStrings.noPostsYet, style: AppTextStyles.cardTitle()),
+            Text(AppStrings.noPostsYet, style: AppTextStyles.semiBoldStyle600(fontSize: 18)),
             const SizedBox(height: 8),
             Text(
               AppStrings.beTheFirstToPost,
-              style: AppTextStyles.cardSubtitle(),
+              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
           ],
@@ -89,7 +90,9 @@ class _CommunityScreenState extends State<CommunityScreen> {
         children: [
           const Icon(Icons.error_outline, size: 48, color: AppColors.error),
           const SizedBox(height: 16),
-          Text(message, style: AppTextStyles.errorText(), textAlign: TextAlign.center),
+          Text(message,
+              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.error),
+              textAlign: TextAlign.center),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () => context.read<CommunityBloc>().add(LoadPosts()),

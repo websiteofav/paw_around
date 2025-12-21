@@ -154,7 +154,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: Text(AppStrings.createPost, style: AppTextStyles.appBarTitle()),
+          title: Text(AppStrings.createPost,
+              style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.navigationText)),
           backgroundColor: AppColors.navigationBackground,
           elevation: 0,
         ),
@@ -275,7 +276,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 children: [
                   const Icon(Icons.add_a_photo, size: 40, color: AppColors.textSecondary),
                   const SizedBox(height: 8),
-                  Text(AppStrings.addPhoto, style: AppTextStyles.cardSubtitle()),
+                  Text(AppStrings.addPhoto,
+                      style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary)),
                 ],
               ),
       ),

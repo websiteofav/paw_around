@@ -28,7 +28,7 @@ class GetStartedButton extends StatelessWidget {
       SnackBar(
         content: Text(
           AppStrings.welcomeMessage,
-          style: AppTextStyles.welcomeMessage(),
+          style: AppTextStyles.mediumStyle500(fontColor: AppColors.textSecondary),
         ),
         backgroundColor: AppColors.primary,
       ),

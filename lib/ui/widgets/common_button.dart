@@ -151,7 +151,7 @@ class CommonButton extends StatelessWidget {
   }
 
   TextStyle _getTextStyle() {
-    final baseStyle = AppTextStyles.buttonText(fontColor: _getTextColor());
+    final baseStyle = AppTextStyles.semiBoldStyle600(fontColor: _getTextColor(), letterSpacing: 0.5);
 
     switch (size) {
       case ButtonSize.small:
