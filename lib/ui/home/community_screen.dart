@@ -29,7 +29,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text(AppStrings.communityTitle, style: AppTextStyles.appBarTitle),
+        title: Text(AppStrings.communityTitle, style: AppTextStyles.appBarTitle()),
         backgroundColor: AppColors.navigationBackground,
         elevation: 0,
         centerTitle: true,
@@ -61,19 +61,19 @@ class _CommunityScreenState extends State<CommunityScreen> {
   }
 
   Widget _buildEmptyState() {
-    return const Center(
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(32),
+        padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.pets, size: 80, color: AppColors.textLight),
-            SizedBox(height: 16),
-            Text(AppStrings.noPostsYet, style: AppTextStyles.cardTitle),
-            SizedBox(height: 8),
+            const Icon(Icons.pets, size: 80, color: AppColors.textLight),
+            const SizedBox(height: 16),
+            Text(AppStrings.noPostsYet, style: AppTextStyles.cardTitle()),
+            const SizedBox(height: 8),
             Text(
               AppStrings.beTheFirstToPost,
-              style: AppTextStyles.cardSubtitle,
+              style: AppTextStyles.cardSubtitle(),
               textAlign: TextAlign.center,
             ),
           ],
@@ -89,7 +89,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
         children: [
           const Icon(Icons.error_outline, size: 48, color: AppColors.error),
           const SizedBox(height: 16),
-          Text(message, style: AppTextStyles.errorText, textAlign: TextAlign.center),
+          Text(message, style: AppTextStyles.errorText(), textAlign: TextAlign.center),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () => context.read<CommunityBloc>().add(LoadPosts()),

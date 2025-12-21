@@ -19,7 +19,6 @@ import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/ui/community/create_post_screen.dart';
 import 'package:paw_around/ui/community/post_detail_screen.dart';
 import 'package:paw_around/ui/home/dashboard.dart';
-import 'package:paw_around/ui/auth/login_screen.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
 import 'package:paw_around/ui/onboarding/onboarding_screen.dart';
@@ -51,9 +50,8 @@ class AppRouter {
     redirect: (context, state) {
       final authRepository = sl<AuthRepository>();
       final isLoggedIn = authRepository.isLoggedIn;
-      final isAuthRoute = state.matchedLocation == AppRoutes.phoneLogin ||
-          state.matchedLocation == AppRoutes.otpVerification ||
-          state.matchedLocation == AppRoutes.login;
+      final isAuthRoute =
+          state.matchedLocation == AppRoutes.phoneLogin || state.matchedLocation == AppRoutes.otpVerification;
       final isPublicRoute = state.matchedLocation == AppRoutes.splash ||
           state.matchedLocation == AppRoutes.intro ||
           state.matchedLocation == AppRoutes.onboarding;
@@ -107,13 +105,6 @@ class AppRouter {
           final phoneNumber = state.extra as String? ?? '';
           return OTPScreen(phoneNumber: phoneNumber);
         },
-      ),
-
-      // Authentication Routes - Email Login (Alternative)
-      GoRoute(
-        path: AppRoutes.login,
-        name: AppRoutes.login,
-        builder: (context, state) => const LoginScreen(),
       ),
 
       // ============ AUTHENTICATED ROUTES (ShellRoute) ============

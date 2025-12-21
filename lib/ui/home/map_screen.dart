@@ -73,9 +73,9 @@ class _MapScreenState extends State<MapScreen> {
   AppBar _buildAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
-      title: const Text(
+      title: Text(
         AppStrings.petServices,
-        style: AppTextStyles.appBarTitle,
+        style: AppTextStyles.appBarTitle(),
       ),
       backgroundColor: AppColors.navigationBackground,
       elevation: 0,
@@ -114,7 +114,7 @@ class _MapScreenState extends State<MapScreen> {
         children: [
           const Icon(Icons.error_outline, size: 60, color: Colors.red),
           const SizedBox(height: 16),
-          Text(message, style: AppTextStyles.bodyText),
+          Text(message, style: AppTextStyles.bodyText()),
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: _loadCurrentLocation,
@@ -126,13 +126,13 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildInitialState() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.location_searching, size: 60, color: AppColors.primary),
-          SizedBox(height: 16),
-          Text(AppStrings.gettingYourLocation, style: AppTextStyles.bodyText),
+          const Icon(Icons.location_searching, size: 60, color: AppColors.primary),
+          const SizedBox(height: 16),
+          Text(AppStrings.gettingYourLocation, style: AppTextStyles.bodyText()),
         ],
       ),
     );

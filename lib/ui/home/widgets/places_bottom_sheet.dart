@@ -45,7 +45,7 @@ class PlacesBottomSheet extends StatelessWidget {
           else
             Text(
               '${places.length} ${AppStrings.petServicesFoundNearby}',
-              style: AppTextStyles.bodyText,
+              style: AppTextStyles.bodyText(),
             ),
         ],
       ),

@@ -17,18 +17,18 @@ class AppTitleSection extends StatelessWidget {
       children: [
         AnimatedContent(
           animation: animation,
-          child: const Text(
+          child: Text(
             AppStrings.introTitle,
-            style: AppTextStyles.appTitle,
+            style: AppTextStyles.appTitle(),
           ),
         ),
         const SizedBox(height: 16),
         AnimatedContent(
           animation: animation,
-          child: const Text(
+          child: Text(
             AppStrings.introDescription,
             textAlign: TextAlign.center,
-            style: AppTextStyles.tagline,
+            style: AppTextStyles.tagline(),
           ),
         ),
       ],

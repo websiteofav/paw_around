@@ -51,14 +51,14 @@ class PlaceCard extends StatelessWidget {
               children: [
                 Text(
                   place.name,
-                  style: AppTextStyles.cardTitle,
+                  style: AppTextStyles.cardTitle(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
                   place.address,
-                  style: AppTextStyles.cardSubtitle,
+                  style: AppTextStyles.cardSubtitle(),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -84,14 +84,12 @@ class PlaceCard extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             '${place.rating}',
-            style: AppTextStyles.cardSubtitle.copyWith(
-              fontWeight: FontWeight.w500,
-            ),
+            style: AppTextStyles.cardSubtitle(fontWeight: FontWeight.w500),
           ),
           if (place.userRatingsTotal != null)
             Text(
               ' (${place.userRatingsTotal})',
-              style: AppTextStyles.cardSubtitle,
+              style: AppTextStyles.cardSubtitle(),
             ),
           const SizedBox(width: 12),
         ],

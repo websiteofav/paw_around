@@ -25,10 +25,10 @@ class GetStartedButton extends StatelessWidget {
 
   void _showWelcomeMessage(BuildContext context) {
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
+      SnackBar(
         content: Text(
           AppStrings.welcomeMessage,
-          style: AppTextStyles.welcomeMessage,
+          style: AppTextStyles.welcomeMessage(),
         ),
         backgroundColor: AppColors.primary,
       ),

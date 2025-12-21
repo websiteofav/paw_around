@@ -154,7 +154,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text(AppStrings.createPost, style: AppTextStyles.appBarTitle),
+          title: Text(AppStrings.createPost, style: AppTextStyles.appBarTitle()),
           backgroundColor: AppColors.navigationBackground,
           elevation: 0,
         ),
@@ -270,12 +270,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 borderRadius: BorderRadius.circular(12),
                 child: Image.file(File(_imagePath!), fit: BoxFit.cover, width: double.infinity),
               )
-            : const Column(
+            : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_a_photo, size: 40, color: AppColors.textSecondary),
-                  SizedBox(height: 8),
-                  Text(AppStrings.addPhoto, style: AppTextStyles.cardSubtitle),
+                  const Icon(Icons.add_a_photo, size: 40, color: AppColors.textSecondary),
+                  const SizedBox(height: 8),
+                  Text(AppStrings.addPhoto, style: AppTextStyles.cardSubtitle()),
                 ],
               ),
       ),

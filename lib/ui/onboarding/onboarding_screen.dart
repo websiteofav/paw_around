@@ -6,7 +6,7 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_bloc.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_event.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_state.dart';
-import 'package:paw_around/ui/auth/login_screen.dart';
+import 'package:paw_around/ui/auth/phone_login_screen.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -22,7 +22,7 @@ class OnboardingView extends StatelessWidget {
 
   void _goToAuth(BuildContext context) {
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      MaterialPageRoute(builder: (context) => const PhoneLoginScreen()),
     );
   }
 
