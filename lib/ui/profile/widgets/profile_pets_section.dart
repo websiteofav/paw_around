@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 
 class ProfilePetsSection extends StatelessWidget {
@@ -26,11 +27,11 @@ class ProfilePetsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Section Title
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          const Padding(
+            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
               AppStrings.myPets,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: AppColors.textPrimary,
@@ -193,14 +194,13 @@ class ProfilePetsSection extends StatelessWidget {
         bottomRight: Radius.circular(16),
       ),
       child: Container(
-        margin: const EdgeInsets.all(16),
-        padding: const EdgeInsets.symmetric(vertical: 12),
+        margin: const EdgeInsets.all(0),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
         decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               width: 28,
@@ -218,11 +218,7 @@ class ProfilePetsSection extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               AppStrings.addAnotherPet,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: AppColors.primary,
-              ),
+              style: AppTextStyles.mediumStyle500(fontSize: 15, fontColor: AppColors.primary),
             ),
           ],
         ),
@@ -247,7 +243,10 @@ class ProfilePetsSection extends StatelessWidget {
     final now = DateTime.now();
     final months = (now.year - dateOfBirth.year) * 12 + (now.month - dateOfBirth.month);
 
-    if (months < 12) {
+    if (months == 0) {
+      final days = now.difference(dateOfBirth).inDays;
+      return '$days ${AppStrings.daysOld}';
+    } else if (months < 12) {
       return '$months ${AppStrings.monthsOld}';
     } else {
       final years = months ~/ 12;

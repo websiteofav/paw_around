@@ -102,8 +102,13 @@ class AppRouter {
         path: AppRoutes.otpVerification,
         name: AppRoutes.otpVerification,
         builder: (context, state) {
-          final phoneNumber = state.extra as String? ?? '';
-          return OTPScreen(phoneNumber: phoneNumber);
+          final extra = state.extra as Map<String, dynamic>? ?? {};
+          final phoneNumber = extra['phoneNumber'] as String? ?? '';
+          final verificationId = extra['verificationId'] as String? ?? '';
+          return OTPScreen(
+            phoneNumber: phoneNumber,
+            verificationId: verificationId,
+          );
         },
       ),
 
@@ -186,14 +191,14 @@ class AppRouter {
           // Community - Create Post Route
           GoRoute(
             path: AppRoutes.createPost,
-            name: 'createPost',
+            name: AppRoutes.createPost,
             builder: (context, state) => const CreatePostScreen(),
           ),
 
           // Community - Post Detail Route
           GoRoute(
             path: AppRoutes.postDetail,
-            name: 'postDetail',
+            name: AppRoutes.postDetail,
             builder: (context, state) {
               final postId = state.pathParameters['id']!;
               return PostDetailScreen(postId: postId);
@@ -203,7 +208,7 @@ class AppRouter {
           // Pet Care Settings Routes
           GoRoute(
             path: AppRoutes.groomingSettings,
-            name: 'groomingSettings',
+            name: AppRoutes.groomingSettings,
             builder: (context, state) {
               final pet = state.extra as PetModel;
               return GroomingSettingsScreen(pet: pet);
@@ -211,7 +216,7 @@ class AppRouter {
           ),
           GoRoute(
             path: AppRoutes.tickFleaSettings,
-            name: 'tickFleaSettings',
+            name: AppRoutes.tickFleaSettings,
             builder: (context, state) {
               final pet = state.extra as PetModel;
               return TickFleaSettingsScreen(pet: pet);
@@ -219,7 +224,7 @@ class AppRouter {
           ),
           GoRoute(
             path: AppRoutes.vaccinesSetup,
-            name: 'vaccinesSetup',
+            name: AppRoutes.vaccinesSetup,
             builder: (context, state) {
               final pet = state.extra as PetModel;
               return VaccinesSetupScreen(pet: pet);
@@ -229,7 +234,7 @@ class AppRouter {
           // Action Card Detail Route
           GoRoute(
             path: AppRoutes.actionDetail,
-            name: 'actionDetail',
+            name: AppRoutes.actionDetail,
             builder: (context, state) {
               final data = state.extra as ActionCardData;
               return ActionCardDetailScreen(data: data);

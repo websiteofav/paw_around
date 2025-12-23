@@ -59,7 +59,7 @@ class CommonFormField extends StatelessWidget {
               fontSize: 16,
             ),
             filled: true,
-            fillColor: AppColors.background,
+            fillColor: AppColors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(color: AppColors.patternColor),

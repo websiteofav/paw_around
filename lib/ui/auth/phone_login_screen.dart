@@ -20,14 +20,59 @@ class PhoneLoginScreen extends StatefulWidget {
 class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   String _completePhoneNumber = '';
   bool _isPhoneValid = false;
+  bool _isLoading = false;
 
-  void _onContinuePressed() {
-    if (_isPhoneValid && _completePhoneNumber.isNotEmpty) {
-      context.push(
-        AppRoutes.otpVerification,
-        extra: _completePhoneNumber,
-      );
+  Future<void> _onContinuePressed() async {
+    if (!_isPhoneValid || _completePhoneNumber.isEmpty) {
+      return;
     }
+
+    setState(() => _isLoading = true);
+
+    await sl<AuthRepository>().verifyPhoneNumber(
+      phoneNumber: _completePhoneNumber,
+      onCodeSent: (verificationId) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          context.push(
+            AppRoutes.otpVerification,
+            extra: {
+              'phoneNumber': _completePhoneNumber,
+              'verificationId': verificationId,
+            },
+          );
+        }
+      },
+      onError: (error) {
+        if (mounted) {
+          setState(() => _isLoading = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      },
+      onAutoVerified: (credential) async {
+        try {
+          await sl<AuthRepository>().signInWithPhoneCredential(credential);
+          if (mounted) {
+            context.go(AppRoutes.home);
+          }
+        } catch (e) {
+          if (mounted) {
+            setState(() => _isLoading = false);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(e.toString()),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
+        }
+      },
+    );
   }
 
   @override
@@ -56,12 +101,9 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               const SizedBox(height: 8),
 
               // Subtitle
-              const Text(
+              Text(
                 AppStrings.authSubtitle,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: AppColors.textSecondary,
-                ),
+                style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
 
@@ -130,13 +172,9 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           AppStrings.phoneNumber,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textPrimary,
-          ),
+          style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
         ),
         const SizedBox(height: 8),
         IntlPhoneField(
@@ -161,6 +199,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
+          disableLengthCheck: true,
           initialCountryCode: 'IN',
           dropdownTextStyle: const TextStyle(
             fontSize: 16,
@@ -191,7 +230,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       height: 52,
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _isPhoneValid ? _onContinuePressed : null,
+        onPressed: _isPhoneValid && !_isLoading ? _onContinuePressed : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
@@ -201,14 +240,23 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
           ),
           elevation: 0,
         ),
-        child: Text(
-          AppStrings.continueButton,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: _isPhoneValid ? AppColors.white : AppColors.white.withValues(alpha: 0.7),
-          ),
-        ),
+        child: _isLoading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                ),
+              )
+            : Text(
+                AppStrings.continueButton,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: _isPhoneValid ? AppColors.white : AppColors.white.withValues(alpha: 0.7),
+                ),
+              ),
       ),
     );
   }
@@ -240,26 +288,21 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        style: TextStyle(
-          fontSize: 14,
-          color: AppColors.textSecondary,
-        ),
+        style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
         children: [
-          TextSpan(text: '${AppStrings.termsText} '),
+          TextSpan(
+              text: '${AppStrings.termsText} ',
+              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary)),
           TextSpan(
             text: AppStrings.termsOfService,
-            style: TextStyle(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w500,
-            ),
+            style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
           ),
-          TextSpan(text: ' ${AppStrings.and} '),
+          TextSpan(
+              text: ' ${AppStrings.and} ',
+              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary)),
           TextSpan(
             text: AppStrings.privacyPolicyLink,
-            style: TextStyle(
-              color: AppColors.primary,
-              fontWeight: FontWeight.w500,
-            ),
+            style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
           ),
         ],
       ),

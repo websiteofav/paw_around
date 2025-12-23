@@ -70,6 +70,22 @@ class _AddPetViewState extends State<_AddPetView> {
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: Text(
+            widget.petToEdit != null ? 'Edit Pet' : AppStrings.addYourPet,
+            style: const TextStyle(
+              color: AppColors.navigationText,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: AppColors.navigationBackground,
+          elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+            onPressed: () => context.pop(),
+          ),
+        ),
         body: BlocListener<PetFormBloc, PetFormState>(
           listener: (context, state) {
             if (state.status == PetFormStatus.success) {
@@ -111,79 +127,48 @@ class _AddPetViewState extends State<_AddPetView> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Stack(
         children: [
-          SafeArea(
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                // Header
-                _buildHeader(context),
+                // Image Picker (Optional)
+                _buildImagePicker(context, formState),
+                const SizedBox(height: 24),
 
-                // Scrollable content
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        // Image Picker (Optional)
-                        _buildImagePicker(context, formState),
+                // Pet Name Field
+                CommonFormField(
+                  label: AppStrings.petName,
+                  hintText: AppStrings.petNameHint,
+                  controller: _nameController,
+                  onChanged: (value) {
+                    context.read<PetFormBloc>().add(UpdateName(value));
+                  },
+                  validator: (value) => formState.errors['name'],
+                ),
+                const SizedBox(height: 16),
 
-                        // Form Card
-                        Container(
-                          margin: const EdgeInsets.all(16),
-                          padding: const EdgeInsets.all(24),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            borderRadius: BorderRadius.circular(24),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.04),
-                                blurRadius: 16,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Pet Name Field
-                              CommonFormField(
-                                label: AppStrings.petName,
-                                hintText: "Pet's name",
-                                controller: _nameController,
-                                onChanged: (value) {
-                                  context.read<PetFormBloc>().add(UpdateName(value));
-                                },
-                                validator: (value) => formState.errors['name'],
-                              ),
-                              const SizedBox(height: 20),
+                // Pet Type Selector
+                const PetTypeSelector(),
+                const SizedBox(height: 16),
 
-                              // Pet Type Selector
-                              const PetTypeSelector(),
-                              const SizedBox(height: 20),
+                // Birthdate OR Age
+                const BirthdateAgeSelector(),
+                const SizedBox(height: 16),
 
-                              // Birthdate OR Age
-                              const BirthdateAgeSelector(),
-                              const SizedBox(height: 20),
+                // Gender Selection (Required)
+                _buildGenderSection(context, formState),
+                const SizedBox(height: 32),
 
-                              // Gender Selection (Required)
-                              _buildGenderSection(context, formState),
-                              const SizedBox(height: 24),
-
-                              // Save Button
-                              CommonButton(
-                                text: AppStrings.saveAndContinue,
-                                onPressed: formState.status == PetFormStatus.saving
-                                    ? null
-                                    : () {
-                                        context.read<PetFormBloc>().add(const SubmitForm());
-                                      },
-                                isLoading: formState.status == PetFormStatus.saving,
-                                size: ButtonSize.medium,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                // Save Button
+                CommonButton(
+                  text: AppStrings.saveAndContinue,
+                  onPressed: formState.status == PetFormStatus.saving
+                      ? null
+                      : () {
+                          context.read<PetFormBloc>().add(SubmitForm(petToEdit: widget.petToEdit));
+                        },
+                  isLoading: formState.status == PetFormStatus.saving,
+                  size: ButtonSize.medium,
                 ),
               ],
             ),
@@ -197,35 +182,6 @@ class _AddPetViewState extends State<_AddPetView> {
                 child: CircularProgressIndicator(color: AppColors.primary),
               ),
             ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          // Paw icon
-          const Icon(
-            Icons.chevron_left,
-            color: AppColors.textPrimary,
-            size: 28,
-          ),
-          const Spacer(),
-          // Title
-          Text(
-            widget.petToEdit != null ? 'Edit Pet' : AppStrings.addYourPet,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
-          ),
-          const Spacer(),
-          // Close button placeholder (for balance)
-          const SizedBox(width: 48),
         ],
       ),
     );

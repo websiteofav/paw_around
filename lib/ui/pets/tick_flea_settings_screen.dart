@@ -103,59 +103,61 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          // Custom App Bar
-          CareAppBar(
-            pet: widget.pet,
-            screenTitle: AppStrings.tickFleaPrevention,
-            titleIcon: Icons.bug_report_outlined,
-          ),
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Custom App Bar
+            CareAppBar(
+              pet: widget.pet,
+              screenTitle: AppStrings.tickFleaPrevention,
+              titleIcon: Icons.bug_report_outlined,
+            ),
 
-          // Scrollable content
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Frequency selector (no weekly option for tick/flea)
-                  FrequencySelector(
-                    title: AppStrings.frequency,
-                    selectedFrequency: _selectedFrequency,
-                    options: const [
-                      CareFrequency.none,
-                      CareFrequency.monthly,
-                      CareFrequency.quarterly,
-                    ],
-                    onChanged: _onFrequencyChanged,
-                  ),
+            // Scrollable content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  children: [
+                    // Frequency selector (no weekly option for tick/flea)
+                    FrequencySelector(
+                      title: AppStrings.frequency,
+                      selectedFrequency: _selectedFrequency,
+                      options: const [
+                        CareFrequency.none,
+                        CareFrequency.monthly,
+                        CareFrequency.quarterly,
+                      ],
+                      onChanged: _onFrequencyChanged,
+                    ),
 
-                  const SizedBox(height: 16),
+                    const SizedBox(height: 16),
 
-                  // Date picker
-                  DatePickerField(
-                    label: AppStrings.lastTreatment,
-                    selectedDate: _lastDate,
-                    onDateSelected: _onDateChanged,
-                  ),
+                    // Date picker
+                    DatePickerField(
+                      label: AppStrings.lastTreatment,
+                      selectedDate: _lastDate,
+                      onDateSelected: _onDateChanged,
+                    ),
 
-                  const SizedBox(height: 32),
-                ],
+                    const SizedBox(height: 32),
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Save button
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: CommonButton(
-              text: AppStrings.save,
-              onPressed: _isSaving ? null : _save,
-              isLoading: _isSaving,
-              size: ButtonSize.large,
+            // Save button
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: CommonButton(
+                text: AppStrings.save,
+                onPressed: _isSaving ? null : _save,
+                isLoading: _isSaving,
+                size: ButtonSize.medium,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

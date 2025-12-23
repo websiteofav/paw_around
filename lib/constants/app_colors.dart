@@ -75,6 +75,33 @@ class AppColors {
   static const Color onboardingWarningYellow = Color(0xFFFFF7D6);
   static const Color onboardingWarningRed = Color(0xFFEF4444);
 
+  // Gradient Colors - Urgent/Vaccine (Red)
+  static const Color urgentGradientStart = Color(0xFFFB7185);
+  static const Color urgentGradientEnd = Color(0xFFDB2777);
+  static const Color urgentBadge = Color(0xFFFDE047);
+  static const Color urgentBadgeText = Color(0xFF7F1D1D);
+
+  // Gradient Colors - Grooming (Emerald)
+  static const Color groomingGradientStart = Color(0xFF10B981);
+  static const Color groomingGradientEnd = Color(0xFF059669);
+  static const Color groomingBadge = Color(0xFFA7F3D0);
+  static const Color groomingBadgeText = Color(0xFF064E3B);
+
+  // Gradient Colors - Care Summary (Purple/Pink)
+  static const Color summaryGradientStart = Color(0xFFF3E8FF);
+  static const Color summaryGradientEnd = Color(0xFFFCE7F3);
+
+  // Stat Colors
+  static const Color statPurple = Color(0xFF9333EA);
+  static const Color statPink = Color(0xFFDB2777);
+  static const Color statEmerald = Color(0xFF10B981);
+
+  // Card Colors
+  static const Color cardBlueIcon = Color(0xFF2563EB);
+  static const Color cardBlueIconBg = Color(0xFFDBEAFE);
+  static const Color progressBarBg = Color(0xFFF3F4F6);
+  static const Color progressBarFill = Color(0xFF3B82F6);
+
   // Private constructor to prevent instantiation
   AppColors._();
 }

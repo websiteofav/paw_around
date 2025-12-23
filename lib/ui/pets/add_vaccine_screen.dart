@@ -5,6 +5,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/constants/vaccine_constants.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
@@ -213,10 +214,98 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
               variant: ButtonVariant.primary,
               size: ButtonSize.medium,
             ),
+
+            // Delete Button (only in edit mode)
+            if (_isEditMode) ...[
+              const SizedBox(height: 12),
+              _buildDeleteButton(),
+            ],
           ],
         ),
       ),
     );
+  }
+
+  Widget _buildDeleteButton() {
+    return GestureDetector(
+      onTap: _showDeleteConfirmation,
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.error),
+        ),
+        child: const Center(
+          child: Text(
+            AppStrings.deleteVaccine,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.error,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation() {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text(AppStrings.deleteVaccineConfirmTitle),
+        content: const Text(AppStrings.deleteVaccineConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(
+              AppStrings.cancel,
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              _deleteVaccine();
+            },
+            child: Text(
+              AppStrings.delete,
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteVaccine() async {
+    if (widget.pet == null || widget.vaccineToEdit == null) {
+      return;
+    }
+
+    try {
+      await sl<PetRepository>().deleteVaccine(widget.pet!.id, widget.vaccineToEdit!.id);
+      if (mounted) {
+        context.read<PetListBloc>().add(const LoadPetList());
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(AppStrings.vaccineDeletedSuccessfully),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        context.pop();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildSyringeIcon() {
@@ -260,12 +349,9 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             child: DropdownButton<VaccineMasterData>(
               isExpanded: true,
               value: _selectedVaccine,
-              hint: const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                child: Text(
-                  'Select vaccine',
-                  style: TextStyle(color: AppColors.textSecondary),
-                ),
+              hint: Text(
+                AppStrings.selectVaccine,
+                style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
               ),
               padding: const EdgeInsets.symmetric(horizontal: 16),
               borderRadius: BorderRadius.circular(14),
@@ -431,11 +517,11 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
           child: TextField(
             controller: _notesController,
             maxLines: 3,
-            decoration: const InputDecoration(
-              hintText: 'Optional notes...',
-              hintStyle: TextStyle(color: AppColors.textSecondary),
+            decoration: InputDecoration(
+              hintText: AppStrings.optionalNotesHint,
+              hintStyle: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(16),
             ),
           ),
         ),

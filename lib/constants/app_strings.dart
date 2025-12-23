@@ -95,7 +95,7 @@ class AppStrings {
   static const String gender = 'Gender';
   static const String genderOptional = 'Gender (optional)';
   static const String dateOfBirth = 'Date of Birth';
-  static const String birthdateOrAge = 'Birthdate OR Age';
+  static const String birthdateOrAge = 'Birth Date or Age';
   static const String weight = 'Weight (kg)';
   static const String notes = 'Notes';
   static const String addPhoto = 'Add Photo';
@@ -210,12 +210,17 @@ class AppStrings {
   static const String vaccineDueIn = 'vaccine due in';
 
   // Home Screen - Empty States
-  static const String welcomeToPawAroundHome = 'Welcome to Paw Around';
+  static const String welcomeToPawAroundHome = 'Your Pet Deserves The Best Care! 🐾';
   static const String addPetToGetStarted =
-      "To get started, add your pet and we'll take care of reminders for vaccines, grooming, and health.";
-  static const String addYourFirstPet = 'Add your first pet';
+      'Track vaccines, grooming & health - all in one place';
+  static const String addYourFirstPet = 'Get Started - It\'s Free!';
   static const String completeHealthDetails = "Complete %s's health details";
   static const String addVaccineDetails = 'Add vaccine details';
+  
+  // Welcome Card Benefits
+  static const String neverMissVaccines = 'Never miss vaccines & appointments';
+  static const String findVetsNearby = 'Find vets & groomers nearby';
+  static const String trackHealthWellness = 'Track health & wellness';
 
   // Care Settings Screens
   static const String grooming = 'Grooming';
@@ -286,6 +291,7 @@ class AppStrings {
   static const String accountSettings = 'Account settings';
   static const String logOutConfirmTitle = 'Log out?';
   static const String logOutConfirmMessage = 'You will need to sign in again to access Paw Around.';
+  static const String daysOld = 'days old';
   static const String monthsOld = 'months old';
   static const String yearsOld = 'years old';
   static const String noPetsAddedYet = 'No pets added yet';
@@ -300,6 +306,29 @@ class AppStrings {
   static const String nextDoseSoon = 'Next dose soon';
   static const String notSet = 'Not set';
   static const String noVaccinesAdded = 'No vaccines added';
+  static const String petNameHint = "Pet's name";
+  static const String delete = 'Delete';
+  static const String deletePet = 'Delete Pet';
+  static const String deletePetConfirmTitle = 'Delete Pet?';
+  static const String deletePetConfirmMessage =
+      'Are you sure you want to delete this pet? This action cannot be undone.';
+  static const String petDeletedSuccessfully = 'Pet deleted successfully';
+  static const String selectVaccine = 'Select vaccine';
+  static const String optionalNotesHint = 'Optional notes...';
+  static const String deleteVaccine = 'Delete Vaccine';
+  static const String deleteVaccineConfirmTitle = 'Delete Vaccine?';
+  static const String deleteVaccineConfirmMessage = 'Are you sure you want to delete this vaccine record?';
+  static const String vaccineDeletedSuccessfully = 'Vaccine deleted successfully';
+  static const String allGood = 'All good';
+  static const String thisWeek = 'This Week';
+  static const String groomingSession = 'Grooming Session';
+  static const String scheduleAppointment = 'Schedule appointment';
+  static const String protectionActive = 'Protection is active and working';
+  static const String daysLeft = 'days left';
+  static const String careSummary = 'Care Summary';
+  static const String activeTasks = 'Active Tasks';
+  static const String urgent = 'Urgent';
+  static const String scheduled = 'Scheduled';
 
   // Private constructor to prevent instantiation
   AppStrings._();

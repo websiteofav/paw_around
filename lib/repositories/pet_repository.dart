@@ -216,6 +216,21 @@ class PetRepository {
     });
   }
 
+  // Delete a vaccine from a pet
+  Future<void> deleteVaccine(String petId, String vaccineId) async {
+    final pet = await getPetById(petId);
+    if (pet == null) {
+      return;
+    }
+
+    final updatedVaccines = pet.vaccines.where((v) => v.id != vaccineId).toList();
+
+    await _petsRef.doc(petId).update({
+      'vaccines': updatedVaccines.map((v) => v.toFirestore()).toList(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
   // Mark grooming as done
   Future<void> markGroomingAsDone(String petId) async {
     final pet = await getPetById(petId);

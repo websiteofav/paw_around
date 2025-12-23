@@ -124,6 +124,7 @@ class AuthRepository {
   /// Get Firebase Auth error message - user-friendly messages
   String getAuthErrorMessage(FirebaseAuthException e) {
     switch (e.code) {
+      // Email/Password errors
       case 'user-not-found':
       case 'wrong-password':
       case 'invalid-credential':
@@ -134,6 +135,17 @@ class AuthRepository {
         return 'Please enter a valid email';
       case 'weak-password':
         return 'Password is too weak';
+      // Phone auth errors
+      case 'invalid-verification-code':
+        return 'Invalid OTP. Please check and try again';
+      case 'invalid-verification-id':
+      case 'session-expired':
+        return 'OTP has expired. Please request a new one';
+      case 'invalid-phone-number':
+        return 'Invalid phone number';
+      case 'quota-exceeded':
+        return 'SMS quota exceeded. Please try again later';
+      // General errors
       case 'user-disabled':
         return 'This account has been disabled';
       case 'too-many-requests':

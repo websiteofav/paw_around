@@ -70,7 +70,7 @@ class ProfileScreen extends StatelessWidget {
         if (state is PetListLoaded) {
           return ProfilePetsSection(pets: state.pets);
         }
-        return ProfilePetsSection(pets: const []);
+        return const ProfilePetsSection(pets: const []);
       },
     );
   }

@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
+import 'package:paw_around/repositories/pet_repository.dart';
 
 class PetOverviewScreen extends StatelessWidget {
   final PetModel pet;
@@ -16,6 +23,22 @@ class PetOverviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<PetListBloc, PetListState>(
+      builder: (context, state) {
+        // Get updated pet from state, fallback to passed pet
+        final currentPet = state is PetListLoaded
+            ? state.pets.firstWhere(
+                (p) => p.id == pet.id,
+                orElse: () => pet,
+              )
+            : pet;
+
+        return _buildContent(context, currentPet);
+      },
+    );
+  }
+
+  Widget _buildContent(BuildContext context, PetModel pet) {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -42,13 +65,13 @@ class PetOverviewScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Pet Info Card
-              _buildPetInfoCard(),
+              _buildPetInfoCard(pet),
 
               const SizedBox(height: 16),
 
               // Vaccines Section (only for dogs and cats)
               if (pet.supportsMedicalCare) ...[
-                _buildVaccinesSection(context),
+                _buildVaccinesSection(context, pet),
                 const SizedBox(height: 12),
               ],
 
@@ -57,7 +80,7 @@ class PetOverviewScreen extends StatelessWidget {
                 context: context,
                 icon: Icons.content_cut,
                 title: AppStrings.grooming,
-                subtitle: _getGroomingStatus(),
+                subtitle: _getGroomingStatus(pet),
                 onTap: () {
                   context.pushNamed(
                     AppRoutes.groomingSettings,
@@ -74,7 +97,7 @@ class PetOverviewScreen extends StatelessWidget {
                   context: context,
                   icon: Icons.shield_outlined,
                   title: AppStrings.tickFleaPrevention,
-                  subtitle: _getTickFleaStatus(),
+                  subtitle: _getTickFleaStatus(pet),
                   onTap: () {
                     context.pushNamed(
                       AppRoutes.tickFleaSettings,
@@ -88,7 +111,12 @@ class PetOverviewScreen extends StatelessWidget {
               if (!pet.supportsMedicalCare) const SizedBox(height: 12),
 
               // Edit Pet Details Button
-              _buildEditButton(context),
+              _buildEditButton(context, pet),
+
+              const SizedBox(height: 12),
+
+              // Delete Pet Button
+              _buildDeleteButton(context, pet),
             ],
           ),
         ),
@@ -96,8 +124,62 @@ class PetOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPetInfoCard() {
-    final bool hasCareDue = _hasCareDue();
+  void _showDeleteConfirmation(BuildContext context, PetModel pet) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text(AppStrings.deletePetConfirmTitle),
+        content: const Text(AppStrings.deletePetConfirmMessage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(
+              AppStrings.cancel,
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(dialogContext).pop();
+              await _deletePet(context, pet);
+            },
+            child: Text(
+              AppStrings.delete,
+              style: TextStyle(color: AppColors.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deletePet(BuildContext context, PetModel pet) async {
+    try {
+      await sl<PetRepository>().deletePet(pet.id);
+      if (context.mounted) {
+        context.read<PetListBloc>().add(const LoadPetList());
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(AppStrings.petDeletedSuccessfully),
+            backgroundColor: AppColors.success,
+          ),
+        );
+        context.pop();
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildPetInfoCard(PetModel pet) {
+    final bool hasCareDue = _hasCareDue(pet);
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -179,8 +261,8 @@ class PetOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVaccinesSection(BuildContext context) {
-    final upcomingCount = _getUpcomingVaccinesCount();
+  Widget _buildVaccinesSection(BuildContext context, PetModel pet) {
+    final upcomingCount = _getUpcomingVaccinesCount(pet);
     final headerText =
         upcomingCount > 0 ? '${AppStrings.vaccines} ($upcomingCount ${AppStrings.comingUp})' : AppStrings.vaccines;
 
@@ -198,7 +280,7 @@ class PetOverviewScreen extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.vaccines_outlined,
                   size: 20,
                   color: AppColors.primary,
@@ -218,8 +300,8 @@ class PetOverviewScreen extends StatelessWidget {
 
           // Vaccine list
           if (pet.vaccines.isEmpty)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Text(
                 AppStrings.noVaccinesAdded,
                 style: TextStyle(
@@ -312,10 +394,7 @@ class PetOverviewScreen extends StatelessWidget {
             Expanded(
               child: Text(
                 vaccine.vaccineName,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: AppColors.textPrimary,
-                ),
+                style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
               ),
             ),
             const Icon(
@@ -396,7 +475,7 @@ class PetOverviewScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEditButton(BuildContext context) {
+  Widget _buildEditButton(BuildContext context, PetModel pet) {
     return GestureDetector(
       onTap: () {
         context.pushNamed(AppRoutes.addPet, extra: pet);
@@ -421,6 +500,30 @@ class PetOverviewScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildDeleteButton(BuildContext context, PetModel pet) {
+    return GestureDetector(
+      onTap: () => _showDeleteConfirmation(context, pet),
+      child: Container(
+        height: 52,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: AppColors.error),
+        ),
+        child: const Center(
+          child: Text(
+            AppStrings.deletePet,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: AppColors.error,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildDefaultPetIcon() {
     return Container(
       width: 80,
@@ -438,7 +541,10 @@ class PetOverviewScreen extends StatelessWidget {
     final now = DateTime.now();
     final months = (now.year - dateOfBirth.year) * 12 + (now.month - dateOfBirth.month);
 
-    if (months < 12) {
+    if (months == 0) {
+      final days = now.difference(dateOfBirth).inDays;
+      return '$days ${AppStrings.daysOld}';
+    } else if (months < 12) {
       return '$months ${AppStrings.monthsOld}';
     } else {
       final years = months ~/ 12;
@@ -461,7 +567,7 @@ class PetOverviewScreen extends StatelessWidget {
     }
   }
 
-  bool _hasCareDue() {
+  bool _hasCareDue(PetModel pet) {
     // Check vaccines
     if (pet.supportsMedicalCare) {
       for (final vaccine in pet.vaccines) {
@@ -486,7 +592,7 @@ class PetOverviewScreen extends StatelessWidget {
     return false;
   }
 
-  int _getUpcomingVaccinesCount() {
+  int _getUpcomingVaccinesCount(PetModel pet) {
     final now = DateTime.now();
     final thirtyDaysFromNow = now.add(const Duration(days: 30));
 
@@ -495,27 +601,35 @@ class PetOverviewScreen extends StatelessWidget {
     }).length;
   }
 
-  String _getGroomingStatus() {
+  String _getGroomingStatus(PetModel pet) {
     if (pet.groomingSettings == null || !pet.groomingSettings!.hasReminder) {
       return AppStrings.notSet;
     }
 
-    if (pet.groomingSettings!.isDueSoon || pet.groomingSettings!.isOverdue) {
+    if (pet.groomingSettings!.isOverdue) {
       return AppStrings.upcomingSoon;
     }
 
-    return AppStrings.notSet;
+    if (pet.groomingSettings!.isDueSoon) {
+      return AppStrings.upcomingSoon;
+    }
+
+    return AppStrings.allGood;
   }
 
-  String _getTickFleaStatus() {
+  String _getTickFleaStatus(PetModel pet) {
     if (pet.tickFleaSettings == null || !pet.tickFleaSettings!.hasReminder) {
       return AppStrings.notSet;
     }
 
-    if (pet.tickFleaSettings!.isDueSoon || pet.tickFleaSettings!.isOverdue) {
+    if (pet.tickFleaSettings!.isOverdue) {
       return AppStrings.nextDoseSoon;
     }
 
-    return AppStrings.notSet;
+    if (pet.tickFleaSettings!.isDueSoon) {
+      return AppStrings.nextDoseSoon;
+    }
+
+    return AppStrings.allGood;
   }
 }

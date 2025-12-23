@@ -7,6 +7,7 @@ class AppIcons {
   static const String appleIcon = 'assets/auth/apple_icon.png';
 
   static const String pawIcon = 'assets/home/paw_icon.png';
+  static const String addPetAnimation = 'assets/lottie/add_pet.json';
 
   AppIcons._();
 }

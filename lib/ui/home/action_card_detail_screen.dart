@@ -307,18 +307,22 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
                         Expanded(
                           child: CommonButton(
                             size: ButtonSize.small,
-                            text: AppStrings.markAsDone,
+                            text: AppStrings.snooze,
                             variant: ButtonVariant.outline,
-                            onPressed: _handleMarkAsDone,
+                            customColor: AppColors.warning,
+                            customTextColor: AppColors.warning,
+                            onPressed: _handleSnooze,
                           ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: CommonButton(
                             size: ButtonSize.small,
-                            text: AppStrings.snooze,
+                            text: AppStrings.markAsDone,
+                            customColor: AppColors.authPrimaryButton,
+                            customTextColor: AppColors.authPrimaryButton,
                             variant: ButtonVariant.outline,
-                            onPressed: _handleSnooze,
+                            onPressed: _handleMarkAsDone,
                           ),
                         ),
                       ],

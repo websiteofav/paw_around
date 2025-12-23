@@ -118,7 +118,7 @@ class BirthdateAgeSelector extends StatelessWidget {
   void _selectDateOfBirth(BuildContext context, PetFormState state) async {
     final date = await showDatePicker(
       context: context,
-      initialDate: state.dateOfBirth ?? DateTime.now().subtract(const Duration(days: 365)),
+      initialDate: state.dateOfBirth ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
       builder: (context, child) {
