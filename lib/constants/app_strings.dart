@@ -211,12 +211,11 @@ class AppStrings {
 
   // Home Screen - Empty States
   static const String welcomeToPawAroundHome = 'Your Pet Deserves The Best Care! 🐾';
-  static const String addPetToGetStarted =
-      'Track vaccines, grooming & health - all in one place';
+  static const String addPetToGetStarted = 'Track vaccines, grooming & health - all in one place';
   static const String addYourFirstPet = 'Get Started - It\'s Free!';
   static const String completeHealthDetails = "Complete %s's health details";
   static const String addVaccineDetails = 'Add vaccine details';
-  
+
   // Welcome Card Benefits
   static const String neverMissVaccines = 'Never miss vaccines & appointments';
   static const String findVetsNearby = 'Find vets & groomers nearby';
@@ -236,6 +235,15 @@ class AppStrings {
   static const String settingsSaved = 'Settings saved successfully';
   static const String addGroomingDetails = 'Add grooming schedule';
   static const String addTickFleaDetails = 'Add treatment schedule';
+
+  // Setup Reminder Card Subtitles
+  static const String vaccineSubtitle = 'Protect against common diseases';
+  static const String groomingSubtitle = 'Keep coat healthy & tangle-free';
+  static const String tickFleaSubtitle = 'Prevent parasites & infections';
+  static const String itemsRemaining = 'items remaining';
+  static const String itemRemaining = 'item remaining';
+  static const String quickSetup = '~1 min';
+  static const String remindMeLater = 'Remind me later';
 
   // Action Card Detail Screen
   static const String vaccine = 'Vaccine';
@@ -270,6 +278,11 @@ class AppStrings {
   static const String markDoneDescription = 'This will update the last completed date and calculate the next due date.';
   static const String confirm = 'Confirm';
   static const String markedAsDone = 'Marked as done';
+
+  // Care History Card
+  static const String careHistory = 'Care History';
+  static const String lastCompleted = 'Last completed';
+  static const String nextDue = 'Next due';
 
   // Profile Screen
   static const String myPets = 'My Pets';

@@ -23,6 +23,7 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
     on<SelectGender>(_onSelectGender);
     on<SelectDateOfBirth>(_onSelectDateOfBirth);
     on<SelectImage>(_onSelectImage);
+    on<SetImageLoading>(_onSetImageLoading);
 
     // Vaccine management
     on<AddVaccine>(_onAddVaccine);
@@ -60,11 +61,23 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
   }
 
   void _onSelectDateOfBirth(SelectDateOfBirth event, Emitter<PetFormState> emit) {
-    emit(state.copyWith(dateOfBirth: event.date, status: PetFormStatus.editing));
+    emit(state.copyWith(
+      dateOfBirth: event.date,
+      isExactDateOfBirth: event.isExact,
+      status: PetFormStatus.editing,
+    ));
   }
 
   void _onSelectImage(SelectImage event, Emitter<PetFormState> emit) {
-    emit(state.copyWith(imagePath: event.imagePath, status: PetFormStatus.editing));
+    emit(state.copyWith(
+      imagePath: event.imagePath,
+      isImageLoading: false,
+      status: PetFormStatus.editing,
+    ));
+  }
+
+  void _onSetImageLoading(SetImageLoading event, Emitter<PetFormState> emit) {
+    emit(state.copyWith(isImageLoading: event.isLoading));
   }
 
   void _onAddVaccine(AddVaccine event, Emitter<PetFormState> emit) {

@@ -17,6 +17,7 @@ import 'package:paw_around/ui/pets/widgets/pet_type_selector.dart';
 import 'package:paw_around/ui/pets/widgets/birthdate_age_selector.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/common_form_field.dart';
+import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class AddPetScreen extends StatelessWidget {
   final PetModel? petToEdit;
@@ -140,10 +141,11 @@ class _AddPetViewState extends State<_AddPetView> {
                   label: AppStrings.petName,
                   hintText: AppStrings.petNameHint,
                   controller: _nameController,
+                  isRequired: true,
                   onChanged: (value) {
                     context.read<PetFormBloc>().add(UpdateName(value));
                   },
-                  validator: (value) => formState.errors['name'],
+                  errorText: formState.errors['name'],
                 ),
                 const SizedBox(height: 16),
 
@@ -191,13 +193,26 @@ class _AddPetViewState extends State<_AddPetView> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          AppStrings.gender,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textPrimary,
-          ),
+        Row(
+          children: [
+            const Text(
+              AppStrings.gender,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(width: 4),
+            const Text(
+              '*',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.error,
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 8),
         Row(
@@ -219,20 +234,35 @@ class _AddPetViewState extends State<_AddPetView> {
             ),
           ],
         ),
+        // Error message
+        if (state.errors['gender'] != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              state.errors['gender']!,
+              style: const TextStyle(
+                color: AppColors.error,
+                fontSize: 12,
+              ),
+            ),
+          ),
       ],
     );
   }
 
   Widget _buildGenderButton(BuildContext context, String gender, bool isSelected) {
-    return GestureDetector(
-      onTap: () => context.read<PetFormBloc>().add(SelectGender(gender)),
-      child: Container(
+    return ScaleButton(
+      onPressed: () => context.read<PetFormBloc>().add(SelectGender(gender)),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
+            width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Text(
@@ -250,9 +280,10 @@ class _AddPetViewState extends State<_AddPetView> {
 
   Widget _buildImagePicker(BuildContext context, PetFormState state) {
     final hasImage = state.imagePath != null && state.imagePath!.isNotEmpty;
+    final isLoading = state.isImageLoading;
 
-    return GestureDetector(
-      onTap: () => _showImagePickerOptions(context),
+    return ScaleButton(
+      onPressed: isLoading ? null : () => _showImagePickerOptions(context, hasImage: hasImage),
       child: Container(
         height: 160,
         width: double.infinity,
@@ -260,17 +291,18 @@ class _AddPetViewState extends State<_AddPetView> {
         child: Center(
           child: Stack(
             children: [
-              Container(
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
                 width: 140,
                 height: 140,
                 decoration: BoxDecoration(
                   color: AppColors.iconBgLight,
                   borderRadius: BorderRadius.circular(70),
                   border: Border.all(
-                    color: AppColors.border,
-                    width: 2,
+                    color: isLoading ? AppColors.primary : AppColors.border,
+                    width: isLoading ? 3 : 2,
                   ),
-                  image: hasImage
+                  image: hasImage && !isLoading
                       ? DecorationImage(
                           image: state.imagePath!.startsWith('http')
                               ? NetworkImage(state.imagePath!) as ImageProvider
@@ -279,33 +311,44 @@ class _AddPetViewState extends State<_AddPetView> {
                         )
                       : null,
                 ),
-                child: hasImage
-                    ? null
-                    : const Icon(
-                        Icons.pets,
-                        size: 64,
-                        color: AppColors.primary,
-                      ),
+                child: isLoading
+                    ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.primary,
+                          strokeWidth: 3,
+                        ),
+                      )
+                    : hasImage
+                        ? null
+                        : const Icon(
+                            Icons.pets,
+                            size: 64,
+                            color: AppColors.primary,
+                          ),
               ),
               // Camera icon overlay
               Positioned(
                 right: 0,
                 bottom: 0,
-                child: Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.primary,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppColors.surface,
-                      width: 2,
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 200),
+                  opacity: isLoading ? 0.5 : 1.0,
+                  child: Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: AppColors.surface,
+                        width: 2,
+                      ),
                     ),
-                  ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    color: AppColors.white,
-                    size: 20,
+                    child: const Icon(
+                      Icons.camera_alt,
+                      color: AppColors.white,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
@@ -316,14 +359,14 @@ class _AddPetViewState extends State<_AddPetView> {
     );
   }
 
-  void _showImagePickerOptions(BuildContext context) {
+  void _showImagePickerOptions(BuildContext context, {bool hasImage = false}) {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
-      builder: (context) => SafeArea(
+      builder: (sheetContext) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -333,7 +376,7 @@ class _AddPetViewState extends State<_AddPetView> {
                 leading: const Icon(Icons.camera_alt, color: AppColors.primary),
                 title: const Text('Take a photo'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
                   _pickImage(ImageSource.camera);
                 },
               ),
@@ -341,10 +384,24 @@ class _AddPetViewState extends State<_AddPetView> {
                 leading: const Icon(Icons.photo_library, color: AppColors.primary),
                 title: const Text('Choose from gallery'),
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.pop(sheetContext);
                   _pickImage(ImageSource.gallery);
                 },
               ),
+              if (hasImage) ...[
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.delete_outline, color: AppColors.error),
+                  title: const Text(
+                    'Remove photo',
+                    style: TextStyle(color: AppColors.error),
+                  ),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    context.read<PetFormBloc>().add(const SelectImage(null));
+                  },
+                ),
+              ],
             ],
           ),
         ),
@@ -353,6 +410,9 @@ class _AddPetViewState extends State<_AddPetView> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
+    // Show loading state
+    context.read<PetFormBloc>().add(const SetImageLoading(true));
+
     try {
       final picker = ImagePicker();
       final pickedFile = await picker.pickImage(
@@ -364,9 +424,13 @@ class _AddPetViewState extends State<_AddPetView> {
 
       if (pickedFile != null && mounted) {
         context.read<PetFormBloc>().add(SelectImage(pickedFile.path));
+      } else if (mounted) {
+        // User cancelled, hide loading
+        context.read<PetFormBloc>().add(const SetImageLoading(false));
       }
     } catch (e) {
       if (mounted) {
+        context.read<PetFormBloc>().add(const SetImageLoading(false));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Failed to pick image: $e'),

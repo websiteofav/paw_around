@@ -61,10 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, petState) {
             // Show skeleton while loading
             if (petState is PetListLoading) {
-              return Column(
+              return const Column(
                 children: [
-                  const AppBarSkeleton(),
-                  const Expanded(child: HomeSkeletonLoader()),
+                  AppBarSkeleton(),
+                  Expanded(child: HomeSkeletonLoader()),
                 ],
               );
             }
@@ -113,18 +113,72 @@ class _HomeScreenState extends State<HomeScreen> {
       return _buildWelcomeState();
     }
 
-    // For "Other" pet types, skip vaccine setup reminder
+    // For "Other" pet types, skip vaccine and tick & flea setup
     final supportsMedicalCare = activePet!.supportsMedicalCare;
 
-    // State 2: Pet exists but no vaccines (only for dog/cat)
-    final hasVaccines = activePet.vaccines.isNotEmpty;
-    if (supportsMedicalCare && !hasVaccines) {
-      return _buildSetupReminderState(activePet);
+    // Check what's missing for setup
+    final missingItems = _getMissingSetupItems(activePet, supportsMedicalCare);
+    final totalItems = _getTotalSetupItems(supportsMedicalCare);
+
+    // State 2: Pet exists but has missing setup items
+    if (missingItems.isNotEmpty) {
+      return _buildSetupReminderState(activePet, missingItems, totalItems);
     }
 
-    // State 3 & 4: Pet and vaccines exist (or Other pet type)
+    // State 3 & 4: All setup complete
     final hasUpcomingVaccine = supportsMedicalCare && _hasUpcomingVaccine(pets);
     return _buildNormalState(pets, activePet, hasUpcomingVaccine);
+  }
+
+  List<SetupItem> _getMissingSetupItems(PetModel pet, bool supportsMedicalCare) {
+    final List<SetupItem> missingItems = [];
+
+    // Check vaccines (only for dog/cat)
+    if (supportsMedicalCare && pet.vaccines.isEmpty) {
+      missingItems.add(
+        SetupItem(
+          type: SetupItemType.vaccines,
+          label: AppStrings.addVaccineDetails,
+          subtitle: AppStrings.vaccineSubtitle,
+          icon: Icons.vaccines_outlined,
+          onTap: () => context.pushNamed(AppRoutes.addVaccine, extra: pet),
+        ),
+      );
+    }
+
+    // Check grooming (for all pet types)
+    if (pet.groomingSettings?.hasReminder != true) {
+      missingItems.add(
+        SetupItem(
+          type: SetupItemType.grooming,
+          label: AppStrings.addGroomingDetails,
+          subtitle: AppStrings.groomingSubtitle,
+          icon: Icons.content_cut,
+          onTap: () => context.pushNamed(AppRoutes.groomingSettings, extra: pet),
+        ),
+      );
+    }
+
+    // Check tick & flea (only for dog/cat)
+    if (supportsMedicalCare && pet.tickFleaSettings?.hasReminder != true) {
+      missingItems.add(
+        SetupItem(
+          type: SetupItemType.tickFlea,
+          label: AppStrings.addTickFleaDetails,
+          subtitle: AppStrings.tickFleaSubtitle,
+          icon: Icons.shield_outlined,
+          onTap: () => context.pushNamed(AppRoutes.tickFleaSettings, extra: pet),
+        ),
+      );
+    }
+
+    return missingItems;
+  }
+
+  int _getTotalSetupItems(bool supportsMedicalCare) {
+    // Dog/Cat: 3 items (vaccines, grooming, tick & flea)
+    // Other: 1 item (grooming only)
+    return supportsMedicalCare ? 3 : 1;
   }
 
   // State 1: Welcome state for new users
@@ -135,8 +189,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // State 2: Setup reminder for users with pets but no vaccines
-  Widget _buildSetupReminderState(PetModel pet) {
+  // State 2: Setup reminder for users with pets but missing setup items
+  Widget _buildSetupReminderState(PetModel pet, List<SetupItem> missingItems, int totalItems) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(16),
@@ -147,9 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
             index: 0,
             child: SetupReminderCard(
               petName: pet.name,
-              onAddVaccinePressed: () {
-                context.pushNamed(AppRoutes.addVaccine, extra: pet);
-              },
+              missingItems: missingItems,
+              totalItems: totalItems,
             ),
           ),
           const SizedBox(height: 24),
@@ -261,7 +314,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: groomingDueSoon
                     ? GroomingDueCard(
                         badgeText: _getGroomingBadgeText(activePet),
-                        onTap: () {},
                       )
                     : CareProgressCard(
                         icon: Icons.content_cut,
@@ -269,7 +321,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         subtitle: _getGroomingSubtitle(activePet),
                         daysLeft: activePet.groomingSettings?.daysUntilDue ?? 30,
                         totalDays: _getGroomingTotalDays(activePet),
-                        onTap: () {},
                       ),
               ),
             ),
@@ -320,7 +371,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     subtitle: tickFleaDueSoon ? AppStrings.reminderToProtect : AppStrings.protectionActive,
                     daysLeft: activePet.tickFleaSettings?.daysUntilDue ?? 30,
                     totalDays: _getTickFleaTotalDays(activePet),
-                    onTap: () {},
                   ),
                 ),
               ),

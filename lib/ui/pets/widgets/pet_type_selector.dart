@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class PetTypeSelector extends StatelessWidget {
   const PetTypeSelector({super.key});
@@ -18,13 +21,26 @@ class PetTypeSelector extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              AppStrings.petType,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
-              ),
+            Row(
+              children: [
+                const Text(
+                  AppStrings.petType,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Text(
+                  '*',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.error,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
 
@@ -34,7 +50,7 @@ class PetTypeSelector extends StatelessWidget {
                 Expanded(
                   child: _PetTypeOption(
                     label: AppStrings.dog,
-                    icon: Icons.pets,
+                    icon: AppIcons.dogIcon,
                     isSelected: selectedSpecies == 'dog',
                     onTap: () {
                       context.read<PetFormBloc>().add(const SelectSpecies('Dog'));
@@ -45,7 +61,7 @@ class PetTypeSelector extends StatelessWidget {
                 Expanded(
                   child: _PetTypeOption(
                     label: AppStrings.cat,
-                    icon: Icons.pest_control_rodent_outlined,
+                    icon: AppIcons.catIcon,
                     isSelected: selectedSpecies == 'cat',
                     onTap: () {
                       context.read<PetFormBloc>().add(const SelectSpecies('Cat'));
@@ -60,7 +76,7 @@ class PetTypeSelector extends StatelessWidget {
             // Other option (full width)
             _PetTypeOption(
               label: AppStrings.other,
-              icon: Icons.cruelty_free_outlined,
+              icon: AppIcons.otherPetIcon,
               isSelected: selectedSpecies == 'other',
               showCheckmark: true,
               onTap: () {
@@ -86,6 +102,19 @@ class PetTypeSelector extends StatelessWidget {
                 ),
               ),
             ],
+
+            // Error message
+            if (state.errors['species'] != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  state.errors['species']!,
+                  style: const TextStyle(
+                    color: AppColors.error,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
           ],
         );
       },
@@ -95,7 +124,7 @@ class PetTypeSelector extends StatelessWidget {
 
 class _PetTypeOption extends StatelessWidget {
   final String label;
-  final IconData icon;
+  final String icon;
   final bool isSelected;
   final bool showCheckmark;
   final VoidCallback onTap;
@@ -110,33 +139,38 @@ class _PetTypeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    return ScaleButton(
+      onPressed: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
-            width: 1,
+            width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(
           mainAxisAlignment: showCheckmark ? MainAxisAlignment.start : MainAxisAlignment.center,
           children: [
-            if (showCheckmark && isSelected) ...[
-              Icon(
-                Icons.check,
-                color: AppColors.primary,
-                size: 20,
+            if (showCheckmark) ...[
+              AnimatedCheckmark(isVisible: isSelected),
+              AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                child: SizedBox(width: isSelected ? 8 : 0),
               ),
-              const SizedBox(width: 8),
             ],
-            Icon(
+            SvgPicture.asset(
               icon,
-              color: isSelected ? AppColors.primary : AppColors.textSecondary,
-              size: 20,
+              width: 20,
+              height: 20,
+              colorFilter: ColorFilter.mode(
+                isSelected ? AppColors.primary : AppColors.textSecondary,
+                BlendMode.srcIn,
+              ),
             ),
             const SizedBox(width: 8),
             Text(
@@ -148,6 +182,31 @@ class _PetTypeOption extends StatelessWidget {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Animated checkmark that scales in/out
+class AnimatedCheckmark extends StatelessWidget {
+  final bool isVisible;
+
+  const AnimatedCheckmark({super.key, required this.isVisible});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedScale(
+      scale: isVisible ? 1.0 : 0.0,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.elasticOut,
+      child: AnimatedOpacity(
+        opacity: isVisible ? 1.0 : 0.0,
+        duration: const Duration(milliseconds: 150),
+        child: const Icon(
+          Icons.check,
+          color: AppColors.primary,
+          size: 20,
         ),
       ),
     );

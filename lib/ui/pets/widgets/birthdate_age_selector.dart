@@ -5,6 +5,7 @@ import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class BirthdateAgeSelector extends StatelessWidget {
   const BirthdateAgeSelector({super.key});
@@ -16,13 +17,26 @@ class BirthdateAgeSelector extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              AppStrings.birthdateOrAge,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
-              ),
+            Row(
+              children: [
+                const Text(
+                  AppStrings.birthdateOrAge,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                const Text(
+                  '*',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.error,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 8),
 
@@ -31,11 +45,11 @@ class BirthdateAgeSelector extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  // Date picker option - only selected if date exists and no age range matches
+                  // Date picker option - shows selected date when picked
                   _AgeOption(
-                    label: AppStrings.selectDate,
+                    label: _getDatePickerLabel(state),
                     icon: Icons.calendar_today_outlined,
-                    isSelected: _isDatePickerSelected(state),
+                    isSelected: _isExactDateSelected(state),
                     onTap: () => _selectDateOfBirth(context, state),
                   ),
                   const SizedBox(width: 8),
@@ -86,7 +100,7 @@ class BirthdateAgeSelector extends StatelessWidget {
   }
 
   bool _isAgeRangeSelected(PetFormState state, int minYears, int maxYears) {
-    if (state.dateOfBirth == null) {
+    if (state.dateOfBirth == null || state.isExactDateOfBirth) {
       return false;
     }
     final now = DateTime.now();
@@ -94,9 +108,19 @@ class BirthdateAgeSelector extends StatelessWidget {
     return ageInYears >= minYears && ageInYears < maxYears;
   }
 
-  /// Date picker should never appear selected - it's just a trigger to open the picker
-  bool _isDatePickerSelected(PetFormState state) {
-    return false;
+  /// Date picker is selected when user explicitly picked an exact date
+  bool _isExactDateSelected(PetFormState state) {
+    return state.dateOfBirth != null && state.isExactDateOfBirth;
+  }
+
+  /// Returns the label for date picker - shows formatted date if selected
+  String _getDatePickerLabel(PetFormState state) {
+    if (state.dateOfBirth != null && state.isExactDateOfBirth) {
+      final date = state.dateOfBirth!;
+      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return '${months[date.month - 1]} ${date.day}, ${date.year}';
+    }
+    return AppStrings.selectDate;
   }
 
   void _selectAgeRange(BuildContext context, int minYears, int maxYears) {
@@ -137,7 +161,7 @@ class BirthdateAgeSelector extends StatelessWidget {
     );
 
     if (date != null && context.mounted) {
-      context.read<PetFormBloc>().add(SelectDateOfBirth(date));
+      context.read<PetFormBloc>().add(SelectDateOfBirth(date, isExact: true));
     }
   }
 }
@@ -157,16 +181,18 @@ class _AgeOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    return ScaleButton(
+      onPressed: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
-            width: 1,
+            width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(

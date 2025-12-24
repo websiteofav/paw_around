@@ -16,14 +16,14 @@ class WelcomeCard extends StatelessWidget {
       padding: const EdgeInsets.all(28),
       margin: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.primary.withValues(alpha: 0.1),
-            AppColors.secondary.withValues(alpha: 0.02),
-          ],
-        ),
+        // gradient: LinearGradient(
+        //   begin: Alignment.topLeft,
+        //   end: Alignment.bottomRight,
+        //   colors: [
+        //     AppColors.primary.withValues(alpha: 0.1),
+        //     AppColors.secondary.withValues(alpha: 0.02),
+        //   ],
+        // ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: AppColors.primary.withValues(alpha: 0.1),

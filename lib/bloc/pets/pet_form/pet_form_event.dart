@@ -60,10 +60,11 @@ class SelectGender extends PetFormEvent {
 
 class SelectDateOfBirth extends PetFormEvent {
   final DateTime date;
-  const SelectDateOfBirth(this.date);
+  final bool isExact;
+  const SelectDateOfBirth(this.date, {this.isExact = false});
 
   @override
-  List<Object?> get props => [date];
+  List<Object?> get props => [date, isExact];
 }
 
 class SelectImage extends PetFormEvent {
@@ -72,6 +73,14 @@ class SelectImage extends PetFormEvent {
 
   @override
   List<Object?> get props => [imagePath];
+}
+
+class SetImageLoading extends PetFormEvent {
+  final bool isLoading;
+  const SetImageLoading(this.isLoading);
+
+  @override
+  List<Object?> get props => [isLoading];
 }
 
 // Vaccine management

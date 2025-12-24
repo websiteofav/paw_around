@@ -16,9 +16,11 @@ class PetFormState extends Equatable {
   final String breed;
   final String gender;
   final DateTime? dateOfBirth;
+  final bool isExactDateOfBirth;
   final String weight;
   final String notes;
   final String? imagePath;
+  final bool isImageLoading;
   final List<VaccineModel> vaccines;
   final Map<String, String> errors;
   final bool isValid;
@@ -32,9 +34,11 @@ class PetFormState extends Equatable {
     this.breed = '',
     this.gender = 'Male',
     this.dateOfBirth,
+    this.isExactDateOfBirth = false,
     this.weight = '',
     this.notes = '',
     this.imagePath,
+    this.isImageLoading = false,
     this.vaccines = const [],
     this.errors = const {},
     this.isValid = false,
@@ -49,9 +53,11 @@ class PetFormState extends Equatable {
     String? breed,
     String? gender,
     DateTime? dateOfBirth,
+    bool? isExactDateOfBirth,
     String? weight,
     String? notes,
     String? imagePath,
+    bool? isImageLoading,
     List<VaccineModel>? vaccines,
     Map<String, String>? errors,
     bool? isValid,
@@ -65,9 +71,11 @@ class PetFormState extends Equatable {
       breed: breed ?? this.breed,
       gender: gender ?? this.gender,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+      isExactDateOfBirth: isExactDateOfBirth ?? this.isExactDateOfBirth,
       weight: weight ?? this.weight,
       notes: notes ?? this.notes,
       imagePath: imagePath ?? this.imagePath,
+      isImageLoading: isImageLoading ?? this.isImageLoading,
       vaccines: vaccines ?? this.vaccines,
       errors: errors ?? this.errors,
       isValid: isValid ?? this.isValid,
@@ -84,9 +92,11 @@ class PetFormState extends Equatable {
         breed,
         gender,
         dateOfBirth,
+        isExactDateOfBirth,
         weight,
         notes,
         imagePath,
+        isImageLoading,
         vaccines,
         errors,
         isValid,
