@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
@@ -66,10 +67,37 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     final result = await locationService.getCurrentLocation();
 
     if (result.isSuccess && result.position != null) {
+      final lat = result.position!.latitude;
+      final lng = result.position!.longitude;
+
+      // Reverse geocode to get readable address
+      String locationName = '${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}';
+      try {
+        final placemarks = await placemarkFromCoordinates(lat, lng);
+        if (placemarks.isNotEmpty) {
+          final place = placemarks.first;
+          // Format: "Neighborhood, City" or "Street, City"
+          final parts = <String>[];
+          if (place.subLocality?.isNotEmpty == true) {
+            parts.add(place.subLocality!);
+          } else if (place.street?.isNotEmpty == true) {
+            parts.add(place.street!);
+          }
+          if (place.locality?.isNotEmpty == true) {
+            parts.add(place.locality!);
+          }
+          if (parts.isNotEmpty) {
+            locationName = parts.join(', ');
+          }
+        }
+      } catch (e) {
+        // Fallback to coordinates if geocoding fails
+      }
+
       setState(() {
-        _latitude = result.position!.latitude;
-        _longitude = result.position!.longitude;
-        _locationController.text = '${_latitude!.toStringAsFixed(4)}, ${_longitude!.toStringAsFixed(4)}';
+        _latitude = lat;
+        _longitude = lng;
+        _locationController.text = locationName;
       });
     } else {
       if (mounted) {
@@ -154,22 +182,38 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: Text(AppStrings.createPost,
-              style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.navigationText)),
+          title: const Text(
+            AppStrings.createPost,
+            style: TextStyle(
+              color: AppColors.navigationText,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           backgroundColor: AppColors.navigationBackground,
           elevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+            onPressed: () => context.pop(),
+          ),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Post Type Toggle
                 _buildTypeToggle(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 24),
+
+                // Pet Photo
                 _buildImagePicker(),
-                const SizedBox(height: 16),
+                const SizedBox(height: 28),
+
+                // Pet Details Section
+                _buildSectionHeader('PET DETAILS', icon: Icons.pets),
                 CommonTextField(
                   controller: _petNameController,
                   hintText: AppStrings.petName,
@@ -177,18 +221,26 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   validator: (value) => Validators.required(value, AppStrings.petName),
                 ),
                 const SizedBox(height: 12),
-                CommonTextField(
-                  controller: _breedController,
-                  hintText: AppStrings.breed,
-                  labelText: AppStrings.breed,
-                  validator: (value) => Validators.required(value, AppStrings.breed),
-                ),
-                const SizedBox(height: 12),
-                CommonTextField(
-                  controller: _colorController,
-                  hintText: AppStrings.color,
-                  labelText: AppStrings.color,
-                  validator: (value) => Validators.required(value, AppStrings.color),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CommonTextField(
+                        controller: _breedController,
+                        hintText: AppStrings.breed,
+                        labelText: AppStrings.breed,
+                        validator: (value) => Validators.required(value, AppStrings.breed),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: CommonTextField(
+                        controller: _colorController,
+                        hintText: AppStrings.color,
+                        labelText: AppStrings.color,
+                        validator: (value) => Validators.required(value, AppStrings.color),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 CommonTextField(
@@ -198,9 +250,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   maxLines: 3,
                   validator: (value) => Validators.required(value, AppStrings.petDescription),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
+
+                // Location Section
+                _buildSectionHeader('LOCATION', icon: Icons.location_on_outlined),
                 _buildLocationField(),
-                const SizedBox(height: 12),
+                const SizedBox(height: 24),
+
+                // Contact Section
+                _buildSectionHeader('CONTACT', icon: Icons.phone_outlined),
                 CommonTextField(
                   controller: _phoneController,
                   hintText: AppStrings.enterContactPhone,
@@ -208,8 +266,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   keyboardType: TextInputType.phone,
                   validator: Validators.phone,
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 32),
+
+                // Submit Button
                 _buildSubmitButton(),
+                const SizedBox(height: 24),
               ],
             ),
           ),
@@ -219,83 +280,193 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   }
 
   Widget _buildTypeToggle() {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildTypeButton(PostType.lost, AppStrings.lost, Colors.red),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: _buildTypeButton(PostType.found, AppStrings.found, Colors.green),
-        ),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildTypeButton(PostType.lost, AppStrings.lost, Icons.search, AppColors.error),
+          ),
+          Expanded(
+            child: _buildTypeButton(PostType.found, AppStrings.found, Icons.favorite, AppColors.success),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildTypeButton(PostType type, String label, Color color) {
+  Widget _buildTypeButton(PostType type, String label, IconData icon, Color color) {
     final isSelected = _postType == type;
     return GestureDetector(
       onTap: () => setState(() => _postType = type),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? color : Colors.white,
+          color: isSelected ? color : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: color, width: 2),
+          boxShadow: isSelected
+              ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))]
+              : null,
         ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: isSelected ? Colors.white : color,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 20, color: isSelected ? Colors.white : color),
+            const SizedBox(width: 8),
+            Text(
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : color,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildImagePicker() {
-    return GestureDetector(
-      onTap: _pickImage,
-      child: Container(
-        height: 150,
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.authInputBorder),
-        ),
-        child: _imagePath != null
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.file(File(_imagePath!), fit: BoxFit.cover, width: double.infinity),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.add_a_photo, size: 40, color: AppColors.textSecondary),
-                  const SizedBox(height: 8),
-                  Text(AppStrings.addPhoto,
-                      style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary)),
-                ],
+    return Center(
+      child: GestureDetector(
+        onTap: _pickImage,
+        child: Column(
+          children: [
+            Stack(
+              children: [
+                Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.iconBgLight,
+                    border: Border.all(
+                      color: AppColors.primary.withValues(alpha: 0.3),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.1),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: _imagePath != null
+                      ? ClipOval(
+                          child: Image.file(
+                            File(_imagePath!),
+                            fit: BoxFit.fill,
+                            width: 120,
+                            height: 120,
+                          ),
+                        )
+                      : Icon(
+                          Icons.pets,
+                          size: 48,
+                          color: AppColors.primary.withValues(alpha: 0.6),
+                        ),
+                ),
+                Positioned(
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 2),
+                    ),
+                    child: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              _imagePath != null ? 'Tap to change photo' : AppStrings.addPhoto,
+              style: AppTextStyles.regularStyle400(
+                fontSize: 13,
+                fontColor: AppColors.textSecondary,
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, {IconData? icon}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12, top: 8),
+      child: Row(
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 18, color: AppColors.textSecondary),
+            const SizedBox(width: 8),
+          ],
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textSecondary,
+              letterSpacing: 0.5,
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildLocationField() {
-    return CommonTextField(
-      controller: _locationController,
-      hintText: AppStrings.useCurrentLocation,
-      labelText: AppStrings.location,
-      validator: (value) => Validators.required(value, AppStrings.location),
-      suffixIcon: IconButton(
-        onPressed: _isLoadingLocation ? null : _getCurrentLocation,
-        icon: _isLoadingLocation
-            ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Icon(Icons.my_location, color: AppColors.primary),
-      ),
+    final hasLocation = _latitude != null && _longitude != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CommonTextField(
+          controller: _locationController,
+          hintText: AppStrings.useCurrentLocation,
+          labelText: AppStrings.location,
+          validator: (value) => Validators.required(value, AppStrings.location),
+          suffixIcon: IconButton(
+            onPressed: _isLoadingLocation ? null : _getCurrentLocation,
+            icon: _isLoadingLocation
+                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+                : const Icon(Icons.my_location, color: AppColors.primary),
+          ),
+        ),
+        if (hasLocation) ...[
+          const SizedBox(height: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.success.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(Icons.check_circle, size: 16, color: AppColors.success),
+                const SizedBox(width: 6),
+                Text(
+                  'Location set',
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.success),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ],
     );
   }
 

@@ -8,6 +8,7 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/ui/profile/widgets/profile_header.dart';
 import 'package:paw_around/ui/profile/widgets/profile_pets_section.dart';
+import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -16,50 +17,57 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text(
-          AppStrings.profileTab,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w600,
-            color: AppColors.textPrimary,
+      body: Column(
+        children: [
+          // Custom App Bar
+          DashboardAppBar(
+            title: AppStrings.profileTab,
+            actions: [
+              DashboardAppBarAction(
+                icon: Icons.settings_outlined,
+                onTap: () {
+                  _showComingSoon(context, AppStrings.settings);
+                },
+              ),
+            ],
           ),
-        ),
-        backgroundColor: AppColors.background,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const SizedBox(height: 16),
 
-            // User Info Card
-            ProfileHeader(
-              onEditTap: () {
-                _showComingSoon(context, AppStrings.editProfile);
-              },
+          // Content
+          Expanded(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 16),
+
+                  // User Info Card
+                  ProfileHeader(
+                    onEditTap: () {
+                      _showComingSoon(context, AppStrings.editProfile);
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // My Pets Section
+                  _buildPetsSection(context),
+
+                  const SizedBox(height: 16),
+
+                  // Account Section
+                  _buildAccountSection(context),
+
+                  const SizedBox(height: 24),
+
+                  // Logout Button
+                  _buildLogoutButton(context),
+
+                  const SizedBox(height: 32),
+                ],
+              ),
             ),
-
-            const SizedBox(height: 16),
-
-            // My Pets Section
-            _buildPetsSection(context),
-
-            const SizedBox(height: 16),
-
-            // Account Section
-            _buildAccountSection(context),
-
-            const SizedBox(height: 24),
-
-            // Logout Button
-            _buildLogoutButton(context),
-
-            const SizedBox(height: 32),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

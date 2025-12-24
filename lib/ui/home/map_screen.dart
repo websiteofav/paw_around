@@ -11,6 +11,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/home/widgets/places_list_view.dart';
 import 'package:paw_around/ui/home/widgets/places_map_view.dart';
+import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/utils/url_utils.dart';
 
 class MapScreen extends StatefulWidget {
@@ -49,55 +50,51 @@ class _MapScreenState extends State<MapScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: _buildAppBar(),
-      body: BlocBuilder<PlacesBloc, PlacesState>(
-        builder: (context, state) {
-          if (state is PlacesLoading) {
-            return _buildLoadingState();
-          }
-
-          if (state is PlacesError) {
-            return _buildErrorState(state.message);
-          }
-
-          if (state is PlacesLoaded) {
-            return state.isMapView ? _buildMapView(state) : PlacesListView(places: state.places);
-          }
-
-          return _buildInitialState();
-        },
-      ),
-    );
-  }
-
-  AppBar _buildAppBar() {
-    return AppBar(
-      automaticallyImplyLeading: false,
-      title: Text(
-        AppStrings.petServices,
-        style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.navigationText),
-      ),
-      backgroundColor: AppColors.navigationBackground,
-      elevation: 0,
-      centerTitle: true,
-      actions: [
-        BlocBuilder<PlacesBloc, PlacesState>(
-          builder: (context, state) {
-            if (state is PlacesLoaded) {
-              return IconButton(
-                icon: Icon(
-                  state.isMapView ? Icons.list : Icons.map,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  context.read<PlacesBloc>().add(const ToggleMapView());
-                },
+      body: Column(
+        children: [
+          // Custom App Bar
+          BlocBuilder<PlacesBloc, PlacesState>(
+            builder: (context, state) {
+              final isMapView = state is PlacesLoaded && state.isMapView;
+              return DashboardAppBar(
+                title: AppStrings.petServices,
+                actions: [
+                  if (state is PlacesLoaded)
+                    DashboardAppBarAction(
+                      icon: Icons.list,
+                      activeIcon: Icons.map,
+                      isActive: isMapView,
+                      onTap: () {
+                        context.read<PlacesBloc>().add(const ToggleMapView());
+                      },
+                    ),
+                ],
               );
-            }
-            return const SizedBox.shrink();
-          },
-        ),
-      ],
+            },
+          ),
+
+          // Content
+          Expanded(
+            child: BlocBuilder<PlacesBloc, PlacesState>(
+              builder: (context, state) {
+                if (state is PlacesLoading) {
+                  return _buildLoadingState();
+                }
+
+                if (state is PlacesError) {
+                  return _buildErrorState(state.message);
+                }
+
+                if (state is PlacesLoaded) {
+                  return state.isMapView ? _buildMapView(state) : PlacesListView(places: state.places);
+                }
+
+                return _buildInitialState();
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 

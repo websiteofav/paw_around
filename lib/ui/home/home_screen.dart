@@ -17,8 +17,8 @@ import 'package:paw_around/models/pets/action_type.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
-import 'package:paw_around/ui/home/widgets/home_app_bar.dart';
 import 'package:paw_around/ui/home/widgets/urgent_vaccine_card.dart';
+import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/ui/home/widgets/grooming_due_card.dart';
 import 'package:paw_around/ui/home/widgets/care_progress_card.dart';
 import 'package:paw_around/ui/home/widgets/care_summary_section.dart';
@@ -81,10 +81,11 @@ class _HomeScreenState extends State<HomeScreen> {
             return Column(
               children: [
                 // Custom App Bar
-                HomeAppBar(
-                  petName: activePet?.name,
-                  petAge: petAge,
-                  petImageUrl: activePet?.imagePath,
+                DashboardAppBar(
+                  title: activePet?.name ?? 'Your Pet',
+                  subtitle: petAge,
+                  avatarImageUrl: activePet?.imagePath,
+                  showNotificationBell: true,
                   onNotificationTap: () {
                     // TODO: Navigate to notifications
                   },

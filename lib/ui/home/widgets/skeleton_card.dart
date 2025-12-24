@@ -121,7 +121,7 @@ class HomeSkeletonLoader extends StatelessWidget {
   }
 }
 
-/// Skeleton for the app bar
+/// Skeleton for the app bar (matches DashboardAppBar styling)
 class AppBarSkeleton extends StatelessWidget {
   const AppBarSkeleton({super.key});
 
@@ -133,59 +133,62 @@ class AppBarSkeleton extends StatelessWidget {
         color: AppColors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
             offset: const Offset(0, 2),
           ),
         ],
       ),
-      child: Row(
-        children: [
-          // Avatar skeleton
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              color: AppColors.progressBarBg,
-              borderRadius: BorderRadius.circular(24),
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          children: [
+            // Avatar skeleton
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: AppColors.progressBarBg,
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
-          ),
-          const SizedBox(width: 12),
-          // Text skeleton
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 20,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    color: AppColors.progressBarBg,
-                    borderRadius: BorderRadius.circular(4),
+            const SizedBox(width: 12),
+            // Text skeleton
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    height: 20,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: AppColors.progressBarBg,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-                Container(
-                  height: 14,
-                  width: 70,
-                  decoration: BoxDecoration(
-                    color: AppColors.progressBarBg,
-                    borderRadius: BorderRadius.circular(4),
+                  const SizedBox(height: 6),
+                  Container(
+                    height: 14,
+                    width: 70,
+                    decoration: BoxDecoration(
+                      color: AppColors.progressBarBg,
+                      borderRadius: BorderRadius.circular(4),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          // Bell skeleton
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.progressBarBg,
-              borderRadius: BorderRadius.circular(20),
+            // Action button skeleton
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.progressBarBg,
+                borderRadius: BorderRadius.circular(14),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

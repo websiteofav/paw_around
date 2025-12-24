@@ -174,8 +174,10 @@ class AppStrings {
   static const String describeThePet = 'Describe the pet (size, markings, etc.)';
   static const String enterContactPhone = 'Enter contact phone number';
   static const String postCreatedSuccessfully = 'Post created successfully!';
-  static const String noPostsYet = 'No posts yet';
+  static const String noPostsYet = 'No posts near you';
   static const String beTheFirstToPost = 'Be the first to help a lost pet find its way home!';
+  static const String helpReunitePets = 'Help reunite lost pets with their families';
+  static const String alertNearbyParents = 'Alert pet parents in your neighborhood';
   static const String markAsResolved = 'Mark as Resolved';
   static const String getDirections = 'Get Directions';
   static const String callOwner = 'Call Owner';
@@ -295,6 +297,7 @@ class AppStrings {
   static const String privacyPolicy = 'Privacy Policy';
   static const String logout = 'Log out';
   static const String appVersion = 'Version';
+  static const String pressBackAgainToExit = 'Press back again to exit';
   static const String pets = 'pets';
   static const String posts = 'posts';
   static const String activity = 'Activity';
