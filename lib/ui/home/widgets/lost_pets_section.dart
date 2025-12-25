@@ -3,11 +3,13 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 
 class LostPetItem {
+  final String id;
   final String name;
   final String distance;
   final String? imageUrl;
 
   const LostPetItem({
+    required this.id,
     required this.name,
     required this.distance,
     this.imageUrl,

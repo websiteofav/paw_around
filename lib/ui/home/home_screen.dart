@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/bloc/home/home_event.dart';
@@ -12,10 +13,12 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
+import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/pets/action_type.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
+import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 import 'package:paw_around/ui/home/widgets/urgent_vaccine_card.dart';
 import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
@@ -38,16 +41,32 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final LocationService _locationService = sl<LocationService>();
+  Position? _userPosition;
+
   @override
   void initState() {
     super.initState();
     // Load community posts for lost pets section
     context.read<CommunityBloc>().add(LoadPosts());
+    // Load user location for distance calculation
+    _loadUserLocation();
+  }
+
+  Future<void> _loadUserLocation() async {
+    final result = await _locationService.getCurrentLocation();
+    if (result.isSuccess && result.position != null && mounted) {
+      setState(() {
+        _userPosition = result.position;
+      });
+    }
   }
 
   Future<void> _onRefresh() async {
     context.read<PetListBloc>().add(const LoadPetList());
     context.read<CommunityBloc>().add(LoadPosts());
+    // Refresh user location as well
+    _loadUserLocation();
     // Wait for the bloc to complete loading
     await Future.delayed(const Duration(milliseconds: 500));
   }
@@ -514,6 +533,7 @@ class _HomeScreenState extends State<HomeScreen> {
               .where((p) => p.type == PostType.lost && !p.isResolved)
               .take(2)
               .map((p) => LostPetItem(
+                    id: p.id,
                     name: p.petName,
                     distance: '${_formatDistance(p)} ${AppStrings.kmAway}',
                     imageUrl: p.imagePath,
@@ -531,7 +551,7 @@ class _HomeScreenState extends State<HomeScreen> {
             context.read<HomeBloc>().add(HomeTabChanged(2));
           },
           onPetTap: (pet) {
-            context.read<HomeBloc>().add(HomeTabChanged(2));
+            context.push('/community/${pet.id}');
           },
         );
       },
@@ -539,9 +559,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _formatDistance(LostFoundPost post) {
-    // TODO: Calculate actual distance from user location
-    // For now, return a placeholder
-    return '2';
+    if (_userPosition == null) {
+      return '?';
+    }
+
+    final distanceInMeters = _locationService.calculateDistance(
+      startLatitude: _userPosition!.latitude,
+      startLongitude: _userPosition!.longitude,
+      endLatitude: post.latitude,
+      endLongitude: post.longitude,
+    );
+
+    // Convert to km and format
+    final distanceInKm = distanceInMeters / 1000;
+    if (distanceInKm < 1) {
+      return '< 1';
+    }
+    return distanceInKm.toStringAsFixed(1);
   }
 
   String _calculateAge(DateTime? dateOfBirth) {

@@ -18,6 +18,17 @@ class ApiConstants {
   // Places API Endpoints
   static const String nearbySearchEndpoint = '/places:searchNearby';
   static const String textSearchEndpoint = '/places:searchText';
+  static const String autocompleteEndpoint = '/places:autocomplete';
+  static const String placeDetailsEndpoint = '/places'; // GET /places/{placeId}
+
+  // Autocomplete Field Mask
+  static const String autocompleteFieldMask = 'suggestions.placePrediction.placeId,'
+      'suggestions.placePrediction.structuredFormat.mainText.text,'
+      'suggestions.placePrediction.structuredFormat.secondaryText.text,'
+      'suggestions.placePrediction.text.text';
+
+  // Place Details Field Mask (for getting coordinates)
+  static const String placeDetailsFieldMask = 'id,displayName,formattedAddress,location';
 
   // Default Search Parameters
   static const int defaultSearchRadius = 5000; // meters

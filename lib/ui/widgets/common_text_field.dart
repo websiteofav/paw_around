@@ -12,6 +12,7 @@ class CommonTextField extends StatelessWidget {
   final String? Function(String?)? validator;
   final int maxLines;
   final Widget? suffixIcon;
+  final FocusNode? focusNode;
 
   const CommonTextField({
     super.key,
@@ -25,12 +26,14 @@ class CommonTextField extends StatelessWidget {
     this.validator,
     this.maxLines = 1,
     this.suffixIcon,
+    this.focusNode,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       keyboardType: keyboardType,
       obscureText: isPassword ? !isPasswordVisible : false,
       validator: validator,

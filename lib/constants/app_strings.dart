@@ -173,6 +173,7 @@ class AppStrings {
   static const String petDescription = 'Pet Description';
   static const String color = 'Color';
   static const String location = 'Location';
+  static const String searchForLocation = 'Search for location';
   static const String contactPhone = 'Contact Phone';
   static const String selectPostType = 'Select Post Type';
   static const String describeThePet = 'Describe the pet (size, markings, etc.)';

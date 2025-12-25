@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
@@ -13,10 +12,10 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
-import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/services/storage_service.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/common_text_field.dart';
+import 'package:paw_around/ui/widgets/location_autocomplete_field.dart';
 import 'package:paw_around/utils/validators.dart';
 
 class CreatePostScreen extends StatefulWidget {
@@ -39,7 +38,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   String? _imagePath;
   double? _latitude;
   double? _longitude;
-  bool _isLoadingLocation = false;
   bool _isSubmitting = false;
 
   @override
@@ -59,54 +57,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     if (image != null) {
       setState(() => _imagePath = image.path);
     }
-  }
-
-  Future<void> _getCurrentLocation() async {
-    setState(() => _isLoadingLocation = true);
-    final locationService = sl<LocationService>();
-    final result = await locationService.getCurrentLocation();
-
-    if (result.isSuccess && result.position != null) {
-      final lat = result.position!.latitude;
-      final lng = result.position!.longitude;
-
-      // Reverse geocode to get readable address
-      String locationName = '${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}';
-      try {
-        final placemarks = await placemarkFromCoordinates(lat, lng);
-        if (placemarks.isNotEmpty) {
-          final place = placemarks.first;
-          // Format: "Neighborhood, City" or "Street, City"
-          final parts = <String>[];
-          if (place.subLocality?.isNotEmpty == true) {
-            parts.add(place.subLocality!);
-          } else if (place.street?.isNotEmpty == true) {
-            parts.add(place.street!);
-          }
-          if (place.locality?.isNotEmpty == true) {
-            parts.add(place.locality!);
-          }
-          if (parts.isNotEmpty) {
-            locationName = parts.join(', ');
-          }
-        }
-      } catch (e) {
-        // Fallback to coordinates if geocoding fails
-      }
-
-      setState(() {
-        _latitude = lat;
-        _longitude = lng;
-        _locationController.text = locationName;
-      });
-    } else {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result.errorMessage ?? 'Failed to get location')),
-        );
-      }
-    }
-    setState(() => _isLoadingLocation = false);
   }
 
   Future<void> _submitPost() async {
@@ -225,19 +175,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   children: [
                     Expanded(
                       child: CommonTextField(
-                  controller: _breedController,
-                  hintText: AppStrings.breed,
-                  labelText: AppStrings.breed,
-                  validator: (value) => Validators.required(value, AppStrings.breed),
-                ),
+                        controller: _breedController,
+                        hintText: AppStrings.breed,
+                        labelText: AppStrings.breed,
+                        validator: (value) => Validators.required(value, AppStrings.breed),
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: CommonTextField(
-                  controller: _colorController,
-                  hintText: AppStrings.color,
-                  labelText: AppStrings.color,
-                  validator: (value) => Validators.required(value, AppStrings.color),
+                        controller: _colorController,
+                        hintText: AppStrings.color,
+                        labelText: AppStrings.color,
+                        validator: (value) => Validators.required(value, AppStrings.color),
                       ),
                     ),
                   ],
@@ -288,14 +238,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         border: Border.all(color: AppColors.border),
       ),
       child: Row(
-      children: [
-        Expanded(
+        children: [
+          Expanded(
             child: _buildTypeButton(PostType.lost, AppStrings.lost, Icons.search, AppColors.error),
-        ),
-        Expanded(
+          ),
+          Expanded(
             child: _buildTypeButton(PostType.found, AppStrings.found, Icons.favorite, AppColors.success),
-        ),
-      ],
+          ),
+        ],
       ),
     );
   }
@@ -320,13 +270,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             Icon(icon, size: 20, color: isSelected ? Colors.white : color),
             const SizedBox(width: 8),
             Text(
-          label,
-          style: TextStyle(
-            color: isSelected ? Colors.white : color,
+              label,
+              style: TextStyle(
+                color: isSelected ? Colors.white : color,
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
               ),
-          ),
+            ),
           ],
         ),
       ),
@@ -336,7 +286,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget _buildImagePicker() {
     return Center(
       child: GestureDetector(
-      onTap: _pickImage,
+        onTap: _pickImage,
         child: Column(
           children: [
             Stack(
@@ -344,7 +294,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 Container(
                   width: 120,
                   height: 120,
-        decoration: BoxDecoration(
+                  decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.iconBgLight,
                     border: Border.all(
@@ -358,8 +308,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         offset: const Offset(0, 4),
                       ),
                     ],
-        ),
-        child: _imagePath != null
+                  ),
+                  child: _imagePath != null
                       ? ClipOval(
                           child: Image.file(
                             File(_imagePath!),
@@ -367,7 +317,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             width: 120,
                             height: 120,
                           ),
-              )
+                        )
                       : Icon(
                           Icons.pets,
                           size: 48,
@@ -397,8 +347,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 fontColor: AppColors.textSecondary,
               ),
             ),
-                ],
-              ),
+          ],
+        ),
       ),
     );
   }
@@ -432,17 +382,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CommonTextField(
-      controller: _locationController,
-      hintText: AppStrings.useCurrentLocation,
-      labelText: AppStrings.location,
-      validator: (value) => Validators.required(value, AppStrings.location),
-      suffixIcon: IconButton(
-        onPressed: _isLoadingLocation ? null : _getCurrentLocation,
-        icon: _isLoadingLocation
-            ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
-            : const Icon(Icons.my_location, color: AppColors.primary),
-      ),
+        LocationAutocompleteField(
+          controller: _locationController,
+          labelText: AppStrings.location,
+          hintText: AppStrings.searchForLocation,
+          validator: (value) => Validators.required(value, AppStrings.location),
+          showCurrentLocationButton: true,
+          onPlaceSelected: (address, latitude, longitude) {
+            setState(() {
+              _latitude = latitude;
+              _longitude = longitude;
+            });
+          },
         ),
         if (hasLocation) ...[
           const SizedBox(height: 8),
