@@ -11,6 +11,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/home/widgets/places_list_view.dart';
 import 'package:paw_around/ui/home/widgets/places_map_view.dart';
+import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/utils/url_utils.dart';
 
@@ -61,9 +62,8 @@ class _MapScreenState extends State<MapScreen> {
                 actions: [
                   if (state is PlacesLoaded)
                     DashboardAppBarAction(
-                      icon: Icons.list,
-                      activeIcon: Icons.map,
-                      isActive: isMapView,
+                      // Show opposite icon: map icon when in list view, list icon when in map view
+                      icon: isMapView ? Icons.view_list_rounded : Icons.map_rounded,
                       onTap: () {
                         context.read<PlacesBloc>().add(const ToggleMapView());
                       },
@@ -99,25 +99,144 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildLoadingState() {
-    return const Center(
-      child: CircularProgressIndicator(color: AppColors.primary),
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: _buildSkeletonCard(),
+        );
+      },
+    );
+  }
+
+  Widget _buildSkeletonCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Icon skeleton
+          Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(14),
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title skeleton
+                Container(
+                  height: 16,
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Subtitle skeleton
+                Container(
+                  height: 12,
+                  width: 150,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Rating skeleton
+                Container(
+                  height: 12,
+                  width: 80,
+                  decoration: BoxDecoration(
+                    color: AppColors.border,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Directions button skeleton
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildErrorState(String message) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, size: 60, color: Colors.red),
-          const SizedBox(height: 16),
-          Text(message, style: AppTextStyles.regularStyle400()),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: _loadCurrentLocation,
-            child: const Text(AppStrings.retry),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.error_outline_rounded,
+                size: 40,
+                color: AppColors.error,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              AppStrings.somethingWentWrong,
+              style: AppTextStyles.semiBoldStyle600(
+                fontSize: 18,
+                fontColor: AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              message,
+              style: AppTextStyles.regularStyle400(
+                fontSize: 14,
+                fontColor: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            CommonButton(
+              text: AppStrings.retry,
+              onPressed: _loadCurrentLocation,
+              variant: ButtonVariant.primary,
+              size: ButtonSize.small,
+              icon: Icons.refresh,
+              isFullWidth: false,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -127,9 +246,27 @@ class _MapScreenState extends State<MapScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.location_searching, size: 60, color: AppColors.primary),
-          const SizedBox(height: 16),
-          Text(AppStrings.gettingYourLocation, style: AppTextStyles.regularStyle400()),
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.location_searching,
+              size: 40,
+              color: AppColors.primary,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            AppStrings.gettingYourLocation,
+            style: AppTextStyles.mediumStyle500(
+              fontSize: 16,
+              fontColor: AppColors.textSecondary,
+            ),
+          ),
         ],
       ),
     );

@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/bloc/places_event.dart';
 import 'package:paw_around/bloc/bloc/places_state.dart';
-
 import 'package:paw_around/repositories/places_repository.dart';
 
 class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
@@ -39,6 +38,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       ));
     } catch (e) {
       emit(PlacesError('Failed to load nearby places: $e'));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -66,6 +66,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
       ));
     } catch (e) {
       emit(PlacesError('Failed to search places: $e'));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 

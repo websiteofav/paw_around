@@ -2,6 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/ui/widgets/scale_button.dart';
+import 'package:paw_around/utils/utils.dart';
 
 class ProfileHeader extends StatelessWidget {
   final VoidCallback? onEditTap;
@@ -14,33 +17,55 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-    final displayName = user?.displayName ?? 'Pet Parent';
+    final String displayName = (user?.displayName).orDefault('Pet Parent');
     final photoUrl = user?.photoURL;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          // Circular avatar with paw icon
+          // Circular avatar with gradient
           Container(
-            width: 64,
-            height: 64,
+            width: 72,
+            height: 72,
             decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.primary.withValues(alpha: 0.15),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.groomingGradientStart,
+                  AppColors.groomingGradientEnd,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(18),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.groomingGradientStart.withValues(alpha: 0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-            child: ClipOval(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(18),
               child: photoUrl != null
                   ? Image.network(
                       photoUrl,
-                      width: 64,
-                      height: 64,
+                      width: 72,
+                      height: 72,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return _buildPawIcon();
@@ -51,35 +76,65 @@ class ProfileHeader extends StatelessWidget {
           ),
           const SizedBox(width: 16),
 
-          // User name
+          // User name and email
           Expanded(
-            child: Text(
-              displayName,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  displayName,
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 18, fontColor: AppColors.textPrimary),
+                ),
+                if (user?.email != null || user?.phoneNumber != null) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    user?.email ?? user?.phoneNumber ?? '',
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.textSecondary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
             ),
           ),
 
           // Edit button
-          GestureDetector(
-            onTap: onEditTap,
+          ScaleButton(
+            onPressed: onEditTap,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
-                color: AppColors.background,
+                color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.border),
+                border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.1),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              child: Text(
-                AppStrings.edit,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textSecondary,
-                ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.edit_outlined,
+                    size: 16,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    AppStrings.edit,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -90,13 +145,13 @@ class ProfileHeader extends StatelessWidget {
 
   Widget _buildPawIcon() {
     return Container(
-      width: 64,
-      height: 64,
+      width: 72,
+      height: 72,
       alignment: Alignment.center,
-      child: Icon(
+      child: const Icon(
         Icons.pets,
-        size: 32,
-        color: AppColors.primary,
+        size: 36,
+        color: Colors.white,
       ),
     );
   }

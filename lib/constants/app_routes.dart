@@ -23,6 +23,7 @@ class AppRoutes {
   static const String actionDetail = '/action-detail';
 
   // Profile Sub-routes
+  static const String editProfile = '/profile/edit';
   static const String editPet = '/home/profile/edit-pet';
   static const String premium = '/home/profile/premium';
 

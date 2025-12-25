@@ -155,8 +155,12 @@ class AppStrings {
   // Map Screen
   static const String petServices = 'Pet Services';
   static const String gettingYourLocation = 'Getting your location...';
+  static const String loadingNearbyServices = 'Finding nearby services...';
+  static const String somethingWentWrong = 'Something went wrong';
   static const String retry = 'Retry';
   static const String petServicesFoundNearby = 'pet services found nearby';
+  static const String noServicesNearby = 'No services nearby';
+  static const String tryDifferentLocation = 'Try searching in a different location';
   static const String open = 'Open';
   static const String closed = 'Closed';
 
@@ -292,9 +296,18 @@ class AppStrings {
   static const String savedPlaces = 'Saved Places';
   static const String notificationSettings = 'Notification Settings';
   static const String editProfile = 'Edit Profile';
+  static const String displayName = 'Display Name';
+  static const String displayNameHint = 'Enter your name';
+  static const String emailHint = 'Enter your email';
+  static const String emailChangeNote = 'A verification email will be sent to confirm this change';
+  static const String emailVerificationSent = 'Verification email sent! Please check your inbox.';
+  static const String updateProfile = 'Update Profile';
+  static const String profileUpdatedSuccessfully = 'Profile updated successfully!';
   static const String upgradeToPremium = 'Upgrade to Premium';
   static const String helpAndSupport = 'Help & support';
   static const String privacyPolicy = 'Privacy Policy';
+  static const String notifications = 'Notifications';
+  static const String privacyAndSecurity = 'Privacy & Security';
   static const String logout = 'Log out';
   static const String appVersion = 'Version';
   static const String pressBackAgainToExit = 'Press back again to exit';

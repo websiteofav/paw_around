@@ -223,6 +223,7 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
         status: PetFormStatus.error,
         errorMessage: e.toString(),
       ));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 

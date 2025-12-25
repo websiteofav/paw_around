@@ -102,6 +102,18 @@ class AppColors {
   static const Color progressBarBg = Color(0xFFF3F4F6);
   static const Color progressBarFill = Color(0xFF3B82F6);
 
+  // Service Type Colors (Map Screen)
+  static const Color vetServiceBg = Color(0xFFEF5350);
+  static const Color petStoreBg = Color(0xFF42A5F5);
+  static const Color groomingServiceBg = Color(0xFF66BB6A);
+  static const Color serviceIconColor = Color(0xFFFFFFFF);
+
+  // Rating
+  static const Color ratingColor = Color(0xFFFFB300);
+
+  // Map
+  static const Color mapBackground = Color(0xFFF5F5F5);
+
   // Private constructor to prevent instantiation
   AppColors._();
 }

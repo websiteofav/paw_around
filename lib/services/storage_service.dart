@@ -74,4 +74,32 @@ class StorageService {
       return null;
     }
   }
+
+  /// Upload a user profile image
+  Future<String?> uploadProfileImage({
+    required String localPath,
+    required String userId,
+  }) async {
+    try {
+      final file = File(localPath);
+      if (!await file.exists()) {
+        return null;
+      }
+
+      final fileName = '${userId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = _storage.ref().child('profile_images').child(fileName);
+
+      final uploadTask = ref.putFile(
+        file,
+        SettableMetadata(contentType: 'image/jpeg'),
+      );
+
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      return downloadUrl;
+    } catch (e) {
+      return null;
+    }
+  }
 }

@@ -7,6 +7,7 @@ import 'package:paw_around/bloc/auth/auth_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/core/observers/auth_bloc_observer.dart';
 import 'package:paw_around/firebase_options.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/router/app_router.dart';
@@ -23,6 +24,9 @@ void main() async {
   // Initialize service locator
   await init();
   await dotenv.load(fileName: ".env");
+
+  // Register global bloc observer for auth error handling
+  Bloc.observer = AuthBlocObserver();
 
   runApp(const MainApp());
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 
 /// Action item for the dashboard app bar
 class DashboardAppBarAction {
@@ -160,10 +162,11 @@ class DashboardAppBar extends StatelessWidget {
   }
 
   Widget _buildPawIcon() {
-    return const Center(
-      child: Text(
-        '🐾',
-        style: TextStyle(fontSize: 22),
+    return Center(
+      child: SvgPicture.asset(
+        AppIcons.pawPrintIcon,
+        width: 22,
+        height: 22,
       ),
     );
   }
@@ -271,4 +274,3 @@ class DashboardAppBar extends StatelessWidget {
     );
   }
 }
-

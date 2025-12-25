@@ -30,6 +30,7 @@ import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/vaccines_setup_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
+import 'package:paw_around/ui/profile/edit_profile_screen.dart';
 
 /// Notifies GoRouter when auth state changes
 class AuthNotifier extends ChangeNotifier {
@@ -239,6 +240,13 @@ class AppRouter {
               final data = state.extra as ActionCardData;
               return ActionCardDetailScreen(data: data);
             },
+          ),
+
+          // Edit Profile Route
+          GoRoute(
+            path: AppRoutes.editProfile,
+            name: AppRoutes.editProfile,
+            builder: (context, state) => const EditProfileScreen(),
           ),
         ],
       ),

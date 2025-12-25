@@ -61,6 +61,7 @@ class _ScaleButtonState extends State<ScaleButton> with SingleTickerProviderStat
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTapDown: _onTapDown,
       onTapUp: _onTapUp,
       onTapCancel: _onTapCancel,

@@ -225,19 +225,19 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   children: [
                     Expanded(
                       child: CommonTextField(
-                        controller: _breedController,
-                        hintText: AppStrings.breed,
-                        labelText: AppStrings.breed,
-                        validator: (value) => Validators.required(value, AppStrings.breed),
-                      ),
+                  controller: _breedController,
+                  hintText: AppStrings.breed,
+                  labelText: AppStrings.breed,
+                  validator: (value) => Validators.required(value, AppStrings.breed),
+                ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: CommonTextField(
-                        controller: _colorController,
-                        hintText: AppStrings.color,
-                        labelText: AppStrings.color,
-                        validator: (value) => Validators.required(value, AppStrings.color),
+                  controller: _colorController,
+                  hintText: AppStrings.color,
+                  labelText: AppStrings.color,
+                  validator: (value) => Validators.required(value, AppStrings.color),
                       ),
                     ),
                   ],
@@ -288,14 +288,14 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         border: Border.all(color: AppColors.border),
       ),
       child: Row(
-        children: [
-          Expanded(
+      children: [
+        Expanded(
             child: _buildTypeButton(PostType.lost, AppStrings.lost, Icons.search, AppColors.error),
-          ),
-          Expanded(
+        ),
+        Expanded(
             child: _buildTypeButton(PostType.found, AppStrings.found, Icons.favorite, AppColors.success),
-          ),
-        ],
+        ),
+      ],
       ),
     );
   }
@@ -320,13 +320,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             Icon(icon, size: 20, color: isSelected ? Colors.white : color),
             const SizedBox(width: 8),
             Text(
-              label,
-              style: TextStyle(
-                color: isSelected ? Colors.white : color,
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : color,
                 fontWeight: FontWeight.w600,
                 fontSize: 15,
               ),
-            ),
+          ),
           ],
         ),
       ),
@@ -336,7 +336,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget _buildImagePicker() {
     return Center(
       child: GestureDetector(
-        onTap: _pickImage,
+      onTap: _pickImage,
         child: Column(
           children: [
             Stack(
@@ -344,7 +344,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 Container(
                   width: 120,
                   height: 120,
-                  decoration: BoxDecoration(
+        decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: AppColors.iconBgLight,
                     border: Border.all(
@@ -358,8 +358,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         offset: const Offset(0, 4),
                       ),
                     ],
-                  ),
-                  child: _imagePath != null
+        ),
+        child: _imagePath != null
                       ? ClipOval(
                           child: Image.file(
                             File(_imagePath!),
@@ -367,7 +367,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                             width: 120,
                             height: 120,
                           ),
-                        )
+              )
                       : Icon(
                           Icons.pets,
                           size: 48,
@@ -397,8 +397,8 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 fontColor: AppColors.textSecondary,
               ),
             ),
-          ],
-        ),
+                ],
+              ),
       ),
     );
   }
@@ -433,16 +433,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CommonTextField(
-          controller: _locationController,
-          hintText: AppStrings.useCurrentLocation,
-          labelText: AppStrings.location,
-          validator: (value) => Validators.required(value, AppStrings.location),
-          suffixIcon: IconButton(
-            onPressed: _isLoadingLocation ? null : _getCurrentLocation,
-            icon: _isLoadingLocation
-                ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.my_location, color: AppColors.primary),
-          ),
+      controller: _locationController,
+      hintText: AppStrings.useCurrentLocation,
+      labelText: AppStrings.location,
+      validator: (value) => Validators.required(value, AppStrings.location),
+      suffixIcon: IconButton(
+        onPressed: _isLoadingLocation ? null : _getCurrentLocation,
+        icon: _isLoadingLocation
+            ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(strokeWidth: 2))
+            : const Icon(Icons.my_location, color: AppColors.primary),
+      ),
         ),
         if (hasLocation) ...[
           const SizedBox(height: 8),

@@ -12,6 +12,9 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/ui/widgets/animated_card.dart';
+import 'package:paw_around/ui/widgets/common_button.dart';
+import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class PetOverviewScreen extends StatelessWidget {
   final PetModel pet;
@@ -40,9 +43,9 @@ class PetOverviewScreen extends StatelessWidget {
 
   Widget _buildContent(BuildContext context, PetModel pet) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: AppColors.white,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
@@ -60,63 +63,85 @@ class PetOverviewScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Pet Info Card
-              _buildPetInfoCard(pet),
+              AnimatedCard(
+                index: 0,
+                child: _buildPetInfoCard(pet),
+              ),
 
               const SizedBox(height: 16),
 
               // Vaccines Section (only for dogs and cats)
               if (pet.supportsMedicalCare) ...[
-                _buildVaccinesSection(context, pet),
-                const SizedBox(height: 12),
+                AnimatedCard(
+                  index: 1,
+                  child: _buildVaccinesSection(context, pet),
+                ),
+                const SizedBox(height: 16),
               ],
 
               // Grooming Card
-              _buildCareCard(
-                context: context,
-                icon: Icons.content_cut,
-                title: AppStrings.grooming,
-                subtitle: _getGroomingStatus(pet),
-                onTap: () {
-                  context.pushNamed(
-                    AppRoutes.groomingSettings,
-                    extra: pet,
-                  );
-                },
-              ),
-
-              const SizedBox(height: 12),
-
-              // Tick & Flea Card (only for dogs and cats)
-              if (pet.supportsMedicalCare) ...[
-                _buildCareCard(
+              AnimatedCard(
+                index: 2,
+                child: _buildCareCard(
                   context: context,
-                  icon: Icons.shield_outlined,
-                  title: AppStrings.tickFleaPrevention,
-                  subtitle: _getTickFleaStatus(pet),
+                  icon: Icons.content_cut,
+                  title: AppStrings.grooming,
+                  subtitle: _getGroomingStatus(pet),
+                  status: _getGroomingStatusType(pet),
                   onTap: () {
                     context.pushNamed(
-                      AppRoutes.tickFleaSettings,
+                      AppRoutes.groomingSettings,
                       extra: pet,
                     );
                   },
                 ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // Tick & Flea Card (only for dogs and cats)
+              if (pet.supportsMedicalCare) ...[
+                AnimatedCard(
+                  index: 3,
+                  child: _buildCareCard(
+                    context: context,
+                    icon: Icons.shield_outlined,
+                    title: AppStrings.tickFleaPrevention,
+                    subtitle: _getTickFleaStatus(pet),
+                    status: _getTickFleaStatusType(pet),
+                    onTap: () {
+                      context.pushNamed(
+                        AppRoutes.tickFleaSettings,
+                        extra: pet,
+                      );
+                    },
+                  ),
+                ),
                 const SizedBox(height: 24),
               ],
 
-              if (!pet.supportsMedicalCare) const SizedBox(height: 12),
+              if (!pet.supportsMedicalCare) const SizedBox(height: 16),
 
               // Edit Pet Details Button
-              _buildEditButton(context, pet),
+              AnimatedCard(
+                index: 4,
+                child: _buildEditButton(context, pet),
+              ),
 
               const SizedBox(height: 12),
 
               // Delete Pet Button
-              _buildDeleteButton(context, pet),
+              AnimatedCard(
+                index: 5,
+                child: _buildDeleteButton(context, pet),
+              ),
+
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -128,27 +153,74 @@ class PetOverviewScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
-        title: const Text(AppStrings.deletePetConfirmTitle),
-        content: const Text(AppStrings.deletePetConfirmMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(
-              AppStrings.cancel,
-              style: TextStyle(color: AppColors.textSecondary),
+        backgroundColor: AppColors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Warning icon
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.error.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.delete_forever_rounded,
+                size: 32,
+                color: AppColors.error,
+              ),
             ),
-          ),
-          TextButton(
-            onPressed: () async {
-              Navigator.of(dialogContext).pop();
-              await _deletePet(context, pet);
-            },
-            child: Text(
-              AppStrings.delete,
-              style: TextStyle(color: AppColors.error),
+            const SizedBox(height: 16),
+            Text(
+              AppStrings.deletePetConfirmTitle,
+              style: AppTextStyles.semiBoldStyle600(
+                fontSize: 18,
+                fontColor: AppColors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
             ),
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              AppStrings.deletePetConfirmMessage,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            // Buttons row
+            Row(
+              children: [
+                Expanded(
+                  child: CommonButton(
+                    text: AppStrings.cancel,
+                    variant: ButtonVariant.secondary,
+                    size: ButtonSize.small,
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: CommonButton(
+                    text: AppStrings.delete,
+                    variant: ButtonVariant.danger,
+                    size: ButtonSize.small,
+                    onPressed: () async {
+                      Navigator.of(dialogContext).pop();
+                      await _deletePet(context, pet);
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -184,32 +256,63 @@ class PetOverviewScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Row(
         children: [
-          // Circular pet photo
+          // Circular pet photo with gradient
           Container(
-            width: 80,
-            height: 80,
+            width: 88,
+            height: 88,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: _getSpeciesColor(pet.species),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.primary.withValues(alpha: 0.8),
+                  AppColors.primaryLight,
+                ],
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primary.withValues(alpha: 0.3),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            child: ClipOval(
-              child: pet.imagePath != null && pet.imagePath!.startsWith('http')
-                  ? Image.network(
-                      pet.imagePath!,
-                      width: 80,
-                      height: 80,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return _buildDefaultPetIcon();
-                      },
-                    )
-                  : _buildDefaultPetIcon(),
+            child: Padding(
+              padding: const EdgeInsets.all(3),
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _getSpeciesColor(pet.species),
+                  border: Border.all(color: AppColors.white, width: 2),
+                ),
+                child: ClipOval(
+                  child: pet.imagePath != null && pet.imagePath!.startsWith('http')
+                      ? Image.network(
+                          pet.imagePath!,
+                          width: 82,
+                          height: 82,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return _buildDefaultPetIcon();
+                          },
+                        )
+                      : _buildDefaultPetIcon(),
+                ),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -238,18 +341,30 @@ class PetOverviewScreen extends StatelessWidget {
                 if (hasCareDue) ...[
                   const SizedBox(height: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFFDE68A).withValues(alpha: 0.4),
+                      color: AppColors.warning.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
                     ),
-                    child: Text(
-                      AppStrings.someCareDue,
-                      style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.orange.shade700,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.schedule,
+                          size: 14,
+                          color: AppColors.warning,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          AppStrings.someCareDue,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.warning,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -268,9 +383,16 @@ class PetOverviewScreen extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -333,24 +455,20 @@ class PetOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildAddVaccineRow(BuildContext context) {
-    return InkWell(
-      onTap: () {
+    return ScaleButton(
+      onPressed: () {
         context.pushNamed(
           AppRoutes.addVaccine,
           extra: {'pet': pet},
         );
       },
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(16),
-        bottomRight: Radius.circular(16),
-      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
             Container(
-              width: 28,
-              height: 28,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.primary.withValues(alpha: 0.15),
@@ -364,11 +482,7 @@ class PetOverviewScreen extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               AppStrings.addVaccine,
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w500,
-                color: AppColors.primary,
-              ),
+              style: AppTextStyles.mediumStyle500(fontSize: 15, fontColor: AppColors.primary),
             ),
           ],
         ),
@@ -377,8 +491,12 @@ class PetOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildVaccineRow(BuildContext context, VaccineModel vaccine) {
-    return InkWell(
-      onTap: () {
+    final daysUntilDue = vaccine.nextDueDate.difference(DateTime.now()).inDays;
+    final isOverdue = daysUntilDue < 0;
+    final isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 30;
+
+    return ScaleButton(
+      onPressed: () {
         context.pushNamed(
           AppRoutes.addVaccine,
           extra: {
@@ -388,13 +506,44 @@ class PetOverviewScreen extends StatelessWidget {
         );
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
+            // Status indicator dot
+            Container(
+              width: 8,
+              height: 8,
+              margin: const EdgeInsets.only(right: 12),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isOverdue
+                    ? AppColors.error
+                    : isDueSoon
+                        ? AppColors.warning
+                        : AppColors.success,
+              ),
+            ),
             Expanded(
-              child: Text(
-                vaccine.vaccineName,
-                style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    vaccine.vaccineName,
+                    style: AppTextStyles.mediumStyle500(fontSize: 15, fontColor: AppColors.textPrimary),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isOverdue
+                        ? 'Overdue by ${-daysUntilDue} days'
+                        : daysUntilDue == 0
+                            ? 'Due today'
+                            : 'Due in $daysUntilDue days',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: isOverdue ? AppColors.error : AppColors.textSecondary,
+                    ),
+                  ),
+                ],
               ),
             ),
             const Icon(
@@ -414,44 +563,59 @@ class PetOverviewScreen extends StatelessWidget {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    String? status,
   }) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
+    return ScaleButton(
+      onPressed: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.06),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
         child: Row(
           children: [
             Container(
-              width: 44,
-              height: 44,
+              width: 30,
+              height: 30,
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                size: 22,
+                size: 16,
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 8),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      if (status != null) ...[
+                        const SizedBox(width: 8),
+                        _buildStatusBadge(status),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Text(
@@ -476,51 +640,22 @@ class PetOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildEditButton(BuildContext context, PetModel pet) {
-    return GestureDetector(
-      onTap: () {
+    return CommonButton(
+      text: AppStrings.editPetDetails,
+      variant: ButtonVariant.primary,
+      icon: Icons.edit_outlined,
+      onPressed: () {
         context.pushNamed(AppRoutes.addPet, extra: pet);
       },
-      child: Container(
-        height: 52,
-        decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: const Center(
-          child: Text(
-            AppStrings.editPetDetails,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.white,
-            ),
-          ),
-        ),
-      ),
     );
   }
 
   Widget _buildDeleteButton(BuildContext context, PetModel pet) {
-    return GestureDetector(
-      onTap: () => _showDeleteConfirmation(context, pet),
-      child: Container(
-        height: 52,
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.error),
-        ),
-        child: const Center(
-          child: Text(
-            AppStrings.deletePet,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.error,
-            ),
-          ),
-        ),
-      ),
+    return CommonButton(
+      text: AppStrings.deletePet,
+      variant: ButtonVariant.danger,
+      icon: Icons.delete_outline,
+      onPressed: () => _showDeleteConfirmation(context, pet),
     );
   }
 
@@ -533,6 +668,58 @@ class PetOverviewScreen extends StatelessWidget {
         Icons.pets,
         size: 40,
         color: AppColors.primary,
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String status) {
+    Color bgColor;
+    Color textColor;
+    String label;
+    IconData icon;
+
+    switch (status) {
+      case 'overdue':
+        bgColor = AppColors.error.withValues(alpha: 0.15);
+        textColor = AppColors.error;
+        label = 'Overdue';
+        icon = Icons.warning_amber_rounded;
+        break;
+      case 'soon':
+        bgColor = AppColors.warning.withValues(alpha: 0.15);
+        textColor = AppColors.warning;
+        label = 'Due Soon';
+        icon = Icons.schedule;
+        break;
+      case 'good':
+      default:
+        bgColor = AppColors.success.withValues(alpha: 0.15);
+        textColor = AppColors.success;
+        label = 'All Good';
+        icon = Icons.check_circle_outline;
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: textColor),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: textColor,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -631,5 +818,37 @@ class PetOverviewScreen extends StatelessWidget {
     }
 
     return AppStrings.allGood;
+  }
+
+  String? _getGroomingStatusType(PetModel pet) {
+    if (pet.groomingSettings == null || !pet.groomingSettings!.hasReminder) {
+      return null;
+    }
+
+    if (pet.groomingSettings!.isOverdue) {
+      return 'overdue';
+    }
+
+    if (pet.groomingSettings!.isDueSoon) {
+      return 'soon';
+    }
+
+    return 'good';
+  }
+
+  String? _getTickFleaStatusType(PetModel pet) {
+    if (pet.tickFleaSettings == null || !pet.tickFleaSettings!.hasReminder) {
+      return null;
+    }
+
+    if (pet.tickFleaSettings!.isOverdue) {
+      return 'overdue';
+    }
+
+    if (pet.tickFleaSettings!.isDueSoon) {
+      return 'soon';
+    }
+
+    return 'good';
   }
 }

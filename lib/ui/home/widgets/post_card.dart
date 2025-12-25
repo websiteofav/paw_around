@@ -36,27 +36,27 @@ class PostCard extends StatelessWidget {
       ),
       child: Material(
         color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
+      child: InkWell(
+        onTap: onTap,
           borderRadius: BorderRadius.circular(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildImage(),
-              Padding(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildImage(),
+            Padding(
                 padding: const EdgeInsets.all(14),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildHeader(),
-                    const SizedBox(height: 8),
-                    _buildDescription(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 8),
+                  _buildDescription(),
                     const SizedBox(height: 10),
-                    _buildFooter(),
-                  ],
-                ),
+                  _buildFooter(),
+                ],
               ),
-            ],
+            ),
+          ],
           ),
         ),
       ),
@@ -137,12 +137,12 @@ class PostCard extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Text(
-            isLost ? AppStrings.lost : AppStrings.found,
-            style: const TextStyle(
-              color: AppColors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-            ),
+        isLost ? AppStrings.lost : AppStrings.found,
+        style: const TextStyle(
+          color: AppColors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
           ),
         ],
       ),

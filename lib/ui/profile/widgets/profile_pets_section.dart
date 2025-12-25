@@ -5,6 +5,8 @@ import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/ui/widgets/common_button.dart';
+import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class ProfilePetsSection extends StatelessWidget {
   final List<PetModel> pets;
@@ -19,9 +21,16 @@ class ProfilePetsSection extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(24),
         border: Border.all(color: AppColors.border),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,30 +63,48 @@ class ProfilePetsSection extends StatelessWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
       child: Column(
         children: [
-          Icon(
-            Icons.pets,
-            size: 48,
-            color: AppColors.textSecondary.withValues(alpha: 0.5),
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.pets,
+              size: 40,
+              color: AppColors.primary.withValues(alpha: 0.6),
+            ),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 16),
           const Text(
             AppStrings.noPetsAddedYet,
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textSecondary,
+              fontWeight: FontWeight.w600,
+              color: AppColors.textPrimary,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           const Text(
             AppStrings.addFirstPetToStart,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
               color: AppColors.textSecondary,
             ),
+          ),
+          const SizedBox(height: 20),
+          CommonButton(
+            text: AppStrings.addPet,
+            variant: ButtonVariant.primary,
+            size: ButtonSize.small,
+            icon: Icons.add,
+            isFullWidth: false,
+            onPressed: () => context.pushNamed(AppRoutes.addPet),
           ),
         ],
       ),
@@ -114,13 +141,12 @@ class ProfilePetsSection extends StatelessWidget {
   }
 
   Widget _buildPetRow(BuildContext context, PetModel pet) {
-    return InkWell(
-      onTap: () {
+    return ScaleButton(
+      onPressed: () {
         context.pushNamed(AppRoutes.petOverview, extra: pet);
       },
-      borderRadius: BorderRadius.circular(12),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(14),
         child: Row(
           children: [
             // Circular pet avatar
@@ -145,7 +171,7 @@ class ProfilePetsSection extends StatelessWidget {
                     : _buildDefaultPetIcon(pet.species),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 18),
 
             // Pet info
             Expanded(
@@ -160,13 +186,33 @@ class ProfilePetsSection extends StatelessWidget {
                       color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    _formatAge(pet.dateOfBirth),
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: AppColors.textSecondary,
-                    ),
+                  const SizedBox(height: 4),
+                  Row(
+                    children: [
+                      Text(
+                        _formatAge(pet.dateOfBirth),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: _getSpeciesColor(pet.species),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          pet.species,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -185,37 +231,29 @@ class ProfilePetsSection extends StatelessWidget {
   }
 
   Widget _buildAddPetRow(BuildContext context) {
-    return InkWell(
-      onTap: () {
+    return ScaleButton(
+      onPressed: () {
         context.pushNamed(AppRoutes.addPet);
       },
-      borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(16),
-        bottomRight: Radius.circular(16),
-      ),
-      child: Container(
-        margin: const EdgeInsets.all(0),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-        ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-              width: 28,
-              height: 28,
+              width: 32,
+              height: 32,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: AppColors.primary.withValues(alpha: 0.15),
               ),
               child: const Icon(
                 Icons.add,
-                size: 18,
+                size: 20,
                 color: AppColors.primary,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 12),
             Text(
               AppStrings.addAnotherPet,
               style: AppTextStyles.mediumStyle500(fontSize: 15, fontColor: AppColors.primary),

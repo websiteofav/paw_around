@@ -18,3 +18,8 @@ class ValidationFailure extends Failure {
 class AuthFailure extends Failure {
   const AuthFailure(super.message);
 }
+
+/// Failure for unauthorized/unauthenticated errors (401, permission-denied, etc.)
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure([String message = 'Session expired. Please login again.']) : super(message);
+}

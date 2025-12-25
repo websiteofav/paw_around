@@ -34,6 +34,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
 
   final Map<String, String> _errors = {};
   bool _isEditMode = false;
+  bool _isSaving = false;
 
   List<VaccineMasterData> get _availableVaccines {
     if (widget.pet != null) {
@@ -115,36 +116,53 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
     return _errors.isEmpty;
   }
 
-  void _saveVaccine() async {
+  Future<void> _saveVaccine() async {
     if (!_validate()) {
       return;
     }
 
-    final vaccine = VaccineModel.create(
-      vaccineName: _selectedVaccine!.name,
-      dateGiven: _dateGiven!,
-      nextDueDate: _nextDueDate!,
-      notes: _notesController.text,
-      setReminder: _setReminder,
-    );
+    setState(() => _isSaving = true);
 
-    await sl<PetRepository>().updateVaccine(widget.pet!.id, vaccine);
-
-    // Refresh pet list so Home screen and other screens update
-    if (context.mounted) {
-      context.read<PetListBloc>().add(const LoadPetList());
-    }
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AppStrings.vaccineAddedSuccessfully),
-          backgroundColor: AppColors.success,
-        ),
+    try {
+      final vaccine = VaccineModel.create(
+        vaccineName: _selectedVaccine!.name,
+        dateGiven: _dateGiven!,
+        nextDueDate: _nextDueDate!,
+        notes: _notesController.text,
+        setReminder: _setReminder,
       );
 
-      // Return the vaccine to the parent screen
-      context.pop(vaccine);
+      await sl<PetRepository>().updateVaccine(widget.pet!.id, vaccine);
+
+      // Refresh pet list so Home screen and other screens update
+      if (mounted) {
+        context.read<PetListBloc>().add(const LoadPetList());
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(AppStrings.vaccineAddedSuccessfully),
+            backgroundColor: AppColors.success,
+          ),
+        );
+
+        // Return the vaccine to the parent screen
+        context.pop(vaccine);
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
     }
   }
 
@@ -213,6 +231,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
               onPressed: _saveVaccine,
               variant: ButtonVariant.primary,
               size: ButtonSize.medium,
+              isLoading: _isSaving,
             ),
 
             // Delete Button (only in edit mode)

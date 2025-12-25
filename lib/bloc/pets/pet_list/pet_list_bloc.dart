@@ -24,6 +24,7 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
       emit(PetListLoaded(pets: pets));
     } catch (e) {
       emit(PetListError(message: e.toString()));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -36,6 +37,7 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
       add(const LoadPetList());
     } catch (e) {
       emit(PetListError(message: e.toString()));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 

@@ -24,6 +24,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       emit(CommunityLoaded(posts: posts));
     } catch (e) {
       emit(CommunityError(e.toString()));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -36,6 +37,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       add(LoadPosts());
     } catch (e) {
       emit(CommunityError(e.toString()));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -59,6 +61,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       add(LoadPosts());
     } catch (e) {
       emit(CommunityError(e.toString()));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -69,6 +72,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       add(LoadPosts());
     } catch (e) {
       emit(CommunityError(e.toString()));
+      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 }

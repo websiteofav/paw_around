@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/places/places_model.dart';
@@ -21,21 +22,30 @@ class PlacesBottomSheet extends StatelessWidget {
     final selectedPlace = _getSelectedPlace();
 
     return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black12,
-            blurRadius: 10,
-            offset: Offset(0, -2),
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 16,
+            offset: const Offset(0, -4),
           ),
         ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Drag handle
+          Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
           const SizedBox(height: 16),
           if (selectedPlace != null)
             PlaceCard(
@@ -43,10 +53,35 @@ class PlacesBottomSheet extends StatelessWidget {
               onDirectionsTap: onDirectionsTap != null ? () => onDirectionsTap!(selectedPlace) : null,
             )
           else
-            Text(
-              '${places.length} ${AppStrings.petServicesFoundNearby}',
-              style: AppTextStyles.regularStyle400(),
+            _buildPlacesSummary(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlacesSummary() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(
+            Icons.location_on_rounded,
+            color: AppColors.primary,
+            size: 20,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '${places.length} ${AppStrings.petServicesFoundNearby}',
+            style: AppTextStyles.mediumStyle500(
+              fontSize: 14,
+              fontColor: AppColors.primary,
             ),
+          ),
         ],
       ),
     );
