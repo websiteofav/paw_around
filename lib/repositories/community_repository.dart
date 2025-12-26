@@ -50,4 +50,17 @@ class CommunityRepository {
   Future<void> deletePost(String postId) async {
     await _postsRef.doc(postId).delete();
   }
+
+  /// Delete all posts for a specific user (used for account deletion)
+  Future<void> deleteAllPostsForUser(String userId) async {
+    final snapshot = await _postsRef.where('userId', isEqualTo: userId).get();
+
+    // Delete all posts in a batch
+    final batch = _firestore.batch();
+    for (final doc in snapshot.docs) {
+      batch.delete(doc.reference);
+    }
+
+    await batch.commit();
+  }
 }

@@ -360,6 +360,20 @@ class AppStrings {
   static const String urgent = 'Urgent';
   static const String scheduled = 'Scheduled';
 
+  // Delete Account
+  static const String deleteAccount = 'Delete Account';
+  static const String deleteAccountTitle = 'Delete Account?';
+  static const String deleteAccountWarning =
+      'This will permanently delete your account and all associated data including:';
+  static const String deleteAccountBullet1 = 'Your profile information';
+  static const String deleteAccountBullet2 = 'All your pets and their records';
+  static const String deleteAccountBullet3 = 'Your posts and community activity';
+  static const String deleteAccountFinal = 'This action cannot be undone.';
+  static const String deleteAccountConfirm = 'Delete My Account';
+  static const String deletingAccount = 'Deleting account...';
+  static const String accountDeletedSuccessfully = 'Account deleted successfully';
+  static const String reAuthRequired = 'Please sign in again to confirm deletion';
+
   // Private constructor to prevent instantiation
   AppStrings._();
 }

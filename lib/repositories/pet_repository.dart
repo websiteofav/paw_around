@@ -292,4 +292,23 @@ class PetRepository {
 
     await updateTickFleaSettings(petId, updatedSettings);
   }
+
+  /// Delete all pets for a specific user (used for account deletion)
+  Future<void> deleteAllPetsForUser(String userId) async {
+    final petsRef = _firestore.collection('users').doc(userId).collection('pets');
+    final snapshot = await petsRef.get();
+
+    // Delete all pets in a batch
+    final batch = _firestore.batch();
+    for (final doc in snapshot.docs) {
+      // Also delete vaccines subcollection for each pet
+      final vaccinesSnapshot = await petsRef.doc(doc.id).collection('vaccines').get();
+      for (final vaccineDoc in vaccinesSnapshot.docs) {
+        batch.delete(vaccineDoc.reference);
+      }
+      batch.delete(doc.reference);
+    }
+
+    await batch.commit();
+  }
 }
