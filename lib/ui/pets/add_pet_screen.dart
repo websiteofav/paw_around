@@ -124,67 +124,75 @@ class _AddPetViewState extends State<_AddPetView> {
       _nameController.text = formState.name;
     }
 
+    final bool isSaving = formState.status == PetFormStatus.saving;
+
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                // Image Picker (Optional)
-                _buildImagePicker(context, formState),
-                const SizedBox(height: 24),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            // Image Picker (Optional)
+            _buildImagePicker(context, formState),
+            const SizedBox(height: 24),
 
-                // Pet Name Field
-                CommonFormField(
-                  label: AppStrings.petName,
-                  hintText: AppStrings.petNameHint,
-                  controller: _nameController,
-                  isRequired: true,
-                  onChanged: (value) {
-                    context.read<PetFormBloc>().add(UpdateName(value));
-                  },
-                  errorText: formState.errors['name'],
-                ),
-                const SizedBox(height: 16),
-
-                // Pet Type Selector
-                const PetTypeSelector(),
-                const SizedBox(height: 16),
-
-                // Birthdate OR Age
-                const BirthdateAgeSelector(),
-                const SizedBox(height: 16),
-
-                // Gender Selection (Required)
-                _buildGenderSection(context, formState),
-                const SizedBox(height: 32),
-
-                // Save Button
-                CommonButton(
-                  text: AppStrings.saveAndContinue,
-                  onPressed: formState.status == PetFormStatus.saving
-                      ? null
-                      : () {
-                          context.read<PetFormBloc>().add(SubmitForm(petToEdit: widget.petToEdit));
-                        },
-                  isLoading: formState.status == PetFormStatus.saving,
-                  size: ButtonSize.medium,
-                ),
-              ],
+            // Pet Name Field
+            CommonFormField(
+              label: AppStrings.petName,
+              hintText: AppStrings.petNameHint,
+              controller: _nameController,
+              isRequired: true,
+              enabled: !isSaving,
+              onChanged: (value) {
+                context.read<PetFormBloc>().add(UpdateName(value));
+              },
+              errorText: formState.errors['name'],
             ),
-          ),
+            const SizedBox(height: 16),
 
-          // Loading overlay
-          if (formState.status == PetFormStatus.saving)
-            Container(
-              color: Colors.black26,
-              child: const Center(
-                child: CircularProgressIndicator(color: AppColors.primary),
+            // Pet Type Selector
+            IgnorePointer(
+              ignoring: isSaving,
+              child: Opacity(
+                opacity: isSaving ? 0.6 : 1.0,
+                child: const PetTypeSelector(),
               ),
             ),
-        ],
+            const SizedBox(height: 16),
+
+            // Birthdate OR Age
+            IgnorePointer(
+              ignoring: isSaving,
+              child: Opacity(
+                opacity: isSaving ? 0.6 : 1.0,
+                child: const BirthdateAgeSelector(),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Gender Selection (Required)
+            IgnorePointer(
+              ignoring: isSaving,
+              child: Opacity(
+                opacity: isSaving ? 0.6 : 1.0,
+                child: _buildGenderSection(context, formState),
+              ),
+            ),
+            const SizedBox(height: 32),
+
+            // Save Button
+            CommonButton(
+              text: AppStrings.saveAndContinue,
+              onPressed: isSaving
+                  ? null
+                  : () {
+                      context.read<PetFormBloc>().add(SubmitForm(petToEdit: widget.petToEdit));
+                    },
+              isLoading: isSaving,
+              size: ButtonSize.medium,
+            ),
+          ],
+        ),
       ),
     );
   }

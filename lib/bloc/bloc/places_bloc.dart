@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/bloc/places_event.dart';
 import 'package:paw_around/bloc/bloc/places_state.dart';
+import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/repositories/places_repository.dart';
 
 class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
@@ -14,6 +15,7 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
     on<SearchPlaces>(_onSearchPlaces);
     on<SelectPlace>(_onSelectPlace);
     on<ToggleMapView>(_onToggleMapView);
+    on<FilterByServiceType>(_onFilterByServiceType);
   }
 
   Future<void> _onLoadNearbyPlaces(
@@ -35,10 +37,24 @@ class PlacesBloc extends Bloc<PlacesEvent, PlacesState> {
         places: places,
         userLatitude: event.latitude,
         userLongitude: event.longitude,
+        selectedServiceType: event.initialFilter ?? ServiceType.all,
       ));
     } catch (e) {
       emit(PlacesError('Failed to load nearby places: $e'));
       rethrow; // Let AuthBlocObserver handle auth errors
+    }
+  }
+
+  void _onFilterByServiceType(
+    FilterByServiceType event,
+    Emitter<PlacesState> emit,
+  ) {
+    final currentState = state;
+    if (currentState is PlacesLoaded) {
+      emit(currentState.copyWith(
+        selectedServiceType: event.serviceType,
+        selectedPlaceId: null, // Clear selection when filter changes
+      ));
     }
   }
 

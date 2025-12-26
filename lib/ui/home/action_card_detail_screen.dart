@@ -12,6 +12,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/action_type.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/ui/home/widgets/action_info_card.dart';
@@ -262,8 +263,14 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
   }
 
   void _handleCta() {
-    // Navigate to Map screen with filters
-    context.read<HomeBloc>().add(HomeTabChanged(1));
+    // Navigate to Map screen with appropriate filter based on action type
+    final ServiceType filter = switch (actionType) {
+      ActionType.vaccine => ServiceType.vet,
+      ActionType.grooming => ServiceType.groomer,
+      ActionType.tickFlea => ServiceType.petStore,
+    };
+
+    context.read<HomeBloc>().add(NavigateToMapWithFilter(filter));
     context.pop();
   }
 

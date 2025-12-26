@@ -133,6 +133,9 @@ class AppRouter {
                   placesRepository: sl<PlacesRepository>(),
                 ),
               ),
+              BlocProvider<HomeBloc>(
+                create: (_) => HomeBloc(),
+              ),
             ],
             child: child,
           );
@@ -142,10 +145,7 @@ class AppRouter {
           GoRoute(
             path: AppRoutes.home,
             name: AppRoutes.home,
-            builder: (context, state) => BlocProvider(
-              create: (context) => HomeBloc(),
-              child: const Dashboard(),
-            ),
+            builder: (context, state) => const Dashboard(),
           ),
 
           // Add Pet Route - Creates fresh PetFormBloc each time

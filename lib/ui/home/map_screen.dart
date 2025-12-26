@@ -8,6 +8,7 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
+import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/home/widgets/places_list_view.dart';
 import 'package:paw_around/ui/home/widgets/places_map_view.dart';
@@ -16,7 +17,9 @@ import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/utils/url_utils.dart';
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
+  final ServiceType? initialFilter;
+
+  const MapScreen({super.key, this.initialFilter});
 
   @override
   State<MapScreen> createState() => _MapScreenState();
@@ -25,11 +28,24 @@ class MapScreen extends StatefulWidget {
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController? _mapController;
   final LocationService _locationService = sl<LocationService>();
+  ServiceType? _appliedFilter;
 
   @override
   void initState() {
     super.initState();
     _loadCurrentLocation();
+  }
+
+  @override
+  void didUpdateWidget(MapScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Apply new filter when widget is updated with a different filter
+    if (widget.initialFilter != null &&
+        widget.initialFilter != _appliedFilter &&
+        widget.initialFilter != ServiceType.all) {
+      _appliedFilter = widget.initialFilter;
+      context.read<PlacesBloc>().add(FilterByServiceType(widget.initialFilter!));
+    }
   }
 
   Future<void> _loadCurrentLocation() async {
@@ -40,9 +56,11 @@ class _MapScreenState extends State<MapScreen> {
     }
 
     if (result.isSuccess && result.position != null) {
+      _appliedFilter = widget.initialFilter;
       context.read<PlacesBloc>().add(LoadNearbyPlaces(
             latitude: result.position!.latitude,
             longitude: result.position!.longitude,
+            initialFilter: widget.initialFilter,
           ));
     }
   }
@@ -50,7 +68,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.white,
       body: Column(
         children: [
           // Custom App Bar
@@ -73,6 +91,16 @@ class _MapScreenState extends State<MapScreen> {
             },
           ),
 
+          // Filter Chips
+          BlocBuilder<PlacesBloc, PlacesState>(
+            builder: (context, state) {
+              if (state is! PlacesLoaded) {
+                return const SizedBox.shrink();
+              }
+              return _buildFilterChips(state);
+            },
+          ),
+
           // Content
           Expanded(
             child: BlocBuilder<PlacesBloc, PlacesState>(
@@ -86,7 +114,7 @@ class _MapScreenState extends State<MapScreen> {
                 }
 
                 if (state is PlacesLoaded) {
-                  return state.isMapView ? _buildMapView(state) : PlacesListView(places: state.places);
+                  return state.isMapView ? _buildMapView(state) : PlacesListView(places: state.filteredPlaces);
                 }
 
                 return _buildInitialState();
@@ -94,6 +122,108 @@ class _MapScreenState extends State<MapScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChips(PlacesLoaded state) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: ServiceType.values.map((type) {
+            final isSelected = state.selectedServiceType == type;
+            final count = type == ServiceType.all
+                ? state.places.length
+                : state.places.where((p) => type.matchesTypes(p.types, placeName: p.name)).length;
+
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: _buildFilterChip(
+                type: type,
+                isSelected: isSelected,
+                count: count,
+              ),
+            );
+          }).toList(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFilterChip({
+    required ServiceType type,
+    required bool isSelected,
+    required int count,
+  }) {
+    return GestureDetector(
+      onTap: () {
+        context.read<PlacesBloc>().add(FilterByServiceType(type));
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? type.color : AppColors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? type.color : AppColors.border,
+            width: 1.5,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: type.color.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              type.icon,
+              size: 18,
+              color: isSelected ? AppColors.white : AppColors.textSecondary,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              type.label,
+              style: AppTextStyles.mediumStyle500(
+                fontSize: 14,
+                fontColor: isSelected ? AppColors.white : AppColors.textPrimary,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.white.withValues(alpha: 0.2) : AppColors.background,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$count',
+                style: AppTextStyles.semiBoldStyle600(
+                  fontSize: 12,
+                  fontColor: isSelected ? AppColors.white : AppColors.textSecondary,
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -276,7 +406,7 @@ class _MapScreenState extends State<MapScreen> {
     return PlacesMapView(
       userLatitude: state.userLatitude,
       userLongitude: state.userLongitude,
-      places: state.places,
+      places: state.filteredPlaces,
       selectedPlaceId: state.selectedPlaceId,
       onMapCreated: (controller) {
         _mapController = controller;

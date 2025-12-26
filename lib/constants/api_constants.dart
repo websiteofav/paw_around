@@ -43,5 +43,8 @@ class ApiConstants {
   // Pet Service Queries (for text search - non-official types)
   static const List<String> petServiceQueries = [
     'pet groomer',
+    'pet grooming',
+    'dog grooming',
+    'cat grooming',
   ];
 }

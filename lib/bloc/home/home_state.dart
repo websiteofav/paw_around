@@ -1,3 +1,5 @@
+import 'package:paw_around/models/places/service_type.dart';
+
 abstract class HomeState {}
 
 class HomeInitial extends HomeState {
@@ -8,6 +10,7 @@ class HomeInitial extends HomeState {
 
 class HomeTabSelected extends HomeState {
   final int currentTabIndex;
+  final ServiceType? mapServiceFilter;
 
-  HomeTabSelected(this.currentTabIndex);
+  HomeTabSelected(this.currentTabIndex, {this.mapServiceFilter});
 }

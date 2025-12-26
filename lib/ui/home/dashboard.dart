@@ -8,6 +8,7 @@ import 'package:paw_around/bloc/home/home_event.dart';
 import 'package:paw_around/bloc/home/home_state.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
+import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/community_screen.dart';
@@ -61,10 +62,11 @@ class _DashboardState extends State<Dashboard> {
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           final currentIndex = state is HomeTabSelected ? state.currentTabIndex : 0;
+          final mapFilter = state is HomeTabSelected ? state.mapServiceFilter : null;
 
           return Scaffold(
             backgroundColor: AppColors.background,
-            body: _getTabContent(currentIndex),
+            body: _getTabContent(currentIndex, mapFilter: mapFilter),
             bottomNavigationBar: Container(
               decoration: BoxDecoration(
                 color: AppColors.navigationBackground,
@@ -129,12 +131,12 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _getTabContent(int currentIndex) {
+  Widget _getTabContent(int currentIndex, {ServiceType? mapFilter}) {
     switch (currentIndex) {
       case 0:
         return const HomeScreen();
       case 1:
-        return const MapScreen();
+        return MapScreen(initialFilter: mapFilter);
       case 2:
         return const CommunityScreen();
       case 3:

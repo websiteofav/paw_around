@@ -18,6 +18,7 @@ import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/pets/action_type.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
+import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 import 'package:paw_around/ui/home/widgets/urgent_vaccine_card.dart';
@@ -517,8 +518,8 @@ class _HomeScreenState extends State<HomeScreen> {
       nearbyVetsCount: 3,
       distanceKm: 2,
       onFindVetsPressed: () {
-        // Navigate to map tab
-        context.read<HomeBloc>().add(HomeTabChanged(1));
+        // Navigate to map tab with vet filter
+        context.read<HomeBloc>().add(NavigateToMapWithFilter(ServiceType.vet));
       },
     );
   }
