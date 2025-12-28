@@ -359,7 +359,9 @@ class AppStrings {
   static const String activeTasks = 'Active Tasks';
   static const String urgent = 'Urgent';
   static const String scheduled = 'Scheduled';
-
+  static const String enableReminders = 'Enable Reminders';
+  static const String enable = 'Enable';
+  static const String notNow = 'Not Now';
   // Delete Account
   static const String deleteAccount = 'Delete Account';
   static const String deleteAccountTitle = 'Delete Account?';

@@ -178,7 +178,7 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
               text: AppStrings.save,
               onPressed: _isSaving ? null : _save,
               isLoading: _isSaving,
-              size: ButtonSize.large,
+              size: ButtonSize.medium,
             ),
           ),
         ],

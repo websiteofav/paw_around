@@ -1,4 +1,4 @@
-package com.example.paw_around
+package com.pawaround.app
 
 import io.flutter.embedding.android.FlutterActivity
 

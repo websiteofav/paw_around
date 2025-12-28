@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
-import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
+import 'package:paw_around/ui/widgets/notification_permission_dialog.dart';
 
 /// Types of care reminders
 enum ReminderType {
@@ -46,7 +45,6 @@ class NotificationService {
 
   final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
 
-  static const String _declinedKey = 'notifications_declined';
   static const String _channelId = 'pet_care_reminders';
   static const String _channelName = 'Pet Care Reminders';
   static const String _channelDescription = 'Reminders for vaccines, grooming, and tick/flea care';
@@ -83,18 +81,6 @@ class NotificationService {
   void _onNotificationTapped(NotificationResponse response) {
     // Handle notification tap - can navigate to specific screen
     debugPrint('Notification tapped: ${response.payload}');
-  }
-
-  /// Check if user has already declined notifications
-  Future<bool> userDeclinedNotifications() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_declinedKey) ?? false;
-  }
-
-  /// Mark that user has declined notifications
-  Future<void> setUserDeclinedNotifications(bool declined) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_declinedKey, declined);
   }
 
   /// Check if we have notification permission
@@ -145,114 +131,19 @@ class NotificationService {
     String petName,
     ReminderType type,
   ) async {
-    // Check if already declined
-    if (await userDeclinedNotifications()) {
-      return false;
-    }
-
     // Check if already have permission
     if (await hasPermission()) {
       return true;
     }
 
     // Show contextual dialog
-    final shouldRequest = await showDialog<bool>(
+    final shouldRequest = await showNotificationPermissionDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.notifications_active_outlined,
-                size: 32,
-                color: AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "Never Miss $petName's Care",
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              "Get reminders so you never forget $petName's ${type.displayName}.",
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () => Navigator.of(ctx).pop(false),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.textSecondary,
-                      side: const BorderSide(color: AppColors.border),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: const Text(
-                      'Not Now',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.of(ctx).pop(true),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: const Text(
-                      'Enable Reminders',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+      petName: petName,
+      reminderType: type,
     );
 
-    if (shouldRequest != true) {
-      await setUserDeclinedNotifications(true);
+    if (!shouldRequest) {
       return false;
     }
 
@@ -270,7 +161,6 @@ class NotificationService {
       final notificationDate = dueDate.subtract(Duration(days: daysBefore));
 
       // Skip if date is in the past
-      if (notificationDate.isBefore(DateTime.now())) continue;
 
       final body = daysBefore == 0
           ? "$petName's $careName is due today!"
@@ -283,8 +173,8 @@ class NotificationService {
         notificationDate.year,
         notificationDate.month,
         notificationDate.day,
-        9,
-        0,
+        DateTime.now().hour,
+        DateTime.now().minute + 2,
       );
 
       // Skip if scheduled time has passed
@@ -313,7 +203,7 @@ class NotificationService {
     required String body,
     required DateTime scheduledDate,
   }) async {
-    final androidDetails = AndroidNotificationDetails(
+    const androidDetails = AndroidNotificationDetails(
       _channelId,
       _channelName,
       channelDescription: _channelDescription,
@@ -328,7 +218,7 @@ class NotificationService {
       presentSound: true,
     );
 
-    final details = NotificationDetails(
+    const details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );

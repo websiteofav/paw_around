@@ -2,6 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CLIENT_ID</key>
+	<string>716405823878-hmj7laoql53e2utnblm28dkomj1774ln.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.716405823878-hmj7laoql53e2utnblm28dkomj1774ln</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>716405823878-qqp5jkrfjl6hi5d12kcoiopuias3q1ur.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyAlX6HZOXQ252WYSLtiUNDqmI5hua2GYgk</string>
 	<key>GCM_SENDER_ID</key>
@@ -9,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.pawAround</string>
+	<string>com.pawaround.app</string>
 	<key>PROJECT_ID</key>
 	<string>paw-around-f487d</string>
 	<key>STORAGE_BUCKET</key>
@@ -25,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:716405823878:ios:bba183e490690ae74a3407</string>
+	<string>1:716405823878:ios:921f7dbe8d1b66c84a3407</string>
 </dict>
 </plist>

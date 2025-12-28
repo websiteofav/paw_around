@@ -51,7 +51,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCiB5Fip21n6SXYOYkhLoXn5IgMcRYZKpw',
-    appId: '1:716405823878:android:ead69e8db5a3a0914a3407',
+    appId: '1:716405823878:android:acdda229f25d7c644a3407',
     messagingSenderId: '716405823878',
     projectId: 'paw-around-f487d',
     storageBucket: 'paw-around-f487d.firebasestorage.app',
@@ -59,10 +59,13 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyAlX6HZOXQ252WYSLtiUNDqmI5hua2GYgk',
-    appId: '1:716405823878:ios:bba183e490690ae74a3407',
+    appId: '1:716405823878:ios:921f7dbe8d1b66c84a3407',
     messagingSenderId: '716405823878',
     projectId: 'paw-around-f487d',
     storageBucket: 'paw-around-f487d.firebasestorage.app',
-    iosBundleId: 'com.example.pawAround',
+    androidClientId: '716405823878-qqp5jkrfjl6hi5d12kcoiopuias3q1ur.apps.googleusercontent.com',
+    iosClientId: '716405823878-hmj7laoql53e2utnblm28dkomj1774ln.apps.googleusercontent.com',
+    iosBundleId: 'com.pawaround.app',
   );
+
 }
