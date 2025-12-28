@@ -12,6 +12,7 @@ import 'package:paw_around/firebase_options.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/router/app_router.dart';
 import 'package:paw_around/core/di/service_locator.dart';
+import 'package:paw_around/services/notification_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,9 @@ void main() async {
   // Initialize service locator
   await init();
   await dotenv.load(fileName: ".env");
+
+  // Initialize notification service
+  await NotificationService().init();
 
   // Register global bloc observer for auth error handling
   Bloc.observer = AuthBlocObserver();

@@ -12,6 +12,7 @@ import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_master_data.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/services/notification_service.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
 class AddVaccineScreen extends StatefulWidget {
@@ -133,6 +134,24 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
       );
 
       await sl<PetRepository>().updateVaccine(widget.pet!.id, vaccine);
+
+      // Schedule notification if reminder is enabled
+      if (_setReminder && mounted) {
+        final notificationService = NotificationService();
+        final hasPermission = await notificationService.requestPermissionIfNeeded(
+          context,
+          widget.pet!.name,
+          ReminderType.vaccine,
+        );
+
+        if (hasPermission) {
+          await notificationService.scheduleVaccineReminder(
+            petId: widget.pet!.id,
+            petName: widget.pet!.name,
+            vaccine: vaccine,
+          );
+        }
+      }
 
       // Refresh pet list so Home screen and other screens update
       if (mounted) {

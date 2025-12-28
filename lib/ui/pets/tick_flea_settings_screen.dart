@@ -9,6 +9,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/services/notification_service.dart';
 import 'package:paw_around/ui/pets/widgets/care_app_bar.dart';
 import 'package:paw_around/ui/pets/widgets/frequency_selector.dart';
 import 'package:paw_around/ui/pets/widgets/date_picker_field.dart';
@@ -67,6 +68,31 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
       );
 
       await sl<PetRepository>().updateTickFleaSettings(widget.pet.id, settings);
+
+      // Schedule notification if reminder is enabled
+      if (settings.hasReminder && mounted) {
+        final notificationService = NotificationService();
+        final hasPermission = await notificationService.requestPermissionIfNeeded(
+          context,
+          widget.pet.name,
+          ReminderType.tickFlea,
+        );
+
+        if (hasPermission) {
+          await notificationService.scheduleCareReminder(
+            petId: widget.pet.id,
+            petName: widget.pet.name,
+            type: ReminderType.tickFlea,
+            settings: settings,
+          );
+        }
+      } else {
+        // Cancel existing reminders if frequency set to none
+        await NotificationService().cancelCareReminder(
+          petId: widget.pet.id,
+          type: ReminderType.tickFlea,
+        );
+      }
 
       // Reload pet list to reflect changes
       if (mounted) {

@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
+import 'package:paw_around/services/storage_service.dart';
 
 class CommunityRepository {
   final FirebaseFirestore _firestore;
@@ -47,13 +48,31 @@ class CommunityRepository {
   }
 
   /// Delete a post
-  Future<void> deletePost(String postId) async {
+  Future<void> deletePost(String postId, {StorageService? storageService}) async {
+    // Get post to check for image
+    final post = await getPostById(postId);
+    if (post?.imagePath != null && post!.imagePath!.startsWith('http')) {
+      final storage = storageService ?? StorageService();
+      await storage.deleteImage(post.imagePath!);
+    }
+
     await _postsRef.doc(postId).delete();
   }
 
   /// Delete all posts for a specific user (used for account deletion)
-  Future<void> deleteAllPostsForUser(String userId) async {
+  Future<void> deleteAllPostsForUser(String userId, {StorageService? storageService}) async {
     final snapshot = await _postsRef.where('userId', isEqualTo: userId).get();
+
+    final storage = storageService ?? StorageService();
+
+    // Delete images from storage
+    for (final doc in snapshot.docs) {
+      final data = doc.data();
+      final imagePath = data['imagePath'] as String?;
+      if (imagePath != null && imagePath.startsWith('http')) {
+        await storage.deleteImage(imagePath);
+      }
+    }
 
     // Delete all posts in a batch
     final batch = _firestore.batch();

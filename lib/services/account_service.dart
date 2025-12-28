@@ -3,6 +3,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/community_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/services/storage_service.dart';
 
 /// Service for account-related operations
 class AccountService {
@@ -17,14 +18,21 @@ class AccountService {
     }
 
     final userId = user.uid;
+    final storageService = StorageService();
 
-    // Delete user's pets
+    // Delete user's profile image from storage
+    final photoUrl = user.photoURL;
+    if (photoUrl != null && photoUrl.contains('firebasestorage')) {
+      await storageService.deleteImage(photoUrl);
+    }
+
+    // Delete user's pets (and their images)
     final petRepository = sl<PetRepository>();
-    await petRepository.deleteAllPetsForUser(userId);
+    await petRepository.deleteAllPetsForUser(userId, storageService: storageService);
 
-    // Delete user's posts
+    // Delete user's posts (and their images)
     final communityRepository = sl<CommunityRepository>();
-    await communityRepository.deleteAllPostsForUser(userId);
+    await communityRepository.deleteAllPostsForUser(userId, storageService: storageService);
 
     // Delete the Firebase Auth account
     await user.delete();

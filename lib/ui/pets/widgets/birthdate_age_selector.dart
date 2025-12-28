@@ -5,6 +5,7 @@ import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class BirthdateAgeSelector extends StatelessWidget {
@@ -19,22 +20,14 @@ class BirthdateAgeSelector extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Text(
+                Text(
                   AppStrings.birthdateOrAge,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
                 ),
                 const SizedBox(width: 4),
-                const Text(
+                Text(
                   '*',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.error,
-                  ),
+                  style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.error),
                 ),
               ],
             ),
@@ -50,7 +43,10 @@ class BirthdateAgeSelector extends StatelessWidget {
                     label: _getDatePickerLabel(state),
                     icon: Icons.calendar_today_outlined,
                     isSelected: _isExactDateSelected(state),
-                    onTap: () => _selectDateOfBirth(context, state),
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      _selectDateOfBirth(context, state);
+                    },
                   ),
                   const SizedBox(width: 8),
                   // Less than 1 year

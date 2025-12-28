@@ -3,6 +3,8 @@ import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/services/notification_service.dart';
+import 'package:paw_around/services/storage_service.dart';
 
 class PetRepository {
   final FirebaseFirestore _firestore;
@@ -57,7 +59,20 @@ class PetRepository {
   }
 
   // Delete pet
-  Future<void> deletePet(String id) async {
+  Future<void> deletePet(String id, {StorageService? storageService}) async {
+    final pet = await getPetById(id);
+    if (pet != null) {
+      // Cancel all notifications for this pet
+      final vaccineIds = pet.vaccines.map((v) => v.id).toList();
+      await NotificationService().cancelAllRemindersForPetWithVaccines(id, vaccineIds);
+
+      // Delete pet image from storage if exists
+      if (pet.imagePath != null && pet.imagePath!.startsWith('http')) {
+        final storage = storageService ?? StorageService();
+        await storage.deleteImage(pet.imagePath!);
+      }
+    }
+
     await _petsRef.doc(id).delete();
   }
 
@@ -223,6 +238,12 @@ class PetRepository {
       return;
     }
 
+    // Cancel vaccine notifications
+    await NotificationService().cancelVaccineReminder(
+      petId: petId,
+      vaccineId: vaccineId,
+    );
+
     final updatedVaccines = pet.vaccines.where((v) => v.id != vaccineId).toList();
 
     await _petsRef.doc(petId).update({
@@ -294,9 +315,29 @@ class PetRepository {
   }
 
   /// Delete all pets for a specific user (used for account deletion)
-  Future<void> deleteAllPetsForUser(String userId) async {
+  Future<void> deleteAllPetsForUser(String userId, {StorageService? storageService}) async {
     final petsRef = _firestore.collection('users').doc(userId).collection('pets');
     final snapshot = await petsRef.get();
+
+    final notificationService = NotificationService();
+    final storage = storageService ?? StorageService();
+
+    // Cancel notifications and delete images for all pets
+    for (final doc in snapshot.docs) {
+      final petId = doc.id;
+      final petData = doc.data();
+
+      // Cancel notifications
+      final vaccines = (petData['vaccines'] as List<dynamic>?) ?? [];
+      final vaccineIds = vaccines.map((v) => (v as Map<String, dynamic>)['id'] as String).toList();
+      await notificationService.cancelAllRemindersForPetWithVaccines(petId, vaccineIds);
+
+      // Delete pet image from storage
+      final imagePath = petData['imagePath'] as String?;
+      if (imagePath != null && imagePath.startsWith('http')) {
+        await storage.deleteImage(imagePath);
+      }
+    }
 
     // Delete all pets in a batch
     final batch = _firestore.batch();
