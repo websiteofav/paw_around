@@ -56,6 +56,7 @@ class _OTPScreenState extends State<OTPScreen> {
     setState(() {
       _isOTPComplete = true;
     });
+    _verifyOTP();
   }
 
   Future<void> _verifyOTP() async {

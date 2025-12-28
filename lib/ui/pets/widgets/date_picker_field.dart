@@ -58,13 +58,6 @@ class DatePickerField extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    _isToday(selectedDate) ? AppStrings.today : '',
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
                   Row(
                     children: [
                       Text(
@@ -74,13 +67,30 @@ class DatePickerField extends StatelessWidget {
                           color: AppColors.textPrimary,
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      const Icon(
-                        Icons.chevron_right,
-                        color: AppColors.textSecondary,
-                        size: 20,
-                      ),
+                      if (_isToday(selectedDate)) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            AppStrings.today,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ],
+                  ),
+                  const Icon(
+                    Icons.chevron_right,
+                    color: AppColors.textSecondary,
+                    size: 20,
                   ),
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 
@@ -158,27 +159,95 @@ class NotificationService {
     final shouldRequest = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.white,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24),
         ),
-        title: Text("Never Miss $petName's Care"),
-        content: Text(
-          "Get reminders so you never forget $petName's ${type.displayName}.",
+        contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.notifications_active_outlined,
+                size: 32,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              "Never Miss $petName's Care",
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w600,
+                color: AppColors.textPrimary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "Get reminders so you never forget $petName's ${type.displayName}.",
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      side: const BorderSide(color: AppColors.border),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text(
+                      'Not Now',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                    ),
+                    child: const Text(
+                      'Enable Reminders',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop(false);
-            },
-            child: const Text('Not Now'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(ctx).pop(true);
-            },
-            child: const Text('Enable Reminders'),
-          ),
-        ],
       ),
     );
 
@@ -280,10 +349,13 @@ class NotificationService {
   // ============ VACCINE REMINDERS ============
 
   /// Generate base ID for vaccine reminder
-  /// Multiplies vaccineId hashCode by 10 to ensure each vaccine gets
-  /// its own block of IDs (we use 8 IDs per vaccine: 0-7 for countdown)
+  /// Uses modulo to ensure IDs fit within 32-bit integer range
+  /// Each vaccine gets 8 IDs (for countdown: 0-7)
   int _vaccineBaseId(String petId, String vaccineId) {
-    return petId.hashCode.abs() + (vaccineId.hashCode.abs() * 10);
+    // XOR the hashes and constrain to safe range (0 to ~10 million)
+    // Multiply by 10 to give each vaccine its own block of 10 IDs
+    final combinedHash = (petId.hashCode ^ vaccineId.hashCode).abs();
+    return (combinedHash % 1000000) * 10;
   }
 
   /// Schedule vaccine reminder countdown
@@ -320,8 +392,11 @@ class NotificationService {
   // ============ CARE REMINDERS (GROOMING / TICK-FLEA) ============
 
   /// Generate base ID for care reminder
+  /// Uses modulo to ensure IDs fit within 32-bit integer range
   int _careBaseId(String petId, ReminderType type) {
-    return petId.hashCode.abs() + type.typeOffset;
+    // Constrain petId hash to safe range and add type offset
+    final petHash = petId.hashCode.abs() % 1000000;
+    return (petHash * 10) + type.typeOffset;
   }
 
   /// Schedule care reminder countdown

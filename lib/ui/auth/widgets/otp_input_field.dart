@@ -19,6 +19,7 @@ class OTPInputField extends StatelessWidget {
     return PinCodeTextField(
       appContext: context,
       length: 6,
+      autoFocus: true,
       controller: controller,
       onChanged: onChanged,
       onCompleted: onCompleted,
