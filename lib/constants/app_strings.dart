@@ -35,6 +35,7 @@ class AppStrings {
   static const String termsOfService = 'Terms of Service';
   static const String and = 'and';
   static const String privacyPolicyLink = 'Privacy Policy';
+  static const String privacyPolicyUrl = 'https://websiteofav.github.io/pawaround-privacy/';
 
   // OTP Verification Screen
   static const String verifyYourNumber = 'Verify your number';

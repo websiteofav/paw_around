@@ -56,3 +56,6 @@ android/local.properties
 
 # Secrets
 ios/Runner/Secrets.xcconfig
+
+android/key.properties
+android/app/paw-around-release.keystore

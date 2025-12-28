@@ -9,6 +9,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/ui/auth/widgets/auth_logo.dart';
 import 'package:paw_around/ui/auth/widgets/social_auth_button.dart';
+import 'package:paw_around/utils/url_utils.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
   const PhoneLoginScreen({super.key});
@@ -285,27 +286,29 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   }
 
   Widget _buildTermsText() {
-    return RichText(
-      textAlign: TextAlign.center,
-      text: TextSpan(
-        style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
-        children: [
-          TextSpan(
-              text: '${AppStrings.termsText} ',
-              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary)),
-          TextSpan(
-            text: AppStrings.termsOfService,
+    return Wrap(
+      alignment: WrapAlignment.center,
+      children: [
+        Text(
+          '${AppStrings.termsText} ',
+          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+        ),
+        Text(
+          AppStrings.termsOfService,
+          style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
+        ),
+        Text(
+          ' ${AppStrings.and} ',
+          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+        ),
+        GestureDetector(
+          onTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
+          child: Text(
+            AppStrings.privacyPolicyLink,
             style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
           ),
-          TextSpan(
-              text: ' ${AppStrings.and} ',
-              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary)),
-          TextSpan(
-            text: AppStrings.privacyPolicyLink,
-            style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

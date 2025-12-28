@@ -22,6 +22,7 @@ import 'package:paw_around/ui/widgets/animated_card.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/ui/widgets/loading_overlay.dart';
+import 'package:paw_around/utils/url_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -164,7 +165,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: ProfileAccountSection(
                             onAccountSettingsTap: () => _showComingSoon(AppStrings.accountSettings),
                             onNotificationsTap: () => _showComingSoon(AppStrings.notifications),
-                            onPrivacyTap: () => _showComingSoon(AppStrings.privacyAndSecurity),
+                            onPrivacyTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
                             onHelpTap: () => _showComingSoon(AppStrings.helpAndSupport),
                             onDeleteAccountTap: () => showDeleteAccountDialog(
                               context,

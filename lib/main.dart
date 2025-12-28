@@ -17,14 +17,16 @@ import 'package:paw_around/services/notification_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
+  // Load environment variables FIRST (before Firebase)
+  await dotenv.load(fileName: ".env");
+
+  // Initialize Firebase (needs dotenv for API keys)
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   // Initialize service locator
   await init();
-  await dotenv.load(fileName: ".env");
 
   // Initialize notification service
   await NotificationService().init();

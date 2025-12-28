@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "716405823878-1ft2to9t40ctpgn3cfmfav3h0d2jtpca.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pawaround.app",
+            "certificate_hash": "257f5677518d76b4db87c31fa62cc8b7dd2a8772"
+          }
+        },
+        {
           "client_id": "716405823878-4vvsubn280m0bd26hbp7md3gct31t37f.apps.googleusercontent.com",
           "client_type": 3
         }
