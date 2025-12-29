@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "716405823878-28o65de9lukujdmfo1liv4qbcuhjabkn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pawaround.app",
+            "certificate_hash": "897aea051fc51090bd5400bf31e9d492ca5fc129"
+          }
+        },
+        {
           "client_id": "716405823878-4vvsubn280m0bd26hbp7md3gct31t37f.apps.googleusercontent.com",
           "client_type": 3
         }
