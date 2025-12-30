@@ -124,14 +124,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: AppColors.white,
           body: Column(
             children: [
-              DashboardAppBar(
+              const DashboardAppBar(
                 title: AppStrings.profileTab,
-                actions: [
-                  DashboardAppBarAction(
-                    icon: Icons.settings_outlined,
-                    onTap: () => _showComingSoon(AppStrings.settings),
-                  ),
-                ],
               ),
               Expanded(
                 child: RefreshIndicator(

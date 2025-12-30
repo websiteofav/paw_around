@@ -386,6 +386,7 @@ class AppStrings {
   static const String dueToday = 'Due today';
   static const String overdueByDays = 'Overdue by %s days';
   static const String dueInDays = 'Due in %s days';
+  static const String yourPet = 'Your Pet';
   // Private constructor to prevent instantiation
 
   AppStrings._();

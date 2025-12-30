@@ -102,13 +102,9 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 // Custom App Bar
                 DashboardAppBar(
-                  title: activePet?.name ?? 'Your Pet',
+                  title: activePet?.name ?? AppStrings.yourPet,
                   subtitle: petAge,
                   avatarImageUrl: activePet?.imagePath,
-                  showNotificationBell: true,
-                  onNotificationTap: () {
-                    // TODO: Navigate to notifications
-                  },
                 ),
 
                 // Content based on state with pull-to-refresh
