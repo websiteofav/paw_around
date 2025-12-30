@@ -36,6 +36,7 @@ class AppStrings {
   static const String and = 'and';
   static const String privacyPolicyLink = 'Privacy Policy';
   static const String privacyPolicyUrl = 'https://websiteofav.github.io/pawaround-privacy/';
+  static const String termsOfServiceUrl = 'https://websiteofav.github.io/pawaround-privacy/terms/';
 
   // OTP Verification Screen
   static const String verifyYourNumber = 'Verify your number';
@@ -280,6 +281,9 @@ class AppStrings {
   static const String snoozeFor3Days = 'Snooze for 3 days';
   static const String snoozeFor7Days = 'Snooze for 7 days';
   static const String snoozeAction = 'Snooze this reminder';
+  static const String reminderSnoozed = 'Reminder is snoozed';
+  static const String reminderUnsnoozed = 'Reminder is now active';
+  static const String unsnooze = 'Unsnooze';
 
   // Mark as Done
   static const String confirmMarkDone = 'Mark as completed?';
@@ -377,6 +381,12 @@ class AppStrings {
   static const String accountDeletedSuccessfully = 'Account deleted successfully';
   static const String reAuthRequired = 'Please sign in again to confirm deletion';
 
+  // Pet Overview Screen
+  static const String tapToUnsnooze = 'Tap to unsnooze';
+  static const String dueToday = 'Due today';
+  static const String overdueByDays = 'Overdue by %s days';
+  static const String dueInDays = 'Due in %s days';
   // Private constructor to prevent instantiation
+
   AppStrings._();
 }

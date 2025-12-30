@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
@@ -31,7 +32,10 @@ class _DashboardState extends State<Dashboard> {
     context.read<PetListBloc>().add(const LoadPetList());
   }
 
-  Future<bool> _onWillPop() async {
+  Future<bool> _handleBackPress() async {
+    if (GoRouter.of(context).canPop()) {
+      return false; // Don't handle - let GoRouter pop normally
+    }
     final now = DateTime.now();
     if (_lastBackPressTime == null || now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
       _lastBackPressTime = now;
@@ -45,20 +49,16 @@ class _DashboardState extends State<Dashboard> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
-      return false;
+      return true; // Handled - don't pop
     }
     SystemNavigator.pop();
-    return true;
+    return true; // Handled
   }
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) return;
-        await _onWillPop();
-      },
+    return BackButtonListener(
+      onBackButtonPressed: _handleBackPress,
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
           final currentIndex = state is HomeTabSelected ? state.currentTabIndex : 0;

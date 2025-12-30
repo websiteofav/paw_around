@@ -17,6 +17,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/pets/action_type.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
+import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/location_service.dart';
@@ -29,7 +30,6 @@ import 'package:paw_around/ui/home/widgets/care_summary_section.dart';
 import 'package:paw_around/ui/home/widgets/secondary_action_card.dart';
 import 'package:paw_around/ui/home/widgets/lost_pets_section.dart';
 import 'package:paw_around/ui/home/widgets/welcome_card.dart';
-import 'package:paw_around/ui/home/widgets/setup_reminder_card.dart';
 import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
 import 'package:paw_around/ui/widgets/animated_card.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
@@ -134,72 +134,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return _buildWelcomeState();
     }
 
-    // For "Other" pet types, skip vaccine and tick & flea setup
-    final supportsMedicalCare = activePet!.supportsMedicalCare;
-
-    // Check what's missing for setup
-    final missingItems = _getMissingSetupItems(activePet, supportsMedicalCare);
-    final totalItems = _getTotalSetupItems(supportsMedicalCare);
-
-    // State 2: Pet exists but has missing setup items
-    if (missingItems.isNotEmpty) {
-      return _buildSetupReminderState(activePet, missingItems, totalItems);
-    }
-
-    // State 3 & 4: All setup complete
-    final hasUpcomingVaccine = supportsMedicalCare && _hasUpcomingVaccine(pets);
-    return _buildNormalState(pets, activePet, hasUpcomingVaccine);
-  }
-
-  List<SetupItem> _getMissingSetupItems(PetModel pet, bool supportsMedicalCare) {
-    final List<SetupItem> missingItems = [];
-
-    // Check vaccines (only for dog/cat)
-    if (supportsMedicalCare && pet.vaccines.isEmpty) {
-      missingItems.add(
-        SetupItem(
-          type: SetupItemType.vaccines,
-          label: AppStrings.addVaccineDetails,
-          subtitle: AppStrings.vaccineSubtitle,
-          icon: Icons.vaccines_outlined,
-          onTap: () => context.pushNamed(AppRoutes.addVaccine, extra: pet),
-        ),
-      );
-    }
-
-    // Check grooming (for all pet types)
-    if (pet.groomingSettings?.hasReminder != true) {
-      missingItems.add(
-        SetupItem(
-          type: SetupItemType.grooming,
-          label: AppStrings.addGroomingDetails,
-          subtitle: AppStrings.groomingSubtitle,
-          icon: Icons.content_cut,
-          onTap: () => context.pushNamed(AppRoutes.groomingSettings, extra: pet),
-        ),
-      );
-    }
-
-    // Check tick & flea (only for dog/cat)
-    if (supportsMedicalCare && pet.tickFleaSettings?.hasReminder != true) {
-      missingItems.add(
-        SetupItem(
-          type: SetupItemType.tickFlea,
-          label: AppStrings.addTickFleaDetails,
-          subtitle: AppStrings.tickFleaSubtitle,
-          icon: Icons.shield_outlined,
-          onTap: () => context.pushNamed(AppRoutes.tickFleaSettings, extra: pet),
-        ),
-      );
-    }
-
-    return missingItems;
-  }
-
-  int _getTotalSetupItems(bool supportsMedicalCare) {
-    // Dog/Cat: 3 items (vaccines, grooming, tick & flea)
-    // Other: 1 item (grooming only)
-    return supportsMedicalCare ? 3 : 1;
+    // Progressive state: Show available cards + setup prompts for missing items
+    return _buildProgressiveState(pets, activePet!);
   }
 
   // State 1: Welcome state for new users
@@ -210,38 +146,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // State 2: Setup reminder for users with pets but missing setup items
-  Widget _buildSetupReminderState(PetModel pet, List<SetupItem> missingItems, int totalItems) {
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AnimatedCard(
-            index: 0,
-            child: SetupReminderCard(
-              petName: pet.name,
-              missingItems: missingItems,
-              totalItems: totalItems,
-            ),
-          ),
-          const SizedBox(height: 24),
-          // Still show lost pets section
-          AnimatedCard(
-            index: 1,
-            child: _buildLostPetsSection(),
-          ),
-          const SizedBox(height: 32),
-        ],
-      ),
-    );
-  }
-
-  // State 3 & 4: Normal state with action cards or all-set state
-  Widget _buildNormalState(List<PetModel> pets, PetModel activePet, bool hasUpcomingVaccine) {
+  // Progressive state: Shows available due cards + setup prompts for missing items
+  Widget _buildProgressiveState(List<PetModel> pets, PetModel activePet) {
     // Check if pet supports medical care (vaccines, tick & flea)
     final supportsMedicalCare = activePet.supportsMedicalCare;
+
+    // Check for vaccines
+    final hasVaccines = activePet.vaccines.isNotEmpty;
+    final hasUpcomingVaccine = supportsMedicalCare && _hasUpcomingVaccine(pets);
 
     // Check care settings (filter out snoozed)
     final hasGroomingSettings = activePet.groomingSettings?.hasReminder == true;
@@ -289,29 +201,73 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Urgent Vaccine Card (red gradient)
-          if (hasUpcomingVaccine) ...[
-            AnimatedCard(
-              index: cardIndex++,
-              child: ScaleButton(
-                onPressed: () {
-                  final vaccineData = _getUpcomingVaccine(pets);
-                  if (vaccineData != null) {
-                    context.pushNamed(
-                      AppRoutes.actionDetail,
-                      extra: ActionCardData(
-                        actionType: ActionType.vaccine,
-                        pet: vaccineData.$1,
-                        vaccine: vaccineData.$2,
-                        customTitle: vaccineData.$2.vaccineName,
-                      ),
-                    );
-                  }
-                },
-                child: _buildUrgentVaccineCard(pets, activePet),
+          // Vaccine Section
+          if (supportsMedicalCare) ...[
+            if (hasUpcomingVaccine) ...[
+              // Urgent Vaccine Card (red gradient) - due within 30 days
+              AnimatedCard(
+                index: cardIndex++,
+                child: ScaleButton(
+                  onPressed: () {
+                    final vaccineData = _getUpcomingVaccine(pets);
+                    if (vaccineData != null) {
+                      context.pushNamed(
+                        AppRoutes.actionDetail,
+                        extra: ActionCardData(
+                          actionType: ActionType.vaccine,
+                          pet: vaccineData.$1,
+                          vaccine: vaccineData.$2,
+                          customTitle: vaccineData.$2.vaccineName,
+                        ),
+                      );
+                    }
+                  },
+                  child: _buildUrgentVaccineCard(pets, activePet),
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
+              const SizedBox(height: 16),
+            ] else if (hasVaccines) ...[
+              // Vaccines exist but not due soon - show progress card
+              AnimatedCard(
+                index: cardIndex++,
+                child: ScaleButton(
+                  onPressed: () {
+                    final nextVaccine = _getNextVaccine(activePet);
+                    if (nextVaccine != null) {
+                      context.pushNamed(
+                        AppRoutes.actionDetail,
+                        extra: ActionCardData(
+                          actionType: ActionType.vaccine,
+                          pet: activePet,
+                          vaccine: nextVaccine,
+                          customTitle: nextVaccine.vaccineName,
+                        ),
+                      );
+                    }
+                  },
+                  child: _buildVaccineProgressCard(activePet),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ] else ...[
+              // No vaccines - show add card
+              AnimatedCard(
+                index: cardIndex++,
+                child: ScaleButton(
+                  onPressed: () {
+                    context.pushNamed(AppRoutes.addVaccine, extra: activePet);
+                  },
+                  child: const SecondaryActionCard(
+                    icon: Icons.vaccines_outlined,
+                    iconBackgroundColor: AppColors.cardRedIconBg,
+                    iconColor: AppColors.cardRedIcon,
+                    title: AppStrings.addVaccineDetails,
+                    subtitle: AppStrings.vaccineSubtitle,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+            ],
           ],
 
           // Grooming Card
@@ -360,7 +316,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   iconColor: AppColors.primary,
                   title: AppStrings.addGroomingDetails,
                   subtitle: AppStrings.timeForFreshTrim,
-                  onTap: () {},
                 ),
               ),
             ),
@@ -403,13 +358,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () {
                     context.pushNamed(AppRoutes.tickFleaSettings, extra: activePet);
                   },
-                  child: SecondaryActionCard(
+                  child: const SecondaryActionCard(
                     icon: Icons.shield_outlined,
                     iconBackgroundColor: AppColors.cardBlueIconBg,
                     iconColor: AppColors.cardBlueIcon,
                     title: AppStrings.addTickFleaDetails,
                     subtitle: AppStrings.reminderToProtect,
-                    onTap: () {},
                   ),
                 ),
               ),
@@ -524,6 +478,49 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildVaccineProgressCard(PetModel pet) {
+    // Find the next upcoming vaccine (any date, not just within 30 days)
+    final nextVaccine = _getNextVaccine(pet);
+    if (nextVaccine == null) {
+      return const SizedBox.shrink();
+    }
+
+    final daysUntil = nextVaccine.nextDueDate.difference(DateTime.now()).inDays;
+    final vaccineName = nextVaccine.vaccineName;
+
+    return CareProgressCard(
+      icon: Icons.vaccines_outlined,
+      title: vaccineName,
+      subtitle: 'Next in $daysUntil days',
+      daysLeft: daysUntil,
+      totalDays: 365, // Vaccines typically yearly
+    );
+  }
+
+  /// Get the next upcoming vaccine for a pet (regardless of due date)
+  VaccineModel? _getNextVaccine(PetModel pet) {
+    if (pet.vaccines.isEmpty) {
+      return null;
+    }
+
+    // Find the vaccine with the nearest due date
+    VaccineModel? nextVaccine;
+    int minDays = 999999;
+
+    for (final vaccine in pet.vaccines) {
+      if (vaccine.isSnoozed) {
+        continue;
+      }
+      final days = vaccine.nextDueDate.difference(DateTime.now()).inDays;
+      if (days >= 0 && days < minDays) {
+        minDays = days;
+        nextVaccine = vaccine;
+      }
+    }
+
+    return nextVaccine;
+  }
+
   Widget _buildLostPetsSection() {
     return BlocBuilder<CommunityBloc, CommunityState>(
       builder: (context, communityState) {
@@ -620,7 +617,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   /// Get the first upcoming non-snoozed vaccine
-  (PetModel, dynamic)? _getUpcomingVaccine(List<PetModel> pets) {
+  (PetModel, VaccineModel)? _getUpcomingVaccine(List<PetModel> pets) {
     for (final pet in pets) {
       for (final vaccine in pet.vaccines) {
         // Skip snoozed vaccines

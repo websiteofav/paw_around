@@ -308,21 +308,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         offset: const Offset(0, 4),
                       ),
                     ],
+                    image: _imagePath != null
+                        ? DecorationImage(
+                            image: FileImage(File(_imagePath!)),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
                   ),
-                  child: _imagePath != null
-                      ? ClipOval(
-                          child: Image.file(
-                            File(_imagePath!),
-                            fit: BoxFit.fill,
-                            width: 120,
-                            height: 120,
-                          ),
-                        )
-                      : Icon(
+                  child: _imagePath == null
+                      ? Icon(
                           Icons.pets,
                           size: 48,
                           color: AppColors.primary.withValues(alpha: 0.6),
-                        ),
+                        )
+                      : null,
                 ),
                 Positioned(
                   right: 0,

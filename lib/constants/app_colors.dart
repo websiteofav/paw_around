@@ -99,6 +99,8 @@ class AppColors {
   // Card Colors
   static const Color cardBlueIcon = Color(0xFF2563EB);
   static const Color cardBlueIconBg = Color(0xFFDBEAFE);
+  static const Color cardRedIcon = Color(0xFFDC2626);
+  static const Color cardRedIconBg = Color(0xFFFEE2E2);
   static const Color progressBarBg = Color(0xFFF3F4F6);
   static const Color progressBarFill = Color(0xFF3B82F6);
 

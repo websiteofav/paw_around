@@ -36,6 +36,8 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
   final Map<String, String> _errors = {};
   bool _isEditMode = false;
   bool _isSaving = false;
+  bool _isSnoozed = false;
+  bool _isUnsnoozeing = false;
 
   List<VaccineMasterData> get _availableVaccines {
     if (widget.pet != null) {
@@ -66,6 +68,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
       _nextDueDate = vaccine.nextDueDate;
       _notesController.text = vaccine.notes;
       _setReminder = vaccine.setReminder;
+      _isSnoozed = vaccine.isSnoozed;
     }
   }
 
@@ -209,6 +212,9 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
+            // Snooze Banner (only in edit mode when snoozed)
+            if (_isEditMode && _isSnoozed) _buildSnoozeBanner(),
+
             // Syringe Icon
             _buildSyringeIcon(),
             const SizedBox(height: 24),
@@ -344,6 +350,113 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
         );
       }
     }
+  }
+
+  Future<void> _unsnooze() async {
+    if (_isUnsnoozeing || widget.pet == null || widget.vaccineToEdit == null) {
+      return;
+    }
+
+    setState(() {
+      _isUnsnoozeing = true;
+    });
+
+    try {
+      await sl<PetRepository>().unsnoozeVaccine(widget.pet!.id, widget.vaccineToEdit!.id);
+
+      if (mounted) {
+        context.read<PetListBloc>().add(const LoadPetList());
+        setState(() {
+          _isSnoozed = false;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(AppStrings.reminderUnsnoozed),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUnsnoozeing = false;
+        });
+      }
+    }
+  }
+
+  Widget _buildSnoozeBanner() {
+    final snoozedUntil = widget.vaccineToEdit?.snoozedUntil;
+    final daysLeft = snoozedUntil != null ? snoozedUntil.difference(DateTime.now()).inDays : 0;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.warning.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppColors.warning.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.snooze,
+            color: AppColors.warning,
+            size: 24,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppStrings.reminderSnoozed,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  '$daysLeft ${daysLeft == 1 ? 'day' : 'days'} remaining',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: _isUnsnoozeing ? null : _unsnooze,
+            child: _isUnsnoozeing
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : Text(
+                    AppStrings.unsnooze,
+                    style: TextStyle(
+                      color: AppColors.warning,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildSyringeIcon() {

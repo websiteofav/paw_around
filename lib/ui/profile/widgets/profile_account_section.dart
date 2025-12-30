@@ -7,6 +7,7 @@ class ProfileAccountSection extends StatelessWidget {
   final VoidCallback onAccountSettingsTap;
   final VoidCallback onNotificationsTap;
   final VoidCallback onPrivacyTap;
+  final VoidCallback onTermsTap;
   final VoidCallback onHelpTap;
   final VoidCallback onDeleteAccountTap;
 
@@ -15,6 +16,7 @@ class ProfileAccountSection extends StatelessWidget {
     required this.onAccountSettingsTap,
     required this.onNotificationsTap,
     required this.onPrivacyTap,
+    required this.onTermsTap,
     required this.onHelpTap,
     required this.onDeleteAccountTap,
   });
@@ -51,8 +53,14 @@ class ProfileAccountSection extends StatelessWidget {
           const Divider(height: 1, color: AppColors.border),
           _buildItem(
             icon: Icons.shield_outlined,
-            title: AppStrings.privacyAndSecurity,
+            title: AppStrings.privacyPolicy,
             onTap: onPrivacyTap,
+          ),
+          const Divider(height: 1, color: AppColors.border),
+          _buildItem(
+            icon: Icons.description_outlined,
+            title: AppStrings.termsOfService,
+            onTap: onTermsTap,
           ),
           const Divider(height: 1, color: AppColors.border),
           _buildItem(

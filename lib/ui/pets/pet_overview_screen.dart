@@ -494,6 +494,7 @@ class PetOverviewScreen extends StatelessWidget {
     final daysUntilDue = vaccine.nextDueDate.difference(DateTime.now()).inDays;
     final isOverdue = daysUntilDue < 0;
     final isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 30;
+    final isSnoozed = vaccine.isSnoozed;
 
     return ScaleButton(
       onPressed: () {
@@ -516,31 +517,64 @@ class PetOverviewScreen extends StatelessWidget {
               margin: const EdgeInsets.only(right: 12),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isOverdue
-                    ? AppColors.error
-                    : isDueSoon
-                        ? AppColors.warning
-                        : AppColors.success,
+                color: isSnoozed
+                    ? AppColors.warning
+                    : isOverdue
+                        ? AppColors.error
+                        : isDueSoon
+                            ? AppColors.warning
+                            : AppColors.success,
               ),
             ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    vaccine.vaccineName,
-                    style: AppTextStyles.mediumStyle500(fontSize: 15, fontColor: AppColors.textPrimary),
+                  Row(
+                    children: [
+                      Text(
+                        vaccine.vaccineName,
+                        style: AppTextStyles.mediumStyle500(fontSize: 15, fontColor: AppColors.textPrimary),
+                      ),
+                      if (isSnoozed) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.warning.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.snooze, size: 10, color: AppColors.warning),
+                              SizedBox(width: 2),
+                              Text(
+                                'Snoozed',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.warning,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    isOverdue
-                        ? 'Overdue by ${-daysUntilDue} days'
-                        : daysUntilDue == 0
-                            ? 'Due today'
-                            : 'Due in $daysUntilDue days',
+                    isSnoozed
+                        ? AppStrings.tapToUnsnooze
+                        : isOverdue
+                            ? AppStrings.overdueByDays.replaceAll('%s', daysUntilDue.toString())
+                            : daysUntilDue == 0
+                                ? AppStrings.dueToday
+                                : AppStrings.dueInDays.replaceAll('%s', daysUntilDue.toString()),
                     style: TextStyle(
                       fontSize: 12,
-                      color: isOverdue ? AppColors.error : AppColors.textSecondary,
+                      color: isOverdue && !isSnoozed ? AppColors.error : AppColors.textSecondary,
                     ),
                   ),
                 ],

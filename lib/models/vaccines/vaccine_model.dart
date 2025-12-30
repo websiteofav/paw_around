@@ -56,6 +56,7 @@ class VaccineModel extends Equatable {
     String? notes,
     bool? setReminder,
     DateTime? snoozedUntil,
+    bool clearSnoozedUntil = false,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -66,7 +67,7 @@ class VaccineModel extends Equatable {
       nextDueDate: nextDueDate ?? this.nextDueDate,
       notes: notes ?? this.notes,
       setReminder: setReminder ?? this.setReminder,
-      snoozedUntil: snoozedUntil ?? this.snoozedUntil,
+      snoozedUntil: clearSnoozedUntil ? null : (snoozedUntil ?? this.snoozedUntil),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );

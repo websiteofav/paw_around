@@ -194,7 +194,7 @@ class PetRepository {
         return v.copyWith(
           dateGiven: now,
           nextDueDate: now.add(Duration(days: originalInterval > 0 ? originalInterval : 365)),
-          snoozedUntil: null,
+          clearSnoozedUntil: true,
           updatedAt: now,
         );
       }
@@ -219,6 +219,29 @@ class PetRepository {
       if (v.id == vaccineId) {
         return v.copyWith(
           snoozedUntil: snoozedUntil,
+          updatedAt: DateTime.now(),
+        );
+      }
+      return v;
+    }).toList();
+
+    await _petsRef.doc(petId).update({
+      'vaccines': updatedVaccines.map((v) => v.toFirestore()).toList(),
+      'updatedAt': Timestamp.now(),
+    });
+  }
+
+  // Unsnooze vaccine reminder
+  Future<void> unsnoozeVaccine(String petId, String vaccineId) async {
+    final pet = await getPetById(petId);
+    if (pet == null) {
+      return;
+    }
+
+    final updatedVaccines = pet.vaccines.map((v) {
+      if (v.id == vaccineId) {
+        return v.copyWith(
+          clearSnoozedUntil: true,
           updatedAt: DateTime.now(),
         );
       }
@@ -261,7 +284,22 @@ class PetRepository {
 
     final updatedSettings = pet.groomingSettings!.copyWith(
       lastDate: DateTime.now(),
-      snoozedUntil: null,
+      clearSnoozedUntil: true,
+      updatedAt: DateTime.now(),
+    );
+
+    await updateGroomingSettings(petId, updatedSettings);
+  }
+
+  // Unsnooze grooming reminder
+  Future<void> unsnoozeGrooming(String petId) async {
+    final pet = await getPetById(petId);
+    if (pet == null || pet.groomingSettings == null) {
+      return;
+    }
+
+    final updatedSettings = pet.groomingSettings!.copyWith(
+      clearSnoozedUntil: true,
       updatedAt: DateTime.now(),
     );
 
@@ -292,7 +330,22 @@ class PetRepository {
 
     final updatedSettings = pet.tickFleaSettings!.copyWith(
       lastDate: DateTime.now(),
-      snoozedUntil: null,
+      clearSnoozedUntil: true,
+      updatedAt: DateTime.now(),
+    );
+
+    await updateTickFleaSettings(petId, updatedSettings);
+  }
+
+  // Unsnooze tick & flea reminder
+  Future<void> unsnoozeTickFlea(String petId) async {
+    final pet = await getPetById(petId);
+    if (pet == null || pet.tickFleaSettings == null) {
+      return;
+    }
+
+    final updatedSettings = pet.tickFleaSettings!.copyWith(
+      clearSnoozedUntil: true,
       updatedAt: DateTime.now(),
     );
 

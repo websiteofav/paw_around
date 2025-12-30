@@ -88,12 +88,13 @@ class CareSettingsModel extends Equatable {
     CareFrequency? frequency,
     DateTime? lastDate,
     DateTime? snoozedUntil,
+    bool clearSnoozedUntil = false,
     DateTime? updatedAt,
   }) {
     return CareSettingsModel(
       frequency: frequency ?? this.frequency,
       lastDate: lastDate ?? this.lastDate,
-      snoozedUntil: snoozedUntil ?? this.snoozedUntil,
+      snoozedUntil: clearSnoozedUntil ? null : (snoozedUntil ?? this.snoozedUntil),
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }

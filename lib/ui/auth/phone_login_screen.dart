@@ -291,12 +291,15 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       children: [
         Text(
           '${AppStrings.termsText} ',
-        style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
         ),
-        Text(
-          AppStrings.termsOfService,
+        GestureDetector(
+          onTap: () => UrlUtils.openWebsite(AppStrings.termsOfServiceUrl),
+          child: Text(
+            AppStrings.termsOfService,
             style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
           ),
+        ),
         Text(
           ' ${AppStrings.and} ',
           style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
@@ -307,8 +310,8 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
             AppStrings.privacyPolicyLink,
             style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
           ),
-          ),
-        ],
+        ),
+      ],
     );
   }
 }
