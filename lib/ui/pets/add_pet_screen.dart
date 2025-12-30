@@ -41,17 +41,20 @@ class _AddPetView extends StatefulWidget {
 
 class _AddPetViewState extends State<_AddPetView> {
   late TextEditingController _nameController;
+  late TextEditingController _breedController;
 
   @override
   void initState() {
     super.initState();
     final pet = widget.petToEdit;
     _nameController = TextEditingController(text: pet?.name ?? '');
+    _breedController = TextEditingController(text: pet?.breed ?? '');
   }
 
   @override
   void dispose() {
     _nameController.dispose();
+    _breedController.dispose();
     super.dispose();
   }
 
@@ -147,6 +150,16 @@ class _AddPetViewState extends State<_AddPetView> {
                 context.read<PetFormBloc>().add(UpdateName(value));
               },
               errorText: formState.errors['name'],
+            ),
+            const SizedBox(height: 16),
+            CommonFormField(
+              label: AppStrings.breed,
+              hintText: 'e.g., Golden Retriever, Tabby',
+              controller: _breedController,
+              onChanged: (value) {
+                context.read<PetFormBloc>().add(UpdateBreed(value));
+              },
+              isRequired: false, // Optional field
             ),
             const SizedBox(height: 16),
 
