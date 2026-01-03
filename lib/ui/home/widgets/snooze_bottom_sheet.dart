@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class SnoozeBottomSheet extends StatelessWidget {
   final VoidCallback onSnooze3Days;
@@ -62,11 +63,7 @@ class SnoozeBottomSheet extends StatelessWidget {
           // Title
           Text(
             AppStrings.snoozeAction,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
           ),
           const SizedBox(height: 24),
           // Snooze options
@@ -87,11 +84,7 @@ class SnoozeBottomSheet extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Text(
                 AppStrings.cancel,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textSecondary,
-                ),
+                style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textSecondary),
               ),
             ),
           ),
@@ -125,10 +118,7 @@ class SnoozeBottomSheet extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 16,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
             ),
             const Spacer(),
             const Icon(

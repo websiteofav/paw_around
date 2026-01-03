@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/services/storage_service.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
@@ -91,9 +92,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: AppColors.error),
-                  title: const Text(
+                  title: Text(
                     'Remove photo',
-                    style: TextStyle(color: AppColors.error),
+                    style: AppTextStyles.regularStyle400(fontColor: AppColors.error),
                   ),
                   onTap: () {
                     Navigator.pop(sheetContext);
@@ -216,7 +217,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         context.pop();
       }
     } catch (e) {
-      print(e);
+      debugPrint('Failed to update profile: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -239,12 +240,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           AppStrings.editProfile,
-          style: TextStyle(
-            color: AppColors.navigationText,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
         ),
         backgroundColor: AppColors.navigationBackground,
         elevation: 0,
@@ -315,10 +313,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             Expanded(
                               child: Text(
                                 AppStrings.emailChangeNote,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.warning,
-                                ),
+                                style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.warning),
                               ),
                             ),
                           ],
@@ -337,9 +332,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       const SizedBox(height: 8),
                       Text(
                         'Phone number cannot be changed here',
-                        style: TextStyle(
+                        style: AppTextStyles.regularStyle400(
                           fontSize: 12,
-                          color: AppColors.textSecondary.withValues(alpha: 0.7),
+                          fontColor: AppColors.textSecondary.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -472,18 +467,15 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               children: [
                 Text(
                   label,
-                  style: TextStyle(
+                  style: AppTextStyles.regularStyle400(
                     fontSize: 12,
-                    color: AppColors.textSecondary.withValues(alpha: 0.7),
+                    fontColor: AppColors.textSecondary.withValues(alpha: 0.7),
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.regularStyle400(fontSize: 15, fontColor: AppColors.textPrimary),
                 ),
               ],
             ),

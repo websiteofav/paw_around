@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
 class ActionCtaCard extends StatelessWidget {
@@ -63,11 +64,7 @@ class ActionCtaCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 17, fontColor: AppColors.textPrimary),
                 ),
               ),
             ],
@@ -90,10 +87,7 @@ class ActionCtaCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 helperText,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: AppColors.textSecondary,
-                ),
+                style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
               ),
             ],
           ),

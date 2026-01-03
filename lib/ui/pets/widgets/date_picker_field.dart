@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class DatePickerField extends StatelessWidget {
   final String label;
@@ -35,11 +36,7 @@ class DatePickerField extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
           ),
           const SizedBox(height: 16),
           GestureDetector(
@@ -62,10 +59,7 @@ class DatePickerField extends StatelessWidget {
                     children: [
                       Text(
                         _formatDate(selectedDate),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
                       ),
                       if (_isToday(selectedDate)) ...[
                         const SizedBox(width: 8),
@@ -77,11 +71,7 @@ class DatePickerField extends StatelessWidget {
                           ),
                           child: Text(
                             AppStrings.today,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.primary,
-                            ),
+                            style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.primary),
                           ),
                         ),
                       ],

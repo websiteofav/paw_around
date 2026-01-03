@@ -89,10 +89,7 @@ class ProfileHeader extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     user?.email ?? user?.phoneNumber ?? '',
-                    style: const TextStyle(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                    ),
+                    style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -128,11 +125,7 @@ class ProfileHeader extends StatelessWidget {
                   const SizedBox(width: 6),
                   Text(
                     AppStrings.edit,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.primary,
-                    ),
+                    style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
                   ),
                 ],
               ),

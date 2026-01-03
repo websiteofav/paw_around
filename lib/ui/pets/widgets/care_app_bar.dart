@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 
 class CareAppBar extends StatelessWidget {
@@ -78,18 +79,11 @@ class CareAppBar extends StatelessWidget {
                       children: [
                         Text(
                           pet.name,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
+                          style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
                         ),
                         Text(
                           pet.ageString,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textSecondary,
-                          ),
+                          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -130,11 +124,7 @@ class CareAppBar extends StatelessWidget {
                   ],
                   Text(
                     screenTitle,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
+                    style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
                   ),
                 ],
               ),

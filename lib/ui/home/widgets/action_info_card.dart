@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class ActionInfoCard extends StatelessWidget {
   final String title;
@@ -61,11 +62,7 @@ class ActionInfoCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: const TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 17, fontColor: AppColors.textPrimary),
                 ),
               ),
             ],
@@ -73,9 +70,9 @@ class ActionInfoCard extends StatelessWidget {
           const SizedBox(height: 14),
           Text(
             description,
-            style: const TextStyle(
+            style: AppTextStyles.regularStyle400(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              fontColor: AppColors.textSecondary,
               height: 1.6,
             ),
           ),
@@ -87,11 +84,7 @@ class ActionInfoCard extends StatelessWidget {
                 children: [
                   Text(
                     AppStrings.learnMore,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary,
-                    ),
+                    style: AppTextStyles.semiBoldStyle600(fontSize: 14, fontColor: AppColors.primary),
                   ),
                   const SizedBox(width: 4),
                   Icon(

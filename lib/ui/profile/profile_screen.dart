@@ -9,10 +9,13 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_constants.dart';
+import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/services/account_service.dart';
+import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
 import 'package:paw_around/ui/profile/widgets/profile_account_section.dart';
 import 'package:paw_around/ui/profile/widgets/profile_dialogs.dart';
 import 'package:paw_around/ui/profile/widgets/profile_footer.dart';
@@ -136,24 +139,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        const SizedBox(height: 20),
+                        AppSpacing.vertical20,
                         AnimatedCard(
                           index: 0,
                           child: ProfileHeader(
                             onEditTap: () => context.pushNamed(AppRoutes.editProfile),
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        AppSpacing.vertical20,
                         AnimatedCard(
                           index: 1,
                           child: BlocBuilder<PetListBloc, PetListState>(
                             builder: (context, state) {
+                              if (state is PetListLoading) {
+                                return _buildPetsSectionSkeleton();
+                              }
                               final List<PetModel> pets = state is PetListLoaded ? state.pets : [];
                               return ProfilePetsSection(pets: pets);
                             },
                           ),
                         ),
-                        const SizedBox(height: 20),
+                        AppSpacing.vertical20,
                         AnimatedCard(
                           index: 2,
                           child: ProfileAccountSection(
@@ -168,14 +174,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 32),
+                        AppSpacing.vertical32,
                         AnimatedCard(
                           index: 3,
                           child: _buildLogoutButton(),
                         ),
-                        const SizedBox(height: 24),
+                        AppSpacing.vertical24,
                         ProfileFooter(appVersion: _appVersion),
-                        const SizedBox(height: 40),
+                        AppSpacing.vertical40,
                       ],
                     ),
                   ),
@@ -190,7 +196,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildLogoutButton() => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: AppEdgeInsets.horizontalMedium,
         child: CommonButton(
           text: AppStrings.logout,
           variant: ButtonVariant.danger,
@@ -199,4 +205,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onPressed: () => showLogoutDialog(context),
         ),
       );
+
+  Widget _buildPetsSectionSkeleton() {
+    return Container(
+      margin: AppEdgeInsets.horizontalMedium,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppConstants.radiusXL),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Section title
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+            child: Container(
+              height: 16,
+              width: 80,
+              decoration: BoxDecoration(
+                color: AppColors.progressBarBg,
+                borderRadius: BorderRadius.circular(4),
+              ),
+            ),
+          ),
+          // Pet items
+          const ListItemSkeleton(avatarSize: 60),
+          const Divider(height: 1, indent: 16, endIndent: 16),
+          const ListItemSkeleton(avatarSize: 60),
+        ],
+      ),
+    );
+  }
 }

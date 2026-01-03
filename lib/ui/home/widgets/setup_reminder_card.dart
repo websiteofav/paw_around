@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
 
 enum SetupItemType {
@@ -99,19 +100,12 @@ class SetupReminderCard extends StatelessWidget {
                     children: [
                       Text(
                         AppStrings.completeHealthDetails.replaceAll('%s', petName),
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTextStyles.semiBoldStyle600(fontSize: 15, fontColor: AppColors.textPrimary),
                       ),
                       const SizedBox(height: 2),
                       Text(
                         '${missingItems.length} ${missingItems.length == 1 ? AppStrings.itemRemaining : AppStrings.itemsRemaining}',
-                        style: const TextStyle(
-                          fontSize: 13,
-                          color: AppColors.textSecondary,
-                        ),
+                        style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
                       ),
                     ],
                   ),
@@ -208,19 +202,12 @@ class SetupReminderCard extends StatelessWidget {
                   children: [
                     Text(
                       item.label,
-                      style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textPrimary,
-                      ),
+                      style: AppTextStyles.semiBoldStyle600(fontSize: 15, fontColor: AppColors.textPrimary),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       item.subtitle,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
+                      style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
                     ),
                   ],
                 ),
@@ -235,13 +222,9 @@ class SetupReminderCard extends StatelessWidget {
                       color: AppColors.primary.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
+                    child: Text(
                       AppStrings.quickSetup,
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.primary,
-                      ),
+                      style: AppTextStyles.semiBoldStyle600(fontSize: 10, fontColor: AppColors.primary),
                     ),
                   ),
                   const SizedBox(height: 4),

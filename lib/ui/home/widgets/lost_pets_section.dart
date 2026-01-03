@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class LostPetItem {
   final String id;
@@ -41,13 +42,9 @@ class LostPetsSection extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               AppStrings.lostPetsNearYou,
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTextStyles.semiBoldStyle600(fontSize: 18, fontColor: AppColors.textPrimary),
             ),
             GestureDetector(
               onTap: onSeeAllTap,
@@ -55,11 +52,7 @@ class LostPetsSection extends StatelessWidget {
                 children: [
                   Text(
                     AppStrings.seeAll,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.primary,
-                    ),
+                    style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
                   ),
                   const SizedBox(width: 4),
                   Icon(
@@ -120,34 +113,37 @@ class _LostPetCard extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // Pet avatar
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: AppColors.iconBgLight,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: pet.imageUrl != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(24),
-                      child: Image.network(
-                        pet.imageUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Icon(
-                            Icons.pets,
-                            color: AppColors.primary,
-                            size: 24,
-                          );
-                        },
+            // Pet avatar - wrapped in Hero for smooth transition
+            Hero(
+              tag: 'post-image-${pet.id}',
+              child: Container(
+                width: 48,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: AppColors.iconBgLight,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: pet.imageUrl != null
+                    ? ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: Image.network(
+                          pet.imageUrl!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.pets,
+                              color: AppColors.primary,
+                              size: 24,
+                            );
+                          },
+                        ),
+                      )
+                    : const Icon(
+                        Icons.pets,
+                        color: AppColors.primary,
+                        size: 24,
                       ),
-                    )
-                  : const Icon(
-                      Icons.pets,
-                      color: AppColors.primary,
-                      size: 24,
-                    ),
+              ),
             ),
             const SizedBox(width: 12),
             // Name and distance
@@ -157,20 +153,13 @@ class _LostPetCard extends StatelessWidget {
                 children: [
                   Text(
                     pet.name,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
+                    style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     pet.distance,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.primary,
-                    ),
+                    style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.primary),
                   ),
                 ],
               ),

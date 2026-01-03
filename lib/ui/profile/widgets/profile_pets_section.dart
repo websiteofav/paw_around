@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_constants.dart';
 import 'package:paw_around/constants/app_routes.dart';
+import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
@@ -36,15 +38,11 @@ class ProfilePetsSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Section Title
-          const Padding(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
               AppStrings.myPets,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
             ),
           ),
 
@@ -64,14 +62,17 @@ class ProfilePetsSection extends StatelessWidget {
   Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppConstants.space24,
+          vertical: AppConstants.space40,
+        ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Decorative icon with gradient
             Container(
-              width: 100,
-              height: 100,
+              width: AppConstants.avatarSizeXLarge,
+              height: AppConstants.avatarSizeXLarge,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
@@ -119,26 +120,25 @@ class ProfilePetsSection extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 24),
-            const Text(
+            AppSpacing.vertical24,
+            Text(
               AppStrings.noPetsAddedYet,
-              style: TextStyle(
+              style: AppTextStyles.semiBoldStyle600(
                 fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
+                fontColor: AppColors.textPrimary,
               ),
             ),
-            const SizedBox(height: 8),
+            AppSpacing.vertical8,
             Text(
               AppStrings.addFirstPetToStart,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: AppTextStyles.regularStyle400(
                 fontSize: 14,
-                color: AppColors.textSecondary.withValues(alpha: 0.8),
+                fontColor: AppColors.textSecondary.withValues(alpha: 0.8),
                 height: 1.4,
               ),
             ),
-            const SizedBox(height: 24),
+            AppSpacing.vertical24,
             CommonButton(
               text: AppStrings.addPet,
               variant: ButtonVariant.primary,
@@ -187,35 +187,38 @@ class ProfilePetsSection extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(
           children: [
-            // Pet avatar with shadow
-            Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: speciesColor,
-                border: Border.all(
-                  color: hasImage ? AppColors.white : Colors.transparent,
-                  width: 2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: _getSpeciesAccentColor(pet.species).withValues(alpha: 0.3),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
+            // Pet avatar with shadow - wrapped in Hero for smooth transition
+            Hero(
+              tag: 'pet-avatar-${pet.id}',
+              child: Container(
+                width: 60,
+                height: 60,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: speciesColor,
+                  border: Border.all(
+                    color: hasImage ? AppColors.white : Colors.transparent,
+                    width: 2,
                   ),
-                ],
-              ),
-              child: ClipOval(
-                child: hasImage
-                    ? Image.network(
-                        pet.imagePath!,
-                        width: 60,
-                        height: 60,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => _buildDefaultPetIcon(pet.species),
-                      )
-                    : _buildDefaultPetIcon(pet.species),
+                  boxShadow: [
+                    BoxShadow(
+                      color: _getSpeciesAccentColor(pet.species).withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: ClipOval(
+                  child: hasImage
+                      ? Image.network(
+                          pet.imagePath!,
+                          width: 60,
+                          height: 60,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => _buildDefaultPetIcon(pet.species),
+                        )
+                      : _buildDefaultPetIcon(pet.species),
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -227,10 +230,9 @@ class ProfilePetsSection extends StatelessWidget {
                 children: [
                   Text(
                     pet.name,
-                    style: const TextStyle(
+                    style: AppTextStyles.semiBoldStyle600(
                       fontSize: 17,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      fontColor: AppColors.textPrimary,
                       letterSpacing: -0.3,
                     ),
                   ),
@@ -255,10 +257,9 @@ class ProfilePetsSection extends StatelessWidget {
                             const SizedBox(width: 4),
                             Text(
                               pet.species,
-                              style: TextStyle(
+                              style: AppTextStyles.semiBoldStyle600(
                                 fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: _getSpeciesAccentColor(pet.species),
+                                fontColor: _getSpeciesAccentColor(pet.species),
                               ),
                             ),
                           ],
@@ -268,9 +269,9 @@ class ProfilePetsSection extends StatelessWidget {
                       // Age
                       Text(
                         _formatAge(pet.dateOfBirth),
-                        style: TextStyle(
+                        style: AppTextStyles.regularStyle400(
                           fontSize: 13,
-                          color: AppColors.textSecondary.withValues(alpha: 0.8),
+                          fontColor: AppColors.textSecondary.withValues(alpha: 0.8),
                         ),
                       ),
                     ],

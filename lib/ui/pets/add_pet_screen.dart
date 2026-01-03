@@ -12,6 +12,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/ui/pets/widgets/pet_type_selector.dart';
 import 'package:paw_around/ui/pets/widgets/birthdate_age_selector.dart';
@@ -77,10 +78,7 @@ class _AddPetViewState extends State<_AddPetView> {
         appBar: AppBar(
           title: Text(
             widget.petToEdit != null ? 'Edit Pet' : AppStrings.addYourPet,
-            style: const TextStyle(
-              color: AppColors.navigationText,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
           ),
           backgroundColor: AppColors.navigationBackground,
           elevation: 0,
@@ -216,22 +214,14 @@ class _AddPetViewState extends State<_AddPetView> {
       children: [
         Row(
           children: [
-            const Text(
+            Text(
               AppStrings.gender,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
             ),
             const SizedBox(width: 4),
-            const Text(
+            Text(
               '*',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: AppColors.error,
-              ),
+              style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.error),
             ),
           ],
         ),
@@ -261,10 +251,7 @@ class _AddPetViewState extends State<_AddPetView> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               state.errors['gender']!,
-              style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 12,
-              ),
+              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
             ),
           ),
       ],
@@ -289,11 +276,9 @@ class _AddPetViewState extends State<_AddPetView> {
         child: Text(
           gender,
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 16,
-            color: isSelected ? AppColors.primary : AppColors.textPrimary,
-            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-          ),
+          style: isSelected
+              ? AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.primary)
+              : AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
         ),
       ),
     );
@@ -413,9 +398,9 @@ class _AddPetViewState extends State<_AddPetView> {
                 const Divider(),
                 ListTile(
                   leading: const Icon(Icons.delete_outline, color: AppColors.error),
-                  title: const Text(
+                  title: Text(
                     'Remove photo',
-                    style: TextStyle(color: AppColors.error),
+                    style: AppTextStyles.regularStyle400(fontColor: AppColors.error),
                   ),
                   onTap: () {
                     Navigator.pop(sheetContext);

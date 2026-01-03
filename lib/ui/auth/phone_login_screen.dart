@@ -95,7 +95,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               // Title
               Text(
                 AppStrings.welcomeToPawAround,
-                style: AppTextStyles.semiBoldTextStyle(fontSize: 24),
+                style: AppTextStyles.semiBoldStyle600(fontSize: 24),
                 textAlign: TextAlign.center,
               ),
 
@@ -147,15 +147,6 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                 },
               ),
 
-              const SizedBox(height: 12),
-
-              SocialAuthButton(
-                type: SocialAuthType.apple,
-                onPressed: () {
-                  // TODO: Implement Apple Sign-In
-                },
-              ),
-
               const SizedBox(height: 32),
 
               // Terms Text
@@ -181,9 +172,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
         IntlPhoneField(
           decoration: InputDecoration(
             hintText: '9990000000',
-            hintStyle: const TextStyle(
-              color: AppColors.textSecondary,
-            ),
+            hintStyle: AppTextStyles.regularStyle400(fontColor: AppColors.textSecondary),
             filled: true,
             fillColor: AppColors.surface,
             border: OutlineInputBorder(
@@ -202,14 +191,8 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
           ),
           disableLengthCheck: true,
           initialCountryCode: 'IN',
-          dropdownTextStyle: const TextStyle(
-            fontSize: 16,
-            color: AppColors.textPrimary,
-          ),
-          style: const TextStyle(
-            fontSize: 16,
-            color: AppColors.textPrimary,
-          ),
+          dropdownTextStyle: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
+          style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
           onChanged: (phone) {
             setState(() {
               _completePhoneNumber = phone.completeNumber;
@@ -252,10 +235,9 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               )
             : Text(
                 AppStrings.continueButton,
-                style: TextStyle(
+                style: AppTextStyles.semiBoldStyle600(
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: _isPhoneValid ? AppColors.white : AppColors.white.withValues(alpha: 0.7),
+                  fontColor: _isPhoneValid ? AppColors.white : AppColors.white.withValues(alpha: 0.7),
                 ),
               ),
       ),
@@ -263,22 +245,19 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   }
 
   Widget _buildDivider() {
-    return const Row(
+    return Row(
       children: [
-        Expanded(
+        const Expanded(
           child: Divider(color: AppColors.border, thickness: 1),
         ),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Text(
             AppStrings.orContinueWith,
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
           ),
         ),
-        Expanded(
+        const Expanded(
           child: Divider(color: AppColors.border, thickness: 1),
         ),
       ],

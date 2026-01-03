@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class GroomingDueCard extends StatelessWidget {
   final String? badgeText;
@@ -63,50 +64,42 @@ class GroomingDueCard extends StatelessWidget {
                 ),
                 child: Text(
                   badgeText ?? AppStrings.thisWeek,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.groomingBadgeText,
-                  ),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.groomingBadgeText),
                 ),
               ),
             ],
           ),
-    
+
           const SizedBox(height: 12),
-    
+
           // Title
-          const Text(
+          Text(
             AppStrings.groomingSession,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.white,
-            ),
+            style: AppTextStyles.boldStyle700(fontSize: 20, fontColor: AppColors.white),
           ),
-    
+
           const SizedBox(height: 4),
-    
+
           // Subtitle
           Text(
             '${AppStrings.timeForFreshTrim} ✨',
-            style: TextStyle(
+            style: AppTextStyles.regularStyle400(
               fontSize: 14,
-              color: AppColors.white.withValues(alpha: 0.8),
+              fontColor: AppColors.white.withValues(alpha: 0.8),
             ),
           ),
-    
+
           const SizedBox(height: 16),
-    
+
           // Bottom row: Action text with chevron
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 AppStrings.scheduleAppointment,
-                style: TextStyle(
+                style: AppTextStyles.regularStyle400(
                   fontSize: 14,
-                  color: AppColors.white.withValues(alpha: 0.9),
+                  fontColor: AppColors.white.withValues(alpha: 0.9),
                 ),
               ),
               const Icon(

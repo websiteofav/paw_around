@@ -23,8 +23,6 @@ class LoginWithEmail extends AuthEvent {
 
 class LoginWithGoogle extends AuthEvent {}
 
-class LoginWithApple extends AuthEvent {}
-
 class ForgotPassword extends AuthEvent {
   final String email;
 

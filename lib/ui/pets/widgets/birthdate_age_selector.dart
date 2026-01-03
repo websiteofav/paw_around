@@ -86,7 +86,7 @@ class BirthdateAgeSelector extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   state.errors['dateOfBirth']!,
-                  style: const TextStyle(color: AppColors.error, fontSize: 12),
+                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
                 ),
               ),
           ],
@@ -204,11 +204,9 @@ class _AgeOption extends StatelessWidget {
             ],
             Text(
               label,
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                color: isSelected ? AppColors.primary : AppColors.textPrimary,
-              ),
+              style: isSelected
+                  ? AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary)
+                  : AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textPrimary),
             ),
           ],
         ),

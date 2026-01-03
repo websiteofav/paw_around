@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
 class MarkDoneBottomSheet extends StatelessWidget {
@@ -63,20 +64,16 @@ class MarkDoneBottomSheet extends StatelessWidget {
           // Title
           Text(
             AppStrings.confirmMarkDone,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
           // Description
           Text(
             AppStrings.markDoneDescription,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: AppTextStyles.regularStyle400(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              fontColor: AppColors.textSecondary,
               height: 1.5,
             ),
           ),

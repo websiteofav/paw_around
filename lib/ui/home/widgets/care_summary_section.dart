@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class CareSummarySection extends StatelessWidget {
   final int activeTasks;
@@ -36,10 +37,9 @@ class CareSummarySection extends StatelessWidget {
           // Title
           Text(
             AppStrings.careSummary,
-            style: TextStyle(
+            style: AppTextStyles.semiBoldStyle600(
               fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary.withValues(alpha: 0.8),
+              fontColor: AppColors.textPrimary.withValues(alpha: 0.8),
             ),
           ),
 
@@ -88,19 +88,12 @@ class CareSummarySection extends StatelessWidget {
       children: [
         Text(
           value,
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+          style: AppTextStyles.boldStyle700(fontSize: 28, fontColor: color),
         ),
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 12,
-            color: AppColors.textSecondary,
-          ),
+          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
           textAlign: TextAlign.center,
         ),
       ],

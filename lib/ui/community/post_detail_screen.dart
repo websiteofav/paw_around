@@ -72,7 +72,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               Navigator.of(ctx).pop();
               context.read<CommunityBloc>().add(DeletePost(widget.postId));
             },
-            child: const Text(AppStrings.deletePost, style: TextStyle(color: AppColors.error)),
+            child: Text(AppStrings.deletePost, style: AppTextStyles.regularStyle400(fontColor: AppColors.error)),
           ),
         ],
       ),
@@ -135,7 +135,11 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            _buildPostImage(),
+            // Hero animation for smooth transition from list
+            Hero(
+              tag: 'post-image-${widget.postId}',
+              child: _buildPostImage(),
+            ),
             // Gradient overlay for better text visibility
             Container(
               decoration: BoxDecoration(
@@ -216,7 +220,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           const SizedBox(width: 6),
           Text(
             isLost ? AppStrings.lost : AppStrings.found,
-            style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: AppTextStyles.boldStyle700(fontColor: Colors.white),
           ),
         ],
       ),
@@ -305,10 +309,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ],
           Text(
             title,
-            style: const TextStyle(
+            style: AppTextStyles.semiBoldStyle600(
               fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              fontColor: AppColors.textSecondary,
               letterSpacing: 0.5,
             ),
           ),
@@ -435,6 +438,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             Expanded(
               child: CommonButton(
                 text: AppStrings.getDirections,
+                
                 onPressed: () => UrlUtils.openDirections(latitude: _post!.latitude, longitude: _post!.longitude),
                 variant: ButtonVariant.primary,
                 icon: Icons.directions,

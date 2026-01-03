@@ -4,6 +4,7 @@ import 'package:paw_around/bloc/auth/auth_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
 /// Shows logout confirmation dialog
@@ -33,22 +34,15 @@ void showLogoutDialog(BuildContext context) {
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             AppStrings.logOutConfirmTitle,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             AppStrings.logOutConfirmMessage,
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -65,12 +59,9 @@ void showLogoutDialog(BuildContext context) {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text(
+                  child: Text(
                     AppStrings.cancel,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTextStyles.mediumStyle500(fontSize: 15),
                   ),
                 ),
               ),
@@ -90,12 +81,9 @@ void showLogoutDialog(BuildContext context) {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text(
+                  child: Text(
                     AppStrings.logout,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.semiBoldStyle600(fontSize: 15, fontColor: AppColors.white),
                   ),
                 ),
               ),
@@ -137,22 +125,15 @@ void showDeleteAccountDialog(
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             AppStrings.deleteAccountTitle,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             AppStrings.deleteAccountWarning,
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
@@ -177,11 +158,7 @@ void showDeleteAccountDialog(
                 Expanded(
                   child: Text(
                     AppStrings.deleteAccountFinal,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: AppColors.error,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.error),
                   ),
                 ),
               ],
@@ -201,12 +178,9 @@ void showDeleteAccountDialog(
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text(
+                  child: Text(
                     AppStrings.cancel,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTextStyles.mediumStyle500(fontSize: 15),
                   ),
                 ),
               ),
@@ -226,12 +200,9 @@ void showDeleteAccountDialog(
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text(
+                  child: Text(
                     AppStrings.delete,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.semiBoldStyle600(fontSize: 15, fontColor: AppColors.white),
                   ),
                 ),
               ),
@@ -276,22 +247,15 @@ void showReAuthDialog(
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
+          Text(
             'Confirm Identity',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             AppStrings.reAuthRequired,
-            style: TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -320,9 +284,9 @@ void showReAuthDialog(
           const SizedBox(height: 12),
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text(
+            child: Text(
               AppStrings.cancel,
-              style: TextStyle(color: AppColors.textSecondary),
+              style: AppTextStyles.regularStyle400(fontColor: AppColors.textSecondary),
             ),
           ),
         ],
@@ -348,10 +312,7 @@ Widget _buildBullet(String text) {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-            ),
+            style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
           ),
         ),
       ],

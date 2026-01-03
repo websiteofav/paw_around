@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/vaccines/vaccine_master_data.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
@@ -120,30 +121,19 @@ class _VaccineDateBottomSheetState extends State<VaccineDateBottomSheet> {
           // Vaccine name (read-only)
           Text(
             widget.masterData.name,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
           ),
           const SizedBox(height: 4),
           Text(
             widget.masterData.helperText,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
           ),
           const SizedBox(height: 24),
 
           // Date picker field
-          const Text(
+          Text(
             AppStrings.lastGivenDate,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
 
@@ -162,10 +152,7 @@ class _VaccineDateBottomSheetState extends State<VaccineDateBottomSheet> {
                   Expanded(
                     child: Text(
                       _formatDate(_selectedDate),
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: AppColors.textPrimary,
-                      ),
+                      style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
                     ),
                   ),
                   const Icon(
@@ -182,10 +169,7 @@ class _VaccineDateBottomSheetState extends State<VaccineDateBottomSheet> {
           // Next due date preview
           Text(
             'Next due: ${_formatDate(widget.masterData.calculateNextDueDate(_selectedDate))}',
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.textSecondary,
-            ),
+            style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
           ),
           const SizedBox(height: 32),
 

@@ -132,12 +132,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         appBar: AppBar(
-          title: const Text(
+          title: Text(
             AppStrings.createPost,
-            style: TextStyle(
-              color: AppColors.navigationText,
-              fontWeight: FontWeight.bold,
-            ),
+            style: AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
           ),
           backgroundColor: AppColors.navigationBackground,
           elevation: 0,
@@ -271,10 +268,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             const SizedBox(width: 8),
             Text(
               label,
-              style: TextStyle(
-                color: isSelected ? Colors.white : color,
-                fontWeight: FontWeight.w600,
+              style: AppTextStyles.semiBoldStyle600(
                 fontSize: 15,
+                fontColor: isSelected ? Colors.white : color,
               ),
             ),
           ],
@@ -363,10 +359,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           ],
           Text(
             title,
-            style: const TextStyle(
+            style: AppTextStyles.semiBoldStyle600(
               fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.textSecondary,
+              fontColor: AppColors.textSecondary,
               letterSpacing: 0.5,
             ),
           ),

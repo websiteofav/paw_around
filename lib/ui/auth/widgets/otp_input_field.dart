@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class OTPInputField extends StatelessWidget {
   final TextEditingController controller;
@@ -41,11 +42,7 @@ class OTPInputField extends StatelessWidget {
       animationDuration: const Duration(milliseconds: 200),
       enableActiveFill: true,
       keyboardType: TextInputType.number,
-      textStyle: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
+      textStyle: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
     );
   }
 }

@@ -7,6 +7,7 @@ import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class PetTypeSelector extends StatelessWidget {
@@ -23,22 +24,14 @@ class PetTypeSelector extends StatelessWidget {
           children: [
             Row(
               children: [
-                const Text(
+                Text(
                   AppStrings.petType,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
                 ),
                 const SizedBox(width: 4),
-                const Text(
+                Text(
                   '*',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.error,
-                  ),
+                  style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.error),
                 ),
               ],
             ),
@@ -93,12 +86,9 @@ class PetTypeSelector extends StatelessWidget {
                   color: AppColors.background,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
+                child: Text(
                   AppStrings.petTypeOtherHelper,
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
                 ),
               ),
             ],
@@ -109,10 +99,7 @@ class PetTypeSelector extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   state.errors['species']!,
-                  style: const TextStyle(
-                    color: AppColors.error,
-                    fontSize: 12,
-                  ),
+                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
                 ),
               ),
           ],
@@ -175,11 +162,9 @@ class _PetTypeOption extends StatelessWidget {
             const SizedBox(width: 8),
             Text(
               label,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                color: isSelected ? AppColors.primary : AppColors.textPrimary,
-              ),
+              style: isSelected
+                  ? AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.primary)
+                  : AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
             ),
           ],
         ),

@@ -29,7 +29,6 @@ class AppStrings {
   static const String continueButton = 'Continue';
   static const String orContinueWith = 'or continue with';
   static const String continueWithGoogle = 'Continue with Google';
-  static const String continueWithApple = 'Continue with Apple';
   static const String continueWithEmail = 'Continue with Email';
   static const String termsText = 'By continuing, you agree to our';
   static const String termsOfService = 'Terms of Service';

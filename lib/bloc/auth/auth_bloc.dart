@@ -19,7 +19,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<ForgotPassword>(_onForgotPassword);
     on<SignOut>(_onSignOut);
     on<LoginWithGoogle>(_onLoginWithGoogle);
-    on<LoginWithApple>(_onLoginWithApple);
 
     // Listen to auth state changes
     _authSubscription = _authRepository.authStateChanges.listen((user) {
@@ -118,20 +117,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Auth state listener will emit Unauthenticated
   }
 
-  void _onLoginWithGoogle(LoginWithGoogle event, Emitter<AuthState> emit) {
-    // TODO: Implement Google Sign-In later
-    emit(AuthError(
-      errorMessage: 'Google Sign-In not implemented yet.',
-      isPasswordVisible: state.isPasswordVisible,
-    ));
-  }
-
-  void _onLoginWithApple(LoginWithApple event, Emitter<AuthState> emit) {
-    // TODO: Implement Apple Sign-In later
-    emit(AuthError(
-      errorMessage: 'Apple Sign-In not implemented yet.',
-      isPasswordVisible: state.isPasswordVisible,
-    ));
+  Future<void> _onLoginWithGoogle(LoginWithGoogle event, Emitter<AuthState> emit) async {
+    emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
+    try {
+      await _authRepository.signInWithGoogle();
+      // Auth state listener will emit Authenticated
+    } catch (e) {
+      emit(AuthError(
+        errorMessage: e.toString().replaceAll('Exception: ', ''),
+        isPasswordVisible: state.isPasswordVisible,
+      ));
+    }
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class ProfileAccountSection extends StatelessWidget {
@@ -107,9 +108,9 @@ class ProfileAccountSection extends StatelessWidget {
             Expanded(
               child: Text(
                 title,
-                style: TextStyle(
+                style: AppTextStyles.regularStyle400(
                   fontSize: 16,
-                  color: isDanger ? AppColors.error : AppColors.textPrimary,
+                  fontColor: isDanger ? AppColors.error : AppColors.textPrimary,
                 ),
               ),
             ),

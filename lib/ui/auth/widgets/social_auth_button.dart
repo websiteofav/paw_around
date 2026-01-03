@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
-enum SocialAuthType { google, apple, email }
+enum SocialAuthType { google, email }
 
 class SocialAuthButton extends StatelessWidget {
   final SocialAuthType type;
@@ -35,11 +36,7 @@ class SocialAuthButton extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               _getLabel(),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
             ),
           ],
         ),
@@ -58,8 +55,6 @@ class SocialAuthButton extends StatelessWidget {
             return const Icon(Icons.g_mobiledata, size: 24, color: Colors.red);
           },
         );
-      case SocialAuthType.apple:
-        return const Icon(Icons.apple, size: 24, color: Colors.black);
       case SocialAuthType.email:
         return Icon(Icons.mail_outline, size: 24, color: AppColors.textPrimary);
     }
@@ -69,8 +64,6 @@ class SocialAuthButton extends StatelessWidget {
     switch (type) {
       case SocialAuthType.google:
         return 'Continue with Google';
-      case SocialAuthType.apple:
-        return 'Continue with Apple';
       case SocialAuthType.email:
         return 'Continue with Email';
     }

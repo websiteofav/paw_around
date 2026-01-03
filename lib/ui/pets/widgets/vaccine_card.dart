@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/vaccines/vaccine_master_data.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 
@@ -76,32 +77,23 @@ class VaccineCard extends StatelessWidget {
                       // Vaccine name
                       Text(
                         masterData.name,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
-                        ),
+                        style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
                       ),
                       const SizedBox(height: 2),
 
                       // Helper text
                       Text(
                         masterData.helperText,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
+                        style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
                       ),
                       const SizedBox(height: 4),
 
                       // Status text
                       Text(
                         statusText,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: hasExistingVaccine ? AppColors.primary : AppColors.textSecondary,
-                          fontWeight: hasExistingVaccine ? FontWeight.w500 : FontWeight.w400,
-                        ),
+                        style: hasExistingVaccine
+                            ? AppTextStyles.mediumStyle500(fontSize: 13, fontColor: AppColors.primary)
+                            : AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
                       ),
                     ],
                   ),
@@ -117,10 +109,9 @@ class VaccineCard extends StatelessWidget {
                   ),
                   child: Text(
                     actionText,
-                    style: TextStyle(
+                    style: AppTextStyles.mediumStyle500(
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: hasExistingVaccine ? AppColors.textPrimary : AppColors.primary,
+                      fontColor: hasExistingVaccine ? AppColors.textPrimary : AppColors.primary,
                     ),
                   ),
                 ),

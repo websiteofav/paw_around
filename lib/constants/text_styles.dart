@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 class AppTextStyles {
@@ -11,13 +12,15 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
-      TextStyle(
+      GoogleFonts.nunito(
         fontSize: fontSize,
         fontWeight: FontWeight.w400,
         color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   // Medium (w500)
@@ -26,13 +29,15 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
-      TextStyle(
+      GoogleFonts.nunito(
         fontSize: fontSize,
         fontWeight: FontWeight.w500,
         color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   // Semi-bold (w600)
@@ -41,13 +46,15 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
-      TextStyle(
+      GoogleFonts.nunito(
         fontSize: fontSize,
         fontWeight: FontWeight.w600,
         color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   // Bold (w700)
@@ -56,13 +63,15 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
-      TextStyle(
+      GoogleFonts.nunito(
         fontSize: fontSize,
         fontWeight: FontWeight.w700,
         color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   // Extra Bold (w800)
@@ -71,13 +80,15 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
-      TextStyle(
+      GoogleFonts.nunito(
         fontSize: fontSize,
         fontWeight: FontWeight.w800,
         color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   // Light (w300)
@@ -86,13 +97,15 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
-      TextStyle(
+      GoogleFonts.nunito(
         fontSize: fontSize,
         fontWeight: FontWeight.w300,
         color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   // Convenience aliases for common use cases
@@ -101,12 +114,14 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
       semiBoldStyle600(
         fontSize: fontSize,
         fontColor: fontColor,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   static TextStyle boldTextStyle({
@@ -114,12 +129,14 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
       boldStyle700(
         fontSize: fontSize,
         fontColor: fontColor,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   static TextStyle regularTextStyle({
@@ -127,12 +144,14 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
       regularStyle400(
         fontSize: fontSize,
         fontColor: fontColor,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 
   static TextStyle mediumTextStyle({
@@ -140,11 +159,13 @@ class AppTextStyles {
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
+    double? height,
   }) =>
       mediumStyle500(
         fontSize: fontSize,
         fontColor: fontColor,
         decoration: decoration,
         letterSpacing: letterSpacing,
+        height: height,
       );
 }

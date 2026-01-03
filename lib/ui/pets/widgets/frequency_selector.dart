@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 
 class FrequencySelector extends StatelessWidget {
@@ -38,11 +39,7 @@ class FrequencySelector extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
           ),
           const SizedBox(height: 16),
           ...options.map((frequency) => _buildOption(frequency)),
@@ -73,11 +70,9 @@ class FrequencySelector extends StatelessWidget {
           children: [
             Text(
               _getDisplayName(frequency),
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                color: AppColors.textPrimary,
-              ),
+              style: isSelected
+                  ? AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary)
+                  : AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
             ),
             if (isSelected)
               const Icon(

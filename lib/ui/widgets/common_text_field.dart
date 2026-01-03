@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class CommonTextField extends StatelessWidget {
   final TextEditingController controller;
@@ -42,10 +43,7 @@ class CommonTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,
-        hintStyle: const TextStyle(
-          color: AppColors.textSecondary,
-          fontSize: 16,
-        ),
+        hintStyle: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
         filled: true,
         fillColor: AppColors.background,
         border: OutlineInputBorder(

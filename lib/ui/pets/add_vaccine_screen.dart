@@ -195,10 +195,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
       appBar: AppBar(
         title: Text(
           _isEditMode ? AppStrings.editVaccine : AppStrings.addVaccine,
-          style: const TextStyle(
-            color: AppColors.navigationText,
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
         ),
         backgroundColor: AppColors.navigationBackground,
         elevation: 0,
@@ -280,14 +277,10 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: AppColors.error),
         ),
-        child: const Center(
+        child: Center(
           child: Text(
             AppStrings.deleteVaccine,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: AppColors.error,
-            ),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.error),
           ),
         ),
       ),
@@ -305,7 +298,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
               AppStrings.cancel,
-              style: TextStyle(color: AppColors.textSecondary),
+              style: AppTextStyles.regularStyle400(fontColor: AppColors.textSecondary),
             ),
           ),
           TextButton(
@@ -315,7 +308,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             },
             child: Text(
               AppStrings.delete,
-              style: TextStyle(color: AppColors.error),
+              style: AppTextStyles.regularStyle400(fontColor: AppColors.error),
             ),
           ),
         ],
@@ -423,17 +416,11 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
               children: [
                 Text(
                   AppStrings.reminderSnoozed,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.semiBoldStyle600(fontColor: AppColors.textPrimary),
                 ),
                 Text(
                   '$daysLeft ${daysLeft == 1 ? 'day' : 'days'} remaining',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -448,10 +435,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
                   )
                 : Text(
                     AppStrings.unsnooze,
-                    style: TextStyle(
-                      color: AppColors.warning,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.semiBoldStyle600(fontColor: AppColors.warning),
                   ),
           ),
         ],
@@ -479,13 +463,9 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           AppStrings.vaccineName,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textPrimary,
-          ),
+          style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
         ),
         const SizedBox(height: 8),
         Container(
@@ -533,18 +513,11 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
                           children: [
                             Text(
                               vaccine.name,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textPrimary,
-                              ),
+                              style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
                             ),
                             Text(
                               vaccine.helperText,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                color: AppColors.textSecondary,
-                              ),
+                              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
                             ),
                           ],
                         ),
@@ -562,7 +535,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               _errors['vaccineName']!,
-              style: const TextStyle(color: AppColors.error, fontSize: 12),
+              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
             ),
           ),
         if (_selectedVaccine != null)
@@ -570,10 +543,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               _selectedVaccine!.why,
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppColors.textSecondary,
-              ),
+              style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
             ),
           ),
       ],
@@ -592,11 +562,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textPrimary,
-          ),
+          style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
         ),
         const SizedBox(height: 8),
         GestureDetector(
@@ -615,9 +581,9 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
                 Expanded(
                   child: Text(
                     selectedDate != null ? _formatDate(selectedDate) : 'Select date',
-                    style: TextStyle(
+                    style: AppTextStyles.regularStyle400(
                       fontSize: 16,
-                      color: selectedDate != null ? AppColors.textPrimary : AppColors.textSecondary,
+                      fontColor: selectedDate != null ? AppColors.textPrimary : AppColors.textSecondary,
                     ),
                   ),
                 ),
@@ -631,7 +597,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               error,
-              style: const TextStyle(color: AppColors.error, fontSize: 12),
+              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
             ),
           ),
         if (helperText != null && error == null)
@@ -639,7 +605,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               helperText,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
             ),
           ),
       ],
@@ -650,13 +616,9 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           AppStrings.notes,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            color: AppColors.textPrimary,
-          ),
+          style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
         ),
         const SizedBox(height: 8),
         Container(
@@ -704,24 +666,17 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             ),
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   AppStrings.reminderNotification,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
                 ),
                 Text(
                   AppStrings.getNotifiedBeforeNextDose,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
                 ),
               ],
             ),

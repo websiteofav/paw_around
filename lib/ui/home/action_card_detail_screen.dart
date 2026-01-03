@@ -8,6 +8,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/action_type.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
@@ -387,11 +388,7 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
               // Title
               Text(
                 _title,
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.white,
-                ),
+                style: AppTextStyles.boldStyle700(fontSize: 24, fontColor: AppColors.white),
                 textAlign: TextAlign.center,
               ),
 
@@ -400,9 +397,9 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
               // Subtitle
               Text(
                 _subtitle,
-                style: TextStyle(
+                style: AppTextStyles.regularStyle400(
                   fontSize: 14,
-                  color: AppColors.white.withValues(alpha: 0.9),
+                  fontColor: AppColors.white.withValues(alpha: 0.9),
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -418,11 +415,7 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
                 ),
                 child: Text(
                   isOverdue ? AppStrings.overdue : AppStrings.dueSoon,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.white,
-                  ),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 13, fontColor: AppColors.white),
                 ),
               ),
             ],
@@ -463,18 +456,13 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
             children: [
               Text(
                 '$displayDays',
-                style: const TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.white,
-                ),
+                style: AppTextStyles.boldStyle700(fontSize: 32, fontColor: AppColors.white),
               ),
               Text(
                 isOverdue ? AppStrings.overdue.toUpperCase() : 'DAYS',
-                style: TextStyle(
+                style: AppTextStyles.semiBoldStyle600(
                   fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.white.withValues(alpha: 0.9),
+                  fontColor: AppColors.white.withValues(alpha: 0.9),
                   letterSpacing: 1,
                 ),
               ),

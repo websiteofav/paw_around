@@ -136,10 +136,9 @@ class PlaceCard extends StatelessWidget {
       ),
       child: Text(
         isOpen ? AppStrings.open : AppStrings.closed,
-        style: TextStyle(
-          color: isOpen ? AppColors.success : AppColors.error,
+        style: AppTextStyles.semiBoldStyle600(
           fontSize: 11,
-          fontWeight: FontWeight.w600,
+          fontColor: isOpen ? AppColors.success : AppColors.error,
         ),
       ),
     );

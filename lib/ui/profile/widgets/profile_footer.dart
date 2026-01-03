@@ -36,9 +36,9 @@ class ProfileFooter extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           appVersion,
-          style: TextStyle(
+          style: AppTextStyles.regularStyle400(
             fontSize: 12,
-            color: AppColors.textSecondary.withValues(alpha: 0.5),
+            fontColor: AppColors.textSecondary.withValues(alpha: 0.5),
           ),
         ),
       ],

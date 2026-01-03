@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/action_type.dart';
 
 class CareHistoryCard extends StatelessWidget {
@@ -72,14 +73,10 @@ class CareHistoryCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 14),
-              const Expanded(
+              Expanded(
                 child: Text(
                   AppStrings.careHistory,
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 17, fontColor: AppColors.textPrimary),
                 ),
               ),
               if (frequency != null)
@@ -91,11 +88,7 @@ class CareHistoryCard extends StatelessWidget {
                   ),
                   child: Text(
                     frequency!,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.primary,
-                    ),
+                    style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.primary),
                   ),
                 ),
             ],
@@ -166,19 +159,12 @@ class CareHistoryCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 15, fontColor: AppColors.textPrimary),
                 ),
               ],
             ),
@@ -188,4 +174,3 @@ class CareHistoryCard extends StatelessWidget {
     );
   }
 }
-

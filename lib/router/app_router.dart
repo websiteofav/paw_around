@@ -6,6 +6,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/constants/app_routes.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
@@ -269,7 +270,7 @@ class AppRouter {
             const SizedBox(height: 16),
             Text(
               'Page not found: ${state.uri}',
-              style: const TextStyle(fontSize: 18),
+              style: AppTextStyles.regularStyle400(fontSize: 18),
             ),
             const SizedBox(height: 16),
             ElevatedButton(

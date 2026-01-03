@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class UrgentVaccineCard extends StatelessWidget {
@@ -72,11 +73,7 @@ class UrgentVaccineCard extends StatelessWidget {
                 ),
                 child: Text(
                   _getDueBadgeText(),
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.urgentBadgeText,
-                  ),
+                  style: AppTextStyles.boldStyle700(fontSize: 12, fontColor: AppColors.urgentBadgeText),
                 ),
               ),
             ],
@@ -87,11 +84,7 @@ class UrgentVaccineCard extends StatelessWidget {
           // Vaccine name
           Text(
             vaccineName,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppColors.white,
-            ),
+            style: AppTextStyles.boldStyle700(fontSize: 20, fontColor: AppColors.white),
           ),
 
           const SizedBox(height: 4),
@@ -99,9 +92,9 @@ class UrgentVaccineCard extends StatelessWidget {
           // Subtitle
           Text(
             '${AppStrings.importantForHealth} 💉',
-            style: TextStyle(
+            style: AppTextStyles.regularStyle400(
               fontSize: 14,
-              color: AppColors.white.withValues(alpha: 0.8),
+              fontColor: AppColors.white.withValues(alpha: 0.8),
             ),
           ),
 
@@ -124,14 +117,10 @@ class UrgentVaccineCard extends StatelessWidget {
                   ),
                 ],
               ),
-              child: const Text(
+              child: Text(
                 AppStrings.findNearbyVets,
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.urgentGradientStart,
-                ),
+                style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.urgentGradientStart),
               ),
             ),
           ),
@@ -150,9 +139,9 @@ class UrgentVaccineCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   '$nearbyVetsCount vets within ${distanceKm!.toStringAsFixed(0)} km',
-                  style: TextStyle(
+                  style: AppTextStyles.regularStyle400(
                     fontSize: 13,
-                    color: AppColors.white.withValues(alpha: 0.7),
+                    fontColor: AppColors.white.withValues(alpha: 0.7),
                   ),
                 ),
               ],

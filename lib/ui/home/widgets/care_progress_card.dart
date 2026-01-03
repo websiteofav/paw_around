@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class CareProgressCard extends StatelessWidget {
   final IconData icon;
@@ -66,11 +67,7 @@ class CareProgressCard extends StatelessWidget {
                 ),
                 child: Text(
                   '$daysLeft ${AppStrings.daysLeft}',
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.textSecondary),
                 ),
               ),
             ],
@@ -81,11 +78,7 @@ class CareProgressCard extends StatelessWidget {
           // Title
           Text(
             title,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
-            ),
+            style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.textPrimary),
           ),
 
           const SizedBox(height: 4),
@@ -93,10 +86,7 @@ class CareProgressCard extends StatelessWidget {
           // Subtitle
           Text(
             subtitle ?? AppStrings.protectionActive,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.textSecondary,
-            ),
+            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
           ),
 
           const SizedBox(height: 16),

@@ -5,6 +5,7 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class WelcomeCard extends StatelessWidget {
   const WelcomeCard({super.key});
@@ -66,12 +67,11 @@ class WelcomeCard extends StatelessWidget {
           const SizedBox(height: 20),
 
           // Title
-          const Text(
+          Text(
             AppStrings.welcomeToPawAroundHome,
-            style: TextStyle(
+            style: AppTextStyles.boldStyle700(
               fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+              fontColor: AppColors.textPrimary,
               height: 1.3,
             ),
             textAlign: TextAlign.center,
@@ -79,11 +79,11 @@ class WelcomeCard extends StatelessWidget {
           const SizedBox(height: 8),
 
           // Subtitle
-          const Text(
+          Text(
             AppStrings.addPetToGetStarted,
-            style: TextStyle(
+            style: AppTextStyles.regularStyle400(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              fontColor: AppColors.textSecondary,
               height: 1.5,
             ),
             textAlign: TextAlign.center,
@@ -116,11 +116,10 @@ class WelcomeCard extends StatelessWidget {
                 elevation: 2,
                 shadowColor: AppColors.primary.withValues(alpha: 0.3),
               ),
-              child: const Text(
+              child: Text(
                 AppStrings.addYourFirstPet,
-                style: TextStyle(
+                style: AppTextStyles.semiBoldStyle600(
                   fontSize: 16,
-                  fontWeight: FontWeight.w600,
                   letterSpacing: 0.3,
                 ),
               ),
@@ -143,11 +142,7 @@ class WelcomeCard extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
-              fontSize: 13,
-              color: AppColors.textPrimary,
-              fontWeight: FontWeight.w500,
-            ),
+            style: AppTextStyles.mediumStyle500(fontSize: 13, fontColor: AppColors.textPrimary),
           ),
         ),
       ],

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/bloc/home/home_event.dart';
 import 'package:paw_around/bloc/home/home_state.dart';
@@ -170,11 +171,9 @@ class _DashboardState extends State<Dashboard> {
           const SizedBox(height: 4),
           Text(
             label,
-            style: TextStyle(
-              color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive,
-              fontSize: 12,
-              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-            ),
+            style: isSelected
+                ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.navigationActive)
+                : AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.navigationInactive),
           ),
         ],
       ),

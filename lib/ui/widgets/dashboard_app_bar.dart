@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_icons.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 /// Action item for the dashboard app bar
 class DashboardAppBarAction {
@@ -94,19 +95,12 @@ class DashboardAppBar extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.textPrimary,
-                      ),
+                      style: AppTextStyles.boldStyle700(fontSize: 20, fontColor: AppColors.textPrimary),
                     ),
                     if (subtitle != null)
                       Text(
                         subtitle!,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: AppColors.textSecondary,
-                        ),
+                        style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
                       ),
                   ],
                 ),
@@ -264,11 +258,7 @@ class DashboardAppBar extends StatelessWidget {
       ),
       child: Text(
         count > 99 ? '99+' : count.toString(),
-        style: const TextStyle(
-          color: AppColors.white,
-          fontSize: 10,
-          fontWeight: FontWeight.bold,
-        ),
+        style: AppTextStyles.boldStyle700(fontSize: 10, fontColor: AppColors.white),
         textAlign: TextAlign.center,
       ),
     );

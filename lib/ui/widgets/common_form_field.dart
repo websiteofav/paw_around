@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/text_styles.dart';
 
 class CommonFormField extends StatelessWidget {
   final TextEditingController controller;
@@ -42,21 +43,13 @@ class CommonFormField extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
             ),
             if (isRequired) ...[
               const SizedBox(width: 4),
-              const Text(
+              Text(
                 '*',
-                style: TextStyle(
-                  color: AppColors.error,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.error),
               ),
             ],
           ],
@@ -73,10 +66,7 @@ class CommonFormField extends StatelessWidget {
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: hintText ?? label,
-            hintStyle: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 16,
-            ),
+            hintStyle: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
             filled: true,
             fillColor: AppColors.surface,
             border: OutlineInputBorder(
@@ -116,10 +106,7 @@ class CommonFormField extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               errorText!,
-              style: const TextStyle(
-                color: AppColors.error,
-                fontSize: 12,
-              ),
+              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
             ),
           ),
       ],

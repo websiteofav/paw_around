@@ -5,6 +5,8 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
@@ -197,17 +199,11 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
               children: [
                 Text(
                   AppStrings.reminderSnoozed,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
+                  style: AppTextStyles.semiBoldStyle600(fontColor: AppColors.textPrimary),
                 ),
                 Text(
                   '$daysLeft ${daysLeft == 1 ? 'day' : 'days'} remaining',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: AppColors.textSecondary,
-                  ),
+                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -222,10 +218,7 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
                   )
                 : Text(
                     AppStrings.unsnooze,
-                    style: TextStyle(
-                      color: AppColors.warning,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: AppTextStyles.semiBoldStyle600(fontColor: AppColors.warning),
                   ),
           ),
         ],

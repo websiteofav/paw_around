@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_bloc.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_event.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_state.dart';
@@ -97,13 +98,9 @@ class OnboardingView extends StatelessWidget {
                           onPressed: () {
                             context.read<OnboardingBloc>().add(OnboardingSkip());
                           },
-                          child: const Text(
+                          child: Text(
                             AppStrings.skipButton,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: AppColors.onboardingText,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.onboardingText),
                           ),
                         ),
 
@@ -119,13 +116,10 @@ class OnboardingView extends StatelessWidget {
                                   onPressed: () {
                                     context.read<OnboardingBloc>().add(OnboardingNextPage());
                                   },
-                                  child: const Text(
+                                  child: Text(
                                     AppStrings.getStartedButton,
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.onboardingButtonText,
-                                    ),
+                                    style: AppTextStyles.boldStyle700(
+                                        fontSize: 16, fontColor: AppColors.onboardingButtonText),
                                   ),
                                 ),
                               )
@@ -133,13 +127,10 @@ class OnboardingView extends StatelessWidget {
                                 onPressed: () {
                                   context.read<OnboardingBloc>().add(OnboardingNextPage());
                                 },
-                                child: const Text(
+                                child: Text(
                                   AppStrings.nextButton,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: AppColors.onboardingText,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                  style:
+                                      AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.onboardingText),
                                 ),
                               ),
                       ],
@@ -166,10 +157,9 @@ class OnboardingView extends StatelessWidget {
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: AppTextStyles.boldStyle700(
               fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppColors.onboardingText,
+              fontColor: AppColors.onboardingText,
               height: 1.3,
             ),
           ),

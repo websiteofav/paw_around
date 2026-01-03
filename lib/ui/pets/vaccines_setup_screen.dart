@@ -5,6 +5,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/constants/vaccine_constants.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
@@ -208,22 +209,15 @@ class _VaccinesSetupScreenState extends State<VaccinesSetupScreen> {
               color: AppColors.textSecondary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'No vaccines available',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
-              ),
+              style: AppTextStyles.semiBoldStyle600(fontSize: 18, fontColor: AppColors.textPrimary),
             ),
             const SizedBox(height: 8),
             Text(
               AppStrings.vaccinesForDogsCatsOnly,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textSecondary,
-              ),
+              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
             ),
           ],
         ),
@@ -240,13 +234,9 @@ class _VaccinesSetupScreenState extends State<VaccinesSetupScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Section header
-              const Text(
+              Text(
                 'Required Vaccines',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textSecondary,
-                ),
+                style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textSecondary),
               ),
               const SizedBox(height: 12),
 
