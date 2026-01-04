@@ -173,8 +173,8 @@ class NotificationService {
         notificationDate.year,
         notificationDate.month,
         notificationDate.day,
-        DateTime.now().hour,
-        DateTime.now().minute + 2,
+        10,
+        0,
       );
 
       // Skip if scheduled time has passed
