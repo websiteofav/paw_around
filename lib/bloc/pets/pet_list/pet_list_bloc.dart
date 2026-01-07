@@ -7,6 +7,7 @@ import 'package:paw_around/repositories/pet_repository.dart';
 
 class PetListBloc extends Bloc<PetListEvent, PetListState> {
   final PetRepository _petRepository;
+  String? _selectedPetId;
 
   PetListBloc({
     required PetRepository petRepository,
@@ -14,6 +15,7 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
         super(const PetListInitial()) {
     on<LoadPetList>(_onLoadPetList);
     on<DeletePet>(_onDeletePet);
+    on<SelectPet>(_onSelectPet);
   }
 
   Future<void> _onLoadPetList(LoadPetList event, Emitter<PetListState> emit) async {
@@ -21,7 +23,7 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
 
     try {
       final pets = await _petRepository.getAllPets();
-      emit(PetListLoaded(pets: pets));
+      emit(PetListLoaded(pets: pets, selectedPetId: _selectedPetId));
     } catch (e) {
       emit(PetListError(message: e.toString()));
       rethrow; // Let AuthBlocObserver handle auth errors
@@ -31,6 +33,12 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
   Future<void> _onDeletePet(DeletePet event, Emitter<PetListState> emit) async {
     try {
       await _petRepository.deletePet(event.petId);
+
+      // Clear selected pet if it was deleted
+      if (_selectedPetId == event.petId) {
+        _selectedPetId = null;
+      }
+
       emit(PetDeleted(petId: event.petId));
 
       // Reload the list after deletion
@@ -38,6 +46,14 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
     } catch (e) {
       emit(PetListError(message: e.toString()));
       rethrow; // Let AuthBlocObserver handle auth errors
+    }
+  }
+
+  void _onSelectPet(SelectPet event, Emitter<PetListState> emit) {
+    _selectedPetId = event.petId;
+    if (state is PetListLoaded) {
+      final currentState = state as PetListLoaded;
+      emit(currentState.copyWith(selectedPetId: event.petId));
     }
   }
 

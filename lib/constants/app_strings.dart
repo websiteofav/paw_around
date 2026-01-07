@@ -322,6 +322,9 @@ class AppStrings {
   static const String settings = 'Settings';
   static const String account = 'Account';
   static const String addAnotherPet = 'Add another pet';
+  static const String switchPet = 'Switch Pet';
+  static const String unknownBreed = 'Unknown breed';
+  static const String currentlySelected = 'currently selected';
   static const String accountSettings = 'Account settings';
   static const String logOutConfirmTitle = 'Log out?';
   static const String logOutConfirmMessage = 'You will need to sign in again to access Paw Around.';
@@ -389,7 +392,7 @@ class AppStrings {
   // Private constructor to prevent instantiation
 
   // Edit Profile Screen
-  static const String phoneNumberCannotBeChangedHere = 'Phone number cannot be changed here'; 
+  static const String phoneNumberCannotBeChangedHere = 'Phone number cannot be changed here';
   static const String mobileNumber = 'Mobile Number';
 
   AppStrings._();
