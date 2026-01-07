@@ -1,12 +1,14 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/ui/auth/widgets/otp_input_field.dart';
 
 class OTPScreen extends StatefulWidget {
@@ -74,11 +76,23 @@ class _OTPScreenState extends State<OTPScreen> {
         smsCode: _otpController!.text,
       );
 
+      AnalyticsService.logEvent(
+        name: AnalyticsEvents.loginSuccess,
+        parameters: {AnalyticsParams.method: 'phone'},
+      );
+
       if (mounted) {
         _isNavigating = true;
         context.go(AppRoutes.home);
       }
     } on FirebaseAuthException catch (e) {
+      AnalyticsService.logEvent(
+        name: AnalyticsEvents.loginFailed,
+        parameters: {
+          AnalyticsParams.method: 'phone',
+          AnalyticsParams.error: e.code,
+        },
+      );
       if (mounted) {
         setState(() {
           _isVerifying = false;
@@ -91,6 +105,13 @@ class _OTPScreenState extends State<OTPScreen> {
         );
       }
     } catch (e) {
+      AnalyticsService.logEvent(
+        name: AnalyticsEvents.loginFailed,
+        parameters: {
+          AnalyticsParams.method: 'phone',
+          AnalyticsParams.error: e.toString(),
+        },
+      );
       if (mounted) {
         setState(() {
           _isVerifying = false;
@@ -146,11 +167,22 @@ class _OTPScreenState extends State<OTPScreen> {
       onAutoVerified: (credential) async {
         try {
           await sl<AuthRepository>().signInWithPhoneCredential(credential);
+          AnalyticsService.logEvent(
+            name: AnalyticsEvents.loginSuccess,
+            parameters: {AnalyticsParams.method: 'phone'},
+          );
           if (mounted) {
             _isNavigating = true;
             context.go(AppRoutes.home);
           }
         } catch (e) {
+          AnalyticsService.logEvent(
+            name: AnalyticsEvents.loginFailed,
+            parameters: {
+              AnalyticsParams.method: 'phone',
+              AnalyticsParams.error: e.toString(),
+            },
+          );
           if (mounted) {
             setState(() {
               _isResending = false;

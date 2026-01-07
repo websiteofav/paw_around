@@ -308,7 +308,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.info_outline, size: 16, color: AppColors.warning),
+                            const Icon(Icons.info_outline, size: 16, color: AppColors.warning),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
@@ -325,13 +325,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     // Read-only phone info (if available)
                     if (user?.phoneNumber != null) ...[
                       _buildReadOnlyField(
-                        label: 'Phone',
+                        label: AppStrings.mobileNumber,
                         value: user!.phoneNumber!,
                         icon: Icons.phone_outlined,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        'Phone number cannot be changed here',
+                        AppStrings.phoneNumberCannotBeChangedHere,
                         style: AppTextStyles.regularStyle400(
                           fontSize: 12,
                           fontColor: AppColors.textSecondary.withValues(alpha: 0.7),
@@ -371,7 +371,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     return ScaleButton(
       onPressed: _isImageLoading ? null : _pickImage,
-      child: Container(
+      child: SizedBox(
         height: 180,
         width: double.infinity,
         child: Center(

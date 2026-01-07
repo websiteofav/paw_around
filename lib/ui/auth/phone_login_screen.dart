@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/ui/auth/widgets/auth_logo.dart';
 import 'package:paw_around/ui/auth/widgets/social_auth_button.dart';
 import 'package:paw_around/utils/url_utils.dart';
@@ -58,10 +60,21 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       onAutoVerified: (credential) async {
         try {
           await sl<AuthRepository>().signInWithPhoneCredential(credential);
+          AnalyticsService.logEvent(
+            name: AnalyticsEvents.loginSuccess,
+            parameters: {AnalyticsParams.method: 'phone'},
+          );
           if (mounted) {
             context.go(AppRoutes.home);
           }
         } catch (e) {
+          AnalyticsService.logEvent(
+            name: AnalyticsEvents.loginFailed,
+            parameters: {
+              AnalyticsParams.method: 'phone',
+              AnalyticsParams.error: e.toString(),
+            },
+          );
           if (mounted) {
             setState(() => _isLoading = false);
             ScaffoldMessenger.of(context).showSnackBar(
@@ -89,6 +102,11 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
 
               // Logo
               const AuthLogo(size: 80),
+
+              TextButton(
+                onPressed: () => throw Exception(),
+                child: const Text("Throw Test Exception"),
+              ),
 
               const SizedBox(height: 32),
 
@@ -131,10 +149,21 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                 onPressed: () async {
                   try {
                     await sl<AuthRepository>().signInWithGoogle();
+                    AnalyticsService.logEvent(
+                      name: AnalyticsEvents.loginSuccess,
+                      parameters: {AnalyticsParams.method: 'google'},
+                    );
                     if (context.mounted) {
                       context.go(AppRoutes.home);
                     }
                   } catch (e) {
+                    AnalyticsService.logEvent(
+                      name: AnalyticsEvents.loginFailed,
+                      parameters: {
+                        AnalyticsParams.method: 'google',
+                        AnalyticsParams.error: e.toString(),
+                      },
+                    );
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(

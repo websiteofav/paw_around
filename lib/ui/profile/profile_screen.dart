@@ -8,6 +8,7 @@ import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
+import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_constants.dart';
 import 'package:paw_around/constants/app_spacing.dart';
@@ -15,6 +16,7 @@ import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/services/account_service.dart';
+import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
 import 'package:paw_around/ui/profile/widgets/profile_account_section.dart';
 import 'package:paw_around/ui/profile/widgets/profile_dialogs.dart';
@@ -73,6 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     try {
       await _accountService.deleteAccount();
+      AnalyticsService.logEvent(name: AnalyticsEvents.accountDeleted);
     } on FirebaseAuthException catch (e) {
       if (mounted) {
         setState(() => _isDeletingAccount = false);

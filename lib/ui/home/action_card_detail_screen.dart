@@ -6,6 +6,7 @@ import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/bloc/home/home_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
+import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -16,6 +17,7 @@ import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/ui/home/widgets/action_info_card.dart';
 import 'package:paw_around/ui/home/widgets/action_cta_card.dart';
 import 'package:paw_around/ui/home/widgets/care_history_card.dart';
@@ -177,6 +179,14 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
       }
 
       if (mounted) {
+        AnalyticsService.logEvent(
+          name: AnalyticsEvents.actionCardMarkDone,
+          parameters: {
+            AnalyticsParams.actionType: actionType.name,
+            AnalyticsParams.petType: pet.species,
+          },
+        );
+
         context.read<PetListBloc>().add(const LoadPetList());
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -234,6 +244,14 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
       }
 
       if (mounted) {
+        AnalyticsService.logEvent(
+          name: AnalyticsEvents.actionCardSnoozed,
+          parameters: {
+            AnalyticsParams.actionType: actionType.name,
+            AnalyticsParams.petType: pet.species,
+          },
+        );
+
         context.read<PetListBloc>().add(const LoadPetList());
 
         ScaffoldMessenger.of(context).showSnackBar(
@@ -270,6 +288,11 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
       ActionType.grooming => ServiceType.groomer,
       ActionType.tickFlea => ServiceType.petStore,
     };
+
+    AnalyticsService.logEvent(
+      name: AnalyticsEvents.ctaFindNearbyClicked,
+      parameters: {AnalyticsParams.actionType: actionType.name},
+    );
 
     context.read<HomeBloc>().add(NavigateToMapWithFilter(filter));
     context.pop();

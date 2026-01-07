@@ -32,6 +32,7 @@ import 'package:paw_around/ui/pets/vaccines_setup_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
+import 'package:paw_around/services/analytics_service.dart';
 
 /// Notifies GoRouter when auth state changes
 class AuthNotifier extends ChangeNotifier {
@@ -49,6 +50,7 @@ class AppRouter {
     initialLocation: AppRoutes.phoneLogin,
     debugLogDiagnostics: false,
     refreshListenable: _authNotifier,
+    observers: [AnalyticsService.observer],
     redirect: (context, state) {
       final authRepository = sl<AuthRepository>();
       final isLoggedIn = authRepository.isLoggedIn;

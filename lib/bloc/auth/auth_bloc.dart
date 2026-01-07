@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/bloc/auth/auth_state.dart';
+import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/services/analytics_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthRepository _authRepository;
@@ -113,6 +115,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onSignOut(SignOut event, Emitter<AuthState> emit) async {
+    AnalyticsService.logEvent(name: AnalyticsEvents.logout);
     await _authRepository.signOut();
     // Auth state listener will emit Unauthenticated
   }
@@ -121,8 +124,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
     try {
       await _authRepository.signInWithGoogle();
+      AnalyticsService.logEvent(
+        name: AnalyticsEvents.loginSuccess,
+        parameters: {AnalyticsParams.method: 'google'},
+      );
       // Auth state listener will emit Authenticated
     } catch (e) {
+      AnalyticsService.logEvent(
+        name: AnalyticsEvents.loginFailed,
+        parameters: {
+          AnalyticsParams.method: 'google',
+          AnalyticsParams.error: e.toString(),
+        },
+      );
       emit(AuthError(
         errorMessage: e.toString().replaceAll('Exception: ', ''),
         isPasswordVisible: state.isPasswordVisible,

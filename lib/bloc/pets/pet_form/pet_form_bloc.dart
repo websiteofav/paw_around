@@ -1,10 +1,12 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
+import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/services/storage_service.dart';
 
 class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
@@ -183,6 +185,10 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
         );
 
         await _petRepository.updatePet(updatedPet);
+        AnalyticsService.logEvent(
+          name: AnalyticsEvents.petEdited,
+          parameters: {AnalyticsParams.species: state.species},
+        );
         emit(state.copyWith(status: PetFormStatus.success, savedPet: updatedPet));
       } else {
         // Adding new pet
@@ -216,6 +222,13 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
 
         final docId = await _petRepository.addPet(pet);
         final savedPet = pet.copyWith(id: docId);
+        AnalyticsService.logEvent(
+          name: AnalyticsEvents.petAdded,
+          parameters: {
+            AnalyticsParams.species: state.species,
+            AnalyticsParams.hasPhoto: state.imagePath != null,
+          },
+        );
         emit(state.copyWith(status: PetFormStatus.success, savedPet: savedPet));
       }
     } catch (e) {

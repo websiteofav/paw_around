@@ -388,5 +388,9 @@ class AppStrings {
   static const String yourPet = 'Your Pet';
   // Private constructor to prevent instantiation
 
+  // Edit Profile Screen
+  static const String phoneNumberCannotBeChangedHere = 'Phone number cannot be changed here'; 
+  static const String mobileNumber = 'Mobile Number';
+
   AppStrings._();
 }
