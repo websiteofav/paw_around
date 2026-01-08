@@ -5,6 +5,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class ProfileAccountSection extends StatelessWidget {
+  final VoidCallback onMyPostsTap;
   final VoidCallback onAccountSettingsTap;
   final VoidCallback onNotificationsTap;
   final VoidCallback onPrivacyTap;
@@ -14,6 +15,7 @@ class ProfileAccountSection extends StatelessWidget {
 
   const ProfileAccountSection({
     super.key,
+    required this.onMyPostsTap,
     required this.onAccountSettingsTap,
     required this.onNotificationsTap,
     required this.onPrivacyTap,
@@ -40,6 +42,12 @@ class ProfileAccountSection extends StatelessWidget {
       ),
       child: Column(
         children: [
+          _buildItem(
+            icon: Icons.article_outlined,
+            title: AppStrings.myPosts,
+            onTap: onMyPostsTap,
+          ),
+          const Divider(height: 1, color: AppColors.border),
           _buildItem(
             icon: Icons.settings_outlined,
             title: AppStrings.accountSettings,

@@ -396,5 +396,10 @@ class AppStrings {
   static const String phoneNumberCannotBeChangedHere = 'Phone number cannot be changed here';
   static const String mobileNumber = 'Mobile Number';
 
+  // My Posts Screen
+  static const String noMyPostsYet = "You haven't posted yet";
+  static const String noMyPostsSubtitle = 'Your lost & found posts will appear here';
+  static const String resolved = 'Resolved';
+
   AppStrings._();
 }

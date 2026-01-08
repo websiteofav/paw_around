@@ -42,6 +42,12 @@ class CommunityRepository {
     return LostFoundPost.fromFirestore(doc);
   }
 
+  /// Fetch all posts by a specific user (includes resolved posts)
+  Future<List<LostFoundPost>> getPostsByUser(String userId) async {
+    final snapshot = await _postsRef.where('userId', isEqualTo: userId).orderBy('createdAt', descending: true).get();
+    return snapshot.docs.map((doc) => LostFoundPost.fromFirestore(doc)).toList();
+  }
+
   /// Mark a post as resolved
   Future<void> markAsResolved(String postId) async {
     await _postsRef.doc(postId).update({'isResolved': true});

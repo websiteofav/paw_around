@@ -10,6 +10,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       : _repository = repository,
         super(CommunityInitial()) {
     on<LoadPosts>(_onLoadPosts);
+    on<LoadMyPosts>(_onLoadMyPosts);
     on<CreatePost>(_onCreatePost);
     on<SelectPost>(_onSelectPost);
     on<ClearSelectedPost>(_onClearSelectedPost);
@@ -22,6 +23,17 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     try {
       final posts = await _repository.getPosts();
       emit(CommunityLoaded(posts: posts));
+    } catch (e) {
+      emit(CommunityError(e.toString()));
+      rethrow; // Let AuthBlocObserver handle auth errors
+    }
+  }
+
+  Future<void> _onLoadMyPosts(LoadMyPosts event, Emitter<CommunityState> emit) async {
+    emit(MyPostsLoading());
+    try {
+      final posts = await _repository.getPostsByUser(event.userId);
+      emit(MyPostsLoaded(posts: posts));
     } catch (e) {
       emit(CommunityError(e.toString()));
       rethrow; // Let AuthBlocObserver handle auth errors
@@ -58,7 +70,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
   Future<void> _onMarkPostResolved(MarkPostResolved event, Emitter<CommunityState> emit) async {
     try {
       await _repository.markAsResolved(event.postId);
-      add(LoadPosts());
+      // Screens handle their own reload when returning from navigation
     } catch (e) {
       emit(CommunityError(e.toString()));
       rethrow; // Let AuthBlocObserver handle auth errors
@@ -69,7 +81,6 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     try {
       await _repository.deletePost(event.postId);
       emit(PostDeleted());
-      add(LoadPosts());
     } catch (e) {
       emit(CommunityError(e.toString()));
       rethrow; // Let AuthBlocObserver handle auth errors

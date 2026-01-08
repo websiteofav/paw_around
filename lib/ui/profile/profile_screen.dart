@@ -166,6 +166,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AnimatedCard(
                           index: 2,
                           child: ProfileAccountSection(
+                            onMyPostsTap: () => context.pushNamed(AppRoutes.myPosts),
                             onAccountSettingsTap: () => _showComingSoon(AppStrings.accountSettings),
                             onNotificationsTap: () => _showComingSoon(AppStrings.notifications),
                             onPrivacyTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
