@@ -281,6 +281,7 @@ class AppStrings {
   static const String snoozeFor7Days = 'Snooze for 7 days';
   static const String snoozeAction = 'Snooze this reminder';
   static const String reminderSnoozed = 'Reminder is snoozed';
+  static const String snoozed = 'Snoozed';
   static const String reminderUnsnoozed = 'Reminder is now active';
   static const String unsnooze = 'Unsnooze';
 

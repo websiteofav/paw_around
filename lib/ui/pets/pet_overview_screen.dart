@@ -87,8 +87,8 @@ class PetOverviewScreen extends StatelessWidget {
                   context: context,
                   icon: Icons.content_cut,
                   title: AppStrings.grooming,
-                  subtitle: _getGroomingStatus(pet),
-                  status: _getGroomingStatusType(pet),
+                  subtitle: _getGroomingStatusText(pet),
+                  status: pet.groomingStatusType,
                   onTap: () {
                     context.pushNamed(
                       AppRoutes.groomingSettings,
@@ -108,8 +108,8 @@ class PetOverviewScreen extends StatelessWidget {
                     context: context,
                     icon: Icons.shield_outlined,
                     title: AppStrings.tickFleaPrevention,
-                    subtitle: _getTickFleaStatus(pet),
-                    status: _getTickFleaStatusType(pet),
+                    subtitle: _getTickFleaStatusText(pet),
+                    status: pet.tickFleaStatusType,
                     onTap: () {
                       context.pushNamed(
                         AppRoutes.tickFleaSettings,
@@ -244,7 +244,7 @@ class PetOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildPetInfoCard(PetModel pet) {
-    final bool hasCareDue = _hasCareDue(pet);
+    final bool hasCareDue = pet.hasCareDue;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -362,7 +362,7 @@ class PetOverviewScreen extends StatelessWidget {
   }
 
   Widget _buildVaccinesSection(BuildContext context, PetModel pet) {
-    final upcomingCount = _getUpcomingVaccinesCount(pet);
+    final upcomingCount = pet.upcomingVaccinesCount;
     final headerText =
         upcomingCount > 0 ? '${AppStrings.vaccines} ($upcomingCount ${AppStrings.comingUp})' : AppStrings.vaccines;
 
@@ -528,7 +528,7 @@ class PetOverviewScreen extends StatelessWidget {
                               const Icon(Icons.snooze, size: 10, color: AppColors.warning),
                               const SizedBox(width: 2),
                               Text(
-                                'Snoozed',
+                                AppStrings.snoozed,
                                 style: AppTextStyles.semiBoldStyle600(fontSize: 10, fontColor: AppColors.warning),
                               ),
                             ],
@@ -542,10 +542,10 @@ class PetOverviewScreen extends StatelessWidget {
                     isSnoozed
                         ? AppStrings.tapToUnsnooze
                         : isOverdue
-                            ? AppStrings.overdueByDays.replaceAll('%s', daysUntilDue.toString())
+                            ? AppStrings.overdueByDays.replaceAll('%s', daysUntilDue.abs().toString())
                             : daysUntilDue == 0
                                 ? AppStrings.dueToday
-                                : AppStrings.dueInDays.replaceAll('%s', daysUntilDue.toString()),
+                                : AppStrings.dueInDays.replaceAll('%s', daysUntilDue.abs().toString()),
                     style: AppTextStyles.regularStyle400(
                       fontSize: 12,
                       fontColor: isOverdue && !isSnoozed ? AppColors.error : AppColors.textSecondary,
@@ -751,101 +751,27 @@ class PetOverviewScreen extends StatelessWidget {
     }
   }
 
-  bool _hasCareDue(PetModel pet) {
-    // Check vaccines
-    if (pet.supportsMedicalCare) {
-      for (final vaccine in pet.vaccines) {
-        if (vaccine.nextDueDate.isBefore(DateTime.now().add(const Duration(days: 30)))) {
-          return true;
-        }
-      }
-    }
-
-    // Check grooming
-    if (pet.groomingSettings != null && (pet.groomingSettings!.isDueSoon || pet.groomingSettings!.isOverdue)) {
-      return true;
-    }
-
-    // Check tick & flea
-    if (pet.supportsMedicalCare && pet.tickFleaSettings != null) {
-      if (pet.tickFleaSettings!.isDueSoon || pet.tickFleaSettings!.isOverdue) {
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  int _getUpcomingVaccinesCount(PetModel pet) {
-    final now = DateTime.now();
-    final thirtyDaysFromNow = now.add(const Duration(days: 30));
-
-    return pet.vaccines.where((vaccine) {
-      return vaccine.nextDueDate.isAfter(now) && vaccine.nextDueDate.isBefore(thirtyDaysFromNow);
-    }).length;
-  }
-
-  String _getGroomingStatus(PetModel pet) {
-    if (pet.groomingSettings == null || !pet.groomingSettings!.hasReminder) {
+  /// Convert grooming status type to display text
+  String _getGroomingStatusText(PetModel pet) {
+    final statusType = pet.groomingStatusType;
+    if (statusType == null) {
       return AppStrings.notSet;
     }
-
-    if (pet.groomingSettings!.isOverdue) {
+    if (statusType == 'overdue' || statusType == 'soon') {
       return AppStrings.upcomingSoon;
     }
-
-    if (pet.groomingSettings!.isDueSoon) {
-      return AppStrings.upcomingSoon;
-    }
-
     return AppStrings.allGood;
   }
 
-  String _getTickFleaStatus(PetModel pet) {
-    if (pet.tickFleaSettings == null || !pet.tickFleaSettings!.hasReminder) {
+  /// Convert tick & flea status type to display text
+  String _getTickFleaStatusText(PetModel pet) {
+    final statusType = pet.tickFleaStatusType;
+    if (statusType == null) {
       return AppStrings.notSet;
     }
-
-    if (pet.tickFleaSettings!.isOverdue) {
+    if (statusType == 'overdue' || statusType == 'soon') {
       return AppStrings.nextDoseSoon;
     }
-
-    if (pet.tickFleaSettings!.isDueSoon) {
-      return AppStrings.nextDoseSoon;
-    }
-
     return AppStrings.allGood;
-  }
-
-  String? _getGroomingStatusType(PetModel pet) {
-    if (pet.groomingSettings == null || !pet.groomingSettings!.hasReminder) {
-      return null;
-    }
-
-    if (pet.groomingSettings!.isOverdue) {
-      return 'overdue';
-    }
-
-    if (pet.groomingSettings!.isDueSoon) {
-      return 'soon';
-    }
-
-    return 'good';
-  }
-
-  String? _getTickFleaStatusType(PetModel pet) {
-    if (pet.tickFleaSettings == null || !pet.tickFleaSettings!.hasReminder) {
-      return null;
-    }
-
-    if (pet.tickFleaSettings!.isOverdue) {
-      return 'overdue';
-    }
-
-    if (pet.tickFleaSettings!.isDueSoon) {
-      return 'soon';
-    }
-
-    return 'good';
   }
 }

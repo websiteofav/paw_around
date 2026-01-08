@@ -54,6 +54,7 @@ Future<bool> showNotificationPermissionDialog({
               Expanded(
                 child: CommonButton(
                   text: AppStrings.notNow,
+                  textSize: 14,
                   variant: ButtonVariant.outline,
                   size: ButtonSize.medium,
                   onPressed: () => Navigator.of(ctx).pop(false),
@@ -63,6 +64,7 @@ Future<bool> showNotificationPermissionDialog({
               Expanded(
                 child: CommonButton(
                   text: AppStrings.enable,
+                  textSize: 14,
                   variant: ButtonVariant.primary,
                   size: ButtonSize.medium,
                   onPressed: () => Navigator.of(ctx).pop(true),

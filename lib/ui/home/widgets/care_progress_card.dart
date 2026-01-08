@@ -19,9 +19,22 @@ class CareProgressCard extends StatelessWidget {
     required this.totalDays,
   });
 
+  bool get isOverdue {
+    return daysLeft < 0;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final progress = totalDays > 0 ? (totalDays - daysLeft) / totalDays : 0.0;
+    // When overdue, show full progress bar; otherwise calculate normally
+    final progress = isOverdue ? 1.0 : (totalDays > 0 ? (totalDays - daysLeft) / totalDays : 0.0);
+
+    // Badge text: "Overdue by X days" or "X days left"
+    final badgeText = isOverdue ? 'Overdue by ${daysLeft.abs()} days' : '${daysLeft.abs()} ${AppStrings.daysLeft}';
+
+    // Colors based on overdue state
+    final badgeBgColor = isOverdue ? AppColors.error.withValues(alpha: 0.15) : AppColors.progressBarBg;
+    final badgeTextColor = isOverdue ? AppColors.error : AppColors.textSecondary;
+    final progressBarColor = isOverdue ? AppColors.error : AppColors.progressBarFill;
 
     return Container(
       width: double.infinity,
@@ -62,12 +75,12 @@ class CareProgressCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppColors.progressBarBg,
+                  color: badgeBgColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  '$daysLeft ${AppStrings.daysLeft}',
-                  style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.textSecondary),
+                  badgeText,
+                  style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: badgeTextColor),
                 ),
               ),
             ],
@@ -107,7 +120,7 @@ class CareProgressCard extends StatelessWidget {
                     widthFactor: progress.clamp(0.0, 1.0),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: AppColors.progressBarFill,
+                        color: progressBarColor,
                         borderRadius: BorderRadius.circular(4),
                       ),
                     ),

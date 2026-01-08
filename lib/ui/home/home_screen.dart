@@ -27,6 +27,7 @@ import 'package:paw_around/ui/home/widgets/pet_selector_bottom_sheet.dart';
 import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/ui/home/widgets/grooming_due_card.dart';
 import 'package:paw_around/ui/home/widgets/care_progress_card.dart';
+import 'package:paw_around/ui/home/widgets/care_due_card.dart';
 import 'package:paw_around/ui/home/widgets/care_summary_section.dart';
 import 'package:paw_around/ui/home/widgets/secondary_action_card.dart';
 import 'package:paw_around/ui/home/widgets/lost_pets_section.dart';
@@ -167,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Check for vaccines
     final hasVaccines = activePet.vaccines.isNotEmpty;
-    final hasUpcomingVaccine = supportsMedicalCare && _hasUpcomingVaccine(pets);
+    final hasUpcomingVaccine = supportsMedicalCare && _hasUpcomingVaccine(activePet);
 
     // Check care settings (filter out snoozed)
     final hasGroomingSettings = activePet.groomingSettings?.hasReminder == true;
@@ -223,20 +224,20 @@ class _HomeScreenState extends State<HomeScreen> {
                 index: cardIndex++,
                 child: ScaleButton(
                   onPressed: () {
-                    final vaccineData = _getUpcomingVaccine(pets);
-                    if (vaccineData != null) {
+                    final vaccine = _getUpcomingVaccine(activePet);
+                    if (vaccine != null) {
                       context.pushNamed(
                         AppRoutes.actionDetail,
                         extra: ActionCardData(
                           actionType: ActionType.vaccine,
-                          pet: vaccineData.$1,
-                          vaccine: vaccineData.$2,
-                          customTitle: vaccineData.$2.vaccineName,
+                          pet: activePet,
+                          vaccine: vaccine,
+                          customTitle: vaccine.vaccineName,
                         ),
                       );
                     }
                   },
-                  child: _buildUrgentVaccineCard(pets, activePet),
+                  child: _buildUrgentVaccineCard(activePet),
                 ),
               ),
               const SizedBox(height: 16),
@@ -305,6 +306,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: groomingDueSoon
                     ? GroomingDueCard(
                         badgeText: _getGroomingBadgeText(activePet),
+                        isOverdue: activePet.groomingSettings?.isOverdue ?? false,
                       )
                     : CareProgressCard(
                         icon: Icons.content_cut,
@@ -355,13 +357,20 @@ class _HomeScreenState extends State<HomeScreen> {
                       context.pushNamed(AppRoutes.tickFleaSettings, extra: activePet);
                     }
                   },
-                  child: CareProgressCard(
-                    icon: Icons.shield_outlined,
-                    title: AppStrings.tickFleaPrevention,
-                    subtitle: tickFleaDueSoon ? AppStrings.reminderToProtect : AppStrings.protectionActive,
-                    daysLeft: activePet.tickFleaSettings?.daysUntilDue ?? 30,
-                    totalDays: _getTickFleaTotalDays(activePet),
-                  ),
+                  child: tickFleaDueSoon
+                      ? CareDueCard.tickFlea(
+                          badgeText: _getTickFleaBadgeText(activePet),
+                          subtitle: '${AppStrings.reminderToProtect} 🛡️',
+                          actionText: AppStrings.viewTreatmentOptions,
+                          isOverdue: activePet.tickFleaSettings?.isOverdue ?? false,
+                        )
+                      : CareProgressCard(
+                          icon: Icons.shield_outlined,
+                          title: AppStrings.tickFleaPrevention,
+                          subtitle: AppStrings.protectionActive,
+                          daysLeft: activePet.tickFleaSettings?.daysUntilDue ?? 30,
+                          totalDays: _getTickFleaTotalDays(activePet),
+                        ),
                 ),
               ),
             ] else if (!hasTickFleaSettings) ...[
@@ -416,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     final daysUntil = settings.daysUntilDue ?? 0;
     if (daysUntil < 0) {
-      return 'Overdue';
+      return 'Overdue by ${-daysUntil} days';
     } else if (daysUntil == 0) {
       return 'Today';
     } else if (daysUntil <= 7) {
@@ -469,14 +478,28 @@ class _HomeScreenState extends State<HomeScreen> {
     return 'Next in $daysUntil days';
   }
 
-  Widget _buildUrgentVaccineCard(List<PetModel> pets, PetModel activePet) {
-    // Find the next upcoming non-snoozed vaccine
-    final vaccineData = _getUpcomingVaccine(pets);
-    if (vaccineData == null) {
+  String _getTickFleaBadgeText(PetModel pet) {
+    final settings = pet.tickFleaSettings;
+    if (settings == null || settings.nextDueDate == null) {
+      return AppStrings.thisWeek;
+    }
+    final daysUntil = settings.daysUntilDue ?? 0;
+    if (daysUntil < 0) {
+      return 'Overdue by ${-daysUntil} days';
+    } else if (daysUntil == 0) {
+      return 'Today';
+    } else if (daysUntil <= 7) {
+      return AppStrings.thisWeek;
+    }
+    return 'In $daysUntil days';
+  }
+
+  Widget _buildUrgentVaccineCard(PetModel activePet) {
+    // Find the next upcoming non-snoozed vaccine for active pet
+    final vaccine = _getUpcomingVaccine(activePet);
+    if (vaccine == null) {
       return const SizedBox.shrink();
     }
-
-    final vaccine = vaccineData.$2;
     final vaccineName = vaccine.vaccineName;
     final daysUntil = vaccine.nextDueDate.difference(DateTime.now()).inDays;
 
@@ -614,36 +637,42 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  bool _hasUpcomingVaccine(List<PetModel> pets) {
-    for (final pet in pets) {
-      for (final vaccine in pet.vaccines) {
-        // Skip snoozed vaccines
-        if (vaccine.isSnoozed) {
-          continue;
-        }
-        final daysUntilDue = vaccine.nextDueDate.difference(DateTime.now()).inDays;
-        if (daysUntilDue >= 0 && daysUntilDue <= 30) {
-          return true;
-        }
+  /// Check if the active pet has an upcoming or overdue vaccine that needs attention
+  bool _hasUpcomingVaccine(PetModel pet) {
+    for (final vaccine in pet.vaccines) {
+      // Skip snoozed vaccines
+      if (vaccine.isSnoozed) {
+        continue;
+      }
+      final daysUntilDue = vaccine.nextDueDate.difference(DateTime.now()).inDays;
+      // Include overdue (negative) and due soon (0-30 days)
+      if (daysUntilDue <= 30) {
+        return true;
       }
     }
     return false;
   }
 
-  /// Get the first upcoming non-snoozed vaccine
-  (PetModel, VaccineModel)? _getUpcomingVaccine(List<PetModel> pets) {
-    for (final pet in pets) {
-      for (final vaccine in pet.vaccines) {
-        // Skip snoozed vaccines
-        if (vaccine.isSnoozed) {
-          continue;
-        }
-        final days = vaccine.nextDueDate.difference(DateTime.now()).inDays;
-        if (days >= 0 && days <= 30) {
-          return (pet, vaccine);
-        }
+  /// Get the first non-snoozed vaccine for active pet (overdue first, then due soon)
+  VaccineModel? _getUpcomingVaccine(PetModel pet) {
+    VaccineModel? overdueVaccine;
+    VaccineModel? upcomingVaccine;
+
+    for (final vaccine in pet.vaccines) {
+      // Skip snoozed vaccines
+      if (vaccine.isSnoozed) {
+        continue;
+      }
+      final days = vaccine.nextDueDate.difference(DateTime.now()).inDays;
+
+      // Overdue takes priority
+      if (days < 0 && overdueVaccine == null) {
+        overdueVaccine = vaccine;
+      } else if (days >= 0 && days <= 30 && upcomingVaccine == null) {
+        upcomingVaccine = vaccine;
       }
     }
-    return null;
+
+    return overdueVaccine ?? upcomingVaccine;
   }
 }

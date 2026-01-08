@@ -723,11 +723,16 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
   }
 
   Future<void> _selectNextDueDate() async {
+    final now = DateTime.now();
+    // Ensure initialDate is not before firstDate
+    final initialDate =
+        _nextDueDate != null && _nextDueDate!.isAfter(now) ? _nextDueDate! : now.add(const Duration(days: 30));
+
     final date = await showDatePicker(
       context: context,
-      initialDate: _nextDueDate ?? DateTime.now().add(const Duration(days: 365)),
-      firstDate: DateTime.now(),
-      lastDate: DateTime.now().add(const Duration(days: 3650)),
+      initialDate: initialDate,
+      firstDate: now,
+      lastDate: now.add(const Duration(days: 3650)),
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(

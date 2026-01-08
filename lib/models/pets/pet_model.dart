@@ -240,6 +240,69 @@ class PetModel extends Equatable {
     return speciesLower == 'dog' || speciesLower == 'cat';
   }
 
+  /// Check if any care is due (vaccines, grooming, or tick & flea)
+  bool get hasCareDue {
+    // Check vaccines
+    if (supportsMedicalCare) {
+      for (final vaccine in vaccines) {
+        if (vaccine.nextDueDate.isBefore(DateTime.now().add(const Duration(days: 30)))) {
+          return true;
+        }
+      }
+    }
+
+    // Check grooming
+    if (groomingSettings != null && (groomingSettings!.isDueSoon || groomingSettings!.isOverdue)) {
+      return true;
+    }
+
+    // Check tick & flea
+    if (supportsMedicalCare && tickFleaSettings != null) {
+      if (tickFleaSettings!.isDueSoon || tickFleaSettings!.isOverdue) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /// Get count of vaccines due within 30 days
+  int get upcomingVaccinesCount {
+    final now = DateTime.now();
+    final thirtyDaysFromNow = now.add(const Duration(days: 30));
+    return vaccines.where((vaccine) {
+      return vaccine.nextDueDate.isAfter(now) && vaccine.nextDueDate.isBefore(thirtyDaysFromNow);
+    }).length;
+  }
+
+  /// Get grooming status type: 'overdue', 'soon', 'good', or null if not set
+  String? get groomingStatusType {
+    if (groomingSettings == null || !groomingSettings!.hasReminder) {
+      return null;
+    }
+    if (groomingSettings!.isOverdue) {
+      return 'overdue';
+    }
+    if (groomingSettings!.isDueSoon) {
+      return 'soon';
+    }
+    return 'good';
+  }
+
+  /// Get tick & flea status type: 'overdue', 'soon', 'good', or null if not set
+  String? get tickFleaStatusType {
+    if (tickFleaSettings == null || !tickFleaSettings!.hasReminder) {
+      return null;
+    }
+    if (tickFleaSettings!.isOverdue) {
+      return 'overdue';
+    }
+    if (tickFleaSettings!.isDueSoon) {
+      return 'soon';
+    }
+    return 'good';
+  }
+
   @override
   List<Object?> get props => [
         id,
