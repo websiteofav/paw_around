@@ -32,6 +32,7 @@ import 'package:paw_around/ui/pets/vaccines_setup_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
+import 'package:paw_around/ui/profile/my_posts_screen.dart';
 import 'package:paw_around/services/analytics_service.dart';
 
 /// Notifies GoRouter when auth state changes
@@ -250,6 +251,13 @@ class AppRouter {
             path: AppRoutes.editProfile,
             name: AppRoutes.editProfile,
             builder: (context, state) => const EditProfileScreen(),
+          ),
+
+          // My Posts Route
+          GoRoute(
+            path: AppRoutes.myPosts,
+            name: AppRoutes.myPosts,
+            builder: (context, state) => const MyPostsScreen(),
           ),
         ],
       ),

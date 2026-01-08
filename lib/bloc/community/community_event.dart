@@ -43,3 +43,11 @@ class DeletePost extends CommunityEvent {
   @override
   List<Object?> get props => [postId];
 }
+
+class LoadMyPosts extends CommunityEvent {
+  final String userId;
+  const LoadMyPosts(this.userId);
+
+  @override
+  List<Object?> get props => [userId];
+}

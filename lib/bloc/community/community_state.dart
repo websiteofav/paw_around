@@ -55,3 +55,14 @@ class PostCreated extends CommunityState {
 }
 
 class PostDeleted extends CommunityState {}
+
+class MyPostsLoading extends CommunityState {}
+
+class MyPostsLoaded extends CommunityState {
+  final List<LostFoundPost> posts;
+
+  const MyPostsLoaded({required this.posts});
+
+  @override
+  List<Object?> get props => [posts];
+}

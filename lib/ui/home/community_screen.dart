@@ -25,6 +25,10 @@ class _CommunityScreenState extends State<CommunityScreen> {
   @override
   void initState() {
     super.initState();
+    _loadPosts();
+  }
+
+  void _loadPosts() {
     context.read<CommunityBloc>().add(LoadPosts());
   }
 
@@ -40,7 +44,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
             actions: [
               DashboardAppBarAction(
                 icon: Icons.add_circle_outline,
-                onTap: () => context.push('/community/create'),
+                onTap: () async {
+                  await context.push('/community/create');
+                  if (mounted) {
+                    _loadPosts();
+                  }
+                },
               ),
             ],
           ),
@@ -76,7 +85,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
       title: AppStrings.noPostsYet,
       subtitle: AppStrings.beTheFirstToPost,
       actionText: AppStrings.createPost,
-      onAction: () => context.push('/community/create'),
+      onAction: () async {
+        await context.push('/community/create');
+        if (mounted) {
+          _loadPosts();
+        }
+      },
       hints: const [
         EmptyStateHint(
           icon: Icons.location_on_outlined,
@@ -109,7 +123,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
             ),
             AppSpacing.vertical16,
             ElevatedButton(
-              onPressed: () => context.read<CommunityBloc>().add(LoadPosts()),
+              onPressed: _loadPosts,
               child: const Text(AppStrings.retry),
             ),
           ],
@@ -122,7 +136,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: () async {
-        context.read<CommunityBloc>().add(LoadPosts());
+        _loadPosts();
       },
       child: ListView.builder(
         padding: const EdgeInsets.only(
@@ -134,7 +148,12 @@ class _CommunityScreenState extends State<CommunityScreen> {
           final post = state.posts[index];
           return PostCard(
             post: post,
-            onTap: () => context.push('/community/${post.id}'),
+            onTap: () async {
+              await context.push('/community/${post.id}');
+              if (mounted) {
+                _loadPosts();
+              }
+            },
           );
         },
       ),
