@@ -155,27 +155,31 @@ class _DashboardState extends State<Dashboard> {
     required int index,
     required bool isSelected,
   }) {
-    return GestureDetector(
-      onTap: () {
-        // Update BLoC state
-        context.read<HomeBloc>().add(HomeTabChanged(index));
-      },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            isSelected ? activeIcon : icon,
-            color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive,
-            size: 24,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: isSelected
-                ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.navigationActive)
-                : AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.navigationInactive),
-          ),
-        ],
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          // Update BLoC state
+          context.read<HomeBloc>().add(HomeTabChanged(index));
+        },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              isSelected ? activeIcon : icon,
+              color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive,
+              size: 24,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: isSelected
+                  ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.navigationActive)
+                  : AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.navigationInactive),
+            ),
+          ],
+        ),
       ),
     );
   }
