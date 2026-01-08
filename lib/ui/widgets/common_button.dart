@@ -27,6 +27,7 @@ class CommonButton extends StatelessWidget {
   final IconData? icon;
   final Color? customColor;
   final Color? customTextColor;
+  final double? textSize;
 
   const CommonButton({
     super.key,
@@ -39,6 +40,7 @@ class CommonButton extends StatelessWidget {
     this.icon,
     this.customColor,
     this.customTextColor,
+    this.textSize,
   });
 
   @override
@@ -155,11 +157,11 @@ class CommonButton extends StatelessWidget {
 
     switch (size) {
       case ButtonSize.small:
-        return baseStyle.copyWith(fontSize: 14);
+        return baseStyle.copyWith(fontSize: textSize ?? 14);
       case ButtonSize.medium:
-        return baseStyle.copyWith(fontSize: 16);
+        return baseStyle.copyWith(fontSize: textSize ?? 16);
       case ButtonSize.large:
-        return baseStyle.copyWith(fontSize: 18);
+        return baseStyle.copyWith(fontSize: textSize ?? 18);
     }
   }
 
