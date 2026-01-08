@@ -23,6 +23,7 @@ import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 import 'package:paw_around/ui/home/widgets/urgent_vaccine_card.dart';
+import 'package:paw_around/ui/home/widgets/pet_selector_bottom_sheet.dart';
 import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/ui/home/widgets/grooming_due_card.dart';
 import 'package:paw_around/ui/home/widgets/care_progress_card.dart';
@@ -63,6 +64,17 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showPetSelector(List<PetModel> pets, String? selectedPetId) {
+    PetSelectorBottomSheet.show(
+      context: context,
+      pets: pets,
+      selectedPetId: selectedPetId,
+      onPetSelected: (pet) {
+        context.read<PetListBloc>().add(SelectPet(petId: pet.id));
+      },
+    );
+  }
+
   Future<void> _onRefresh() async {
     context.read<PetListBloc>().add(const LoadPetList());
     context.read<CommunityBloc>().add(LoadPosts());
@@ -90,13 +102,17 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             List<PetModel> pets = [];
+            PetModel? activePet;
+            String? selectedPetId;
+
             if (petState is PetListLoaded) {
               pets = petState.pets;
+              activePet = petState.selectedPet;
+              selectedPetId = petState.selectedPetId;
             }
 
-            // Get active pet info
-            final activePet = pets.isNotEmpty ? pets.first : null;
             final petAge = activePet != null ? _calculateAge(activePet.dateOfBirth) : null;
+            final hasMultiplePets = pets.length > 1;
 
             return Column(
               children: [
@@ -105,6 +121,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: activePet?.name ?? AppStrings.yourPet,
                   subtitle: petAge,
                   avatarImageUrl: activePet?.imagePath,
+                  hasMultiplePets: hasMultiplePets,
+                  onAvatarTap: hasMultiplePets ? () => _showPetSelector(pets, selectedPetId) : null,
                 ),
 
                 // Content based on state with pull-to-refresh

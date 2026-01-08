@@ -50,6 +50,12 @@ class DashboardAppBar extends StatelessWidget {
   /// Callback when notification bell is tapped
   final VoidCallback? onNotificationTap;
 
+  /// Callback when avatar is tapped (for pet switching)
+  final VoidCallback? onAvatarTap;
+
+  /// Whether multiple pets exist (shows dropdown indicator)
+  final bool hasMultiplePets;
+
   const DashboardAppBar({
     super.key,
     this.leftWidget,
@@ -61,6 +67,8 @@ class DashboardAppBar extends StatelessWidget {
     this.showNotificationBell = false,
     this.notificationCount,
     this.onNotificationTap,
+    this.onAvatarTap,
+    this.hasMultiplePets = false,
   });
 
   @override
@@ -121,7 +129,7 @@ class DashboardAppBar extends StatelessWidget {
     }
 
     // Build avatar with image or default logo
-    return Container(
+    final avatarWidget = Container(
       width: 48,
       height: 48,
       decoration: BoxDecoration(
@@ -152,6 +160,55 @@ class DashboardAppBar extends StatelessWidget {
               ),
             )
           : _buildPawIcon(),
+    );
+
+    // If no tap handler, return plain avatar
+    if (onAvatarTap == null) {
+      return avatarWidget;
+    }
+
+    // Wrap with gesture detector and dropdown indicator
+    return Semantics(
+      button: true,
+      label: 'Switch pet, currently showing $title',
+      child: GestureDetector(
+        onTap: onAvatarTap,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            avatarWidget,
+            if (hasMultiplePets)
+              Positioned(
+                right: -4,
+                bottom: -4,
+                child: Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.white,
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: 0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.unfold_more_rounded,
+                    color: AppColors.white,
+                    size: 14,
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 

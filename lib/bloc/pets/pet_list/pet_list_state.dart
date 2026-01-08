@@ -18,11 +18,32 @@ class PetListLoading extends PetListState {
 
 class PetListLoaded extends PetListState {
   final List<PetModel> pets;
+  final String? selectedPetId;
 
-  const PetListLoaded({required this.pets});
+  const PetListLoaded({required this.pets, this.selectedPetId});
+
+  /// Get the currently selected pet, or the first pet if none selected
+  PetModel? get selectedPet {
+    if (pets.isEmpty) return null;
+    if (selectedPetId == null) return pets.first;
+    return pets.firstWhere(
+      (p) => p.id == selectedPetId,
+      orElse: () => pets.first,
+    );
+  }
+
+  PetListLoaded copyWith({
+    List<PetModel>? pets,
+    String? selectedPetId,
+  }) {
+    return PetListLoaded(
+      pets: pets ?? this.pets,
+      selectedPetId: selectedPetId ?? this.selectedPetId,
+    );
+  }
 
   @override
-  List<Object?> get props => [pets];
+  List<Object?> get props => [pets, selectedPetId];
 }
 
 class PetListError extends PetListState {

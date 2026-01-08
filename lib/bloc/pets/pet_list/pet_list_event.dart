@@ -19,3 +19,12 @@ class DeletePet extends PetListEvent {
   @override
   List<Object?> get props => [petId];
 }
+
+class SelectPet extends PetListEvent {
+  final String petId;
+
+  const SelectPet({required this.petId});
+
+  @override
+  List<Object?> get props => [petId];
+}
