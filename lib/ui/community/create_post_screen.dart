@@ -176,13 +176,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         if (state is PostCreated) {
           setState(() => _isSubmitting = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text(AppStrings.postCreatedSuccessfully)),
+            const SnackBar(content: Text(AppStrings.postCreatedSuccessfully), backgroundColor: AppColors.success),
           );
           context.pop();
         } else if (state is CommunityError) {
           setState(() => _isSubmitting = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
+            SnackBar(content: Text(state.message), backgroundColor: AppColors.error),
           );
         }
       },

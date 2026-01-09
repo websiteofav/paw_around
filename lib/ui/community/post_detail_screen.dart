@@ -54,14 +54,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   void _markAsResolved() {
     context.read<CommunityBloc>().add(MarkPostResolved(widget.postId));
-    context.pop();
+  }
+
+  void _unresolvePost() {
+    context.read<CommunityBloc>().add(UnresolvePost(widget.postId));
   }
 
   void _deletePost() {
     showDialog(
       context: context,
       builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
+        builder: (builderContext, setDialogState) => AlertDialog(
           backgroundColor: AppColors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -139,10 +142,28 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     return BlocListener<CommunityBloc, CommunityState>(
       listener: (context, state) {
         if (state is PostDeleted) {
+          // Close dialog first (if it's open)
+          Navigator.of(context, rootNavigator: true).pop();
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(AppStrings.postDeletedSuccessfully)),
           );
+          context.go(AppRoutes.home);
+        } else if (state is PostResolved) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Post marked as resolved'), backgroundColor: AppColors.success),
+          );
           context.pop();
+        } else if (state is PostUnresolved) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text(AppStrings.postReopenedSuccessfully), backgroundColor: AppColors.success),
+          );
+          context.pop();
+        } else if (state is CommunityError) {
+          Navigator.of(context, rootNavigator: true).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
         }
       },
       child: Scaffold(
@@ -376,17 +397,29 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   Widget _buildOwnerActions() {
+    final isResolved = _post?.isResolved ?? false;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CommonButton(
-          text: AppStrings.markAsResolved,
-          onPressed: _markAsResolved,
-          variant: ButtonVariant.outline,
-          icon: Icons.check_circle,
-          customColor: Colors.green,
-          customTextColor: Colors.green,
-        ),
+        if (!isResolved)
+          CommonButton(
+            text: AppStrings.markAsResolved,
+            onPressed: _markAsResolved,
+            variant: ButtonVariant.outline,
+            icon: Icons.check_circle,
+            customColor: Colors.green,
+            customTextColor: Colors.green,
+          )
+        else
+          CommonButton(
+            text: AppStrings.reopenPost,
+            onPressed: _unresolvePost,
+            variant: ButtonVariant.outline,
+            icon: Icons.refresh,
+            customColor: Colors.orange,
+            customTextColor: Colors.orange,
+          ),
         const SizedBox(height: 12),
         CommonButton(
           text: AppStrings.deletePost,

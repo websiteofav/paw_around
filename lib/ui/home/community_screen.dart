@@ -34,47 +34,54 @@ class _CommunityScreenState extends State<CommunityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          // Custom App Bar
-          DashboardAppBar(
-            title: AppStrings.communityTitle,
-            actions: [
-              DashboardAppBarAction(
-                icon: Icons.add_circle_outline,
-                onTap: () async {
-                  await context.push('/community/create');
-                  if (mounted) {
-                    _loadPosts();
+    return BlocListener<CommunityBloc, CommunityState>(
+      listener: (context, state) {
+        if (state is PostDeleted || state is PostResolved || state is PostUnresolved) {
+          _loadPosts();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: Column(
+          children: [
+            // Custom App Bar
+            DashboardAppBar(
+              title: AppStrings.communityTitle,
+              actions: [
+                DashboardAppBarAction(
+                  icon: Icons.add_circle_outline,
+                  onTap: () async {
+                    await context.push('/community/create');
+                    if (mounted) {
+                      _loadPosts();
+                    }
+                  },
+                ),
+              ],
+            ),
+
+            // Content
+            Expanded(
+              child: BlocBuilder<CommunityBloc, CommunityState>(
+                builder: (context, state) {
+                  if (state is CommunityLoading) {
+                    return const CommunitySkeleton();
                   }
+                  if (state is CommunityError) {
+                    return _buildError(state.message);
+                  }
+                  if (state is CommunityLoaded) {
+                    if (state.posts.isEmpty) {
+                      return _buildEmptyState();
+                    }
+                    return _buildPostsList(state);
+                  }
+                  return const CommunitySkeleton();
                 },
               ),
-            ],
-          ),
-
-          // Content
-          Expanded(
-            child: BlocBuilder<CommunityBloc, CommunityState>(
-              builder: (context, state) {
-                if (state is CommunityLoading) {
-                  return const CommunitySkeleton();
-                }
-                if (state is CommunityError) {
-                  return _buildError(state.message);
-                }
-                if (state is CommunityLoaded) {
-                  if (state.posts.isEmpty) {
-                    return _buildEmptyState();
-                  }
-                  return _buildPostsList(state);
-                }
-                return const CommunitySkeleton();
-              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

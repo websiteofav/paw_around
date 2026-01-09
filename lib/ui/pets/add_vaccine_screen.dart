@@ -539,7 +539,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
                 AppStrings.selectVaccine,
                 style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               borderRadius: BorderRadius.circular(14),
               icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary),
               items: _availableVaccines.map((vaccine) {

@@ -56,6 +56,10 @@ class PostCreated extends CommunityState {
 
 class PostDeleted extends CommunityState {}
 
+class PostResolved extends CommunityState {}
+
+class PostUnresolved extends CommunityState {}
+
 class MyPostsLoading extends CommunityState {}
 
 class MyPostsLoaded extends CommunityState {

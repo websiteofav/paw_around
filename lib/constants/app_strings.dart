@@ -185,6 +185,8 @@ class AppStrings {
   static const String helpReunitePets = 'Help reunite lost pets with their families';
   static const String alertNearbyParents = 'Alert pet parents in your neighborhood';
   static const String markAsResolved = 'Mark as Resolved';
+  static const String reopenPost = 'Reopen Post';
+  static const String postReopenedSuccessfully = 'Post reopened successfully';
   static const String getDirections = 'Get Directions';
   static const String callOwner = 'Call Owner';
   static const String kmAway = 'km away';
