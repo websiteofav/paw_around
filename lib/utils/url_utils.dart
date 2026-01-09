@@ -56,26 +56,29 @@ class UrlUtils {
 
   /// Opens email client
   static Future<bool> openEmail(String email, {String? subject, String? body}) async {
-    final queryParams = <String, String>{};
+    // Build mailto URL manually to avoid encoding issues
+    String mailtoUrl = 'mailto:$email';
+    final params = <String>[];
 
     if (subject != null) {
-      queryParams['subject'] = subject;
+      params.add('subject=${Uri.encodeComponent(subject)}');
     }
     if (body != null) {
-      queryParams['body'] = body;
+      params.add('body=${Uri.encodeComponent(body)}');
     }
 
-    final uri = Uri(
-      scheme: 'mailto',
-      path: email,
-      queryParameters: queryParams.isNotEmpty ? queryParams : null,
-    );
-
-    if (await canLaunchUrl(uri)) {
-      return await launchUrl(uri);
+    if (params.isNotEmpty) {
+      mailtoUrl += '?${params.join('&')}';
     }
 
-    return false;
+    final uri = Uri.parse(mailtoUrl);
+
+    try {
+      // Don't use canLaunchUrl for mailto - it's unreliable on Android
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      return false;
+    }
   }
 
   /// Opens a website in in-app browser

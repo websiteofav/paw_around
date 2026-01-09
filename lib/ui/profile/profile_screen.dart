@@ -171,7 +171,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             onNotificationsTap: () => _showComingSoon(AppStrings.notifications),
                             onPrivacyTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
                             onTermsTap: () => UrlUtils.openWebsite(AppStrings.termsOfServiceUrl),
-                            onHelpTap: () => _showComingSoon(AppStrings.helpAndSupport),
+                            onHelpTap: () => context.pushNamed(AppRoutes.helpSupport),
                             onDeleteAccountTap: () => showDeleteAccountDialog(
                               context,
                               onConfirm: _handleDeleteAccount,

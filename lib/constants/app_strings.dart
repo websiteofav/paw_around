@@ -401,5 +401,38 @@ class AppStrings {
   static const String noMyPostsSubtitle = 'Your lost & found posts will appear here';
   static const String resolved = 'Resolved';
 
+  // Help & Support Screen
+  static const String frequentlyAskedQuestions = 'Frequently Asked Questions';
+  static const String contactUs = 'Contact Us';
+  static const String stillNeedHelp = 'Still need help?';
+  static const String sendUsEmail = 'Send us an email and we\'ll get back to you as soon as possible.';
+  static const String emailSupport = 'Email Support';
+  static const String supportEmail = 'avinashlabs.dev@gmail.com';
+
+  // FAQ Questions
+  static const String faqAddPetQuestion = 'How do I add a pet?';
+  static const String faqAddPetAnswer =
+      'Tap the "Add Pet" button on the home screen or go to Profile > My Pets > Add Pet. Fill in your pet\'s details like name, breed, and birthdate.';
+
+  static const String faqVaccineRemindersQuestion = 'How do vaccine reminders work?';
+  static const String faqVaccineRemindersAnswer =
+      'Once you add vaccine records for your pet, we\'ll automatically calculate the next due date and send you reminders before it\'s due. You can manage reminders in your pet\'s profile.';
+
+  static const String faqLostFoundQuestion = 'How do I report a lost or found pet?';
+  static const String faqLostFoundAnswer =
+      'Go to the Community tab and tap the "+" button. Select whether you\'re reporting a lost or found pet, add details and a photo, and set the location where the pet was last seen or found.';
+
+  static const String faqFindVetsQuestion = 'How do I find vets near me?';
+  static const String faqFindVetsAnswer =
+      'Go to the Map tab to see veterinary clinics, groomers, and pet stores near your location. Tap on any marker to see details, ratings, and get directions.';
+
+  static const String faqDeleteAccountQuestion = 'How do I delete my account?';
+  static const String faqDeleteAccountAnswer =
+      'Go to Profile > Delete Account. This will permanently delete your account and all associated data including pets, posts, and records. This action cannot be undone.';
+
+  static const String faqContactSupportQuestion = 'How do I contact support?';
+  static const String faqContactSupportAnswer =
+      'You can email us at support@pawaround.app. We typically respond within 24-48 hours.';
+
   AppStrings._();
 }
