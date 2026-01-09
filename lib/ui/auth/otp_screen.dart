@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
@@ -143,6 +144,7 @@ class _OTPScreenState extends State<OTPScreen> {
             _verificationId = verificationId;
             _isResending = false;
           });
+          HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text(AppStrings.otpSentSuccessfully),

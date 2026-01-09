@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -145,16 +146,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           // Close dialog first (if it's open)
           Navigator.of(context, rootNavigator: true).pop();
 
+          HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(AppStrings.postDeletedSuccessfully)),
           );
           context.go(AppRoutes.home);
         } else if (state is PostResolved) {
+          HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Post marked as resolved'), backgroundColor: AppColors.success),
           );
           context.pop();
         } else if (state is PostUnresolved) {
+          HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(AppStrings.postReopenedSuccessfully), backgroundColor: AppColors.success),
           );

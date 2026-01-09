@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -175,6 +176,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       listener: (context, state) {
         if (state is PostCreated) {
           setState(() => _isSubmitting = false);
+          HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(AppStrings.postCreatedSuccessfully), backgroundColor: AppColors.success),
           );

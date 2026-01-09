@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -91,6 +92,7 @@ class _AddPetViewState extends State<_AddPetView> {
         body: BlocListener<PetFormBloc, PetFormState>(
           listener: (context, state) {
             if (state.status == PetFormStatus.success) {
+              HapticFeedback.mediumImpact();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
