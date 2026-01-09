@@ -16,6 +16,7 @@ import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
+import 'package:paw_around/constants/vaccine_constants.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/ui/home/widgets/action_info_card.dart';
@@ -149,6 +150,19 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
       case ActionType.tickFlea:
         return pet.tickFleaSettings?.frequency.displayName;
     }
+  }
+
+  /// Get vaccine-specific "Why this matters" text, or fallback to generic
+  String get _whyItMatters {
+    if (actionType == ActionType.vaccine && vaccine != null) {
+      // Look up vaccine-specific explanation from master data
+      final vaccines = VaccineConstants.getVaccinesByPetType(pet.species);
+      final match = vaccines.where((v) => v.name.toLowerCase() == vaccine!.vaccineName.toLowerCase()).firstOrNull;
+      if (match != null) {
+        return match.why;
+      }
+    }
+    return actionType.whyItMatters;
   }
 
   Future<void> _handleMarkAsDone() async {
@@ -321,7 +335,7 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
                         index: 0,
                         child: ActionInfoCard(
                           title: AppStrings.whyThisMatters,
-                          description: actionType.whyItMatters,
+                          description: _whyItMatters,
                           icon: Icons.lightbulb_outline,
                           iconColor: AppColors.warning,
                         ),

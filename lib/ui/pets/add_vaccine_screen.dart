@@ -288,35 +288,85 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
   }
 
   void _showDeleteConfirmation() {
+    bool isDeleting = false;
+
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text(AppStrings.deleteVaccineConfirmTitle),
-        content: const Text(AppStrings.deleteVaccineConfirmMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(
-              AppStrings.cancel,
-              style: AppTextStyles.regularStyle400(fontColor: AppColors.textSecondary),
-            ),
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: AppColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(dialogContext).pop();
-              _deleteVaccine();
-            },
-            child: Text(
-              AppStrings.delete,
-              style: AppTextStyles.regularStyle400(fontColor: AppColors.error),
-            ),
+          contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.vaccines_outlined,
+                  size: 32,
+                  color: AppColors.error,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppStrings.deleteVaccineConfirmTitle,
+                style: AppTextStyles.semiBoldStyle600(
+                  fontSize: 18,
+                  fontColor: AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppStrings.deleteVaccineConfirmMessage,
+                style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: CommonButton(
+                      text: AppStrings.cancel,
+                      variant: ButtonVariant.secondary,
+                      size: ButtonSize.small,
+                      onPressed: isDeleting ? null : () => Navigator.of(dialogContext).pop(),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CommonButton(
+                      text: AppStrings.delete,
+                      variant: ButtonVariant.danger,
+                      size: ButtonSize.small,
+                      isLoading: isDeleting,
+                      onPressed: isDeleting
+                          ? null
+                          : () async {
+                              setDialogState(() => isDeleting = true);
+                              await _deleteVaccine(dialogContext);
+                            },
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
 
-  Future<void> _deleteVaccine() async {
+  Future<void> _deleteVaccine(BuildContext dialogContext) async {
     if (widget.pet == null || widget.vaccineToEdit == null) {
       return;
     }
@@ -324,6 +374,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
     try {
       await sl<PetRepository>().deleteVaccine(widget.pet!.id, widget.vaccineToEdit!.id);
       if (mounted) {
+        Navigator.of(dialogContext).pop();
         context.read<PetListBloc>().add(const LoadPetList());
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -334,6 +385,9 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
         context.pop();
       }
     } catch (e) {
+      if (dialogContext.mounted) {
+        Navigator.of(dialogContext).pop();
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -469,6 +523,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
         ),
         const SizedBox(height: 8),
         Container(
+          padding: const EdgeInsets.symmetric(vertical: 4),
           decoration: BoxDecoration(
             color: AppColors.surface,
             borderRadius: BorderRadius.circular(14),
@@ -484,7 +539,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
                 AppStrings.selectVaccine,
                 style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
               borderRadius: BorderRadius.circular(14),
               icon: const Icon(Icons.keyboard_arrow_down, color: AppColors.textSecondary),
               items: _availableVaccines.map((vaccine) {

@@ -15,6 +15,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     on<SelectPost>(_onSelectPost);
     on<ClearSelectedPost>(_onClearSelectedPost);
     on<MarkPostResolved>(_onMarkPostResolved);
+    on<UnresolvePost>(_onUnresolvePost);
     on<DeletePost>(_onDeletePost);
   }
 
@@ -70,7 +71,17 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
   Future<void> _onMarkPostResolved(MarkPostResolved event, Emitter<CommunityState> emit) async {
     try {
       await _repository.markAsResolved(event.postId);
-      // Screens handle their own reload when returning from navigation
+      emit(PostResolved());
+    } catch (e) {
+      emit(CommunityError(e.toString()));
+      rethrow; // Let AuthBlocObserver handle auth errors
+    }
+  }
+
+  Future<void> _onUnresolvePost(UnresolvePost event, Emitter<CommunityState> emit) async {
+    try {
+      await _repository.unresolvePost(event.postId);
+      emit(PostUnresolved());
     } catch (e) {
       emit(CommunityError(e.toString()));
       rethrow; // Let AuthBlocObserver handle auth errors

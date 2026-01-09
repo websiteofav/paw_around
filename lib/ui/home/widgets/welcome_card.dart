@@ -120,6 +120,7 @@ class WelcomeCard extends StatelessWidget {
                 AppStrings.addYourFirstPet,
                 style: AppTextStyles.semiBoldStyle600(
                   fontSize: 16,
+                  fontColor: AppColors.white,
                   letterSpacing: 0.3,
                 ),
               ),

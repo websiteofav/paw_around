@@ -30,6 +30,7 @@ class PostDetailScreen extends StatefulWidget {
 class _PostDetailScreenState extends State<PostDetailScreen> {
   LostFoundPost? _post;
   bool _isLoading = true;
+  bool _isDeleting = false;
 
   @override
   void initState() {
@@ -53,28 +54,85 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   void _markAsResolved() {
     context.read<CommunityBloc>().add(MarkPostResolved(widget.postId));
-    context.pop();
+  }
+
+  void _unresolvePost() {
+    context.read<CommunityBloc>().add(UnresolvePost(widget.postId));
   }
 
   void _deletePost() {
     showDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text(AppStrings.deletePost),
-        content: const Text(AppStrings.deletePostConfirmation),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text(AppStrings.cancel),
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (builderContext, setDialogState) => AlertDialog(
+          backgroundColor: AppColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              context.read<CommunityBloc>().add(DeletePost(widget.postId));
-            },
-            child: Text(AppStrings.deletePost, style: AppTextStyles.regularStyle400(fontColor: AppColors.error)),
+          contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.delete_forever_rounded,
+                  size: 32,
+                  color: AppColors.error,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppStrings.deletePost,
+                style: AppTextStyles.semiBoldStyle600(
+                  fontSize: 18,
+                  fontColor: AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppStrings.deletePostConfirmation,
+                style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: CommonButton(
+                      text: AppStrings.cancel,
+                      variant: ButtonVariant.secondary,
+                      size: ButtonSize.small,
+                      onPressed: _isDeleting ? null : () => Navigator.of(dialogContext).pop(),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CommonButton(
+                      text: AppStrings.delete,
+                      variant: ButtonVariant.danger,
+                      size: ButtonSize.small,
+                      isLoading: _isDeleting,
+                      onPressed: _isDeleting
+                          ? null
+                          : () async {
+                              setDialogState(() => _isDeleting = true);
+                              setState(() => _isDeleting = true);
+                              context.read<CommunityBloc>().add(DeletePost(widget.postId));
+                            },
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -84,10 +142,28 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     return BlocListener<CommunityBloc, CommunityState>(
       listener: (context, state) {
         if (state is PostDeleted) {
+          // Close dialog first (if it's open)
+          Navigator.of(context, rootNavigator: true).pop();
+
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(AppStrings.postDeletedSuccessfully)),
           );
+          context.go(AppRoutes.home);
+        } else if (state is PostResolved) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Post marked as resolved'), backgroundColor: AppColors.success),
+          );
           context.pop();
+        } else if (state is PostUnresolved) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text(AppStrings.postReopenedSuccessfully), backgroundColor: AppColors.success),
+          );
+          context.pop();
+        } else if (state is CommunityError) {
+          Navigator.of(context, rootNavigator: true).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(state.message)),
+          );
         }
       },
       child: Scaffold(
@@ -321,17 +397,29 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   Widget _buildOwnerActions() {
+    final isResolved = _post?.isResolved ?? false;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        CommonButton(
-          text: AppStrings.markAsResolved,
-          onPressed: _markAsResolved,
-          variant: ButtonVariant.outline,
-          icon: Icons.check_circle,
-          customColor: Colors.green,
-          customTextColor: Colors.green,
-        ),
+        if (!isResolved)
+          CommonButton(
+            text: AppStrings.markAsResolved,
+            onPressed: _markAsResolved,
+            variant: ButtonVariant.outline,
+            icon: Icons.check_circle,
+            customColor: Colors.green,
+            customTextColor: Colors.green,
+          )
+        else
+          CommonButton(
+            text: AppStrings.reopenPost,
+            onPressed: _unresolvePost,
+            variant: ButtonVariant.outline,
+            icon: Icons.refresh,
+            customColor: Colors.orange,
+            customTextColor: Colors.orange,
+          ),
         const SizedBox(height: 12),
         CommonButton(
           text: AppStrings.deletePost,
@@ -438,7 +526,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             Expanded(
               child: CommonButton(
                 text: AppStrings.getDirections,
-                
                 onPressed: () => UrlUtils.openDirections(latitude: _post!.latitude, longitude: _post!.longitude),
                 variant: ButtonVariant.primary,
                 icon: Icons.directions,

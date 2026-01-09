@@ -53,6 +53,11 @@ class CommunityRepository {
     await _postsRef.doc(postId).update({'isResolved': true});
   }
 
+  /// Unresolve a post (reopen it)
+  Future<void> unresolvePost(String postId) async {
+    await _postsRef.doc(postId).update({'isResolved': false});
+  }
+
   /// Delete a post
   Future<void> deletePost(String postId, {StorageService? storageService}) async {
     // Get post to check for image

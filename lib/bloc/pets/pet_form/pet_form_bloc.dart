@@ -73,6 +73,7 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
   void _onSelectImage(SelectImage event, Emitter<PetFormState> emit) {
     emit(state.copyWith(
       imagePath: event.imagePath,
+      clearImagePath: event.imagePath == null,
       isImageLoading: false,
       status: PetFormStatus.editing,
     ));
@@ -226,7 +227,7 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
           name: AnalyticsEvents.petAdded,
           parameters: {
             AnalyticsParams.species: state.species,
-            AnalyticsParams.hasPhoto: state.imagePath != null,
+            AnalyticsParams.hasPhoto: state.imagePath != null ? 1 : 0,
           },
         );
         emit(state.copyWith(status: PetFormStatus.success, savedPet: savedPet));

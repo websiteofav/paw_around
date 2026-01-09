@@ -323,7 +323,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     const SizedBox(height: 16),
 
                     // Read-only phone info (if available)
-                    if (user?.phoneNumber != null) ...[
+                    if (user?.phoneNumber.isValidString ?? false) ...[
                       _buildReadOnlyField(
                         label: AppStrings.mobileNumber,
                         value: user!.phoneNumber!,
