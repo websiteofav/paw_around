@@ -24,6 +24,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   String _completePhoneNumber = '';
   bool _isPhoneValid = false;
   bool _isLoading = false;
+  bool _isGoogleLoading = false;
 
   Future<void> _onContinuePressed() async {
     if (!_isPhoneValid || _completePhoneNumber.isEmpty) {
@@ -103,11 +104,6 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               // Logo
               const AuthLogo(size: 80),
 
-              TextButton(
-                onPressed: () => throw Exception(),
-                child: const Text("Throw Test Exception"),
-              ),
-
               const SizedBox(height: 32),
 
               // Title
@@ -146,34 +142,39 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               // Social Auth Buttons
               SocialAuthButton(
                 type: SocialAuthType.google,
-                onPressed: () async {
-                  try {
-                    await sl<AuthRepository>().signInWithGoogle();
-                    AnalyticsService.logEvent(
-                      name: AnalyticsEvents.loginSuccess,
-                      parameters: {AnalyticsParams.method: 'google'},
-                    );
-                    if (context.mounted) {
-                      context.go(AppRoutes.home);
-                    }
-                  } catch (e) {
-                    AnalyticsService.logEvent(
-                      name: AnalyticsEvents.loginFailed,
-                      parameters: {
-                        AnalyticsParams.method: 'google',
-                        AnalyticsParams.error: e.toString(),
+                isLoading: _isGoogleLoading,
+                onPressed: _isGoogleLoading
+                    ? null
+                    : () async {
+                        setState(() => _isGoogleLoading = true);
+                        try {
+                          await sl<AuthRepository>().signInWithGoogle();
+                          AnalyticsService.logEvent(
+                            name: AnalyticsEvents.loginSuccess,
+                            parameters: {AnalyticsParams.method: 'google'},
+                          );
+                          if (context.mounted) {
+                            context.go(AppRoutes.home);
+                          }
+                        } catch (e) {
+                          AnalyticsService.logEvent(
+                            name: AnalyticsEvents.loginFailed,
+                            parameters: {
+                              AnalyticsParams.method: 'google',
+                              AnalyticsParams.error: e.toString(),
+                            },
+                          );
+                          if (context.mounted) {
+                            setState(() => _isGoogleLoading = false);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(e.toString()),
+                                backgroundColor: AppColors.error,
+                              ),
+                            );
+                          }
+                        }
                       },
-                    );
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(e.toString()),
-                          backgroundColor: AppColors.error,
-                        ),
-                      );
-                    }
-                  }
-                },
               ),
 
               const SizedBox(height: 32),
@@ -296,6 +297,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   Widget _buildTermsText() {
     return Wrap(
       alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
       children: [
         Text(
           '${AppStrings.termsText} ',
@@ -305,7 +307,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
           onTap: () => UrlUtils.openWebsite(AppStrings.termsOfServiceUrl),
           child: Text(
             AppStrings.termsOfService,
-            style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
+            style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.primary),
           ),
         ),
         Text(
@@ -316,7 +318,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
           onTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
           child: Text(
             AppStrings.privacyPolicyLink,
-            style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
+            style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.primary),
           ),
         ),
       ],

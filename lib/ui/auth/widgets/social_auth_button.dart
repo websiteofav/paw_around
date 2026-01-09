@@ -6,12 +6,14 @@ enum SocialAuthType { google, email }
 
 class SocialAuthButton extends StatelessWidget {
   final SocialAuthType type;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
+  final bool isLoading;
 
   const SocialAuthButton({
     super.key,
     required this.type,
     required this.onPressed,
+    this.isLoading = false,
   });
 
   @override
@@ -29,17 +31,26 @@ class SocialAuthButton extends StatelessWidget {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _buildIcon(),
-            const SizedBox(width: 12),
-            Text(
-              _getLabel(),
-              style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
-            ),
-          ],
-        ),
+        child: isLoading
+            ? const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                ),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _buildIcon(),
+                  const SizedBox(width: 12),
+                  Text(
+                    _getLabel(),
+                    style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
+                  ),
+                ],
+              ),
       ),
     );
   }

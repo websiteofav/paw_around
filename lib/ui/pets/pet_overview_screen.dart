@@ -146,82 +146,91 @@ class PetOverviewScreen extends StatelessWidget {
   }
 
   void _showDeleteConfirmation(BuildContext context, PetModel pet) {
+    bool isDeleting = false;
+
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
-        contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Warning icon
-            Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: AppColors.error.withValues(alpha: 0.1),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.delete_forever_rounded,
-                size: 32,
-                color: AppColors.error,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              AppStrings.deletePetConfirmTitle,
-              style: AppTextStyles.semiBoldStyle600(
-                fontSize: 18,
-                fontColor: AppColors.textPrimary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              AppStrings.deletePetConfirmMessage,
-              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            // Buttons row
-            Row(
-              children: [
-                Expanded(
-                  child: CommonButton(
-                    text: AppStrings.cancel,
-                    variant: ButtonVariant.secondary,
-                    size: ButtonSize.small,
-                    onPressed: () => Navigator.of(dialogContext).pop(),
-                  ),
+      barrierDismissible: false,
+      builder: (dialogContext) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          backgroundColor: AppColors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Warning icon
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: CommonButton(
-                    text: AppStrings.delete,
-                    variant: ButtonVariant.danger,
-                    size: ButtonSize.small,
-                    onPressed: () async {
-                      Navigator.of(dialogContext).pop();
-                      await _deletePet(context, pet);
-                    },
-                  ),
+                child: const Icon(
+                  Icons.delete_forever_rounded,
+                  size: 32,
+                  color: AppColors.error,
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 16),
+              Text(
+                AppStrings.deletePetConfirmTitle,
+                style: AppTextStyles.semiBoldStyle600(
+                  fontSize: 18,
+                  fontColor: AppColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                AppStrings.deletePetConfirmMessage,
+                style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              // Buttons row
+              Row(
+                children: [
+                  Expanded(
+                    child: CommonButton(
+                      text: AppStrings.cancel,
+                      variant: ButtonVariant.secondary,
+                      size: ButtonSize.small,
+                      onPressed: isDeleting ? null : () => Navigator.of(dialogContext).pop(),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: CommonButton(
+                      text: AppStrings.delete,
+                      variant: ButtonVariant.danger,
+                      size: ButtonSize.small,
+                      isLoading: isDeleting,
+                      onPressed: isDeleting
+                          ? null
+                          : () async {
+                              setDialogState(() => isDeleting = true);
+                              await _deletePet(context, pet, dialogContext);
+                            },
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Future<void> _deletePet(BuildContext context, PetModel pet) async {
+  Future<void> _deletePet(BuildContext context, PetModel pet, BuildContext dialogContext) async {
     try {
       await sl<PetRepository>().deletePet(pet.id);
       if (context.mounted) {
+        Navigator.of(dialogContext).pop();
         context.read<PetListBloc>().add(const LoadPetList());
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -232,6 +241,9 @@ class PetOverviewScreen extends StatelessWidget {
         context.pop();
       }
     } catch (e) {
+      if (dialogContext.mounted) {
+        Navigator.of(dialogContext).pop();
+      }
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

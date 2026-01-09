@@ -570,7 +570,7 @@ class _HomeScreenState extends State<HomeScreen> {
               .map((p) => LostPetItem(
                     id: p.id,
                     name: p.petName,
-                    distance: '${_formatDistance(p)} ${AppStrings.kmAway}',
+                    distance: _getDistanceText(p),
                     imageUrl: p.imagePath,
                   ))
               .toList();
@@ -593,9 +593,16 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  String _getDistanceText(LostFoundPost post) {
+    if (_userPosition == null) {
+      return 'Nearby';
+    }
+    return '${_formatDistance(post)} ${AppStrings.kmAway}';
+  }
+
   String _formatDistance(LostFoundPost post) {
     if (_userPosition == null) {
-      return '?';
+      return '';
     }
 
     final distanceInMeters = _locationService.calculateDistance(

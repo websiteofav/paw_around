@@ -239,7 +239,10 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
   }
 
   Future<void> _getCurrentLocation() async {
-    setState(() => _isLoadingCurrentLocation = true);
+    setState(() {
+      _isLoadingCurrentLocation = true;
+      _predictions = [];
+    });
     _removeOverlay();
 
     final result = await _locationService.getCurrentLocation();

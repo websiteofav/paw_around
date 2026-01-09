@@ -115,7 +115,17 @@ class AuthRepository {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      return await _firebaseAuth.signInWithCredential(credential);
+      final userCredential = await _firebaseAuth.signInWithCredential(credential);
+
+      // Store Google user's display name if not already set
+      final user = userCredential.user;
+      if (user != null && (user.displayName == null || user.displayName!.isEmpty)) {
+        if (googleUser.displayName != null && googleUser.displayName!.isNotEmpty) {
+          await user.updateDisplayName(googleUser.displayName);
+        }
+      }
+
+      return userCredential;
     } catch (e) {
       throw Exception('Failed to sign in with Google: $e');
     }

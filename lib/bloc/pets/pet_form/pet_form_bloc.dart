@@ -73,6 +73,7 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
   void _onSelectImage(SelectImage event, Emitter<PetFormState> emit) {
     emit(state.copyWith(
       imagePath: event.imagePath,
+      clearImagePath: event.imagePath == null,
       isImageLoading: false,
       status: PetFormStatus.editing,
     ));

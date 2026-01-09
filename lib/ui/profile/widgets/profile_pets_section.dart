@@ -51,7 +51,10 @@ class ProfilePetsSection extends StatelessWidget {
             _buildEmptyState(context)
           else ...[
             _buildPetList(context),
-            const Divider(height: 1, color: AppColors.border),
+            if (pets.length > 2) ...[
+              _buildViewAllPetsRow(context),
+              const Divider(height: 1, color: AppColors.border),
+            ],
             _buildAddPetRow(context),
           ],
         ],
@@ -154,11 +157,14 @@ class ProfilePetsSection extends StatelessWidget {
   }
 
   Widget _buildPetList(BuildContext context) {
+    // Show only first 2 pets if there are more than 2
+    final displayPets = pets.length > 2 ? pets.take(2).toList() : pets;
+
     return Column(
-      children: pets.asMap().entries.map((entry) {
+      children: displayPets.asMap().entries.map((entry) {
         final index = entry.key;
         final pet = entry.value;
-        final isLast = index == pets.length - 1;
+        final isLast = index == displayPets.length - 1;
 
         return Column(
           children: [
@@ -174,6 +180,106 @@ class ProfilePetsSection extends StatelessWidget {
           ],
         );
       }).toList(),
+    );
+  }
+
+  Widget _buildViewAllPetsRow(BuildContext context) {
+    return ScaleButton(
+      onPressed: () => _showAllPetsBottomSheet(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.iconBgLight,
+              ),
+              child: const Icon(
+                Icons.pets_rounded,
+                size: 22,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Text(
+                'View all ${pets.length} pets',
+                style: AppTextStyles.mediumStyle500(
+                  fontSize: 15,
+                  fontColor: AppColors.primary,
+                ),
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 16,
+              color: AppColors.primary.withValues(alpha: 0.6),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showAllPetsBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      isScrollControlled: true,
+      builder: (sheetContext) => DraggableScrollableSheet(
+        initialChildSize: 0.6,
+        minChildSize: 0.4,
+        maxChildSize: 0.9,
+        expand: false,
+        builder: (context, scrollController) => Column(
+          children: [
+            // Handle
+            Container(
+              margin: const EdgeInsets.only(top: 12),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.border,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Title
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                '${AppStrings.myPets} (${pets.length})',
+                style: AppTextStyles.semiBoldStyle600(fontSize: 18, fontColor: AppColors.textPrimary),
+              ),
+            ),
+            const Divider(height: 1, color: AppColors.border),
+            // Pet list
+            Expanded(
+              child: ListView.separated(
+                controller: scrollController,
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: pets.length,
+                separatorBuilder: (_, __) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Divider(
+                    height: 1,
+                    color: AppColors.border.withValues(alpha: 0.5),
+                  ),
+                ),
+                itemBuilder: (context, index) {
+                  final pet = pets[index];
+                  return _buildPetRow(context, pet);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
