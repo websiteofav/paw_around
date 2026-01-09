@@ -25,6 +25,7 @@ class AppRoutes {
   // Profile Sub-routes
   static const String editProfile = '/profile/edit';
   static const String myPosts = '/profile/my-posts';
+  static const String helpSupport = '/profile/help-support';
   static const String editPet = '/home/profile/edit-pet';
   static const String premium = '/home/profile/premium';
 
