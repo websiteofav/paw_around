@@ -153,7 +153,7 @@ class PetOverviewScreen extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
+        builder: (builderContext, setDialogState) => AlertDialog(
           backgroundColor: AppColors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -200,7 +200,7 @@ class PetOverviewScreen extends StatelessWidget {
                       text: AppStrings.cancel,
                       variant: ButtonVariant.secondary,
                       size: ButtonSize.small,
-                      onPressed: isDeleting ? null : () => Navigator.of(dialogContext).pop(),
+                      onPressed: isDeleting ? null : () => Navigator.of(builderContext).pop(),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -240,7 +240,11 @@ class PetOverviewScreen extends StatelessWidget {
             backgroundColor: AppColors.success,
           ),
         );
-        context.pop();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            context.pop();
+          }
+        });
       }
     } catch (e) {
       if (dialogContext.mounted) {

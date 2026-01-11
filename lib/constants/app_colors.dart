@@ -43,6 +43,7 @@ class AppColors {
   static const Color patternColor = Color(0xFFE5E7EB);
   static const Color shadowColor = Color(0xFF5CBF7A);
   static const Color divider = Color(0xFFE5E7EB);
+  static const Color shadowOverlay = Color(0xFF000000);
 
   // Authentication Colors
   static const Color authBackground = Color(0xFFFAFAF8);

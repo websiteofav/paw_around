@@ -170,7 +170,7 @@ class EmptyStateWidget extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: AppColors.shadowOverlay.withValues(alpha: 0.06),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
@@ -186,14 +186,30 @@ class EmptyStateWidget extends StatelessWidget {
       return SizedBox(
         width: illustrationSize,
         height: illustrationSize,
-        child: Lottie.asset(
-          lottieAsset!,
-          fit: BoxFit.contain,
-          repeat: true,
-        ),
+        child: lottieAsset!.startsWith('http')
+            ? Lottie.network(
+                lottieAsset!,
+                fit: BoxFit.contain,
+                repeat: true,
+                errorBuilder: (context, error, stackTrace) {
+                  return _buildIconFallback();
+                },
+              )
+            : Lottie.asset(
+                lottieAsset!,
+                fit: BoxFit.contain,
+                repeat: true,
+                errorBuilder: (context, error, stackTrace) {
+                  return _buildIconFallback();
+                },
+              ),
       );
     }
 
+    return _buildIconFallback();
+  }
+
+  Widget _buildIconFallback() {
     return Container(
       width: illustrationSize,
       height: illustrationSize,

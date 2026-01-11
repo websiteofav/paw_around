@@ -6,6 +6,9 @@ class AppIcons {
   static const String googleIcon = 'assets/auth/google_icon.png';
 
   static const String pawIcon = 'assets/home/paw_icon.png';
+  // Firebase Storage file name for Lottie animation
+  static const String addPetAnimationFileName = 'add_pet.json';
+  // Legacy asset path (kept for backward compatibility if needed)
   static const String addPetAnimation = 'assets/lottie/add_pet.json';
   static const String dogIcon = 'assets/pets/dog_icon.svg';
   static const String catIcon = 'assets/pets/cat_icon.svg';

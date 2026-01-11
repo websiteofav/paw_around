@@ -164,6 +164,14 @@ class AppStrings {
   static const String tryDifferentLocation = 'Try searching in a different location';
   static const String open = 'Open';
   static const String closed = 'Closed';
+  static const String locationPermissionRequired = 'Location Permission Required';
+  static const String locationPermissionDeniedMessage =
+      'Location permission has been permanently denied. Please enable it in app settings to use the map feature.';
+  static const String openAppSettings = 'Open App Settings';
+  static const String locationServicesDisabled = 'Location Services Disabled';
+  static const String locationServicesDisabledMessage =
+      'Please enable location services in your device settings to use the map feature.';
+  static const String openLocationSettings = 'Open Location Settings';
 
   // Community Screen
   static const String lost = 'Lost';
