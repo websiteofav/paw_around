@@ -197,7 +197,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       leading: Container(
         margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.3),
+          color: AppColors.shadowOverlay.withValues(alpha: 0.3),
           shape: BoxShape.circle,
         ),
         child: IconButton(
@@ -227,9 +227,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.3),
+                    AppColors.shadowOverlay.withValues(alpha: 0.3),
                     Colors.transparent,
-                    Colors.black.withValues(alpha: 0.5),
+                    AppColors.shadowOverlay.withValues(alpha: 0.5),
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -476,7 +476,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.shadowOverlay.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -512,7 +512,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, -2))],
+        boxShadow: [BoxShadow(color: AppColors.shadowOverlay.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, -2))],
       ),
       child: SafeArea(
         child: Row(
