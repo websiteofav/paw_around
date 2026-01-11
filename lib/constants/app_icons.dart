@@ -9,7 +9,6 @@ class AppIcons {
   // Firebase Storage file name for Lottie animation
   static const String addPetAnimationFileName = 'add_pet.json';
   // Legacy asset path (kept for backward compatibility if needed)
-  static const String addPetAnimation = 'assets/lottie/add_pet.json';
   static const String dogIcon = 'assets/pets/dog_icon.svg';
   static const String catIcon = 'assets/pets/cat_icon.svg';
   static const String otherPetIcon = 'assets/pets/other_pet_icon.svg';
