@@ -3,12 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
+import 'package:paw_around/services/animation_service.dart';
 import 'package:paw_around/ui/auth/widgets/auth_logo.dart';
 import 'package:paw_around/ui/auth/widgets/social_auth_button.dart';
 import 'package:paw_around/utils/url_utils.dart';
@@ -25,6 +27,21 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   bool _isPhoneValid = false;
   bool _isLoading = false;
   bool _isGoogleLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Preload Lottie animation in background while user is logging in
+    _preloadAnimation();
+  }
+
+   void _preloadAnimation() {
+    AnimationService.getLottieFile(AppIcons.addPetAnimationFileName).then((_) {
+    }).catchError((error) {
+      // Silently fail - welcome card will handle fallback
+      debugPrint('Failed to preload animation: $error');
+    });
+  }
 
   Future<void> _onContinuePressed() async {
     if (!_isPhoneValid || _completePhoneNumber.isEmpty) {
