@@ -28,7 +28,7 @@ class ProfilePetsSection extends StatelessWidget {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -288,7 +288,12 @@ class ProfilePetsSection extends StatelessWidget {
     final hasImage = pet.imagePath != null && pet.imagePath!.startsWith('http');
 
     return ScaleButton(
-      onPressed: () => context.pushNamed(AppRoutes.petOverview, extra: pet),
+      onPressed: () {
+        if(Navigator.canPop(context)) {
+          context.pop();
+        }
+        context.pushNamed(AppRoutes.petOverview, extra: pet);
+      },
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         child: Row(

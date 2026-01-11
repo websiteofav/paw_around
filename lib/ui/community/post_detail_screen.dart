@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -145,16 +146,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           // Close dialog first (if it's open)
           Navigator.of(context, rootNavigator: true).pop();
 
+          HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(AppStrings.postDeletedSuccessfully)),
           );
           context.go(AppRoutes.home);
         } else if (state is PostResolved) {
+          HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Post marked as resolved'), backgroundColor: AppColors.success),
           );
           context.pop();
         } else if (state is PostUnresolved) {
+          HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text(AppStrings.postReopenedSuccessfully), backgroundColor: AppColors.success),
           );
@@ -193,7 +197,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       leading: Container(
         margin: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: Colors.black.withValues(alpha: 0.3),
+          color: AppColors.shadowOverlay.withValues(alpha: 0.3),
           shape: BoxShape.circle,
         ),
         child: IconButton(
@@ -223,9 +227,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.black.withValues(alpha: 0.3),
+                    AppColors.shadowOverlay.withValues(alpha: 0.3),
                     Colors.transparent,
-                    Colors.black.withValues(alpha: 0.5),
+                    AppColors.shadowOverlay.withValues(alpha: 0.5),
                   ],
                   stops: const [0.0, 0.5, 1.0],
                 ),
@@ -472,7 +476,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: AppColors.shadowOverlay.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -508,7 +512,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, -2))],
+        boxShadow: [BoxShadow(color: AppColors.shadowOverlay.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, -2))],
       ),
       child: SafeArea(
         child: Row(

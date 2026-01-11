@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
@@ -71,6 +72,7 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
           _isSnoozed = false;
         });
 
+        HapticFeedback.mediumImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(AppStrings.reminderUnsnoozed),
@@ -143,6 +145,7 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
       if (mounted) {
         context.read<PetListBloc>().add(const LoadPetList());
 
+        HapticFeedback.mediumImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(AppStrings.settingsSaved),

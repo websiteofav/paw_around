@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
@@ -6,9 +8,34 @@ import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/services/animation_service.dart';
 
-class WelcomeCard extends StatelessWidget {
+class WelcomeCard extends StatefulWidget {
   const WelcomeCard({super.key});
+
+  @override
+  State<WelcomeCard> createState() => _WelcomeCardState();
+}
+
+class _WelcomeCardState extends State<WelcomeCard> {
+  String? _lottiePath;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAnimation();
+  }
+
+  Future<void> _loadAnimation() async {
+    final path = await AnimationService.getLottieFile(AppIcons.addPetAnimationFileName);
+    if (mounted) {
+      setState(() {
+        _lottiePath = path;
+        _loading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +59,7 @@ class WelcomeCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: AppColors.shadowOverlay.withValues(alpha: 0.08),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -42,27 +69,14 @@ class WelcomeCard extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Lottie Animation with fallback
-          LottieBuilder.asset(
-            AppIcons.addPetAnimation,
+          // Lottie Animation from Firebase Storage with fallback
+          SizedBox(
             height: 180,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) {
-              // Fallback to icon if Lottie fails
-              return Container(
-                height: 180,
-                width: 180,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.pets,
-                  size: 80,
-                  color: AppColors.primary,
-                ),
-              );
-            },
+            child: _loading
+                ? _buildLoadingState()
+                : _lottiePath != null
+                    ? _buildLottieAnimation()
+                    : _buildIconFallback(),
           ),
           const SizedBox(height: 20),
 
@@ -127,6 +141,60 @@ class WelcomeCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLottieAnimation() {
+    // Check if it's a network URL or local file path
+    if (_lottiePath!.startsWith('http')) {
+      return Lottie.network(
+        _lottiePath!,
+        height: 180,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildIconFallback();
+        },
+      );
+    } else {
+      // Local cached file
+      return Lottie.file(
+        File(_lottiePath!),
+        height: 180,
+        fit: BoxFit.contain,
+        errorBuilder: (context, error, stackTrace) {
+          return _buildIconFallback();
+        },
+      );
+    }
+  }
+
+  Widget _buildLoadingState() {
+    return Container(
+      height: 180,
+      width: 180,
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.1),
+        shape: BoxShape.circle,
+      ),
+      child: const Center(
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
+    );
+  }
+
+  Widget _buildIconFallback() {
+    return Container(
+      height: 180,
+      width: 180,
+      decoration: BoxDecoration(
+        color: AppColors.primary.withValues(alpha: 0.1),
+        shape: BoxShape.circle,
+      ),
+      child: const Icon(
+        Icons.pets,
+        size: 80,
+        color: AppColors.primary,
       ),
     );
   }

@@ -1,0 +1,489 @@
+# Paw Around - Coding Standards for Cursor AI
+
+## General Rules
+- Follow Flutter/Dart best practices and conventions
+- Use meaningful variable and method names
+- Write clean, maintainable, and readable code
+- Add comments for complex logic only
+- Prefer composition over inheritance
+
+## UI Screen Standards
+
+### File Size
+- **UI screens should NOT exceed 200 lines of code**
+- If a screen exceeds 200 lines, extract widgets into separate files in a `widgets/` subdirectory
+- Break complex widgets into smaller, reusable components
+- Keep the main screen widget focused on layout and composition
+
+### Constants Usage
+
+#### Strings
+- **ALWAYS use `AppStrings` for ALL text content**
+- Never hardcode strings like "Cancel", "Save", "Continue", etc.
+- If a string doesn't exist in AppStrings, add it first before using it
+
+✅ CORRECT:
+```dart
+Text(AppStrings.continueButton)
+Text(AppStrings.welcomeToPawAround)
+label: AppStrings.phoneNumber
+```
+
+❌ WRONG:
+```dart
+Text('Continue')
+Text('Welcome')
+Text("Save")
+label: 'Phone Number'
+```
+
+#### Colors
+- **ALWAYS use `AppColors` for ALL colors**
+- Never use `Colors.blue`, `Colors.white`, `Color(0xFF...)`, etc. directly
+- Use semantic color names (e.g., `AppColors.primary`, `AppColors.textPrimary`)
+
+✅ CORRECT:
+```dart
+color: AppColors.primary
+backgroundColor: AppColors.background
+fontColor: AppColors.textPrimary
+borderColor: AppColors.border
+```
+
+❌ WRONG:
+```dart
+color: Colors.blue
+color: Color(0xFF5CBF7A)
+Colors.white
+Color(0xFFFFFFFF)
+```
+
+#### Text Styles
+- **ALWAYS use `AppTextStyles` for ALL text styling**
+- Never use `TextStyle()` directly
+- Use appropriate style methods: `regularStyle400`, `mediumStyle500`, `semiBoldStyle600`, `boldStyle700`
+
+✅ CORRECT:
+```dart
+style: AppTextStyles.semiBoldStyle600(fontSize: 18, fontColor: AppColors.textPrimary)
+style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary)
+style: AppTextStyles.boldStyle700(fontSize: 20)
+```
+
+❌ WRONG:
+```dart
+style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)
+style: TextStyle(color: Colors.black, fontSize: 14)
+TextStyle(fontWeight: FontWeight.w600)
+```
+
+#### Spacing
+- Use `AppSpacing` constants when available (e.g., `AppSpacing.vertical16`, `AppSpacing.horizontal24`)
+- Use `AppEdgeInsets` for padding (e.g., `AppEdgeInsets.screenHorizontal`, `AppEdgeInsets.allMedium`)
+- Use `AppBorderRadius` for border radius (e.g., `AppBorderRadius.md`, `AppBorderRadius.lg`)
+- Use `AppConstants` spacing values when needed (e.g., `AppConstants.space16`, `AppConstants.space24`)
+- Avoid magic numbers for padding and margins
+- Use consistent spacing values from the spacing scale
+
+## Design System Patterns
+
+### Card Design
+- **Standard Card Pattern:**
+  ```dart
+  Container(
+    padding: AppEdgeInsets.cardPadding, // or EdgeInsets.all(16-20)
+    decoration: BoxDecoration(
+      color: AppColors.white, // or AppColors.surface
+      borderRadius: AppBorderRadius.md, // or BorderRadius.circular(16-20)
+      border: Border.all(color: AppColors.border), // Optional for bordered cards
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.shadowOverlay.withValues(alpha: 0.04), // Light shadow
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: // card content
+  )
+  ```
+
+- **Elevated Card Pattern (for important cards):**
+  ```dart
+  boxShadow: [
+    BoxShadow(
+      color: AppColors.shadowOverlay.withValues(alpha: 0.06), // Medium shadow
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+  ]
+  ```
+
+- **Gradient Card Pattern (for special cards like urgent items):**
+  ```dart
+  decoration: BoxDecoration(
+    gradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [gradientStart, gradientEnd],
+    ),
+    borderRadius: BorderRadius.circular(24),
+    boxShadow: [
+      BoxShadow(
+        color: gradientStart.withValues(alpha: 0.3),
+        blurRadius: 12,
+        offset: const Offset(0, 6),
+      ),
+    ],
+  )
+  ```
+
+### Shadow Patterns
+- **Light Shadow (subtle cards, chips, filter bars):**
+  - `color: AppColors.shadowOverlay.withValues(alpha: 0.04)`
+  - `blurRadius: 8`
+  - `offset: Offset(0, 2)`
+
+- **Medium Shadow (standard cards):**
+  - `color: AppColors.shadowOverlay.withValues(alpha: 0.05-0.06)`
+  - `blurRadius: 12`
+  - `offset: Offset(0, 4)`
+
+- **Heavy Shadow (gradient cards, important items):**
+  - `color: gradientColor.withValues(alpha: 0.3)` or `AppColors.shadowOverlay.withValues(alpha: 0.1)`
+  - `blurRadius: 12-16`
+  - `offset: Offset(0, 6)`
+
+- **NEVER use `Colors.black.withValues()` directly - always use `AppColors.shadowOverlay.withValues()`**
+
+✅ CORRECT:
+```dart
+BoxShadow(
+  color: AppColors.shadowOverlay.withValues(alpha: 0.06),
+  blurRadius: 12,
+  offset: const Offset(0, 4),
+)
+```
+
+❌ WRONG:
+```dart
+BoxShadow(
+  color: Colors.black.withValues(alpha: 0.06),
+  blurRadius: 12,
+  offset: const Offset(0, 4),
+)
+```
+
+### Bottom Sheet Design
+- **Standard Pattern:**
+  ```dart
+  showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent, // IMPORTANT
+    isScrollControlled: true, // if content is scrollable
+    builder: (context) => Container(
+      padding: const EdgeInsets.all(24),
+      decoration: const BoxDecoration(
+        color: AppColors.surface, // or AppColors.white
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle bar (40x4, margin bottom 24)
+          Container(
+            width: 40,
+            height: 4,
+            margin: const EdgeInsets.only(bottom: 24),
+            decoration: BoxDecoration(
+              color: AppColors.border,
+              borderRadius: BorderRadius.circular(2),
+            ),
+          ),
+          // Content
+        ],
+      ),
+    ),
+  )
+  ```
+
+- Bottom sheets always have `backgroundColor: Colors.transparent`
+- Border radius: `BorderRadius.vertical(top: Radius.circular(24))`
+- Handle bar: 40x4, margin bottom 24, color `AppColors.border`
+- Padding: `EdgeInsets.all(24)`
+
+### Dialog Design
+- **Standard AlertDialog Pattern:**
+  ```dart
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: AppColors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24), // AppConstants.radiusXL
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Icon or illustration (optional)
+          // Title (AppTextStyles.semiBoldStyle600, fontSize: 20)
+          // Description (AppTextStyles.regularStyle400, fontSize: 14)
+          // Actions
+        ],
+      ),
+      actions: [
+        // Use CommonButton or standard buttons
+      ],
+    ),
+  )
+  ```
+
+- Dialogs use `backgroundColor: AppColors.white`
+- Border radius: `BorderRadius.circular(24)`
+- Content padding: `EdgeInsets.fromLTRB(24, 24, 24, 16)`
+- Title: `AppTextStyles.semiBoldStyle600(fontSize: 20)`
+- Description: `AppTextStyles.regularStyle400(fontSize: 14)`
+
+### Border Radius Standards
+- **Use `AppBorderRadius` constants:**
+  - `AppBorderRadius.xs` (8) - Small chips, tags, handle bars
+  - `AppBorderRadius.sm` (12) - Buttons, inputs
+  - `AppBorderRadius.md` (16) - Small cards, icon containers
+  - `AppBorderRadius.lg` (20) - Medium cards
+  - `AppBorderRadius.xl` (24) - Large cards, dialogs, bottom sheets
+  - `AppBorderRadius.full` (999) - Pills, circles
+
+- **Card Border Radius Guidelines:**
+  - Small cards: 16px (`AppBorderRadius.md`)
+  - Medium cards: 20px (`AppBorderRadius.lg`)
+  - Large cards: 24px (`AppBorderRadius.xl`)
+  - Bottom sheets: 24px top radius only
+  - Dialogs: 24px all corners
+
+### Elevation Patterns
+- Use `AppConstants` elevation values when available:
+  - `AppConstants.elevationNone` (0)
+  - `AppConstants.elevationLow` (2)
+  - `AppConstants.elevationMedium` (4)
+  - `AppConstants.elevationHigh` (8)
+  - `AppConstants.elevationXHigh` (12)
+
+- For Material widgets (AppBar, Card), use `elevation` property
+- For custom widgets, use `BoxShadow` instead of elevation
+- Buttons use elevation (8 for primary, 4 for secondary)
+
+### Card Padding Standards
+- **Standard cards:** `EdgeInsets.all(16-20)` or `AppEdgeInsets.cardPadding`
+- **Small cards:** `EdgeInsets.all(12-14)` or `AppEdgeInsets.cardPaddingSmall`
+- **Large cards:** `EdgeInsets.all(24)`
+- Use `AppEdgeInsets` constants when available
+- Prefer `AppEdgeInsets.cardPadding` for consistency
+
+### Icon Container Patterns
+- **Circular Icon Background (for dialogs, bottom sheets):**
+  ```dart
+  Container(
+    width: 64,
+    height: 64,
+    decoration: BoxDecoration(
+      color: AppColors.primary.withValues(alpha: 0.1), // or specific color
+      borderRadius: BorderRadius.circular(32),
+    ),
+    child: Icon(icon, color: AppColors.primary, size: 32),
+  )
+  ```
+
+- **Rounded Square Icon Background (for cards):**
+  ```dart
+  Container(
+    width: 56,
+    height: 56,
+    decoration: BoxDecoration(
+      color: AppColors.iconBgLight, // or specific color (cardBlueIconBg, etc.)
+      borderRadius: BorderRadius.circular(14), // AppBorderRadius.md
+    ),
+    child: Icon(icon, color: AppColors.primary, size: 24),
+  )
+  ```
+
+- Icon sizes: 32px for large (64x64 container), 24px for medium (56x56 container)
+
+### Design Consistency Rules
+1. ✅ Always use `AppBorderRadius` for border radius (never hardcode values like `BorderRadius.circular(16)`)
+2. ✅ Always use `AppColors.shadowOverlay.withValues()` for shadows (never `Colors.black.withValues()`)
+3. ✅ Always use `AppEdgeInsets` or `AppSpacing` for padding/spacing
+4. ✅ Use consistent card padding (16-20px standard, 24px for large)
+5. ✅ Bottom sheets: borderRadius 24 top, handle bar 40x4, padding 24
+6. ✅ Dialogs: borderRadius 24, padding 24px horizontal/vertical, 16px bottom
+7. ✅ Icon containers: 64x64 circular or 56x56 rounded square
+8. ✅ Card colors: `AppColors.white` or `AppColors.surface`
+9. ✅ Border colors: `AppColors.border` for standard borders
+
+## Widget Standards
+
+### Reusable Components
+- Use existing common widgets when available:
+  - `CommonButton` for buttons (with variants: primary, secondary, outline, text, danger)
+  - `CommonTextField` or `CommonFormField` for text inputs
+  - `ScaleButton` for tappable cards/items
+  - `AnimatedCard` for animated list items with staggered animations
+  - `EmptyStateWidget` for empty states
+
+### State Management
+- Use BLoC pattern for state management (flutter_bloc package)
+- Keep business logic in BLoCs, not in UI widgets
+- Use `BlocBuilder` for reactive UI updates
+- Use `BlocListener` for side effects (navigation, snackbars, etc.)
+- Use `BlocProvider` at the appropriate level in widget tree
+
+### Navigation
+- Use `go_router` for navigation (go_router package)
+- Use `context.pushNamed()` or `context.go()` from GoRouter
+- Never use `Navigator.push()` or `Navigator.pop()` directly
+- Use named routes from `AppRoutes` class
+- Pass data via `extra` parameter when needed
+
+## Code Organization
+
+### Imports Order
+1. Flutter imports (`package:flutter/...`)
+2. Package imports (external packages)
+3. Local imports (`package:paw_around/...`)
+   - Group by: constants, models, services, repositories, bloc, widgets, screens
+
+Example:
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
+```
+
+### File Structure
+```
+lib/
+  ui/
+    feature_name/
+      feature_screen.dart (main screen, max 200 lines)
+      widgets/
+        widget_name.dart (extracted widgets)
+```
+
+### Widget Extraction
+- Extract widgets when:
+  - Screen exceeds 200 lines
+  - Widget is reused multiple times
+  - Widget has complex logic
+  - Widget improves readability
+
+## Error Handling
+
+- Use the error handling patterns from `ErrorHandler` class
+- Show user-friendly error messages from `AppStrings`
+- Use `ScaffoldMessenger` for snackbars with proper styling:
+  ```dart
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Text(errorMessage),
+      backgroundColor: AppColors.error,
+    ),
+  );
+  ```
+
+## Spacing & Layout
+
+- Use consistent spacing values
+- Prefer `SizedBox` over `Container` for spacing
+- Use `Padding` widget for padding
+- Avoid magic numbers - use constants when possible
+- Use `EdgeInsets.symmetric()` or `EdgeInsets.all()` consistently
+
+## Performance
+
+- Use `const` constructors wherever possible
+- Avoid unnecessary rebuilds - use `BlocBuilder` with specific state checks
+- Use `RepaintBoundary` for complex widgets if needed
+- Use `ListView.builder` instead of `ListView` for long lists
+- Avoid creating widgets in build methods
+
+## Accessibility
+
+- Add semantic labels where appropriate using `Semantics` widget
+- Ensure touch targets are at least 48x48dp
+- Test with text scaling enabled using `MediaQuery.textScaleFactor`
+- Use proper contrast ratios for text on backgrounds
+
+## Code Quality Checks
+
+Before suggesting code, verify:
+1. ✅ Does it use `AppStrings` for all text?
+2. ✅ Does it use `AppColors` for all colors?
+3. ✅ Does it use `AppTextStyles` for all text styles?
+4. ✅ Does it use `AppBorderRadius` for border radius?
+5. ✅ Does it use `AppColors.shadowOverlay` for shadows (not `Colors.black`)?
+6. ✅ Does it use `AppEdgeInsets` or `AppSpacing` for spacing?
+7. ✅ Is the UI screen under 200 lines?
+8. ✅ Does it use existing common widgets?
+9. ✅ Does it follow BLoC pattern for state management?
+10. ✅ Are imports properly organized?
+11. ✅ Are `const` constructors used where possible?
+12. ✅ Does it use `go_router` for navigation?
+13. ✅ Do cards follow the standard card design patterns?
+14. ✅ Do bottom sheets follow the standard bottom sheet pattern?
+15. ✅ Do dialogs follow the standard dialog pattern?
+
+## Example Good Practice
+
+```dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_routes.dart';
+import 'package:paw_around/constants/app_strings.dart';
+import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/ui/widgets/common_button.dart';
+
+class MyScreen extends StatelessWidget {
+  const MyScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        title: Text(
+          AppStrings.myScreenTitle,
+          style: AppTextStyles.boldStyle700(fontColor: AppColors.textPrimary),
+        ),
+        backgroundColor: AppColors.navigationBackground,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            CommonButton(
+              text: AppStrings.saveButton,
+              onPressed: () {
+                context.pushNamed(AppRoutes.home);
+              },
+              variant: ButtonVariant.primary,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+```
+
+## Remember
+
+- When in doubt, check existing code in the codebase for patterns
+- Maintain consistency with the existing codebase style
+- If you need to add a new string/color/style, add it to the appropriate constants file first
+- Keep screens focused and extract complex widgets
+- Always prioritize code readability and maintainability

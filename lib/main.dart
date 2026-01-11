@@ -12,6 +12,7 @@ import 'package:paw_around/bloc/auth/auth_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_constants.dart';
 import 'package:paw_around/core/observers/auth_bloc_observer.dart';
 import 'package:paw_around/firebase_options.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
@@ -77,28 +78,29 @@ class MainApp extends StatelessWidget {
       child: MaterialApp.router(
         title: AppStrings.appName,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
           primaryColor: AppColors.primary,
           colorScheme: const ColorScheme.light(
             primary: AppColors.primary,
             secondary: AppColors.secondary,
             surface: AppColors.surface,
-            onPrimary: Colors.white,
-            onSecondary: Colors.black,
+            background: AppColors.background,
+            onPrimary: AppColors.white,
+            onSecondary: AppColors.textPrimary,
             onSurface: AppColors.textPrimary,
           ),
+          scaffoldBackgroundColor: AppColors.background,
           textTheme: GoogleFonts.nunitoTextTheme(),
           appBarTheme: const AppBarTheme(
             backgroundColor: AppColors.primary,
-            foregroundColor: Colors.white,
+            foregroundColor: AppColors.white,
             elevation: 0,
           ),
           elevatedButtonTheme: ElevatedButtonThemeData(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
-              foregroundColor: Colors.white,
+              foregroundColor: AppColors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(AppConstants.radiusSM),
               ),
             ),
           ),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/constants/app_colors.dart';
@@ -198,6 +199,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await user.reload();
 
       if (mounted) {
+        HapticFeedback.mediumImpact();
         if (emailChanged) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(

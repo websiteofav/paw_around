@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
@@ -152,7 +153,7 @@ class PetOverviewScreen extends StatelessWidget {
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) => StatefulBuilder(
-        builder: (context, setDialogState) => AlertDialog(
+        builder: (builderContext, setDialogState) => AlertDialog(
           backgroundColor: AppColors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -199,7 +200,7 @@ class PetOverviewScreen extends StatelessWidget {
                       text: AppStrings.cancel,
                       variant: ButtonVariant.secondary,
                       size: ButtonSize.small,
-                      onPressed: isDeleting ? null : () => Navigator.of(dialogContext).pop(),
+                      onPressed: isDeleting ? null : () => Navigator.of(builderContext).pop(),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -232,13 +233,18 @@ class PetOverviewScreen extends StatelessWidget {
       if (context.mounted) {
         Navigator.of(dialogContext).pop();
         context.read<PetListBloc>().add(const LoadPetList());
+        HapticFeedback.mediumImpact();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(AppStrings.petDeletedSuccessfully),
             backgroundColor: AppColors.success,
           ),
         );
-        context.pop();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            context.pop();
+          }
+        });
       }
     } catch (e) {
       if (dialogContext.mounted) {
@@ -266,7 +272,7 @@ class PetOverviewScreen extends StatelessWidget {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -385,7 +391,7 @@ class PetOverviewScreen extends StatelessWidget {
         border: Border.all(color: AppColors.border),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),
@@ -595,7 +601,7 @@ class PetOverviewScreen extends StatelessWidget {
           border: Border.all(color: AppColors.border),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
+              color: AppColors.shadowOverlay.withValues(alpha: 0.06),
               blurRadius: 12,
               offset: const Offset(0, 4),
             ),
