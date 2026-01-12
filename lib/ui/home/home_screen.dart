@@ -210,211 +210,229 @@ class _HomeScreenState extends State<HomeScreen> {
     // Track card index for staggered animation
     int cardIndex = 0;
 
-    return SingleChildScrollView(
-      physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Vaccine Section
-          if (supportsMedicalCare) ...[
-            if (hasUpcomingVaccine) ...[
-              // Urgent Vaccine Card (red gradient) - due within 30 days
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    final vaccine = _getUpcomingVaccine(activePet);
-                    if (vaccine != null) {
-                      context.pushNamed(
-                        AppRoutes.actionDetail,
-                        extra: ActionCardData(
-                          actionType: ActionType.vaccine,
-                          pet: activePet,
-                          vaccine: vaccine,
-                          customTitle: vaccine.vaccineName,
-                        ),
-                      );
-                    }
-                  },
-                  child: _buildUrgentVaccineCard(activePet),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ] else if (hasVaccines) ...[
-              // Vaccines exist but not due soon - show progress card
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    final nextVaccine = _getNextVaccine(activePet);
-                    if (nextVaccine != null) {
-                      context.pushNamed(
-                        AppRoutes.actionDetail,
-                        extra: ActionCardData(
-                          actionType: ActionType.vaccine,
-                          pet: activePet,
-                          vaccine: nextVaccine,
-                          customTitle: nextVaccine.vaccineName,
-                        ),
-                      );
-                    }
-                  },
-                  child: _buildVaccineProgressCard(activePet),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ] else ...[
-              // No vaccines - show add card
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    context.pushNamed(AppRoutes.addVaccine, extra: activePet);
-                  },
-                  child: const SecondaryActionCard(
-                    icon: Icons.vaccines_outlined,
-                    iconBackgroundColor: AppColors.cardRedIconBg,
-                    iconColor: AppColors.cardRedIcon,
-                    title: AppStrings.addVaccineDetails,
-                    subtitle: AppStrings.vaccineSubtitle,
+    return Stack(
+      children: [
+        // Scrollable content
+        SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 140), // Extra bottom padding for floating card
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Vaccine Section
+              if (supportsMedicalCare) ...[
+                if (hasUpcomingVaccine) ...[
+                  // Urgent Vaccine Card (red gradient) - due within 30 days
+                  AnimatedCard(
+                    index: cardIndex++,
+                    child: ScaleButton(
+                      onPressed: () {
+                        final vaccine = _getUpcomingVaccine(activePet);
+                        if (vaccine != null) {
+                          context.pushNamed(
+                            AppRoutes.actionDetail,
+                            extra: ActionCardData(
+                              actionType: ActionType.vaccine,
+                              pet: activePet,
+                              vaccine: vaccine,
+                              customTitle: vaccine.vaccineName,
+                            ),
+                          );
+                        }
+                      },
+                      child: _buildUrgentVaccineCard(activePet),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ] else if (hasVaccines) ...[
+                  // Vaccines exist but not due soon - show progress card
+                  AnimatedCard(
+                    index: cardIndex++,
+                    child: ScaleButton(
+                      onPressed: () {
+                        final nextVaccine = _getNextVaccine(activePet);
+                        if (nextVaccine != null) {
+                          context.pushNamed(
+                            AppRoutes.actionDetail,
+                            extra: ActionCardData(
+                              actionType: ActionType.vaccine,
+                              pet: activePet,
+                              vaccine: nextVaccine,
+                              customTitle: nextVaccine.vaccineName,
+                            ),
+                          );
+                        }
+                      },
+                      child: _buildVaccineProgressCard(activePet),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ] else ...[
+                  // No vaccines - show add card
+                  AnimatedCard(
+                    index: cardIndex++,
+                    child: ScaleButton(
+                      onPressed: () {
+                        context.pushNamed(AppRoutes.addVaccine, extra: activePet);
+                      },
+                      child: const SecondaryActionCard(
+                        icon: Icons.vaccines_outlined,
+                        iconBackgroundColor: AppColors.cardRedIconBg,
+                        iconColor: AppColors.cardRedIcon,
+                        title: AppStrings.addVaccineDetails,
+                        subtitle: AppStrings.vaccineSubtitle,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+              ],
+
+              // Grooming Card
+              if (hasGroomingSettings && !groomingSnoozed) ...[
+                AnimatedCard(
+                  index: cardIndex++,
+                  child: ScaleButton(
+                    onPressed: () {
+                      if (groomingDueSoon) {
+                        context.pushNamed(
+                          AppRoutes.actionDetail,
+                          extra: ActionCardData(
+                            actionType: ActionType.grooming,
+                            pet: activePet,
+                          ),
+                        );
+                      } else {
+                        context.pushNamed(AppRoutes.groomingSettings, extra: activePet);
+                      }
+                    },
+                    child: groomingDueSoon
+                        ? GroomingDueCard(
+                            badgeText: _getGroomingBadgeText(activePet),
+                            isOverdue: activePet.groomingSettings?.isOverdue ?? false,
+                          )
+                        : CareProgressCard(
+                            icon: Icons.content_cut,
+                            title: AppStrings.grooming,
+                            subtitle: _getGroomingSubtitle(activePet),
+                            daysLeft: activePet.groomingSettings?.daysUntilDue ?? 30,
+                            totalDays: _getGroomingTotalDays(activePet),
+                          ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 12),
-            ],
-          ],
-
-          // Grooming Card
-          if (hasGroomingSettings && !groomingSnoozed) ...[
-            AnimatedCard(
-              index: cardIndex++,
-              child: ScaleButton(
-                onPressed: () {
-                  if (groomingDueSoon) {
-                    context.pushNamed(
-                      AppRoutes.actionDetail,
-                      extra: ActionCardData(
-                        actionType: ActionType.grooming,
-                        pet: activePet,
-                      ),
-                    );
-                  } else {
-                    context.pushNamed(AppRoutes.groomingSettings, extra: activePet);
-                  }
-                },
-                child: groomingDueSoon
-                    ? GroomingDueCard(
-                        badgeText: _getGroomingBadgeText(activePet),
-                        isOverdue: activePet.groomingSettings?.isOverdue ?? false,
-                      )
-                    : CareProgressCard(
-                        icon: Icons.content_cut,
-                        title: AppStrings.grooming,
-                        subtitle: _getGroomingSubtitle(activePet),
-                        daysLeft: activePet.groomingSettings?.daysUntilDue ?? 30,
-                        totalDays: _getGroomingTotalDays(activePet),
-                      ),
-              ),
-            ),
-            const SizedBox(height: 12),
-          ] else if (!hasGroomingSettings) ...[
-            // No grooming settings - show add card
-            AnimatedCard(
-              index: cardIndex++,
-              child: ScaleButton(
-                onPressed: () {
-                  context.pushNamed(AppRoutes.groomingSettings, extra: activePet);
-                },
-                child: SecondaryActionCard(
-                  icon: Icons.content_cut,
-                  iconBackgroundColor: AppColors.iconBgLight,
-                  iconColor: AppColors.primary,
-                  title: AppStrings.addGroomingDetails,
-                  subtitle: AppStrings.timeForFreshTrim,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
-
-          // Tick & Flea Card (only for dogs and cats)
-          if (supportsMedicalCare) ...[
-            if (hasTickFleaSettings && !tickFleaSnoozed) ...[
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    if (tickFleaDueSoon) {
-                      context.pushNamed(
-                        AppRoutes.actionDetail,
-                        extra: ActionCardData(
-                          actionType: ActionType.tickFlea,
-                          pet: activePet,
-                        ),
-                      );
-                    } else {
-                      context.pushNamed(AppRoutes.tickFleaSettings, extra: activePet);
-                    }
-                  },
-                  child: tickFleaDueSoon
-                      ? CareDueCard.tickFlea(
-                          badgeText: _getTickFleaBadgeText(activePet),
-                          subtitle: '${AppStrings.reminderToProtect} 🛡️',
-                          actionText: AppStrings.viewTreatmentOptions,
-                          isOverdue: activePet.tickFleaSettings?.isOverdue ?? false,
-                        )
-                      : CareProgressCard(
-                          icon: Icons.shield_outlined,
-                          title: AppStrings.tickFleaPrevention,
-                          subtitle: AppStrings.protectionActive,
-                          daysLeft: activePet.tickFleaSettings?.daysUntilDue ?? 30,
-                          totalDays: _getTickFleaTotalDays(activePet),
-                        ),
-                ),
-              ),
-            ] else if (!hasTickFleaSettings) ...[
-              // No tick/flea settings - show add card
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    context.pushNamed(AppRoutes.tickFleaSettings, extra: activePet);
-                  },
-                  child: const SecondaryActionCard(
-                    icon: Icons.shield_outlined,
-                    iconBackgroundColor: AppColors.cardBlueIconBg,
-                    iconColor: AppColors.cardBlueIcon,
-                    title: AppStrings.addTickFleaDetails,
-                    subtitle: AppStrings.reminderToProtect,
+                const SizedBox(height: 12),
+              ] else if (!hasGroomingSettings) ...[
+                // No grooming settings - show add card
+                AnimatedCard(
+                  index: cardIndex++,
+                  child: ScaleButton(
+                    onPressed: () {
+                      context.pushNamed(AppRoutes.groomingSettings, extra: activePet);
+                    },
+                    child: SecondaryActionCard(
+                      icon: Icons.content_cut,
+                      iconBackgroundColor: AppColors.iconBgLight,
+                      iconColor: AppColors.primary,
+                      title: AppStrings.addGroomingDetails,
+                      subtitle: AppStrings.timeForFreshTrim,
+                    ),
                   ),
                 ),
-              ),
-            ],
-            const SizedBox(height: 16),
-          ],
+                const SizedBox(height: 12),
+              ],
 
-          // Care Summary Section
-          AnimatedCard(
-            index: cardIndex++,
+              // Tick & Flea Card (only for dogs and cats)
+              if (supportsMedicalCare) ...[
+                if (hasTickFleaSettings && !tickFleaSnoozed) ...[
+                  AnimatedCard(
+                    index: cardIndex++,
+                    child: ScaleButton(
+                      onPressed: () {
+                        if (tickFleaDueSoon) {
+                          context.pushNamed(
+                            AppRoutes.actionDetail,
+                            extra: ActionCardData(
+                              actionType: ActionType.tickFlea,
+                              pet: activePet,
+                            ),
+                          );
+                        } else {
+                          context.pushNamed(AppRoutes.tickFleaSettings, extra: activePet);
+                        }
+                      },
+                      child: tickFleaDueSoon
+                          ? CareDueCard.tickFlea(
+                              badgeText: _getTickFleaBadgeText(activePet),
+                              subtitle: '${AppStrings.reminderToProtect} 🛡️',
+                              actionText: AppStrings.viewTreatmentOptions,
+                              isOverdue: activePet.tickFleaSettings?.isOverdue ?? false,
+                            )
+                          : CareProgressCard(
+                              icon: Icons.shield_outlined,
+                              title: AppStrings.tickFleaPrevention,
+                              subtitle: AppStrings.protectionActive,
+                              daysLeft: activePet.tickFleaSettings?.daysUntilDue ?? 30,
+                              totalDays: _getTickFleaTotalDays(activePet),
+                            ),
+                    ),
+                  ),
+                ] else if (!hasTickFleaSettings) ...[
+                  // No tick/flea settings - show add card
+                  AnimatedCard(
+                    index: cardIndex++,
+                    child: ScaleButton(
+                      onPressed: () {
+                        context.pushNamed(AppRoutes.tickFleaSettings, extra: activePet);
+                      },
+                      child: const SecondaryActionCard(
+                        icon: Icons.shield_outlined,
+                        iconBackgroundColor: AppColors.cardBlueIconBg,
+                        iconColor: AppColors.cardBlueIcon,
+                        title: AppStrings.addTickFleaDetails,
+                        subtitle: AppStrings.reminderToProtect,
+                      ),
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 16),
+              ],
+
+              const SizedBox(height: 24),
+
+              // Lost & Found Section (from Firebase)
+              AnimatedCard(
+                index: cardIndex++,
+                child: _buildLostPetsSection(),
+              ),
+
+              const SizedBox(height: 32),
+            ],
+          ),
+        ),
+
+        // Floating Care Summary Section at bottom
+        Positioned(
+          left: 16,
+          right: 16,
+          bottom: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.shadowOverlay.withValues(alpha: 0.12),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
             child: CareSummarySection(
               activeTasks: activeTasks,
               urgentCount: urgentCount,
               scheduledCount: scheduledCount,
             ),
           ),
-
-          const SizedBox(height: 24),
-
-          // Lost & Found Section (from Firebase)
-          AnimatedCard(
-            index: cardIndex++,
-            child: _buildLostPetsSection(),
-          ),
-
-          const SizedBox(height: 32),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

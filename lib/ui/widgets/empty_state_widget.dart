@@ -196,13 +196,13 @@ class EmptyStateWidget extends StatelessWidget {
                 },
               )
             : Lottie.asset(
-                lottieAsset!,
-                fit: BoxFit.contain,
-                repeat: true,
+          lottieAsset!,
+          fit: BoxFit.contain,
+          repeat: true,
                 errorBuilder: (context, error, stackTrace) {
                   return _buildIconFallback();
                 },
-              ),
+        ),
       );
     }
 
