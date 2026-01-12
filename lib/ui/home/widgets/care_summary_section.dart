@@ -93,7 +93,8 @@ class CareSummarySection extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+          style: AppTextStyles.regularStyle400(
+              fontSize: 12, fontColor: AppColors.textSecondary),
           textAlign: TextAlign.center,
         ),
       ],

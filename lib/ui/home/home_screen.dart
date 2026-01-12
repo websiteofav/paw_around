@@ -112,7 +112,8 @@ class _HomeScreenState extends State<HomeScreen> {
               selectedPetId = petState.selectedPetId;
             }
 
-            final petAge = activePet != null ? _calculateAge(activePet.dateOfBirth) : null;
+            final petAge =
+                activePet != null ? _calculateAge(activePet.dateOfBirth) : null;
             final hasMultiplePets = pets.length > 1;
 
             return Column(
@@ -123,7 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   subtitle: petAge,
                   avatarImageUrl: activePet?.imagePath,
                   hasMultiplePets: hasMultiplePets,
-                  onAvatarTap: hasMultiplePets ? () => _showPetSelector(pets, selectedPetId) : null,
+                  onAvatarTap: hasMultiplePets
+                      ? () => _showPetSelector(pets, selectedPetId)
+                      : null,
                 ),
 
                 // Content based on state with pull-to-refresh
@@ -168,18 +171,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
     // Check for vaccines
     final hasVaccines = activePet.vaccines.isNotEmpty;
-    final hasUpcomingVaccine = supportsMedicalCare && _hasUpcomingVaccine(activePet);
+    final hasUpcomingVaccine =
+        supportsMedicalCare && _hasUpcomingVaccine(activePet);
 
     // Check care settings (filter out snoozed)
     final hasGroomingSettings = activePet.groomingSettings?.hasReminder == true;
-    final hasTickFleaSettings = supportsMedicalCare && activePet.tickFleaSettings?.hasReminder == true;
+    final hasTickFleaSettings =
+        supportsMedicalCare && activePet.tickFleaSettings?.hasReminder == true;
     final groomingSnoozed = activePet.groomingSettings?.isSnoozed == true;
     final tickFleaSnoozed = activePet.tickFleaSettings?.isSnoozed == true;
     final groomingDueSoon = !groomingSnoozed &&
-        (activePet.groomingSettings?.isDueSoon == true || activePet.groomingSettings?.isOverdue == true);
+        (activePet.groomingSettings?.isDueSoon == true ||
+            activePet.groomingSettings?.isOverdue == true);
     final tickFleaDueSoon = supportsMedicalCare &&
         !tickFleaSnoozed &&
-        (activePet.tickFleaSettings?.isDueSoon == true || activePet.tickFleaSettings?.isOverdue == true);
+        (activePet.tickFleaSettings?.isDueSoon == true ||
+            activePet.tickFleaSettings?.isOverdue == true);
 
     // Calculate stats for summary
     int activeTasks = 0;
@@ -215,7 +222,8 @@ class _HomeScreenState extends State<HomeScreen> {
         // Scrollable content
         SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 140), // Extra bottom padding for floating card
+          padding: const EdgeInsets.fromLTRB(
+              16, 16, 16, 140), // Extra bottom padding for floating card
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -273,7 +281,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     index: cardIndex++,
                     child: ScaleButton(
                       onPressed: () {
-                        context.pushNamed(AppRoutes.addVaccine, extra: activePet);
+                        context.pushNamed(AppRoutes.addVaccine,
+                            extra: activePet);
                       },
                       child: const SecondaryActionCard(
                         icon: Icons.vaccines_outlined,
@@ -303,19 +312,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                       } else {
-                        context.pushNamed(AppRoutes.groomingSettings, extra: activePet);
+                        context.pushNamed(AppRoutes.groomingSettings,
+                            extra: activePet);
                       }
                     },
                     child: groomingDueSoon
                         ? GroomingDueCard(
                             badgeText: _getGroomingBadgeText(activePet),
-                            isOverdue: activePet.groomingSettings?.isOverdue ?? false,
+                            isOverdue:
+                                activePet.groomingSettings?.isOverdue ?? false,
                           )
                         : CareProgressCard(
                             icon: Icons.content_cut,
                             title: AppStrings.grooming,
                             subtitle: _getGroomingSubtitle(activePet),
-                            daysLeft: activePet.groomingSettings?.daysUntilDue ?? 30,
+                            daysLeft:
+                                activePet.groomingSettings?.daysUntilDue ?? 30,
                             totalDays: _getGroomingTotalDays(activePet),
                           ),
                   ),
@@ -327,7 +339,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   index: cardIndex++,
                   child: ScaleButton(
                     onPressed: () {
-                      context.pushNamed(AppRoutes.groomingSettings, extra: activePet);
+                      context.pushNamed(AppRoutes.groomingSettings,
+                          extra: activePet);
                     },
                     child: SecondaryActionCard(
                       icon: Icons.content_cut,
@@ -357,7 +370,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           );
                         } else {
-                          context.pushNamed(AppRoutes.tickFleaSettings, extra: activePet);
+                          context.pushNamed(AppRoutes.tickFleaSettings,
+                              extra: activePet);
                         }
                       },
                       child: tickFleaDueSoon
@@ -365,13 +379,17 @@ class _HomeScreenState extends State<HomeScreen> {
                               badgeText: _getTickFleaBadgeText(activePet),
                               subtitle: '${AppStrings.reminderToProtect} 🛡️',
                               actionText: AppStrings.viewTreatmentOptions,
-                              isOverdue: activePet.tickFleaSettings?.isOverdue ?? false,
+                              isOverdue:
+                                  activePet.tickFleaSettings?.isOverdue ??
+                                      false,
                             )
                           : CareProgressCard(
                               icon: Icons.shield_outlined,
                               title: AppStrings.tickFleaPrevention,
                               subtitle: AppStrings.protectionActive,
-                              daysLeft: activePet.tickFleaSettings?.daysUntilDue ?? 30,
+                              daysLeft:
+                                  activePet.tickFleaSettings?.daysUntilDue ??
+                                      30,
                               totalDays: _getTickFleaTotalDays(activePet),
                             ),
                     ),
@@ -382,7 +400,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     index: cardIndex++,
                     child: ScaleButton(
                       onPressed: () {
-                        context.pushNamed(AppRoutes.tickFleaSettings, extra: activePet);
+                        context.pushNamed(AppRoutes.tickFleaSettings,
+                            extra: activePet);
                       },
                       child: const SecondaryActionCard(
                         icon: Icons.shield_outlined,
@@ -669,7 +688,8 @@ class _HomeScreenState extends State<HomeScreen> {
       if (vaccine.isSnoozed) {
         continue;
       }
-      final daysUntilDue = vaccine.nextDueDate.difference(DateTime.now()).inDays;
+      final daysUntilDue =
+          vaccine.nextDueDate.difference(DateTime.now()).inDays;
       // Include overdue (negative) and due soon (0-30 days)
       if (daysUntilDue <= 30) {
         return true;

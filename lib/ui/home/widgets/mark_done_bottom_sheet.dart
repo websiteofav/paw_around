@@ -62,7 +62,7 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: ColorScheme.light(
+            colorScheme: const ColorScheme.light(
               primary: AppColors.primary,
               onPrimary: AppColors.white,
               surface: AppColors.white,
@@ -96,8 +96,10 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final isToday = _selectedDate != null &&
-        DateTime(_selectedDate!.year, _selectedDate!.month, _selectedDate!.day) ==
-            DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+        DateTime(_selectedDate!.year, _selectedDate!.month,
+                _selectedDate!.day) ==
+            DateTime(
+                DateTime.now().year, DateTime.now().month, DateTime.now().day);
 
     return Container(
       padding: const EdgeInsets.all(24),
@@ -136,7 +138,8 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
           // Title
           Text(
             AppStrings.confirmMarkDone,
-            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
+            style: AppTextStyles.semiBoldStyle600(
+                fontSize: 20, fontColor: AppColors.textPrimary),
           ),
           const SizedBox(height: 8),
           // Description
@@ -173,7 +176,9 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _selectedDate != null ? _formatDate(_selectedDate!) : AppStrings.doneToday,
+                        _selectedDate != null
+                            ? _formatDate(_selectedDate!)
+                            : AppStrings.doneToday,
                         style: AppTextStyles.semiBoldStyle600(
                           fontSize: 16,
                           fontColor: AppColors.textPrimary,
@@ -183,6 +188,7 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
                   ),
                 ),
                 CommonButton(
+                  isFullWidth: false, // Add this line
                   text: isToday ? AppStrings.changeDate : AppStrings.selectDate,
                   variant: ButtonVariant.outline,
                   size: ButtonSize.small,
