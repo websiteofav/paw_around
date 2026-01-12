@@ -300,6 +300,10 @@ class AppStrings {
   static const String markDoneDescription = 'This will update the last completed date and calculate the next due date.';
   static const String confirm = 'Confirm';
   static const String markedAsDone = 'Marked as done';
+  static const String doneToday = 'Done today';
+  static const String doneEarlier = 'Done earlier';
+  static const String changeDate = 'Change date';
+  static const String completionDate = 'Completion date';
 
   // Care History Card
   static const String careHistory = 'Care History';

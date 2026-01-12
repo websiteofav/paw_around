@@ -180,22 +180,23 @@ class PetRepository {
   }
 
   // Mark vaccine as done - updates dateGiven and recalculates nextDueDate
-  Future<void> markVaccineAsDone(String petId, String vaccineId) async {
+  Future<void> markVaccineAsDone(String petId, String vaccineId, {DateTime? completionDate}) async {
     final pet = await getPetById(petId);
     if (pet == null) {
       return;
     }
 
+    final completion = completionDate ?? DateTime.now();
+
     final updatedVaccines = pet.vaccines.map((v) {
       if (v.id == vaccineId) {
-        final now = DateTime.now();
         // Calculate next due date based on original interval
         final originalInterval = v.nextDueDate.difference(v.dateGiven).inDays;
         return v.copyWith(
-          dateGiven: now,
-          nextDueDate: now.add(Duration(days: originalInterval > 0 ? originalInterval : 365)),
+          dateGiven: completion,
+          nextDueDate: completion.add(Duration(days: originalInterval > 0 ? originalInterval : 365)),
           clearSnoozedUntil: true,
-          updatedAt: now,
+          updatedAt: DateTime.now(),
         );
       }
       return v;
@@ -276,14 +277,16 @@ class PetRepository {
   }
 
   // Mark grooming as done
-  Future<void> markGroomingAsDone(String petId) async {
+  Future<void> markGroomingAsDone(String petId, {DateTime? completionDate}) async {
     final pet = await getPetById(petId);
     if (pet == null || pet.groomingSettings == null) {
       return;
     }
 
+    final completion = completionDate ?? DateTime.now();
+
     final updatedSettings = pet.groomingSettings!.copyWith(
-      lastDate: DateTime.now(),
+      lastDate: completion,
       clearSnoozedUntil: true,
       updatedAt: DateTime.now(),
     );
@@ -322,14 +325,16 @@ class PetRepository {
   }
 
   // Mark tick & flea as done
-  Future<void> markTickFleaAsDone(String petId) async {
+  Future<void> markTickFleaAsDone(String petId, {DateTime? completionDate}) async {
     final pet = await getPetById(petId);
     if (pet == null || pet.tickFleaSettings == null) {
       return;
     }
 
+    final completion = completionDate ?? DateTime.now();
+
     final updatedSettings = pet.tickFleaSettings!.copyWith(
-      lastDate: DateTime.now(),
+      lastDate: completion,
       clearSnoozedUntil: true,
       updatedAt: DateTime.now(),
     );

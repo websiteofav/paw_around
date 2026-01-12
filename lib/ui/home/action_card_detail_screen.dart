@@ -166,8 +166,8 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
   }
 
   Future<void> _handleMarkAsDone() async {
-    final confirmed = await MarkDoneBottomSheet.show(context, _title);
-    if (confirmed != true || !mounted) {
+    final completionDate = await MarkDoneBottomSheet.show(context, _title);
+    if (completionDate == null || !mounted) {
       return;
     }
 
@@ -181,14 +181,14 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
       switch (actionType) {
         case ActionType.vaccine:
           if (vaccine != null) {
-            await repo.markVaccineAsDone(pet.id, vaccine!.id);
+            await repo.markVaccineAsDone(pet.id, vaccine!.id, completionDate: completionDate);
           }
           break;
         case ActionType.grooming:
-          await repo.markGroomingAsDone(pet.id);
+          await repo.markGroomingAsDone(pet.id, completionDate: completionDate);
           break;
         case ActionType.tickFlea:
-          await repo.markTickFleaAsDone(pet.id);
+          await repo.markTickFleaAsDone(pet.id, completionDate: completionDate);
           break;
       }
 

@@ -10,8 +10,8 @@ class AnalyticsEvents {
   // Pets
   static const String petAdded = 'pet_added';
   static const String firstPetAdded = 'first_pet_added';
-  static const String petEdited = 'pet_edited';
-
+     static const String petEdited = 'pet_edited';
+    
   // Care Setup
   static const String vaccineAdded = 'vaccine_added';
   static const String groomingSetup = 'grooming_setup';
