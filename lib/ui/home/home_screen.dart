@@ -303,18 +303,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   index: cardIndex++,
                   child: ScaleButton(
                     onPressed: () {
-                      if (groomingDueSoon) {
-                        context.pushNamed(
-                          AppRoutes.actionDetail,
-                          extra: ActionCardData(
-                            actionType: ActionType.grooming,
-                            pet: activePet,
-                          ),
-                        );
-                      } else {
-                        context.pushNamed(AppRoutes.groomingSettings,
-                            extra: activePet);
-                      }
+                      // Always navigate to action detail if settings exist
+                      context.pushNamed(
+                        AppRoutes.actionDetail,
+                        extra: ActionCardData(
+                          actionType: ActionType.grooming,
+                          pet: activePet,
+                        ),
+                      );
                     },
                     child: groomingDueSoon
                         ? GroomingDueCard(
@@ -361,18 +357,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     index: cardIndex++,
                     child: ScaleButton(
                       onPressed: () {
-                        if (tickFleaDueSoon) {
-                          context.pushNamed(
-                            AppRoutes.actionDetail,
-                            extra: ActionCardData(
-                              actionType: ActionType.tickFlea,
-                              pet: activePet,
-                            ),
-                          );
-                        } else {
-                          context.pushNamed(AppRoutes.tickFleaSettings,
-                              extra: activePet);
-                        }
+                        // Always navigate to action detail if settings exist
+                        context.pushNamed(
+                          AppRoutes.actionDetail,
+                          extra: ActionCardData(
+                            actionType: ActionType.tickFlea,
+                            pet: activePet,
+                          ),
+                        );
                       },
                       child: tickFleaDueSoon
                           ? CareDueCard.tickFlea(

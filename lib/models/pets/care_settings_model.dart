@@ -66,12 +66,14 @@ class CareSettingsModel extends Equatable {
   final CareFrequency frequency;
   final DateTime? lastDate;
   final DateTime? snoozedUntil;
+  final List<DateTime> completionHistory;
   final DateTime updatedAt;
 
   const CareSettingsModel({
     required this.frequency,
     this.lastDate,
     this.snoozedUntil,
+    this.completionHistory = const [],
     required this.updatedAt,
   });
 
@@ -80,6 +82,7 @@ class CareSettingsModel extends Equatable {
       frequency: CareFrequency.none,
       lastDate: null,
       snoozedUntil: null,
+      completionHistory: const [],
       updatedAt: DateTime.now(),
     );
   }
@@ -89,22 +92,38 @@ class CareSettingsModel extends Equatable {
     DateTime? lastDate,
     DateTime? snoozedUntil,
     bool clearSnoozedUntil = false,
+    List<DateTime>? completionHistory,
+    bool clearCompletionHistory = false,
     DateTime? updatedAt,
   }) {
     return CareSettingsModel(
       frequency: frequency ?? this.frequency,
       lastDate: lastDate ?? this.lastDate,
-      snoozedUntil: clearSnoozedUntil ? null : (snoozedUntil ?? this.snoozedUntil),
+      snoozedUntil:
+          clearSnoozedUntil ? null : (snoozedUntil ?? this.snoozedUntil),
+      completionHistory: clearCompletionHistory
+          ? []
+          : (completionHistory ?? this.completionHistory),
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
-  /// Calculate next due date based on frequency and last date
+  /// Calculate next due date based on frequency and latest completion history
   DateTime? get nextDueDate {
-    if (frequency == CareFrequency.none || lastDate == null) {
+    if (frequency == CareFrequency.none) {
       return null;
     }
-    return lastDate!.add(Duration(days: frequency.days));
+
+    // Use latest date from completionHistory if available, otherwise fall back to lastDate
+    final latestDate = completionHistory.isNotEmpty
+        ? completionHistory.reduce((a, b) => a.isAfter(b) ? a : b)
+        : lastDate;
+
+    if (latestDate == null) {
+      return null;
+    }
+
+    return latestDate.add(Duration(days: frequency.days));
   }
 
   /// Check if care is due within the next 7 days
@@ -139,14 +158,18 @@ class CareSettingsModel extends Equatable {
   bool get hasReminder => frequency != CareFrequency.none;
 
   /// Check if action is snoozed
-  bool get isSnoozed => snoozedUntil != null && snoozedUntil!.isAfter(DateTime.now());
+  bool get isSnoozed =>
+      snoozedUntil != null && snoozedUntil!.isAfter(DateTime.now());
 
   /// Convert to Firestore map
   Map<String, dynamic> toFirestore() {
     return {
       'frequency': frequency.toFirestoreValue(),
       'lastDate': lastDate != null ? Timestamp.fromDate(lastDate!) : null,
-      'snoozedUntil': snoozedUntil != null ? Timestamp.fromDate(snoozedUntil!) : null,
+      'snoozedUntil':
+          snoozedUntil != null ? Timestamp.fromDate(snoozedUntil!) : null,
+      'completionHistory':
+          completionHistory.map((date) => Timestamp.fromDate(date)).toList(),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
   }
@@ -156,10 +179,24 @@ class CareSettingsModel extends Equatable {
     if (data == null) {
       return CareSettingsModel.empty();
     }
+
+    // Handle backward compatibility: if completionHistory doesn't exist, create it from lastDate
+    List<DateTime> history = [];
+    if (data['completionHistory'] != null) {
+      final historyList = data['completionHistory'] as List<dynamic>?;
+      history =
+          historyList?.map((ts) => (ts as Timestamp).toDate()).toList() ?? [];
+    } else if (data['lastDate'] != null) {
+      // Migrate existing lastDate to history for backward compatibility
+      history = [(data['lastDate'] as Timestamp).toDate()];
+    }
+
     return CareSettingsModel(
-      frequency: CareFrequencyExtension.fromString(data['frequency'] as String?),
+      frequency:
+          CareFrequencyExtension.fromString(data['frequency'] as String?),
       lastDate: (data['lastDate'] as Timestamp?)?.toDate(),
       snoozedUntil: (data['snoozedUntil'] as Timestamp?)?.toDate(),
+      completionHistory: history,
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
     );
   }
@@ -170,6 +207,8 @@ class CareSettingsModel extends Equatable {
       'frequency': frequency.toFirestoreValue(),
       'lastDate': lastDate?.toIso8601String(),
       'snoozedUntil': snoozedUntil?.toIso8601String(),
+      'completionHistory':
+          completionHistory.map((date) => date.toIso8601String()).toList(),
       'updatedAt': updatedAt.toIso8601String(),
     };
   }
@@ -179,14 +218,36 @@ class CareSettingsModel extends Equatable {
     if (json == null) {
       return CareSettingsModel.empty();
     }
+
+    // Handle backward compatibility
+    List<DateTime> history = [];
+    if (json['completionHistory'] != null) {
+      final historyList = json['completionHistory'] as List<dynamic>?;
+      history = historyList
+              ?.map((dateStr) => DateTime.parse(dateStr as String))
+              .toList() ??
+          [];
+    } else if (json['lastDate'] != null) {
+      history = [DateTime.parse(json['lastDate'] as String)];
+    }
+
     return CareSettingsModel(
-      frequency: CareFrequencyExtension.fromString(json['frequency'] as String?),
-      lastDate: json['lastDate'] != null ? DateTime.parse(json['lastDate'] as String) : null,
-      snoozedUntil: json['snoozedUntil'] != null ? DateTime.parse(json['snoozedUntil'] as String) : null,
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt'] as String) : DateTime.now(),
+      frequency:
+          CareFrequencyExtension.fromString(json['frequency'] as String?),
+      lastDate: json['lastDate'] != null
+          ? DateTime.parse(json['lastDate'] as String)
+          : null,
+      snoozedUntil: json['snoozedUntil'] != null
+          ? DateTime.parse(json['snoozedUntil'] as String)
+          : null,
+      completionHistory: history,
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.parse(json['updatedAt'] as String)
+          : DateTime.now(),
     );
   }
 
   @override
-  List<Object?> get props => [frequency, lastDate, snoozedUntil, updatedAt];
+  List<Object?> get props =>
+      [frequency, lastDate, snoozedUntil, completionHistory, updatedAt];
 }

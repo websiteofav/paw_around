@@ -11,6 +11,7 @@ class VaccineModel extends Equatable {
   final DateTime? snoozedUntil;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final List<DateTime> completionHistory;
 
   const VaccineModel({
     required this.id,
@@ -22,6 +23,7 @@ class VaccineModel extends Equatable {
     this.snoozedUntil,
     required this.createdAt,
     required this.updatedAt,
+    this.completionHistory = const [],
   });
 
   // Factory constructor for creating a new vaccine
@@ -44,6 +46,7 @@ class VaccineModel extends Equatable {
       snoozedUntil: snoozedUntil,
       createdAt: now,
       updatedAt: now,
+      completionHistory: [dateGiven], // Initialize with first date
     );
   }
 
@@ -59,6 +62,7 @@ class VaccineModel extends Equatable {
     bool clearSnoozedUntil = false,
     DateTime? createdAt,
     DateTime? updatedAt,
+    List<DateTime>? completionHistory,
   }) {
     return VaccineModel(
       id: id ?? this.id,
@@ -67,9 +71,11 @@ class VaccineModel extends Equatable {
       nextDueDate: nextDueDate ?? this.nextDueDate,
       notes: notes ?? this.notes,
       setReminder: setReminder ?? this.setReminder,
-      snoozedUntil: clearSnoozedUntil ? null : (snoozedUntil ?? this.snoozedUntil),
+      snoozedUntil:
+          clearSnoozedUntil ? null : (snoozedUntil ?? this.snoozedUntil),
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      completionHistory: completionHistory ?? this.completionHistory,
     );
   }
 
@@ -82,24 +88,52 @@ class VaccineModel extends Equatable {
       'nextDueDate': Timestamp.fromDate(nextDueDate),
       'notes': notes,
       'setReminder': setReminder,
-      'snoozedUntil': snoozedUntil != null ? Timestamp.fromDate(snoozedUntil!) : null,
+      'snoozedUntil':
+          snoozedUntil != null ? Timestamp.fromDate(snoozedUntil!) : null,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
+      'completionHistory':
+          completionHistory.map((d) => Timestamp.fromDate(d)).toList(),
     };
   }
 
   // Create from Firestore map (for reading from pet document)
   factory VaccineModel.fromFirestore(Map<String, dynamic> data) {
+    final dateGiven = (data['dateGiven'] as Timestamp).toDate();
+    final storedNextDueDate = (data['nextDueDate'] as Timestamp).toDate();
+
+    // Backward compatibility: if completionHistory is missing or empty, initialize with dateGiven
+    final historyTimestamps = data['completionHistory'] as List<dynamic>?;
+    final history = historyTimestamps != null
+        ? historyTimestamps.map((ts) => (ts as Timestamp).toDate()).toList()
+        : <DateTime>[];
+
+    // If history is empty, seed it with existing dateGiven
+    final effectiveHistory = history.isEmpty ? [dateGiven] : history;
+
+    // Calculate interval from stored values
+    final interval = storedNextDueDate.difference(dateGiven).inDays;
+
+    // Get latest completion date from history
+    final latestCompletion = effectiveHistory.isNotEmpty
+        ? effectiveHistory.reduce((a, b) => a.isAfter(b) ? a : b)
+        : dateGiven;
+
+    // Recalculate nextDueDate from latest completion
+    final calculatedNextDueDate =
+        latestCompletion.add(Duration(days: interval > 0 ? interval : 365));
+
     return VaccineModel(
       id: data['id'] as String,
       vaccineName: data['vaccineName'] as String,
-      dateGiven: (data['dateGiven'] as Timestamp).toDate(),
-      nextDueDate: (data['nextDueDate'] as Timestamp).toDate(),
+      dateGiven: latestCompletion, // Use latest from history
+      nextDueDate: calculatedNextDueDate, // Recalculated from latest
       notes: data['notes'] as String? ?? '',
       setReminder: data['setReminder'] as bool? ?? false,
       snoozedUntil: (data['snoozedUntil'] as Timestamp?)?.toDate(),
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      completionHistory: effectiveHistory,
     );
   }
 
@@ -115,21 +149,37 @@ class VaccineModel extends Equatable {
       'snoozedUntil': snoozedUntil?.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'completionHistory':
+          completionHistory.map((d) => d.toIso8601String()).toList(),
     };
   }
 
   // Create from JSON
   factory VaccineModel.fromJson(Map<String, dynamic> json) {
+    final dateGiven = DateTime.parse(json['dateGiven'] as String);
+
+    // Backward compatibility: if completionHistory is missing or empty, initialize with dateGiven
+    final historyStrings = json['completionHistory'] as List<dynamic>?;
+    final history = historyStrings != null
+        ? historyStrings.map((s) => DateTime.parse(s as String)).toList()
+        : <DateTime>[];
+
+    // If history is empty, seed it with existing dateGiven
+    final effectiveHistory = history.isEmpty ? [dateGiven] : history;
+
     return VaccineModel(
       id: json['id'] as String,
       vaccineName: json['vaccineName'] as String,
-      dateGiven: DateTime.parse(json['dateGiven'] as String),
+      dateGiven: dateGiven,
       nextDueDate: DateTime.parse(json['nextDueDate'] as String),
       notes: json['notes'] as String,
       setReminder: json['setReminder'] as bool,
-      snoozedUntil: json['snoozedUntil'] != null ? DateTime.parse(json['snoozedUntil'] as String) : null,
+      snoozedUntil: json['snoozedUntil'] != null
+          ? DateTime.parse(json['snoozedUntil'] as String)
+          : null,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
+      completionHistory: effectiveHistory,
     );
   }
 
@@ -186,5 +236,6 @@ class VaccineModel extends Equatable {
         snoozedUntil,
         createdAt,
         updatedAt,
+        completionHistory,
       ];
 }
