@@ -8,11 +8,11 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/action_type.dart';
-import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
@@ -21,7 +21,7 @@ import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/ui/home/widgets/action_info_card.dart';
 import 'package:paw_around/ui/home/widgets/action_cta_card.dart';
-import 'package:paw_around/ui/home/widgets/care_history_card.dart';
+import 'package:paw_around/ui/home/widgets/action_card_timeline.dart';
 import 'package:paw_around/ui/home/widgets/mark_done_bottom_sheet.dart';
 import 'package:paw_around/ui/home/widgets/snooze_bottom_sheet.dart';
 import 'package:paw_around/ui/widgets/animated_card.dart';
@@ -119,45 +119,15 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
     }
   }
 
-  DateTime? get _lastDate {
-    switch (actionType) {
-      case ActionType.vaccine:
-        return vaccine?.dateGiven;
-      case ActionType.grooming:
-        return pet.groomingSettings?.lastDate;
-      case ActionType.tickFlea:
-        return pet.tickFleaSettings?.lastDate;
-    }
-  }
-
-  DateTime? get _nextDueDate {
-    switch (actionType) {
-      case ActionType.vaccine:
-        return vaccine?.nextDueDate;
-      case ActionType.grooming:
-        return pet.groomingSettings?.nextDueDate;
-      case ActionType.tickFlea:
-        return pet.tickFleaSettings?.nextDueDate;
-    }
-  }
-
-  String? get _frequencyText {
-    switch (actionType) {
-      case ActionType.vaccine:
-        return null;
-      case ActionType.grooming:
-        return pet.groomingSettings?.frequency.displayName;
-      case ActionType.tickFlea:
-        return pet.tickFleaSettings?.frequency.displayName;
-    }
-  }
-
   /// Get vaccine-specific "Why this matters" text, or fallback to generic
   String get _whyItMatters {
     if (actionType == ActionType.vaccine && vaccine != null) {
       // Look up vaccine-specific explanation from master data
       final vaccines = VaccineConstants.getVaccinesByPetType(pet.species);
-      final match = vaccines.where((v) => v.name.toLowerCase() == vaccine!.vaccineName.toLowerCase()).firstOrNull;
+      final match = vaccines
+          .where(
+              (v) => v.name.toLowerCase() == vaccine!.vaccineName.toLowerCase())
+          .firstOrNull;
       if (match != null) {
         return match.why;
       }
@@ -181,7 +151,8 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
       switch (actionType) {
         case ActionType.vaccine:
           if (vaccine != null) {
-            await repo.markVaccineAsDone(pet.id, vaccine!.id, completionDate: completionDate);
+            await repo.markVaccineAsDone(pet.id, vaccine!.id,
+                completionDate: completionDate);
           }
           break;
         case ActionType.grooming:
@@ -317,7 +288,8 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary))
           : CustomScrollView(
               slivers: [
                 // Gradient Hero Header
@@ -342,14 +314,17 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
                       ),
                       const SizedBox(height: 16),
 
-                      // Care History Card
+                      // Action Timeline Card
                       AnimatedCard(
                         index: 1,
-                        child: CareHistoryCard(
-                          lastDate: _lastDate,
-                          nextDueDate: _nextDueDate,
-                          frequency: _frequencyText,
-                          actionType: actionType,
+                        child: ActionCardTimeline(
+                          pet: pet,
+                          filterByActionType: actionType,
+                          filterByVaccineName:
+                              actionType == ActionType.vaccine &&
+                                      vaccine != null
+                                  ? vaccine!.vaccineName
+                                  : null,
                         ),
                       ),
                       const SizedBox(height: 16),
@@ -412,6 +387,27 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
                     onPressed: () => context.pop(),
                   ),
                   const Spacer(),
+                  // Edit/Settings button (only for grooming and tick & flea)
+                  if (actionType == ActionType.grooming ||
+                      actionType == ActionType.tickFlea)
+                    IconButton(
+                      icon: const Icon(Icons.settings, color: AppColors.white),
+                      onPressed: () {
+                        switch (actionType) {
+                          case ActionType.grooming:
+                            context.pushNamed(AppRoutes.groomingSettings,
+                                extra: pet);
+                            break;
+                          case ActionType.tickFlea:
+                            context.pushNamed(AppRoutes.tickFleaSettings,
+                                extra: pet);
+                            break;
+                          case ActionType.vaccine:
+                            // Vaccines are managed individually, no general settings
+                            break;
+                        }
+                      },
+                    ),
                 ],
               ),
 
@@ -425,7 +421,8 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
               // Title
               Text(
                 _title,
-                style: AppTextStyles.boldStyle700(fontSize: 24, fontColor: AppColors.white),
+                style: AppTextStyles.boldStyle700(
+                    fontSize: 24, fontColor: AppColors.white),
                 textAlign: TextAlign.center,
               ),
 
@@ -445,14 +442,16 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
 
               // Status badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: AppColors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   isOverdue ? AppStrings.overdue : AppStrings.dueSoon,
-                  style: AppTextStyles.semiBoldStyle600(fontSize: 13, fontColor: AppColors.white),
+                  style: AppTextStyles.semiBoldStyle600(
+                      fontSize: 13, fontColor: AppColors.white),
                 ),
               ),
             ],
@@ -493,7 +492,8 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
             children: [
               Text(
                 '$displayDays',
-                style: AppTextStyles.boldStyle700(fontSize: 32, fontColor: AppColors.white),
+                style: AppTextStyles.boldStyle700(
+                    fontSize: 32, fontColor: AppColors.white),
               ),
               Text(
                 isOverdue ? AppStrings.overdue.toUpperCase() : 'DAYS',

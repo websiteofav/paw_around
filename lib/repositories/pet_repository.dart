@@ -27,14 +27,16 @@ class PetRepository {
 
   // Get all pets for current user
   Future<List<PetModel>> getAllPets() async {
-    final snapshot = await _petsRef.orderBy('createdAt', descending: true).get();
+    final snapshot =
+        await _petsRef.orderBy('createdAt', descending: true).get();
     return snapshot.docs.map((doc) => PetModel.fromFirestore(doc)).toList();
   }
 
   // Get pets stream for real-time updates
   Stream<List<PetModel>> getPetsStream() {
     return _petsRef.orderBy('createdAt', descending: true).snapshots().map(
-          (snapshot) => snapshot.docs.map((doc) => PetModel.fromFirestore(doc)).toList(),
+          (snapshot) =>
+              snapshot.docs.map((doc) => PetModel.fromFirestore(doc)).toList(),
         );
   }
 
@@ -64,7 +66,8 @@ class PetRepository {
     if (pet != null) {
       // Cancel all notifications for this pet
       final vaccineIds = pet.vaccines.map((v) => v.id).toList();
-      await NotificationService().cancelAllRemindersForPetWithVaccines(id, vaccineIds);
+      await NotificationService()
+          .cancelAllRemindersForPetWithVaccines(id, vaccineIds);
 
       // Delete pet image from storage if exists
       if (pet.imagePath != null && pet.imagePath!.startsWith('http')) {
@@ -90,7 +93,8 @@ class PetRepository {
 
     return pets.where((pet) {
       return pet.vaccines.any((vaccine) {
-        return vaccine.nextDueDate.isAfter(now) && vaccine.nextDueDate.isBefore(thirtyDaysFromNow);
+        return vaccine.nextDueDate.isAfter(now) &&
+            vaccine.nextDueDate.isBefore(thirtyDaysFromNow);
       });
     }).toList();
   }
@@ -122,7 +126,8 @@ class PetRepository {
   }
 
   // Update grooming settings for a pet
-  Future<void> updateGroomingSettings(String petId, CareSettingsModel settings) async {
+  Future<void> updateGroomingSettings(
+      String petId, CareSettingsModel settings) async {
     await _petsRef.doc(petId).update({
       'groomingSettings': settings.toFirestore(),
       'updatedAt': Timestamp.now(),
@@ -130,7 +135,8 @@ class PetRepository {
   }
 
   // Update tick & flea settings for a pet
-  Future<void> updateTickFleaSettings(String petId, CareSettingsModel settings) async {
+  Future<void> updateTickFleaSettings(
+      String petId, CareSettingsModel settings) async {
     await _petsRef.doc(petId).update({
       'tickFleaSettings': settings.toFirestore(),
       'updatedAt': Timestamp.now(),
@@ -167,7 +173,8 @@ class PetRepository {
   Future<List<PetModel>> getPetsWithUpcomingGrooming() async {
     final pets = await getAllPets();
     return pets.where((pet) {
-      return pet.groomingSettings?.isDueSoon == true || pet.groomingSettings?.isOverdue == true;
+      return pet.groomingSettings?.isDueSoon == true ||
+          pet.groomingSettings?.isOverdue == true;
     }).toList();
   }
 
@@ -175,12 +182,14 @@ class PetRepository {
   Future<List<PetModel>> getPetsWithUpcomingTickFlea() async {
     final pets = await getAllPets();
     return pets.where((pet) {
-      return pet.tickFleaSettings?.isDueSoon == true || pet.tickFleaSettings?.isOverdue == true;
+      return pet.tickFleaSettings?.isDueSoon == true ||
+          pet.tickFleaSettings?.isOverdue == true;
     }).toList();
   }
 
   // Mark vaccine as done - updates dateGiven and recalculates nextDueDate
-  Future<void> markVaccineAsDone(String petId, String vaccineId, {DateTime? completionDate}) async {
+  Future<void> markVaccineAsDone(String petId, String vaccineId,
+      {DateTime? completionDate}) async {
     final pet = await getPetById(petId);
     if (pet == null) {
       return;
@@ -190,13 +199,37 @@ class PetRepository {
 
     final updatedVaccines = pet.vaccines.map((v) {
       if (v.id == vaccineId) {
-        // Calculate next due date based on original interval
+        // Calculate original interval from stored nextDueDate and dateGiven
         final originalInterval = v.nextDueDate.difference(v.dateGiven).inDays;
+
+        // Get existing history and deduplicate same-day entries
+        final history = List<DateTime>.from(v.completionHistory);
+
+        // Remove any entry on the same day (deduplication)
+        history.removeWhere((d) =>
+            d.year == completion.year &&
+            d.month == completion.month &&
+            d.day == completion.day);
+
+        // Add new completion date
+        history.add(completion);
+
+        // Sort descending (most recent first)
+        history.sort((a, b) => b.compareTo(a));
+
+        // Get the latest completion date (first item after sorting)
+        final latestCompletion = history.isNotEmpty ? history[0] : completion;
+
+        // Calculate nextDueDate from the latest completion date
+        final calculatedNextDueDate = latestCompletion
+            .add(Duration(days: originalInterval > 0 ? originalInterval : 365));
+
         return v.copyWith(
-          dateGiven: completion,
-          nextDueDate: completion.add(Duration(days: originalInterval > 0 ? originalInterval : 365)),
+          dateGiven: latestCompletion, // Update to latest completion
+          nextDueDate: calculatedNextDueDate, // Calculate from latest
           clearSnoozedUntil: true,
           updatedAt: DateTime.now(),
+          completionHistory: history,
         );
       }
       return v;
@@ -268,7 +301,8 @@ class PetRepository {
       vaccineId: vaccineId,
     );
 
-    final updatedVaccines = pet.vaccines.where((v) => v.id != vaccineId).toList();
+    final updatedVaccines =
+        pet.vaccines.where((v) => v.id != vaccineId).toList();
 
     await _petsRef.doc(petId).update({
       'vaccines': updatedVaccines.map((v) => v.toFirestore()).toList(),
@@ -277,7 +311,8 @@ class PetRepository {
   }
 
   // Mark grooming as done
-  Future<void> markGroomingAsDone(String petId, {DateTime? completionDate}) async {
+  Future<void> markGroomingAsDone(String petId,
+      {DateTime? completionDate}) async {
     final pet = await getPetById(petId);
     if (pet == null || pet.groomingSettings == null) {
       return;
@@ -285,8 +320,29 @@ class PetRepository {
 
     final completion = completionDate ?? DateTime.now();
 
+    // Get existing history and deduplicate same-day entries
+    final updatedHistory =
+        List<DateTime>.from(pet.groomingSettings!.completionHistory);
+
+    // Remove any entry on the same day (deduplication)
+    updatedHistory.removeWhere((d) =>
+        d.year == completion.year &&
+        d.month == completion.month &&
+        d.day == completion.day);
+
+    // Add new completion date
+    updatedHistory.add(completion);
+
+    // Sort descending (most recent first)
+    updatedHistory.sort((a, b) => b.compareTo(a));
+
+    // Get the latest completion date (first item after sorting)
+    final latestCompletion =
+        updatedHistory.isNotEmpty ? updatedHistory[0] : completion;
+
     final updatedSettings = pet.groomingSettings!.copyWith(
-      lastDate: completion,
+      lastDate: latestCompletion, // Use latest from history
+      completionHistory: updatedHistory,
       clearSnoozedUntil: true,
       updatedAt: DateTime.now(),
     );
@@ -325,7 +381,8 @@ class PetRepository {
   }
 
   // Mark tick & flea as done
-  Future<void> markTickFleaAsDone(String petId, {DateTime? completionDate}) async {
+  Future<void> markTickFleaAsDone(String petId,
+      {DateTime? completionDate}) async {
     final pet = await getPetById(petId);
     if (pet == null || pet.tickFleaSettings == null) {
       return;
@@ -333,8 +390,29 @@ class PetRepository {
 
     final completion = completionDate ?? DateTime.now();
 
+    // Get existing history and deduplicate same-day entries
+    final updatedHistory =
+        List<DateTime>.from(pet.tickFleaSettings!.completionHistory);
+
+    // Remove any entry on the same day (deduplication)
+    updatedHistory.removeWhere((d) =>
+        d.year == completion.year &&
+        d.month == completion.month &&
+        d.day == completion.day);
+
+    // Add new completion date
+    updatedHistory.add(completion);
+
+    // Sort descending (most recent first)
+    updatedHistory.sort((a, b) => b.compareTo(a));
+
+    // Get the latest completion date (first item after sorting)
+    final latestCompletion =
+        updatedHistory.isNotEmpty ? updatedHistory[0] : completion;
+
     final updatedSettings = pet.tickFleaSettings!.copyWith(
-      lastDate: completion,
+      lastDate: latestCompletion, // Use latest from history
+      completionHistory: updatedHistory,
       clearSnoozedUntil: true,
       updatedAt: DateTime.now(),
     );
@@ -373,8 +451,10 @@ class PetRepository {
   }
 
   /// Delete all pets for a specific user (used for account deletion)
-  Future<void> deleteAllPetsForUser(String userId, {StorageService? storageService}) async {
-    final petsRef = _firestore.collection('users').doc(userId).collection('pets');
+  Future<void> deleteAllPetsForUser(String userId,
+      {StorageService? storageService}) async {
+    final petsRef =
+        _firestore.collection('users').doc(userId).collection('pets');
     final snapshot = await petsRef.get();
 
     final notificationService = NotificationService();
@@ -387,8 +467,11 @@ class PetRepository {
 
       // Cancel notifications
       final vaccines = (petData['vaccines'] as List<dynamic>?) ?? [];
-      final vaccineIds = vaccines.map((v) => (v as Map<String, dynamic>)['id'] as String).toList();
-      await notificationService.cancelAllRemindersForPetWithVaccines(petId, vaccineIds);
+      final vaccineIds = vaccines
+          .map((v) => (v as Map<String, dynamic>)['id'] as String)
+          .toList();
+      await notificationService.cancelAllRemindersForPetWithVaccines(
+          petId, vaccineIds);
 
       // Delete pet image from storage
       final imagePath = petData['imagePath'] as String?;
@@ -401,7 +484,8 @@ class PetRepository {
     final batch = _firestore.batch();
     for (final doc in snapshot.docs) {
       // Also delete vaccines subcollection for each pet
-      final vaccinesSnapshot = await petsRef.doc(doc.id).collection('vaccines').get();
+      final vaccinesSnapshot =
+          await petsRef.doc(doc.id).collection('vaccines').get();
       for (final vaccineDoc in vaccinesSnapshot.docs) {
         batch.delete(vaccineDoc.reference);
       }

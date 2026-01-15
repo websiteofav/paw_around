@@ -3,6 +3,7 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
+import 'package:paw_around/utils/date_utils.dart';
 
 class MarkDoneBottomSheet extends StatefulWidget {
   final String actionTitle;
@@ -27,21 +28,6 @@ class MarkDoneBottomSheet extends StatefulWidget {
 
 class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
   DateTime? _selectedDate;
-
-  static const List<String> _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
 
   @override
   void initState() {
@@ -89,7 +75,7 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
     if (selected == today) {
       return AppStrings.doneToday;
     } else {
-      return '${_months[date.month - 1]} ${date.day}, ${date.year}';
+      return AppDateUtils.formatMonthDayYear(date);
     }
   }
 

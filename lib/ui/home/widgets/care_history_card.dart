@@ -3,6 +3,7 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/action_type.dart';
+import 'package:paw_around/utils/date_utils.dart';
 
 class CareHistoryCard extends StatelessWidget {
   final DateTime? lastDate;
@@ -18,23 +19,8 @@ class CareHistoryCard extends StatelessWidget {
     required this.actionType,
   });
 
-  static const List<String> _months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec'
-  ];
-
   String _formatDate(DateTime date) {
-    return '${_months[date.month - 1]} ${date.day}, ${date.year}';
+    return AppDateUtils.formatMonthDayYear(date);
   }
 
   @override
@@ -76,19 +62,22 @@ class CareHistoryCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   AppStrings.careHistory,
-                  style: AppTextStyles.semiBoldStyle600(fontSize: 17, fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.semiBoldStyle600(
+                      fontSize: 17, fontColor: AppColors.textPrimary),
                 ),
               ),
               if (frequency != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     frequency!,
-                    style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.primary),
+                    style: AppTextStyles.mediumStyle500(
+                        fontSize: 12, fontColor: AppColors.primary),
                   ),
                 ),
             ],
@@ -100,14 +89,17 @@ class CareHistoryCard extends StatelessWidget {
             icon: Icons.check_circle,
             iconColor: AppColors.success,
             label: AppStrings.lastCompleted,
-            value: lastDate != null ? _formatDate(lastDate!) : AppStrings.notSet,
+            value:
+                lastDate != null ? _formatDate(lastDate!) : AppStrings.notSet,
             isLast: false,
           ),
           _buildTimelineItem(
             icon: Icons.arrow_forward,
             iconColor: AppColors.primary,
             label: AppStrings.nextDue,
-            value: nextDueDate != null ? _formatDate(nextDueDate!) : AppStrings.notSet,
+            value: nextDueDate != null
+                ? _formatDate(nextDueDate!)
+                : AppStrings.notSet,
             isLast: true,
           ),
         ],
@@ -159,12 +151,14 @@ class CareHistoryCard extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
+                  style: AppTextStyles.regularStyle400(
+                      fontSize: 13, fontColor: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: AppTextStyles.semiBoldStyle600(fontSize: 15, fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.semiBoldStyle600(
+                      fontSize: 15, fontColor: AppColors.textPrimary),
                 ),
               ],
             ),
