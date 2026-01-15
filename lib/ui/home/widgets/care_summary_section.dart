@@ -74,6 +74,21 @@ class CareSummarySection extends StatelessWidget {
               ),
             ],
           ),
+
+          // Empty state helper text
+          if (activeTasks == 0 && urgentCount == 0 && scheduledCount == 0) ...[
+            const SizedBox(height: 12),
+            Center(
+              child: Text(
+                AppStrings.noCareTasksYet,
+                style: AppTextStyles.regularStyle400(
+                  fontSize: 12,
+                  fontColor: AppColors.textSecondary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
 class SecondaryActionCard extends StatelessWidget {
@@ -9,6 +10,7 @@ class SecondaryActionCard extends StatelessWidget {
   final String title;
   final String subtitle;
   final VoidCallback? onTap;
+  final bool showRecommended;
 
   const SecondaryActionCard({
     super.key,
@@ -18,6 +20,7 @@ class SecondaryActionCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     this.onTap,
+    this.showRecommended = false,
   });
 
   @override
@@ -60,14 +63,38 @@ class SecondaryActionCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
+                  Row(
+                    children: [
+                      Text(
+                        title,
+                        style: AppTextStyles.semiBoldStyle600(
+                            fontSize: 16, fontColor: AppColors.textPrimary),
+                      ),
+                      if (showRecommended) ...[
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.primary.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            AppStrings.recommended,
+                            style: AppTextStyles.regularStyle400(
+                              fontSize: 10,
+                              fontColor: AppColors.primary,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                    style: AppTextStyles.regularStyle400(
+                        fontSize: 14, fontColor: AppColors.textSecondary),
                   ),
                 ],
               ),

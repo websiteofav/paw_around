@@ -303,6 +303,18 @@ class AppStrings {
   static const String quickSetup = '~1 min';
   static const String remindMeLater = 'Remind me later';
 
+  // Home Screen - Care Setup
+  static const String setUpCareForYourPet = 'Set up care for your pet';
+  static const String recommended = 'Recommended';
+  static const String setRemindersForVaccines =
+      'Set reminders for upcoming vaccines';
+  static const String trackDewormingPreventive =
+      'Track deworming & preventive care';
+  static const String scheduleGroomingReminders =
+      'Schedule regular grooming reminders';
+  static const String noCareTasksYet =
+      'No care tasks yet — add one to get started';
+
   // Action Card Detail Screen
   static const String vaccine = 'Vaccine';
   static const String whyThisMatters = 'Why this matters';

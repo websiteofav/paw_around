@@ -53,6 +53,9 @@ class DashboardAppBar extends StatelessWidget {
   /// Callback when avatar is tapped (for pet switching)
   final VoidCallback? onAvatarTap;
 
+  /// Callback when title/subtitle area is tapped (for pet profile)
+  final VoidCallback? onTitleTap;
+
   /// Whether multiple pets exist (shows dropdown indicator)
   final bool hasMultiplePets;
 
@@ -68,6 +71,7 @@ class DashboardAppBar extends StatelessWidget {
     this.notificationCount,
     this.onNotificationTap,
     this.onAvatarTap,
+    this.onTitleTap,
     this.hasMultiplePets = false,
   });
 
@@ -97,20 +101,25 @@ class DashboardAppBar extends StatelessWidget {
 
               // Center-left: Title and subtitle
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      title,
-                      style: AppTextStyles.boldStyle700(fontSize: 20, fontColor: AppColors.textPrimary),
-                    ),
-                    if (subtitle != null)
+                child: GestureDetector(
+                  onTap: onTitleTap,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                       Text(
-                        subtitle!,
-                        style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                        title,
+                        style: AppTextStyles.boldStyle700(
+                            fontSize: 20, fontColor: AppColors.textPrimary),
                       ),
-                  ],
+                      if (subtitle != null)
+                        Text(
+                          subtitle!,
+                          style: AppTextStyles.regularStyle400(
+                              fontSize: 14, fontColor: AppColors.textSecondary),
+                        ),
+                    ],
+                  ),
                 ),
               ),
 
@@ -249,15 +258,20 @@ class DashboardAppBar extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: action.isActive ? AppColors.primary.withValues(alpha: 0.1) : AppColors.progressBarBg,
+          color: action.isActive
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.progressBarBg,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Stack(
           alignment: Alignment.center,
           children: [
             Icon(
-              action.isActive ? (action.activeIcon ?? action.icon) : action.icon,
-              color: action.isActive ? AppColors.primary : AppColors.textSecondary,
+              action.isActive
+                  ? (action.activeIcon ?? action.icon)
+                  : action.icon,
+              color:
+                  action.isActive ? AppColors.primary : AppColors.textSecondary,
               size: 22,
             ),
             if (action.badgeCount != null && action.badgeCount! > 0)
@@ -315,7 +329,8 @@ class DashboardAppBar extends StatelessWidget {
       ),
       child: Text(
         count > 99 ? '99+' : count.toString(),
-        style: AppTextStyles.boldStyle700(fontSize: 10, fontColor: AppColors.white),
+        style: AppTextStyles.boldStyle700(
+            fontSize: 10, fontColor: AppColors.white),
         textAlign: TextAlign.center,
       ),
     );
