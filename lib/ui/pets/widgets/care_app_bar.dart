@@ -9,6 +9,7 @@ class CareAppBar extends StatelessWidget {
   final String screenTitle;
   final IconData? titleIcon;
   final VoidCallback? onNotificationTap;
+  final bool enableNotification;
 
   const CareAppBar({
     super.key,
@@ -16,6 +17,7 @@ class CareAppBar extends StatelessWidget {
     required this.screenTitle,
     this.titleIcon,
     this.onNotificationTap,
+    this.enableNotification = false,
   });
 
   @override
@@ -79,11 +81,13 @@ class CareAppBar extends StatelessWidget {
                       children: [
                         Text(
                           pet.name,
-                          style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
+                          style: AppTextStyles.semiBoldStyle600(
+                              fontSize: 16, fontColor: AppColors.textPrimary),
                         ),
                         Text(
                           pet.ageString,
-                          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+                          style: AppTextStyles.regularStyle400(
+                              fontSize: 12, fontColor: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -91,9 +95,13 @@ class CareAppBar extends StatelessWidget {
                   // Notification bell
                   GestureDetector(
                     onTap: onNotificationTap,
-                    child: const Icon(
-                      Icons.notifications_outlined,
-                      color: AppColors.textPrimary,
+                    child: Icon(
+                      enableNotification
+                          ? Icons.notifications_outlined
+                          : Icons.notifications_off_outlined,
+                      color: enableNotification
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary,
                       size: 24,
                     ),
                   ),
@@ -124,7 +132,8 @@ class CareAppBar extends StatelessWidget {
                   ],
                   Text(
                     screenTitle,
-                    style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
+                    style: AppTextStyles.semiBoldStyle600(
+                        fontSize: 20, fontColor: AppColors.textPrimary),
                   ),
                 ],
               ),

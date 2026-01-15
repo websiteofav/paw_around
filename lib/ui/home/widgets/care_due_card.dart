@@ -43,10 +43,10 @@ class CareDueCard extends StatelessWidget {
       subtitle: subtitle,
       badgeText: badgeText,
       actionText: actionText,
-      gradientStart: const Color(0xFF3B82F6),
-      gradientEnd: const Color(0xFF1D4ED8),
-      badgeColor: const Color(0xFFBFDBFE),
-      badgeTextColor: const Color(0xFF1E3A8A),
+      gradientStart: AppColors.tickFleaGradientStart,
+      gradientEnd: AppColors.tickFleaGradientEnd,
+      badgeColor: AppColors.tickFleaBadge,
+      badgeTextColor: AppColors.tickFleaBadgeText,
       isOverdue: isOverdue,
     );
   }
@@ -55,7 +55,8 @@ class CareDueCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Use urgent/warning colors when overdue for prominent badge
     final effectiveBadgeColor = isOverdue ? AppColors.urgentBadge : badgeColor;
-    final effectiveBadgeTextColor = isOverdue ? AppColors.urgentBadgeText : badgeTextColor;
+    final effectiveBadgeTextColor =
+        isOverdue ? AppColors.urgentBadgeText : badgeTextColor;
 
     return Container(
       width: double.infinity,
@@ -99,14 +100,16 @@ class CareDueCard extends StatelessWidget {
               // Badge - prominent yellow when overdue
               if (badgeText != null)
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: effectiveBadgeColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
                     badgeText!,
-                    style: AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: effectiveBadgeTextColor),
+                    style: AppTextStyles.semiBoldStyle600(
+                        fontSize: 12, fontColor: effectiveBadgeTextColor),
                   ),
                 ),
             ],
@@ -117,7 +120,8 @@ class CareDueCard extends StatelessWidget {
           // Title
           Text(
             title,
-            style: AppTextStyles.boldStyle700(fontSize: 20, fontColor: AppColors.white),
+            style: AppTextStyles.boldStyle700(
+                fontSize: 20, fontColor: AppColors.white),
           ),
 
           const SizedBox(height: 4),

@@ -23,7 +23,7 @@ class ActionCardTimeline extends StatelessWidget {
   });
 
   String _formatDate(DateTime date) {
-    return AppDateUtils.formatMonthDay(date);
+    return AppDateUtils.formatDateLong(date);
   }
 
   @override

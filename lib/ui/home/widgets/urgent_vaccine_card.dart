@@ -66,14 +66,16 @@ class UrgentVaccineCard extends StatelessWidget {
               ),
               // Due badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: AppColors.urgentBadge,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   _getDueBadgeText(),
-                  style: AppTextStyles.boldStyle700(fontSize: 12, fontColor: AppColors.urgentBadgeText),
+                  style: AppTextStyles.boldStyle700(
+                      fontSize: 12, fontColor: AppColors.urgentBadgeText),
                 ),
               ),
             ],
@@ -84,7 +86,8 @@ class UrgentVaccineCard extends StatelessWidget {
           // Vaccine name
           Text(
             vaccineName,
-            style: AppTextStyles.boldStyle700(fontSize: 20, fontColor: AppColors.white),
+            style: AppTextStyles.boldStyle700(
+                fontSize: 20, fontColor: AppColors.white),
           ),
 
           const SizedBox(height: 4),
@@ -105,7 +108,7 @@ class UrgentVaccineCard extends StatelessWidget {
             onPressed: onFindVetsPressed,
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 14),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               decoration: BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.circular(16),
@@ -120,7 +123,8 @@ class UrgentVaccineCard extends StatelessWidget {
               child: Text(
                 AppStrings.findNearbyVets,
                 textAlign: TextAlign.center,
-                style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.urgentGradientStart),
+                style: AppTextStyles.semiBoldStyle600(
+                    fontSize: 16, fontColor: AppColors.urgentGradientStart),
               ),
             ),
           ),

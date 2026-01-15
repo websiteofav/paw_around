@@ -254,8 +254,8 @@ class _HomeScreenState extends State<HomeScreen> {
               (supportsMedicalCare && !hasTickFleaSettings)) ...[
             Text(
               AppStrings.setUpCareForYourPet,
-              style: AppTextStyles.semiBoldStyle600(
-                fontSize: 18,
+              style: AppTextStyles.boldStyle700(
+                fontSize: 20,
                 fontColor: AppColors.textPrimary,
               ),
             ),
@@ -366,6 +366,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                 ),
               ),
+              const SizedBox(height: 12),
             ] else if (!hasTickFleaSettings) ...[
               // No tick/flea settings - show add card
               AnimatedCard(
@@ -512,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (daysUntil < 0) {
       return 'Overdue by ${-daysUntil} days';
     }
-    return 'Next in $daysUntil days';
+    return 'Due in $daysUntil days';
   }
 
   String _getTickFleaBadgeText(PetModel pet) {
@@ -567,7 +568,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return CareProgressCard(
       icon: Icons.vaccines_outlined,
       title: vaccineName,
-      subtitle: 'Next in $daysUntil days',
+      subtitle: 'Due in $daysUntil days',
       daysLeft: daysUntil,
       totalDays: 365,
       isOneTimeVaccine: nextVaccine.nextDueDate == null,
