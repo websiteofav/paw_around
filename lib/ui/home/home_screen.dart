@@ -538,7 +538,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return const SizedBox.shrink();
     }
     final vaccineName = vaccine.vaccineName;
-    final daysUntil = vaccine.nextDueDate.difference(DateTime.now()).inDays;
+    final daysUntil =
+        vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
 
     return UrgentVaccineCard(
       vaccineName: vaccineName,
@@ -559,7 +560,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return const SizedBox.shrink();
     }
 
-    final daysUntil = nextVaccine.nextDueDate.difference(DateTime.now()).inDays;
+    final daysUntil =
+        nextVaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
     final vaccineName = nextVaccine.vaccineName;
 
     return CareProgressCard(
@@ -567,7 +569,9 @@ class _HomeScreenState extends State<HomeScreen> {
       title: vaccineName,
       subtitle: 'Next in $daysUntil days',
       daysLeft: daysUntil,
-      totalDays: 365, // Vaccines typically yearly
+      totalDays: 365,
+      isOneTimeVaccine: nextVaccine.nextDueDate == null,
+      dateGiven: nextVaccine.dateGiven, // Vaccines typically yearly
     );
   }
 
@@ -585,11 +589,35 @@ class _HomeScreenState extends State<HomeScreen> {
       if (vaccine.isSnoozed) {
         continue;
       }
-      final days = vaccine.nextDueDate.difference(DateTime.now()).inDays;
-      if (days >= 0 && days < minDays) {
+      final days = vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
+      if (days >= 0 && days < minDays && vaccine.nextDueDate != null) {
         minDays = days;
         nextVaccine = vaccine;
       }
+    }
+
+    // If no vaccine with due date found, return the latest vaccine
+    if (nextVaccine == null) {
+      VaccineModel? latestVaccine;
+      DateTime? latestDate;
+
+      for (final vaccine in pet.vaccines) {
+        if (vaccine.isSnoozed) {
+          continue;
+        }
+
+        // Get the latest completion date from history, or use dateGiven
+        final latestCompletion = vaccine.completionHistory.isNotEmpty
+            ? vaccine.completionHistory.reduce((a, b) => a.isAfter(b) ? a : b)
+            : vaccine.dateGiven;
+
+        if (latestDate == null || latestCompletion.isAfter(latestDate)) {
+          latestDate = latestCompletion;
+          latestVaccine = vaccine;
+        }
+      }
+
+      return latestVaccine;
     }
 
     return nextVaccine;
@@ -685,11 +713,11 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _hasUpcomingVaccine(PetModel pet) {
     for (final vaccine in pet.vaccines) {
       // Skip snoozed vaccines
-      if (vaccine.isSnoozed) {
+      if (vaccine.isSnoozed || vaccine.nextDueDate == null) {
         continue;
       }
       final daysUntilDue =
-          vaccine.nextDueDate.difference(DateTime.now()).inDays;
+          vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
       // Include overdue (negative) and due soon (0-30 days)
       if (daysUntilDue <= 30) {
         return true;
@@ -705,10 +733,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
     for (final vaccine in pet.vaccines) {
       // Skip snoozed vaccines
-      if (vaccine.isSnoozed) {
+      if (vaccine.isSnoozed || vaccine.nextDueDate == null) {
         continue;
       }
-      final days = vaccine.nextDueDate.difference(DateTime.now()).inDays;
+      final days = vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
 
       // Overdue takes priority
       if (days < 0 && overdueVaccine == null) {

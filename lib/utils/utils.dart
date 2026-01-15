@@ -54,14 +54,24 @@ class PetTimelineUtils {
         }
 
         // Use all completionHistory entries instead of just dateGiven
+        // Deduplicate same-day entries to avoid showing duplicates
+        final seenDates = <String>{};
         for (final completionDate in vaccine.completionHistory) {
-          vaccineEntries.add(ActionTimelineEntry(
-            id: 'vaccine_${vaccine.id}_${completionDate.millisecondsSinceEpoch}',
-            actionName: vaccine.vaccineName,
-            date: completionDate,
-            status: TimelineEntryStatus.completed,
-            actionType: ActionType.vaccine,
-          ));
+          // Create a unique key for the date (year-month-day)
+          final dateKey =
+              '${completionDate.year}-${completionDate.month}-${completionDate.day}';
+
+          // Only add if we haven't seen this date before
+          if (!seenDates.contains(dateKey)) {
+            seenDates.add(dateKey);
+            vaccineEntries.add(ActionTimelineEntry(
+              id: 'vaccine_${vaccine.id}_${completionDate.millisecondsSinceEpoch}',
+              actionName: vaccine.vaccineName,
+              date: completionDate,
+              status: TimelineEntryStatus.completed,
+              actionType: ActionType.vaccine,
+            ));
+          }
         }
       }
       // Sort vaccines by date (most recent first)

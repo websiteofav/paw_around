@@ -137,14 +137,17 @@ class PetModel extends Equatable {
       notes: data['notes'] as String? ?? '',
       imagePath: data['imagePath'] as String?,
       vaccines: (data['vaccines'] as List<dynamic>?)
-              ?.map((v) => VaccineModel.fromFirestore(v as Map<String, dynamic>))
+              ?.map(
+                  (v) => VaccineModel.fromFirestore(v as Map<String, dynamic>))
               .toList() ??
           [],
       groomingSettings: data['groomingSettings'] != null
-          ? CareSettingsModel.fromFirestore(data['groomingSettings'] as Map<String, dynamic>)
+          ? CareSettingsModel.fromFirestore(
+              data['groomingSettings'] as Map<String, dynamic>)
           : null,
       tickFleaSettings: data['tickFleaSettings'] != null
-          ? CareSettingsModel.fromFirestore(data['tickFleaSettings'] as Map<String, dynamic>)
+          ? CareSettingsModel.fromFirestore(
+              data['tickFleaSettings'] as Map<String, dynamic>)
           : null,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
@@ -183,14 +186,17 @@ class PetModel extends Equatable {
       weight: (json['weight'] as num).toDouble(),
       notes: json['notes'] as String,
       imagePath: json['imagePath'] as String?,
-      vaccines:
-          (json['vaccines'] as List<dynamic>?)?.map((v) => VaccineModel.fromJson(v as Map<String, dynamic>)).toList() ??
-              [],
+      vaccines: (json['vaccines'] as List<dynamic>?)
+              ?.map((v) => VaccineModel.fromJson(v as Map<String, dynamic>))
+              .toList() ??
+          [],
       groomingSettings: json['groomingSettings'] != null
-          ? CareSettingsModel.fromJson(json['groomingSettings'] as Map<String, dynamic>)
+          ? CareSettingsModel.fromJson(
+              json['groomingSettings'] as Map<String, dynamic>)
           : null,
       tickFleaSettings: json['tickFleaSettings'] != null
-          ? CareSettingsModel.fromJson(json['tickFleaSettings'] as Map<String, dynamic>)
+          ? CareSettingsModel.fromJson(
+              json['tickFleaSettings'] as Map<String, dynamic>)
           : null,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
@@ -225,12 +231,16 @@ class PetModel extends Equatable {
 
   List<VaccineModel> get upcomingVaccines {
     final now = DateTime.now();
-    return vaccines.where((vaccine) => vaccine.nextDueDate.isAfter(now)).toList();
+    return vaccines
+        .where((vaccine) => vaccine.nextDueDate?.isAfter(now) ?? false)
+        .toList();
   }
 
   List<VaccineModel> get overdueVaccines {
     final now = DateTime.now();
-    return vaccines.where((vaccine) => vaccine.nextDueDate.isBefore(now)).toList();
+    return vaccines
+        .where((vaccine) => vaccine.nextDueDate?.isBefore(now) ?? false)
+        .toList();
   }
 
   /// Check if pet supports medical care (vaccines, tick & flea)
@@ -245,14 +255,16 @@ class PetModel extends Equatable {
     // Check vaccines
     if (supportsMedicalCare) {
       for (final vaccine in vaccines) {
-        if (vaccine.nextDueDate.isBefore(DateTime.now().add(const Duration(days: 30)))) {
+        if (vaccine.nextDueDate
+            ?.isBefore(DateTime.now().add(const Duration(days: 30))) ?? false) {
           return true;
         }
       }
     }
 
     // Check grooming
-    if (groomingSettings != null && (groomingSettings!.isDueSoon || groomingSettings!.isOverdue)) {
+    if (groomingSettings != null &&
+        (groomingSettings!.isDueSoon || groomingSettings!.isOverdue)) {
       return true;
     }
 
@@ -271,7 +283,8 @@ class PetModel extends Equatable {
     final now = DateTime.now();
     final thirtyDaysFromNow = now.add(const Duration(days: 30));
     return vaccines.where((vaccine) {
-      return vaccine.nextDueDate.isAfter(now) && vaccine.nextDueDate.isBefore(thirtyDaysFromNow);
+      return (vaccine.nextDueDate?.isAfter(now) ?? false) &&
+          (vaccine.nextDueDate?.isBefore(thirtyDaysFromNow) ?? false);
     }).length;
   }
 

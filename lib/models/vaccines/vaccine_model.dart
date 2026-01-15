@@ -5,7 +5,7 @@ class VaccineModel extends Equatable {
   final String id;
   final String vaccineName;
   final DateTime dateGiven;
-  final DateTime nextDueDate;
+  final DateTime? nextDueDate;
   final String notes;
   final bool setReminder;
   final DateTime? snoozedUntil;
@@ -30,7 +30,7 @@ class VaccineModel extends Equatable {
   factory VaccineModel.create({
     required String vaccineName,
     required DateTime dateGiven,
-    required DateTime nextDueDate,
+    DateTime? nextDueDate,
     required String notes,
     required bool setReminder,
     DateTime? snoozedUntil,
@@ -85,7 +85,8 @@ class VaccineModel extends Equatable {
       'id': id,
       'vaccineName': vaccineName,
       'dateGiven': Timestamp.fromDate(dateGiven),
-      'nextDueDate': Timestamp.fromDate(nextDueDate),
+      'nextDueDate':
+          nextDueDate != null ? Timestamp.fromDate(nextDueDate!) : null,
       'notes': notes,
       'setReminder': setReminder,
       'snoozedUntil':
@@ -100,9 +101,10 @@ class VaccineModel extends Equatable {
   // Create from Firestore map (for reading from pet document)
   factory VaccineModel.fromFirestore(Map<String, dynamic> data) {
     final dateGiven = (data['dateGiven'] as Timestamp).toDate();
-    final storedNextDueDate = (data['nextDueDate'] as Timestamp).toDate();
+    final storedNextDueDate = (data['nextDueDate'] as Timestamp?)?.toDate();
 
     // Backward compatibility: if completionHistory is missing or empty, initialize with dateGiven
+
     final historyTimestamps = data['completionHistory'] as List<dynamic>?;
     final history = historyTimestamps != null
         ? historyTimestamps.map((ts) => (ts as Timestamp).toDate()).toList()
@@ -111,23 +113,28 @@ class VaccineModel extends Equatable {
     // If history is empty, seed it with existing dateGiven
     final effectiveHistory = history.isEmpty ? [dateGiven] : history;
 
-    // Calculate interval from stored values
-    final interval = storedNextDueDate.difference(dateGiven).inDays;
-
-    // Get latest completion date from history
+    // Get latest completion date from history first
     final latestCompletion = effectiveHistory.isNotEmpty
         ? effectiveHistory.reduce((a, b) => a.isAfter(b) ? a : b)
         : dateGiven;
 
+    // Calculate interval from stored nextDueDate and latestCompletion (not dateGiven)
+    final interval = storedNextDueDate != null
+        ? storedNextDueDate.difference(latestCompletion).inDays
+        : 0;
+
     // Recalculate nextDueDate from latest completion
-    final calculatedNextDueDate =
-        latestCompletion.add(Duration(days: interval > 0 ? interval : 365));
+    final calculatedNextDueDate = storedNextDueDate != null
+        ? latestCompletion.add(Duration(days: interval > 0 ? interval : 365))
+        : null;
 
     return VaccineModel(
       id: data['id'] as String,
       vaccineName: data['vaccineName'] as String,
       dateGiven: latestCompletion, // Use latest from history
-      nextDueDate: calculatedNextDueDate, // Recalculated from latest
+      nextDueDate: storedNextDueDate != null
+          ? calculatedNextDueDate
+          : null, // Recalculated from latest
       notes: data['notes'] as String? ?? '',
       setReminder: data['setReminder'] as bool? ?? false,
       snoozedUntil: (data['snoozedUntil'] as Timestamp?)?.toDate(),
@@ -143,7 +150,7 @@ class VaccineModel extends Equatable {
       'id': id,
       'vaccineName': vaccineName,
       'dateGiven': dateGiven.toIso8601String(),
-      'nextDueDate': nextDueDate.toIso8601String(),
+      'nextDueDate': nextDueDate?.toIso8601String(),
       'notes': notes,
       'setReminder': setReminder,
       'snoozedUntil': snoozedUntil?.toIso8601String(),
@@ -189,17 +196,17 @@ class VaccineModel extends Equatable {
   }
 
   bool get isOverdue {
-    return nextDueDate.isBefore(DateTime.now());
+    return nextDueDate?.isBefore(DateTime.now()) ?? false;
   }
 
   bool get isDueSoon {
     final now = DateTime.now();
-    final daysUntilDue = nextDueDate.difference(now).inDays;
+    final daysUntilDue = nextDueDate?.difference(now).inDays ?? 0;
     return daysUntilDue <= 30 && daysUntilDue >= 0;
   }
 
   int get daysUntilDue {
-    return nextDueDate.difference(DateTime.now()).inDays;
+    return nextDueDate?.difference(DateTime.now()).inDays ?? 0;
   }
 
   String get status {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/utils/date_utils.dart';
 
 class CareProgressCard extends StatelessWidget {
   final IconData icon;
@@ -9,6 +10,8 @@ class CareProgressCard extends StatelessWidget {
   final String? subtitle;
   final int daysLeft;
   final int totalDays;
+  final bool isOneTimeVaccine;
+  final DateTime? dateGiven;
 
   const CareProgressCard({
     super.key,
@@ -17,6 +20,8 @@ class CareProgressCard extends StatelessWidget {
     this.subtitle,
     required this.daysLeft,
     required this.totalDays,
+    this.isOneTimeVaccine = false,
+    this.dateGiven,
   });
 
   bool get isOverdue {
@@ -26,15 +31,23 @@ class CareProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // When overdue, show full progress bar; otherwise calculate normally
-    final progress = isOverdue ? 1.0 : (totalDays > 0 ? (totalDays - daysLeft) / totalDays : 0.0);
+    final progress = isOverdue
+        ? 1.0
+        : (totalDays > 0 ? (totalDays - daysLeft) / totalDays : 0.0);
 
     // Badge text: "Overdue by X days" or "X days left"
-    final badgeText = isOverdue ? 'Overdue by ${daysLeft.abs()} days' : '${daysLeft.abs()} ${AppStrings.daysLeft}';
+    final badgeText = isOverdue
+        ? 'Overdue by ${daysLeft.abs()} days'
+        : '${daysLeft.abs()} ${AppStrings.daysLeft}';
 
     // Colors based on overdue state
-    final badgeBgColor = isOverdue ? AppColors.error.withValues(alpha: 0.15) : AppColors.progressBarBg;
-    final badgeTextColor = isOverdue ? AppColors.error : AppColors.textSecondary;
-    final progressBarColor = isOverdue ? AppColors.error : AppColors.progressBarFill;
+    final badgeBgColor = isOverdue
+        ? AppColors.error.withValues(alpha: 0.15)
+        : AppColors.progressBarBg;
+    final badgeTextColor =
+        isOverdue ? AppColors.error : AppColors.textSecondary;
+    final progressBarColor =
+        isOverdue ? AppColors.error : AppColors.progressBarFill;
 
     return Container(
       width: double.infinity,
@@ -73,14 +86,19 @@ class CareProgressCard extends StatelessWidget {
               ),
               // Days left badge
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: badgeBgColor,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  badgeText,
-                  style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: badgeTextColor),
+                  isOneTimeVaccine ? AppStrings.oneTimeVaccine : badgeText,
+                  style: AppTextStyles.mediumStyle500(
+                      fontSize: 12,
+                      fontColor: isOneTimeVaccine
+                          ? AppColors.textPrimary
+                          : badgeTextColor),
                 ),
               ),
             ],
@@ -91,15 +109,20 @@ class CareProgressCard extends StatelessWidget {
           // Title
           Text(
             title,
-            style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.textPrimary),
+            style: AppTextStyles.boldStyle700(
+                fontSize: 18, fontColor: AppColors.textPrimary),
           ),
 
           const SizedBox(height: 4),
 
           // Subtitle
+
           Text(
-            subtitle ?? AppStrings.protectionActive,
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            isOneTimeVaccine
+                ? '${AppStrings.lastGivenOn} ${AppDateUtils.formatDateShort(dateGiven!)}'
+                : subtitle ?? AppStrings.protectionActive,
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textPrimary),
           ),
 
           const SizedBox(height: 16),
