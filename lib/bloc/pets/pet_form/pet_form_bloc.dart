@@ -62,7 +62,8 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
     emit(state.copyWith(gender: event.gender, status: PetFormStatus.editing));
   }
 
-  void _onSelectDateOfBirth(SelectDateOfBirth event, Emitter<PetFormState> emit) {
+  void _onSelectDateOfBirth(
+      SelectDateOfBirth event, Emitter<PetFormState> emit) {
     emit(state.copyWith(
       dateOfBirth: event.date,
       isExactDateOfBirth: event.isExact,
@@ -84,13 +85,17 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
   }
 
   void _onAddVaccine(AddVaccine event, Emitter<PetFormState> emit) {
-    final updatedVaccines = List<VaccineModel>.from(state.vaccines)..add(event.vaccine);
-    emit(state.copyWith(vaccines: updatedVaccines, status: PetFormStatus.editing));
+    final updatedVaccines = List<VaccineModel>.from(state.vaccines)
+      ..add(event.vaccine);
+    emit(state.copyWith(
+        vaccines: updatedVaccines, status: PetFormStatus.editing));
   }
 
   void _onRemoveVaccine(RemoveVaccine event, Emitter<PetFormState> emit) {
-    final updatedVaccines = state.vaccines.where((v) => v.id != event.vaccineId).toList();
-    emit(state.copyWith(vaccines: updatedVaccines, status: PetFormStatus.editing));
+    final updatedVaccines =
+        state.vaccines.where((v) => v.id != event.vaccineId).toList();
+    emit(state.copyWith(
+        vaccines: updatedVaccines, status: PetFormStatus.editing));
   }
 
   void _onInitializeForm(InitializeForm event, Emitter<PetFormState> emit) {
@@ -122,9 +127,7 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
     if (state.species.isEmpty) {
       errors['species'] = 'Pet type is required';
     }
-    if (state.gender.isEmpty) {
-      errors['gender'] = 'Gender is required';
-    }
+
     if (state.dateOfBirth == null) {
       errors['dateOfBirth'] = 'Age or birthdate is required';
     }
@@ -133,9 +136,10 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
     emit(state.copyWith(errors: errors, isValid: isValid));
   }
 
-  Future<void> _onSubmitForm(SubmitForm event, Emitter<PetFormState> emit) async {
-    // Validate first
-    add(const ValidateForm());
+  Future<void> _onSubmitForm(
+      SubmitForm event, Emitter<PetFormState> emit) async {
+    // Validate first (pass petToEdit for proper validation)
+    add(ValidateForm(petToEdit: event.petToEdit));
 
     // Wait for validation to complete
     await Future.delayed(const Duration(milliseconds: 50));
@@ -178,7 +182,9 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
           breed: state.breed.isNotEmpty ? state.breed : existingPet.breed,
           gender: state.gender,
           dateOfBirth: state.dateOfBirth!,
-          weight: state.weight.isNotEmpty ? double.tryParse(state.weight) ?? existingPet.weight : existingPet.weight,
+          weight: state.weight.isNotEmpty
+              ? double.tryParse(state.weight) ?? existingPet.weight
+              : existingPet.weight,
           notes: state.notes,
           imagePath: imagePath,
           vaccines: state.vaccines,
@@ -190,7 +196,8 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
           name: AnalyticsEvents.petEdited,
           parameters: {AnalyticsParams.species: state.species},
         );
-        emit(state.copyWith(status: PetFormStatus.success, savedPet: updatedPet));
+        emit(state.copyWith(
+            status: PetFormStatus.success, savedPet: updatedPet));
       } else {
         // Adding new pet
         final tempPetId = DateTime.now().millisecondsSinceEpoch.toString();
@@ -209,13 +216,16 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
           }
         }
 
+        // Step 1: Create pet with only essentials (breed and gender are empty, will be added in Step 2)
         final pet = PetModel.create(
           name: state.name,
           species: state.species,
-          breed: state.breed.isNotEmpty ? state.breed : '',
-          gender: state.gender,
+          breed: '', // Empty for Step 1, will be added in Step 2
+          gender: '', // Empty for Step 1, will be added in Step 2
           dateOfBirth: state.dateOfBirth!,
-          weight: state.weight.isNotEmpty ? double.tryParse(state.weight) ?? 0.0 : 0.0,
+          weight: state.weight.isNotEmpty
+              ? double.tryParse(state.weight) ?? 0.0
+              : 0.0,
           notes: state.notes,
           imagePath: imagePath,
           vaccines: state.vaccines,

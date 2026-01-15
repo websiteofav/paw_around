@@ -25,6 +25,7 @@ import 'package:paw_around/ui/auth/otp_screen.dart';
 import 'package:paw_around/ui/onboarding/onboarding_screen.dart';
 import 'package:paw_around/ui/intro/intro_screen.dart';
 import 'package:paw_around/ui/pets/add_pet_screen.dart';
+import 'package:paw_around/ui/pets/add_pet_details_screen.dart';
 import 'package:paw_around/ui/pets/add_vaccine_screen.dart';
 import 'package:paw_around/ui/pets/grooming_settings_screen.dart';
 import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
@@ -48,258 +49,277 @@ class AuthNotifier extends ChangeNotifier {
 class AppRouter {
   static final _authNotifier = AuthNotifier();
 
-  static final GoRouter _router = GoRouter(
-    initialLocation: AppRoutes.phoneLogin,
-    debugLogDiagnostics: false,
-    refreshListenable: _authNotifier,
-    observers: [AnalyticsService.observer],
-    redirect: (context, state) {
-      final authRepository = sl<AuthRepository>();
-      final isLoggedIn = authRepository.isLoggedIn;
-      final isAuthRoute =
-          state.matchedLocation == AppRoutes.phoneLogin || state.matchedLocation == AppRoutes.otpVerification;
-      final isPublicRoute = state.matchedLocation == AppRoutes.splash ||
-          state.matchedLocation == AppRoutes.intro ||
-          state.matchedLocation == AppRoutes.onboarding;
+  // Router is initialized from main() so we can decide the initial location
+  // (e.g., show onboarding only on first app open).
+  static late final GoRouter _router;
 
-      // If user is logged in and trying to access auth routes, redirect to home
-      if (isLoggedIn && isAuthRoute) {
-        return AppRoutes.home;
-      }
+  /// Initialize the router with the correct initial location.
+  /// This MUST be called before [AppRouter.router] is accessed.
+  static void init({required bool hasCompletedOnboarding}) {
+    _router = GoRouter(
+      initialLocation:
+          !hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+      debugLogDiagnostics: false,
+      refreshListenable: _authNotifier,
+      observers: [AnalyticsService.observer],
+      redirect: (context, state) {
+        final authRepository = sl<AuthRepository>();
+        final isLoggedIn = authRepository.isLoggedIn;
+        final isAuthRoute = state.matchedLocation == AppRoutes.phoneLogin ||
+            state.matchedLocation == AppRoutes.otpVerification;
+        final isPublicRoute = state.matchedLocation == AppRoutes.splash ||
+            state.matchedLocation == AppRoutes.intro ||
+            state.matchedLocation == AppRoutes.onboarding;
 
-      // If user is not logged in and trying to access protected routes
-      if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
-        return AppRoutes.phoneLogin;
-      }
+        // If user is logged in and trying to access auth routes, redirect to home
+        if (isLoggedIn && isAuthRoute) {
+          return AppRoutes.home;
+        }
 
-      // No redirect needed
-      return null;
-    },
-    routes: [
-      // ============ PUBLIC ROUTES ============
-      // Splash/Intro Route
-      GoRoute(
-        path: AppRoutes.splash,
-        name: AppRoutes.splash,
-        builder: (context, state) => const IntroScreen(),
-      ),
+        // If user is not logged in and trying to access protected routes
+        if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
+          return AppRoutes.phoneLogin;
+        }
 
-      // Intro Route
-      GoRoute(
-        path: AppRoutes.intro,
-        name: AppRoutes.intro,
-        builder: (context, state) => const IntroScreen(),
-      ),
+        // No redirect needed
+        return null;
+      },
+      routes: [
+        // ============ PUBLIC ROUTES ============
+        // Splash/Intro Route
+        GoRoute(
+          path: AppRoutes.splash,
+          name: AppRoutes.splash,
+          builder: (context, state) => const IntroScreen(),
+        ),
 
-      // Onboarding Route
-      GoRoute(
-        path: AppRoutes.onboarding,
-        name: AppRoutes.onboarding,
-        builder: (context, state) => const OnboardingScreen(),
-      ),
+        // Intro Route
+        GoRoute(
+          path: AppRoutes.intro,
+          name: AppRoutes.intro,
+          builder: (context, state) => const IntroScreen(),
+        ),
 
-      // Authentication Routes - Phone Login (Primary)
-      GoRoute(
-        path: AppRoutes.phoneLogin,
-        name: AppRoutes.phoneLogin,
-        builder: (context, state) => const PhoneLoginScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.otpVerification,
-        name: AppRoutes.otpVerification,
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>? ?? {};
-          final phoneNumber = extra['phoneNumber'] as String? ?? '';
-          final verificationId = extra['verificationId'] as String? ?? '';
-          return OTPScreen(
-            phoneNumber: phoneNumber,
-            verificationId: verificationId,
-          );
-        },
-      ),
+        // Onboarding Route
+        GoRoute(
+          path: AppRoutes.onboarding,
+          name: AppRoutes.onboarding,
+          builder: (context, state) => const OnboardingScreen(),
+        ),
 
-      // ============ AUTHENTICATED ROUTES (ShellRoute) ============
-      ShellRoute(
-        builder: (context, state, child) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider<CommunityBloc>(
-                create: (_) => CommunityBloc(
-                  repository: sl<CommunityRepository>(),
+        // Authentication Routes - Phone Login (Primary)
+        GoRoute(
+          path: AppRoutes.phoneLogin,
+          name: AppRoutes.phoneLogin,
+          builder: (context, state) => const PhoneLoginScreen(),
+        ),
+        GoRoute(
+          path: AppRoutes.otpVerification,
+          name: AppRoutes.otpVerification,
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            final phoneNumber = extra['phoneNumber'] as String? ?? '';
+            final verificationId = extra['verificationId'] as String? ?? '';
+            return OTPScreen(
+              phoneNumber: phoneNumber,
+              verificationId: verificationId,
+            );
+          },
+        ),
+
+        // ============ AUTHENTICATED ROUTES (ShellRoute) ============
+        ShellRoute(
+          builder: (context, state, child) {
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<CommunityBloc>(
+                  create: (_) => CommunityBloc(
+                    repository: sl<CommunityRepository>(),
+                  ),
                 ),
-              ),
-              BlocProvider<PetListBloc>(
-                create: (_) => PetListBloc(
-                  petRepository: sl<PetRepository>(),
+                BlocProvider<PetListBloc>(
+                  create: (_) => PetListBloc(
+                    petRepository: sl<PetRepository>(),
+                  ),
                 ),
-              ),
-              BlocProvider<PlacesBloc>(
-                create: (_) => PlacesBloc(
-                  placesRepository: sl<PlacesRepository>(),
+                BlocProvider<PlacesBloc>(
+                  create: (_) => PlacesBloc(
+                    placesRepository: sl<PlacesRepository>(),
+                  ),
                 ),
-              ),
-              BlocProvider<HomeBloc>(
-                create: (_) => HomeBloc(),
-              ),
-            ],
-            child: child,
-          );
-        },
-        routes: [
-          // Home Route
-          GoRoute(
-            path: AppRoutes.home,
-            name: AppRoutes.home,
-            builder: (context, state) => const Dashboard(),
-          ),
-
-          // Add Pet Route - Creates fresh PetFormBloc each time
-          GoRoute(
-            path: AppRoutes.addPet,
-            name: AppRoutes.addPet,
-            builder: (context, state) {
-              final petToEdit = state.extra as PetModel?;
-              return BlocProvider(
-                create: (_) => PetFormBloc(
-                  petRepository: sl<PetRepository>(),
-                )..add(InitializeForm(petToEdit: petToEdit)),
-                child: AddPetScreen(petToEdit: petToEdit),
-              );
-            },
-          ),
-
-          // Pet Overview Route
-          GoRoute(
-            path: AppRoutes.petOverview,
-            name: AppRoutes.petOverview,
-            builder: (context, state) {
-              final pet = state.extra as PetModel;
-              return PetOverviewScreen(pet: pet);
-            },
-          ),
-
-          // Add Vaccine Route - Accepts optional pet and vaccine for editing
-          GoRoute(
-            path: AppRoutes.addVaccine,
-            name: AppRoutes.addVaccine,
-            builder: (context, state) {
-              final extra = state.extra;
-              if (extra is Map<String, dynamic>) {
-                final pet = extra['pet'] as PetModel?;
-                final vaccine = extra['vaccine'] as VaccineModel?;
-                return AddVaccineScreen(pet: pet, vaccineToEdit: vaccine);
-              }
-              final pet = extra as PetModel?;
-              return AddVaccineScreen(pet: pet);
-            },
-          ),
-
-          // Community - Create Post Route
-          GoRoute(
-            path: AppRoutes.createPost,
-            name: AppRoutes.createPost,
-            builder: (context, state) => const CreatePostScreen(),
-          ),
-
-          // Community - Post Detail Route
-          GoRoute(
-            path: AppRoutes.postDetail,
-            name: AppRoutes.postDetail,
-            builder: (context, state) {
-              final postId = state.pathParameters['id']!;
-              return PostDetailScreen(postId: postId);
-            },
-          ),
-
-          // Pet Care Settings Routes
-          GoRoute(
-            path: AppRoutes.groomingSettings,
-            name: AppRoutes.groomingSettings,
-            builder: (context, state) {
-              final pet = state.extra as PetModel;
-              return GroomingSettingsScreen(pet: pet);
-            },
-          ),
-          GoRoute(
-            path: AppRoutes.tickFleaSettings,
-            name: AppRoutes.tickFleaSettings,
-            builder: (context, state) {
-              final pet = state.extra as PetModel;
-              return TickFleaSettingsScreen(pet: pet);
-            },
-          ),
-          GoRoute(
-            path: AppRoutes.vaccinesSetup,
-            name: AppRoutes.vaccinesSetup,
-            builder: (context, state) {
-              final pet = state.extra as PetModel;
-              return VaccinesSetupScreen(pet: pet);
-            },
-          ),
-
-          // Action Card Detail Route
-          GoRoute(
-            path: AppRoutes.actionDetail,
-            name: AppRoutes.actionDetail,
-            builder: (context, state) {
-              final data = state.extra as ActionCardData;
-              return ActionCardDetailScreen(data: data);
-            },
-          ),
-
-          // Edit Profile Route
-          GoRoute(
-            path: AppRoutes.editProfile,
-            name: AppRoutes.editProfile,
-            builder: (context, state) => const EditProfileScreen(),
-          ),
-
-          // My Posts Route
-          GoRoute(
-            path: AppRoutes.myPosts,
-            name: AppRoutes.myPosts,
-            builder: (context, state) => const MyPostsScreen(),
-          ),
-
-          // Help & Support Route
-          GoRoute(
-            path: AppRoutes.helpSupport,
-            name: AppRoutes.helpSupport,
-            builder: (context, state) => const HelpSupportScreen(),
-          ),
-        ],
-      ),
-    ],
-    errorBuilder: (context, state) => Scaffold(
-      appBar: AppBar(
-        title: const Text('Error'),
-        backgroundColor: AppColors.navigationBackground,
-        foregroundColor: AppColors.navigationText,
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: AppColors.primary,
+                BlocProvider<HomeBloc>(
+                  create: (_) => HomeBloc(),
+                ),
+              ],
+              child: child,
+            );
+          },
+          routes: [
+            // Home Route
+            GoRoute(
+              path: AppRoutes.home,
+              name: AppRoutes.home,
+              builder: (context, state) => const Dashboard(),
             ),
-            const SizedBox(height: 16),
-            Text(
-              'Page not found: ${state.uri}',
-              style: AppTextStyles.regularStyle400(fontSize: 18),
+
+            // Add Pet Route - Creates fresh PetFormBloc each time
+            GoRoute(
+              path: AppRoutes.addPet,
+              name: AppRoutes.addPet,
+              builder: (context, state) {
+                final petToEdit = state.extra as PetModel?;
+                return BlocProvider(
+                  create: (_) => PetFormBloc(
+                    petRepository: sl<PetRepository>(),
+                  )..add(InitializeForm(petToEdit: petToEdit)),
+                  child: AddPetScreen(petToEdit: petToEdit),
+                );
+              },
             ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => context.pushNamed(AppRoutes.home),
-              child: const Text('Go Home'),
+
+            // Add Pet Details Route (Step 2)
+            GoRoute(
+              path: AppRoutes.addPetDetails,
+              name: AppRoutes.addPetDetails,
+              builder: (context, state) {
+                final pet = state.extra as PetModel;
+                return AddPetDetailsScreen(pet: pet);
+              },
+            ),
+
+            // Pet Overview Route
+            GoRoute(
+              path: AppRoutes.petOverview,
+              name: AppRoutes.petOverview,
+              builder: (context, state) {
+                final pet = state.extra as PetModel;
+                return PetOverviewScreen(pet: pet);
+              },
+            ),
+
+            // Add Vaccine Route - Accepts optional pet and vaccine for editing
+            GoRoute(
+              path: AppRoutes.addVaccine,
+              name: AppRoutes.addVaccine,
+              builder: (context, state) {
+                final extra = state.extra;
+                if (extra is Map<String, dynamic>) {
+                  final pet = extra['pet'] as PetModel?;
+                  final vaccine = extra['vaccine'] as VaccineModel?;
+                  return AddVaccineScreen(pet: pet, vaccineToEdit: vaccine);
+                }
+                final pet = extra as PetModel?;
+                return AddVaccineScreen(pet: pet);
+              },
+            ),
+
+            // Community - Create Post Route
+            GoRoute(
+              path: AppRoutes.createPost,
+              name: AppRoutes.createPost,
+              builder: (context, state) => const CreatePostScreen(),
+            ),
+
+            // Community - Post Detail Route
+            GoRoute(
+              path: AppRoutes.postDetail,
+              name: AppRoutes.postDetail,
+              builder: (context, state) {
+                final postId = state.pathParameters['id']!;
+                return PostDetailScreen(postId: postId);
+              },
+            ),
+
+            // Pet Care Settings Routes
+            GoRoute(
+              path: AppRoutes.groomingSettings,
+              name: AppRoutes.groomingSettings,
+              builder: (context, state) {
+                final pet = state.extra as PetModel;
+                return GroomingSettingsScreen(pet: pet);
+              },
+            ),
+            GoRoute(
+              path: AppRoutes.tickFleaSettings,
+              name: AppRoutes.tickFleaSettings,
+              builder: (context, state) {
+                final pet = state.extra as PetModel;
+                return TickFleaSettingsScreen(pet: pet);
+              },
+            ),
+            GoRoute(
+              path: AppRoutes.vaccinesSetup,
+              name: AppRoutes.vaccinesSetup,
+              builder: (context, state) {
+                final pet = state.extra as PetModel;
+                return VaccinesSetupScreen(pet: pet);
+              },
+            ),
+
+            // Action Card Detail Route
+            GoRoute(
+              path: AppRoutes.actionDetail,
+              name: AppRoutes.actionDetail,
+              builder: (context, state) {
+                final data = state.extra as ActionCardData;
+                return ActionCardDetailScreen(data: data);
+              },
+            ),
+
+            // Edit Profile Route
+            GoRoute(
+              path: AppRoutes.editProfile,
+              name: AppRoutes.editProfile,
+              builder: (context, state) => const EditProfileScreen(),
+            ),
+
+            // My Posts Route
+            GoRoute(
+              path: AppRoutes.myPosts,
+              name: AppRoutes.myPosts,
+              builder: (context, state) => const MyPostsScreen(),
+            ),
+
+            // Help & Support Route
+            GoRoute(
+              path: AppRoutes.helpSupport,
+              name: AppRoutes.helpSupport,
+              builder: (context, state) => const HelpSupportScreen(),
             ),
           ],
         ),
+      ],
+      errorBuilder: (context, state) => Scaffold(
+        appBar: AppBar(
+          title: const Text('Error'),
+          backgroundColor: AppColors.navigationBackground,
+          foregroundColor: AppColors.navigationText,
+        ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: AppColors.primary,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Page not found: ${state.uri}',
+                style: AppTextStyles.regularStyle400(fontSize: 18),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => context.pushNamed(AppRoutes.home),
+                child: const Text('Go Home'),
+              ),
+            ],
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
 
   static GoRouter get router => _router;
 }

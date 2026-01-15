@@ -34,15 +34,16 @@ class OTPInputField extends StatelessWidget {
         inactiveFillColor: AppColors.surface,
         selectedFillColor: AppColors.surface,
         activeColor: AppColors.primary,
-        inactiveColor: AppColors.border,
+        inactiveColor: AppColors.border.withValues(alpha: 0.6),
         selectedColor: AppColors.primary,
-        borderWidth: 1.5,
+        borderWidth: 1.0,
       ),
       cursorColor: AppColors.primary,
       animationDuration: const Duration(milliseconds: 200),
       enableActiveFill: true,
       keyboardType: TextInputType.number,
-      textStyle: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
+      textStyle: AppTextStyles.semiBoldStyle600(
+          fontSize: 20, fontColor: AppColors.textPrimary),
     );
   }
 }

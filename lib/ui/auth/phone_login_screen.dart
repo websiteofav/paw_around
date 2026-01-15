@@ -12,7 +12,6 @@ import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/services/animation_service.dart';
 import 'package:paw_around/ui/auth/widgets/auth_logo.dart';
-import 'package:paw_around/ui/auth/widgets/social_auth_button.dart';
 import 'package:paw_around/utils/url_utils.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
@@ -26,7 +25,6 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   String _completePhoneNumber = '';
   bool _isPhoneValid = false;
   bool _isLoading = false;
-  bool _isGoogleLoading = false;
 
   @override
   void initState() {
@@ -35,9 +33,10 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     _preloadAnimation();
   }
 
-   void _preloadAnimation() {
-    AnimationService.getLottieFile(AppIcons.addPetAnimationFileName).then((_) {
-    }).catchError((error) {
+  void _preloadAnimation() {
+    AnimationService.getLottieFile(AppIcons.addPetAnimationFileName)
+        .then((_) {})
+        .catchError((error) {
       // Silently fail - welcome card will handle fallback
       debugPrint('Failed to preload animation: $error');
     });
@@ -135,7 +134,8 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               // Subtitle
               Text(
                 AppStrings.authSubtitle,
-                style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
+                style: AppTextStyles.regularStyle400(
+                    fontSize: 16, fontColor: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
 
@@ -144,55 +144,10 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               // Phone Number Input
               _buildPhoneInput(),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 24),
 
               // Continue Button
               _buildContinueButton(),
-
-              const SizedBox(height: 24),
-
-              // Divider
-              _buildDivider(),
-
-              const SizedBox(height: 24),
-
-              // Social Auth Buttons
-              SocialAuthButton(
-                type: SocialAuthType.google,
-                isLoading: _isGoogleLoading,
-                onPressed: _isGoogleLoading
-                    ? null
-                    : () async {
-                        setState(() => _isGoogleLoading = true);
-                        try {
-                          await sl<AuthRepository>().signInWithGoogle();
-                          AnalyticsService.logEvent(
-                            name: AnalyticsEvents.loginSuccess,
-                            parameters: {AnalyticsParams.method: 'google'},
-                          );
-                          if (context.mounted) {
-                            context.go(AppRoutes.home);
-                          }
-                        } catch (e) {
-                          AnalyticsService.logEvent(
-                            name: AnalyticsEvents.loginFailed,
-                            parameters: {
-                              AnalyticsParams.method: 'google',
-                              AnalyticsParams.error: e.toString(),
-                            },
-                          );
-                          if (context.mounted) {
-                            setState(() => _isGoogleLoading = false);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(e.toString()),
-                                backgroundColor: AppColors.error,
-                              ),
-                            );
-                          }
-                        }
-                      },
-              ),
 
               const SizedBox(height: 32),
 
@@ -213,33 +168,41 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       children: [
         Text(
           AppStrings.phoneNumber,
-          style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
+          style: AppTextStyles.mediumStyle500(
+              fontSize: 14, fontColor: AppColors.textPrimary),
         ),
         const SizedBox(height: 8),
         IntlPhoneField(
           decoration: InputDecoration(
             hintText: '9990000000',
-            hintStyle: AppTextStyles.regularStyle400(fontColor: AppColors.textSecondary),
+            hintStyle: AppTextStyles.regularStyle400(
+                fontColor: AppColors.textSecondary),
             filled: true,
             fillColor: AppColors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.border),
+              borderSide:
+                  BorderSide(color: AppColors.border.withValues(alpha: 0.6)),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.border),
+              borderSide:
+                  BorderSide(color: AppColors.border.withValues(alpha: 0.6)),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+              borderSide:
+                  const BorderSide(color: AppColors.primary, width: 1.5),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
           ),
           disableLengthCheck: true,
           initialCountryCode: 'IN',
-          dropdownTextStyle: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
-          style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
+          dropdownTextStyle: AppTextStyles.regularStyle400(
+              fontSize: 16, fontColor: AppColors.textPrimary),
+          style: AppTextStyles.regularStyle400(
+              fontSize: 16, fontColor: AppColors.textPrimary),
           onChanged: (phone) {
             setState(() {
               _completePhoneNumber = phone.completeNumber;
@@ -284,30 +247,12 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                 AppStrings.continueButton,
                 style: AppTextStyles.semiBoldStyle600(
                   fontSize: 16,
-                  fontColor: _isPhoneValid ? AppColors.white : AppColors.white.withValues(alpha: 0.7),
+                  fontColor: _isPhoneValid
+                      ? AppColors.white
+                      : AppColors.white.withValues(alpha: 0.7),
                 ),
               ),
       ),
-    );
-  }
-
-  Widget _buildDivider() {
-    return Row(
-      children: [
-        const Expanded(
-          child: Divider(color: AppColors.border, thickness: 1),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            AppStrings.orContinueWith,
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
-          ),
-        ),
-        const Expanded(
-          child: Divider(color: AppColors.border, thickness: 1),
-        ),
-      ],
     );
   }
 
@@ -318,24 +263,28 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       children: [
         Text(
           '${AppStrings.termsText} ',
-          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+          style: AppTextStyles.regularStyle400(
+              fontSize: 12, fontColor: AppColors.textSecondary),
         ),
         GestureDetector(
           onTap: () => UrlUtils.openWebsite(AppStrings.termsOfServiceUrl),
           child: Text(
             AppStrings.termsOfService,
-            style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.primary),
+            style: AppTextStyles.mediumStyle500(
+                fontSize: 12, fontColor: AppColors.primary),
           ),
         ),
         Text(
           ' ${AppStrings.and} ',
-          style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+          style: AppTextStyles.regularStyle400(
+              fontSize: 12, fontColor: AppColors.textSecondary),
         ),
         GestureDetector(
           onTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
           child: Text(
             AppStrings.privacyPolicyLink,
-            style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.primary),
+            style: AppTextStyles.mediumStyle500(
+                fontSize: 12, fontColor: AppColors.primary),
           ),
         ),
       ],

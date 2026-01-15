@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 
 class AuthLogo extends StatelessWidget {
   final double size;
@@ -14,15 +15,13 @@ class AuthLogo extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: AppColors.primary,
-        borderRadius: BorderRadius.circular(20),
+        shape: BoxShape.circle,
       ),
-      child: Center(
-        child: Icon(
-          Icons.pets,
-          size: size * 0.5,
-          color: AppColors.white,
+      child: ClipOval(
+        child: Center(
+          child: Image.asset(AppIcons.appIcon, width: size, height: size),
         ),
       ),
     );
