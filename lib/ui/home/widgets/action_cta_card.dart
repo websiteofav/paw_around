@@ -64,7 +64,8 @@ class ActionCtaCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   title,
-                  style: AppTextStyles.semiBoldStyle600(fontSize: 17, fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.semiBoldStyle600(
+                      fontSize: 17, fontColor: AppColors.textPrimary),
                 ),
               ),
             ],
@@ -87,7 +88,8 @@ class ActionCtaCard extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 helperText,
-                style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+                style: AppTextStyles.regularStyle400(
+                    fontSize: 12, fontColor: AppColors.textSecondary),
               ),
             ],
           ),

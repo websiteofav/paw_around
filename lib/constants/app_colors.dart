@@ -82,15 +82,24 @@ class AppColors {
   static const Color urgentBadge = Color(0xFFFDE047);
   static const Color urgentBadgeText = Color(0xFF7F1D1D);
 
-  // Gradient Colors - Grooming (Emerald)
-  static const Color groomingGradientStart = Color(0xFF10B981);
-  static const Color groomingGradientEnd = Color(0xFF059669);
-  static const Color groomingBadge = Color(0xFFA7F3D0);
-  static const Color groomingBadgeText = Color(0xFF064E3B);
+  // Gradient Colors - Grooming (Emerald - lighter shades)
+  static const Color groomingGradientStart =
+      Color(0xFF34D399); // Lighter emerald-400
+  static const Color groomingGradientEnd = Color(0xFF10B981); // Emerald-500
+  static const Color groomingBadge = Color(0xFFD1FAE5); // Lighter emerald-100
+  static const Color groomingBadgeText =
+      Color(0xFF065F46); // Lighter emerald-800
 
   // Gradient Colors - Care Summary (Purple/Pink)
   static const Color summaryGradientStart = Color(0xFFF3E8FF);
   static const Color summaryGradientEnd = Color(0xFFFCE7F3);
+
+  // Gradient Colors - Tick & Flea (Blue - lighter shades)
+  static const Color tickFleaGradientStart =
+      Color(0xFF60A5FA); // Lighter blue-400
+  static const Color tickFleaGradientEnd = Color(0xFF3B82F6); // Blue-500
+  static const Color tickFleaBadge = Color(0xFFDBEAFE); // Lighter blue-100
+  static const Color tickFleaBadgeText = Color(0xFF2563EB); // Lighter blue-600
 
   // Stat Colors
   static const Color statPurple = Color(0xFF9333EA);

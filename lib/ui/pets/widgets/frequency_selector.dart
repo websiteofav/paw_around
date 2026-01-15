@@ -9,6 +9,7 @@ class FrequencySelector extends StatelessWidget {
   final CareFrequency selectedFrequency;
   final List<CareFrequency> options;
   final ValueChanged<CareFrequency> onChanged;
+  final String? subtitle;
 
   const FrequencySelector({
     super.key,
@@ -16,6 +17,7 @@ class FrequencySelector extends StatelessWidget {
     required this.selectedFrequency,
     required this.options,
     required this.onChanged,
+    this.subtitle,
   });
 
   @override
@@ -39,10 +41,21 @@ class FrequencySelector extends StatelessWidget {
         children: [
           Text(
             title,
-            style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
+            style: AppTextStyles.mediumStyle500(
+                fontSize: 16, fontColor: AppColors.textPrimary),
           ),
           const SizedBox(height: 16),
           ...options.map((frequency) => _buildOption(frequency)),
+          if (subtitle != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              subtitle!,
+              style: AppTextStyles.regularStyle400(
+                  fontSize: 12, fontColor: AppColors.textSecondary),
+            ),
+          ],
+
+          //     Text()
         ],
       ),
     );
@@ -71,8 +84,10 @@ class FrequencySelector extends StatelessWidget {
             Text(
               _getDisplayName(frequency),
               style: isSelected
-                  ? AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary)
-                  : AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
+                  ? AppTextStyles.mediumStyle500(
+                      fontSize: 16, fontColor: AppColors.textPrimary)
+                  : AppTextStyles.regularStyle400(
+                      fontSize: 16, fontColor: AppColors.textPrimary),
             ),
             if (isSelected)
               const Icon(

@@ -29,7 +29,6 @@ import 'package:paw_around/ui/pets/add_pet_details_screen.dart';
 import 'package:paw_around/ui/pets/add_vaccine_screen.dart';
 import 'package:paw_around/ui/pets/grooming_settings_screen.dart';
 import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
-import 'package:paw_around/ui/pets/vaccines_setup_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
@@ -245,14 +244,6 @@ class AppRouter {
               builder: (context, state) {
                 final pet = state.extra as PetModel;
                 return TickFleaSettingsScreen(pet: pet);
-              },
-            ),
-            GoRoute(
-              path: AppRoutes.vaccinesSetup,
-              name: AppRoutes.vaccinesSetup,
-              builder: (context, state) {
-                final pet = state.extra as PetModel;
-                return VaccinesSetupScreen(pet: pet);
               },
             ),
 

@@ -40,7 +40,8 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedFrequency = widget.pet.tickFleaSettings?.frequency ?? CareFrequency.none;
+    _selectedFrequency =
+        widget.pet.tickFleaSettings?.frequency ?? CareFrequency.monthly;
     _lastDate = widget.pet.tickFleaSettings?.lastDate ?? DateTime.now();
     _isSnoozed = widget.pet.tickFleaSettings?.isSnoozed ?? false;
   }
@@ -120,7 +121,8 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
       // Schedule notification if reminder is enabled
       if (settings.hasReminder && mounted) {
         final notificationService = NotificationService();
-        final hasPermission = await notificationService.requestPermissionIfNeeded(
+        final hasPermission =
+            await notificationService.requestPermissionIfNeeded(
           context,
           widget.pet.name,
           ReminderType.tickFlea,
@@ -176,7 +178,9 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
 
   Widget _buildSnoozeBanner() {
     final snoozedUntil = widget.pet.tickFleaSettings?.snoozedUntil;
-    final daysLeft = snoozedUntil != null ? snoozedUntil.difference(DateTime.now()).inDays : 0;
+    final daysLeft = snoozedUntil != null
+        ? snoozedUntil.difference(DateTime.now()).inDays
+        : 0;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -202,11 +206,13 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
               children: [
                 Text(
                   AppStrings.reminderSnoozed,
-                  style: AppTextStyles.semiBoldStyle600(fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.semiBoldStyle600(
+                      fontColor: AppColors.textPrimary),
                 ),
                 Text(
                   '$daysLeft ${daysLeft == 1 ? 'day' : 'days'} remaining',
-                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+                  style: AppTextStyles.regularStyle400(
+                      fontSize: 12, fontColor: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -221,7 +227,8 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
                   )
                 : Text(
                     AppStrings.unsnooze,
-                    style: AppTextStyles.semiBoldStyle600(fontColor: AppColors.warning),
+                    style: AppTextStyles.semiBoldStyle600(
+                        fontColor: AppColors.warning),
                   ),
           ),
         ],
@@ -241,6 +248,7 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
               pet: widget.pet,
               screenTitle: AppStrings.tickFleaPrevention,
               titleIcon: Icons.bug_report_outlined,
+              enableNotification: _selectedFrequency != CareFrequency.none,
             ),
 
             // Scrollable content
@@ -256,6 +264,7 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
                     FrequencySelector(
                       title: AppStrings.frequency,
                       selectedFrequency: _selectedFrequency,
+                      subtitle: AppStrings.mostPetsNeedMonthlyPrevention,
                       options: const [
                         CareFrequency.none,
                         CareFrequency.monthly,

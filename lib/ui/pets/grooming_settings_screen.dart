@@ -39,7 +39,8 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedFrequency = widget.pet.groomingSettings?.frequency ?? CareFrequency.none;
+    _selectedFrequency =
+        widget.pet.groomingSettings?.frequency ?? CareFrequency.none;
     _lastDate = widget.pet.groomingSettings?.lastDate ?? DateTime.now();
     _isSnoozed = widget.pet.groomingSettings?.isSnoozed ?? false;
   }
@@ -119,7 +120,8 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
       // Schedule notification if reminder is enabled
       if (settings.hasReminder && mounted) {
         final notificationService = NotificationService();
-        final hasPermission = await notificationService.requestPermissionIfNeeded(
+        final hasPermission =
+            await notificationService.requestPermissionIfNeeded(
           context,
           widget.pet.name,
           ReminderType.grooming,
@@ -175,7 +177,9 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
 
   Widget _buildSnoozeBanner() {
     final snoozedUntil = widget.pet.groomingSettings?.snoozedUntil;
-    final daysLeft = snoozedUntil != null ? snoozedUntil.difference(DateTime.now()).inDays : 0;
+    final daysLeft = snoozedUntil != null
+        ? snoozedUntil.difference(DateTime.now()).inDays
+        : 0;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -201,11 +205,13 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
               children: [
                 Text(
                   AppStrings.reminderSnoozed,
-                  style: AppTextStyles.semiBoldStyle600(fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.semiBoldStyle600(
+                      fontColor: AppColors.textPrimary),
                 ),
                 Text(
                   '$daysLeft ${daysLeft == 1 ? 'day' : 'days'} remaining',
-                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+                  style: AppTextStyles.regularStyle400(
+                      fontSize: 12, fontColor: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -220,7 +226,8 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
                   )
                 : Text(
                     AppStrings.unsnooze,
-                    style: AppTextStyles.semiBoldStyle600(fontColor: AppColors.warning),
+                    style: AppTextStyles.semiBoldStyle600(
+                        fontColor: AppColors.warning),
                   ),
           ),
         ],
@@ -238,6 +245,7 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
           CareAppBar(
             pet: widget.pet,
             screenTitle: AppStrings.grooming,
+            enableNotification: _selectedFrequency != CareFrequency.none,
           ),
 
           // Scrollable content
@@ -253,6 +261,7 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
                   FrequencySelector(
                     title: AppStrings.frequency,
                     selectedFrequency: _selectedFrequency,
+                    subtitle: AppStrings.chooseHowOftenYouGroomYourPet,
                     options: const [
                       CareFrequency.none,
                       CareFrequency.weekly,

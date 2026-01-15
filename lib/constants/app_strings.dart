@@ -533,5 +533,8 @@ class AppStrings {
       'You can email us at support@pawaround.app. We typically respond within 24-48 hours.';
   static const String oneTimeVaccine = 'One-time vaccine';
 
+  static const String mostPetsNeedMonthlyPrevention = 'Most pets need monthly prevention';
+  static const String chooseHowOftenYouGroomYourPet = 'Choose how often you groom your pet';
+
   AppStrings._();
 }
