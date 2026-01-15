@@ -110,7 +110,11 @@ class InitializeForm extends PetFormEvent {
 }
 
 class ValidateForm extends PetFormEvent {
-  const ValidateForm();
+  final PetModel? petToEdit;
+  const ValidateForm({this.petToEdit});
+
+  @override
+  List<Object?> get props => [petToEdit];
 }
 
 class SubmitForm extends PetFormEvent {

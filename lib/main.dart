@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -13,13 +11,15 @@ import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_constants.dart';
+import 'package:paw_around/constants/preferences_constants.dart';
 import 'package:paw_around/core/observers/auth_bloc_observer.dart';
 import 'package:paw_around/firebase_options.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
-import 'package:paw_around/router/app_router.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/services/notification_service.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:paw_around/router/app_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +34,8 @@ void main() async {
 
   // Initialize Firebase App Check for Play Integrity
   await FirebaseAppCheck.instance.activate(
-    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+    androidProvider:
+        kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
     appleProvider: AppleProvider.deviceCheck,
   );
 
@@ -50,6 +51,14 @@ void main() async {
 
   // Initialize notification service
   await NotificationService().init();
+
+  // Determine if onboarding has already been completed
+  final prefs = await SharedPreferences.getInstance();
+  final hasCompletedOnboarding =
+      prefs.getBool(PreferencesConstants.hasCompletedOnboarding) ?? false;
+
+  // Configure router with correct initial route (onboarding vs auth)
+  AppRouter.init(hasCompletedOnboarding: hasCompletedOnboarding);
 
   // Register global bloc observer for auth error handling
   Bloc.observer = AuthBlocObserver();

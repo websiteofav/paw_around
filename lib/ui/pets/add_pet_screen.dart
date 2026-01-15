@@ -79,7 +79,8 @@ class _AddPetViewState extends State<_AddPetView> {
         appBar: AppBar(
           title: Text(
             widget.petToEdit != null ? 'Edit Pet' : AppStrings.addYourPet,
-            style: AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
+            style:
+                AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
           ),
           backgroundColor: AppColors.navigationBackground,
           elevation: 0,
@@ -93,17 +94,26 @@ class _AddPetViewState extends State<_AddPetView> {
           listener: (context, state) {
             if (state.status == PetFormStatus.success) {
               HapticFeedback.mediumImpact();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    widget.petToEdit != null ? 'Pet updated successfully!' : AppStrings.petAddedSuccessfully,
+              // If editing, show success and go home
+              if (widget.petToEdit != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: const Text('Pet updated successfully!'),
+                    backgroundColor: AppColors.success,
                   ),
-                  backgroundColor: AppColors.success,
-                ),
-              );
-              context.read<PetListBloc>().add(const LoadPetList());
-              context.pushNamed(AppRoutes.home);
-            } else if (state.status == PetFormStatus.error && state.errorMessage != null) {
+                );
+                context.read<PetListBloc>().add(const LoadPetList());
+                context.pushNamed(AppRoutes.home);
+              } else {
+                // New pet: reload list and navigate to Step 2
+                context.read<PetListBloc>().add(const LoadPetList());
+                if (state.savedPet != null) {
+                  context.pushNamed(AppRoutes.addPetDetails,
+                      extra: state.savedPet);
+                }
+              }
+            } else if (state.status == PetFormStatus.error &&
+                state.errorMessage != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(state.errorMessage!),
@@ -135,6 +145,21 @@ class _AddPetViewState extends State<_AddPetView> {
         padding: const EdgeInsets.all(24),
         child: Column(
           children: [
+            // Progress indicator (only for new pets)
+            if (widget.petToEdit == null) ...[
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Text(
+                  AppStrings.step1Of2,
+                  style: AppTextStyles.regularStyle400(
+                    fontSize: 12,
+                    fontColor: AppColors.textSecondary,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
+
             // Image Picker (Optional)
             _buildImagePicker(context, formState),
             const SizedBox(height: 24),
@@ -152,16 +177,21 @@ class _AddPetViewState extends State<_AddPetView> {
               errorText: formState.errors['name'],
             ),
             const SizedBox(height: 16),
-            CommonFormField(
-              label: AppStrings.breed,
-              hintText: 'e.g., Golden Retriever, Tabby',
-              controller: _breedController,
-              onChanged: (value) {
-                context.read<PetFormBloc>().add(UpdateBreed(value));
-              },
-              isRequired: false, // Optional field
-            ),
-            const SizedBox(height: 16),
+
+            // Breed Field (only when editing)
+            if (widget.petToEdit != null) ...[
+              CommonFormField(
+                label: AppStrings.breed,
+                hintText: 'e.g., Golden Retriever, Tabby',
+                controller: _breedController,
+                isRequired: false,
+                enabled: !isSaving,
+                onChanged: (value) {
+                  context.read<PetFormBloc>().add(UpdateBreed(value));
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
 
             // Pet Type Selector
             IgnorePointer(
@@ -183,15 +213,18 @@ class _AddPetViewState extends State<_AddPetView> {
             ),
             const SizedBox(height: 16),
 
-            // Gender Selection (Required)
-            IgnorePointer(
-              ignoring: isSaving,
-              child: Opacity(
-                opacity: isSaving ? 0.6 : 1.0,
-                child: _buildGenderSection(context, formState),
+            // Gender Selection (only when editing)
+            if (widget.petToEdit != null) ...[
+              IgnorePointer(
+                ignoring: isSaving,
+                child: Opacity(
+                  opacity: isSaving ? 0.6 : 1.0,
+                  child: _buildGenderSection(context, formState),
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
+              const SizedBox(height: 16),
+            ],
+            const SizedBox(height: 16),
 
             // Save Button
             CommonButton(
@@ -199,7 +232,9 @@ class _AddPetViewState extends State<_AddPetView> {
               onPressed: isSaving
                   ? null
                   : () {
-                      context.read<PetFormBloc>().add(SubmitForm(petToEdit: widget.petToEdit));
+                      context
+                          .read<PetFormBloc>()
+                          .add(SubmitForm(petToEdit: widget.petToEdit));
                     },
               isLoading: isSaving,
               size: ButtonSize.medium,
@@ -218,13 +253,10 @@ class _AddPetViewState extends State<_AddPetView> {
           children: [
             Text(
               AppStrings.gender,
-              style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
+              style: AppTextStyles.mediumStyle500(
+                  fontSize: 14, fontColor: AppColors.textPrimary),
             ),
             const SizedBox(width: 4),
-            Text(
-              '*',
-              style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.error),
-            ),
           ],
         ),
         const SizedBox(height: 8),
@@ -248,19 +280,12 @@ class _AddPetViewState extends State<_AddPetView> {
           ],
         ),
         // Error message
-        if (state.errors['gender'] != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              state.errors['gender']!,
-              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
-            ),
-          ),
       ],
     );
   }
 
-  Widget _buildGenderButton(BuildContext context, String gender, bool isSelected) {
+  Widget _buildGenderButton(
+      BuildContext context, String gender, bool isSelected) {
     return ScaleButton(
       onPressed: () => context.read<PetFormBloc>().add(SelectGender(gender)),
       child: AnimatedContainer(
@@ -268,7 +293,9 @@ class _AddPetViewState extends State<_AddPetView> {
         curve: Curves.easeInOut,
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surface,
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected ? AppColors.primary : AppColors.border,
@@ -279,8 +306,10 @@ class _AddPetViewState extends State<_AddPetView> {
           gender,
           textAlign: TextAlign.center,
           style: isSelected
-              ? AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.primary)
-              : AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
+              ? AppTextStyles.mediumStyle500(
+                  fontSize: 16, fontColor: AppColors.primary)
+              : AppTextStyles.regularStyle400(
+                  fontSize: 16, fontColor: AppColors.textPrimary),
         ),
       ),
     );
@@ -291,7 +320,9 @@ class _AddPetViewState extends State<_AddPetView> {
     final isLoading = state.isImageLoading;
 
     return ScaleButton(
-      onPressed: isLoading ? null : () => _showImagePickerOptions(context, hasImage: hasImage),
+      onPressed: isLoading
+          ? null
+          : () => _showImagePickerOptions(context, hasImage: hasImage),
       child: Container(
         height: 160,
         width: double.infinity,
@@ -389,7 +420,8 @@ class _AddPetViewState extends State<_AddPetView> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppColors.primary),
+                leading:
+                    const Icon(Icons.photo_library, color: AppColors.primary),
                 title: const Text('Choose from gallery'),
                 onTap: () {
                   Navigator.pop(sheetContext);
@@ -399,10 +431,12 @@ class _AddPetViewState extends State<_AddPetView> {
               if (hasImage) ...[
                 const Divider(),
                 ListTile(
-                  leading: const Icon(Icons.delete_outline, color: AppColors.error),
+                  leading:
+                      const Icon(Icons.delete_outline, color: AppColors.error),
                   title: Text(
                     'Remove photo',
-                    style: AppTextStyles.regularStyle400(fontColor: AppColors.error),
+                    style: AppTextStyles.regularStyle400(
+                        fontColor: AppColors.error),
                   ),
                   onTap: () {
                     Navigator.pop(sheetContext);

@@ -28,7 +28,8 @@ class _WelcomeCardState extends State<WelcomeCard> {
   }
 
   Future<void> _loadAnimation() async {
-    final path = await AnimationService.getLottieFile(AppIcons.addPetAnimationFileName);
+    final path =
+        await AnimationService.getLottieFile(AppIcons.addPetAnimationFileName);
     if (mounted) {
       setState(() {
         _lottiePath = path;
@@ -44,14 +45,6 @@ class _WelcomeCardState extends State<WelcomeCard> {
       padding: const EdgeInsets.all(28),
       margin: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        // gradient: LinearGradient(
-        //   begin: Alignment.topLeft,
-        //   end: Alignment.bottomRight,
-        //   colors: [
-        //     AppColors.primary.withValues(alpha: 0.1),
-        //     AppColors.secondary.withValues(alpha: 0.02),
-        //   ],
-        // ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: AppColors.primary.withValues(alpha: 0.1),
@@ -71,7 +64,7 @@ class _WelcomeCardState extends State<WelcomeCard> {
         children: [
           // Lottie Animation from Firebase Storage with fallback
           SizedBox(
-            height: 180,
+            height: 144,
             child: _loading
                 ? _buildLoadingState()
                 : _lottiePath != null
@@ -102,15 +95,6 @@ class _WelcomeCardState extends State<WelcomeCard> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
-
-          // Benefits List
-          _buildBenefit(Icons.check_circle, AppStrings.neverMissVaccines),
-          const SizedBox(height: 10),
-          _buildBenefit(Icons.check_circle, AppStrings.findVetsNearby),
-          const SizedBox(height: 10),
-          _buildBenefit(Icons.check_circle, AppStrings.trackHealthWellness),
-
           const SizedBox(height: 28),
 
           // CTA Button
@@ -150,7 +134,7 @@ class _WelcomeCardState extends State<WelcomeCard> {
     if (_lottiePath!.startsWith('http')) {
       return Lottie.network(
         _lottiePath!,
-        height: 180,
+        height: 144,
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           return _buildIconFallback();
@@ -160,7 +144,7 @@ class _WelcomeCardState extends State<WelcomeCard> {
       // Local cached file
       return Lottie.file(
         File(_lottiePath!),
-        height: 180,
+        height: 144,
         fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           return _buildIconFallback();
@@ -171,8 +155,8 @@ class _WelcomeCardState extends State<WelcomeCard> {
 
   Widget _buildLoadingState() {
     return Container(
-      height: 180,
-      width: 180,
+      height: 144,
+      width: 144,
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.1),
         shape: BoxShape.circle,
@@ -185,8 +169,8 @@ class _WelcomeCardState extends State<WelcomeCard> {
 
   Widget _buildIconFallback() {
     return Container(
-      height: 180,
-      width: 180,
+      height: 144,
+      width: 144,
       decoration: BoxDecoration(
         color: AppColors.primary.withValues(alpha: 0.1),
         shape: BoxShape.circle,
@@ -196,25 +180,6 @@ class _WelcomeCardState extends State<WelcomeCard> {
         size: 80,
         color: AppColors.primary,
       ),
-    );
-  }
-
-  Widget _buildBenefit(IconData icon, String text) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          size: 20,
-          color: AppColors.primary,
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: Text(
-            text,
-            style: AppTextStyles.mediumStyle500(fontSize: 13, fontColor: AppColors.textPrimary),
-          ),
-        ),
-      ],
     );
   }
 }

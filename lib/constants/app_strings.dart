@@ -15,17 +15,20 @@ class AppStrings {
   static const String skipButton = 'Skip';
   static const String nextButton = 'Next';
 
-  // Onboarding Page 1
-  static const String onboarding1Title =
-      'Find trusted vets, groomers & pet stores near you';
+  // Onboarding Page 1 - Tracking (FIRST)
+  static const String onboarding1Title = 'Track vaccines & care';
+  static const String onboarding1Description =
+      'Smart reminders so you never miss what your pet needs';
 
-  // Onboarding Page 2
-  static const String onboarding2Title =
-      'Track vaccines & never miss an appointment';
+  // Onboarding Page 2 - Nearby services
+  static const String onboarding2Title = 'Find trusted care near you';
+  static const String onboarding2Description =
+      'Vets, groomers, and pet stores around you';
 
-  // Onboarding Page 3
-  static const String onboarding3Title =
-      'Alert nearby pet parents instantly if your pet goes missing';
+  // Onboarding Page 3 - Community & safety (LAST)
+  static const String onboarding3Title = 'Get help from your community';
+  static const String onboarding3Description =
+      'Alert nearby pet parents when it matters most';
 
   // Authentication Screen - Phone Login
   static const String welcomeToPawAround = 'Welcome to Paw Around';
@@ -51,7 +54,7 @@ class AppStrings {
   static const String enterCode = 'Enter code';
   static const String verify = 'Verify';
   static const String didntReceiveCode = "Didn't receive the code?";
-  static const String resendOTP = 'Resend OTP';
+  static const String resendOTP = 'Resend';
   static const String invalidOTP = 'Invalid OTP. Please try again.';
   static const String otpSentSuccessfully = 'OTP sent successfully';
 
@@ -253,11 +256,10 @@ class AppStrings {
   static const String vaccineDueIn = 'vaccine due in';
 
   // Home Screen - Empty States
-  static const String welcomeToPawAroundHome =
-      'Your Pet Deserves The Best Care! 🐾';
+  static const String welcomeToPawAroundHome = 'Start by adding your pet';
   static const String addPetToGetStarted =
-      'Track vaccines, grooming & health - all in one place';
-  static const String addYourFirstPet = 'Get Started - It\'s Free!';
+      'Track vaccines, grooming, and care reminders in one place.';
+  static const String addYourFirstPet = 'Add my pet';
   static const String completeHealthDetails = "Complete %s's health details";
   static const String addVaccineDetails = 'Add vaccine details';
 
@@ -265,6 +267,17 @@ class AppStrings {
   static const String neverMissVaccines = 'Never miss vaccines & appointments';
   static const String findVetsNearby = 'Find vets & groomers nearby';
   static const String trackHealthWellness = 'Track health & wellness';
+
+  // Add Pet Flow - Step 2
+  static const String step1Of2 = 'Step 1 of 2';
+  static const String step2Of2Optional = 'Step 2 of 2 (Optional)';
+  static const String addMoreDetailsOptional = 'Add more details (optional)';
+  static const String addMoreDetailsSubtitle =
+      'You can skip this and add it later anytime.';
+  static const String saveDetails = 'Save details';
+  static const String skipForNow = 'Skip for now';
+  static const String addBreedForBetterCare =
+      'Add breed to get better care suggestions';
 
   // Care Settings Screens
   static const String grooming = 'Grooming';
