@@ -93,8 +93,8 @@ class PetRepository {
 
     return pets.where((pet) {
       return pet.vaccines.any((vaccine) {
-        return vaccine.nextDueDate.isAfter(now) &&
-            vaccine.nextDueDate.isBefore(thirtyDaysFromNow);
+        return (vaccine.nextDueDate?.isAfter(now) ?? false) &&
+            (vaccine.nextDueDate?.isBefore(thirtyDaysFromNow) ?? false);
       });
     }).toList();
   }
@@ -105,7 +105,8 @@ class PetRepository {
     final now = DateTime.now();
 
     return pets.where((pet) {
-      return pet.vaccines.any((vaccine) => vaccine.nextDueDate.isBefore(now));
+      return pet.vaccines
+          .any((vaccine) => vaccine.nextDueDate?.isBefore(now) ?? false);
     }).toList();
   }
 
@@ -199,11 +200,13 @@ class PetRepository {
 
     final updatedVaccines = pet.vaccines.map((v) {
       if (v.id == vaccineId) {
-        // Calculate original interval from stored nextDueDate and dateGiven
-        final originalInterval = v.nextDueDate.difference(v.dateGiven).inDays;
-
         // Get existing history and deduplicate same-day entries
         final history = List<DateTime>.from(v.completionHistory);
+
+        // Get the current latest completion (before adding new one) to calculate interval
+        final currentLatest = history.isNotEmpty
+            ? history.reduce((a, b) => a.isAfter(b) ? a : b)
+            : v.dateGiven;
 
         // Remove any entry on the same day (deduplication)
         history.removeWhere((d) =>
@@ -220,9 +223,17 @@ class PetRepository {
         // Get the latest completion date (first item after sorting)
         final latestCompletion = history.isNotEmpty ? history[0] : completion;
 
+        // Calculate original interval from stored nextDueDate and current latest completion
+        // This preserves the interval that was set based on the previous completion
+        final originalInterval = v.nextDueDate != null
+            ? v.nextDueDate!.difference(currentLatest).inDays
+            : 0;
+
         // Calculate nextDueDate from the latest completion date
-        final calculatedNextDueDate = latestCompletion
-            .add(Duration(days: originalInterval > 0 ? originalInterval : 365));
+        final calculatedNextDueDate = v.nextDueDate != null
+            ? latestCompletion.add(
+                Duration(days: originalInterval > 0 ? originalInterval : 365))
+            : null;
 
         return v.copyWith(
           dateGiven: latestCompletion, // Update to latest completion

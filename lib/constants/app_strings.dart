@@ -172,6 +172,15 @@ class AppStrings {
   static const String lastGivenDate = 'Last given date';
   static const String vaccinesForDogsCatsOnly =
       'Vaccines are currently available only for dogs and cats.';
+
+  // Vaccine Selection Categories
+  static const String requiredCore = 'Required / Core';
+  static const String recommendedVaccines = 'Recommended';
+  static const String requiredByLaw = 'Required by law';
+  static const String requiredBadge = '⚠ Required';
+  static const String otherVaccine = 'Other';
+  static const String enterCustomVaccine = 'Enter a custom vaccine';
+  static const String customVaccineName = 'Custom vaccine name';
   static const String vaccineSaved = 'Vaccine saved successfully!';
 
   // Map Screen
@@ -522,6 +531,7 @@ class AppStrings {
   static const String faqContactSupportQuestion = 'How do I contact support?';
   static const String faqContactSupportAnswer =
       'You can email us at support@pawaround.app. We typically respond within 24-48 hours.';
+  static const String oneTimeVaccine = 'One-time vaccine';
 
   AppStrings._();
 }

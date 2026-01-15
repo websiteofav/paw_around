@@ -18,7 +18,8 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
     on<SelectPet>(_onSelectPet);
   }
 
-  Future<void> _onLoadPetList(LoadPetList event, Emitter<PetListState> emit) async {
+  Future<void> _onLoadPetList(
+      LoadPetList event, Emitter<PetListState> emit) async {
     emit(const PetListLoading());
 
     try {
@@ -66,8 +67,12 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
 
     for (final pet in pets) {
       for (final vaccine in pet.vaccines) {
-        if (vaccine.nextDueDate.isBefore(thirtyDaysFromNow) &&
-            vaccine.nextDueDate.isAfter(now.subtract(const Duration(days: 1)))) {
+        if (vaccine.nextDueDate == null) {
+          continue;
+        }
+        if (vaccine.nextDueDate!.isBefore(thirtyDaysFromNow) &&
+            vaccine.nextDueDate!
+                .isAfter(now.subtract(const Duration(days: 1)))) {
           upcomingVaccineList.add(UpcomingVaccineModel(
             vaccine: vaccine,
             petName: pet.name,
@@ -77,7 +82,15 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
       }
     }
 
-    upcomingVaccineList.sort((a, b) => a.vaccine.nextDueDate.compareTo(b.vaccine.nextDueDate));
+    upcomingVaccineList.sort((a, b) {
+      if (a.vaccine.nextDueDate == null) {
+        return 1;
+      }
+      if (b.vaccine.nextDueDate == null) {
+        return -1;
+      }
+      return a.vaccine.nextDueDate!.compareTo(b.vaccine.nextDueDate!);
+    });
 
     return upcomingVaccineList;
   }
