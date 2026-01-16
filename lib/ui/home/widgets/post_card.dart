@@ -3,20 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
+import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/utils/date_utils.dart';
+import 'package:paw_around/utils/utils.dart';
 
 class PostCard extends StatelessWidget {
   final LostFoundPost post;
   final double? distanceKm;
   final VoidCallback? onTap;
+  final bool isFromYourPosts;
 
   const PostCard({
     super.key,
     required this.post,
     this.distanceKm,
     this.onTap,
+    this.isFromYourPosts = false,
   });
+
+  bool get _isOwner => post.userId == sl<AuthRepository>().currentUser?.uid;
 
   @override
   Widget build(BuildContext context) {
@@ -66,21 +73,39 @@ class PostCard extends StatelessWidget {
   Widget _buildImage() {
     return Hero(
       tag: 'post-image-${post.id}',
-      child: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-        child: Stack(
-          children: [
-            SizedBox(
-              height: 150,
-              width: double.infinity,
-              child: _buildPostImage(),
-            ),
-            Positioned(
-              top: 8,
-              left: 8,
-              child: _buildTypeBadge(),
+      child: Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.shadowOverlay.withValues(alpha: 0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 4),
             ),
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+          child: Stack(
+            children: [
+              SizedBox(
+                height: 150,
+                width: double.infinity,
+                child: _buildPostImage(),
+              ),
+              Positioned(
+                top: 8,
+                left: 8,
+                child: _buildTypeBadge(),
+              ),
+              if (_isOwner && !isFromYourPosts) ...[
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: _buildYourPostBadge(),
+                ),
+              ]
+            ],
+          ),
         ),
       ),
     );
@@ -98,7 +123,8 @@ class PostCard extends StatelessWidget {
         fit: BoxFit.cover,
         placeholder: (context, url) => Container(
           color: AppColors.surface,
-          child: const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+          child: const Center(
+              child: CircularProgressIndicator(color: AppColors.primary)),
         ),
         errorWidget: (context, url, error) => _buildPlaceholder(),
       );
@@ -126,26 +152,36 @@ class PostCard extends StatelessWidget {
           BoxShadow(
             color: badgeColor.withValues(alpha: 0.3),
             blurRadius: 6,
-            offset: const Offset(0, 2),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            isLost ? Icons.search : Icons.favorite,
-            size: 12,
-            color: Colors.white,
-          ),
+          Icon(isLost ? Icons.search : Icons.favorite,
+              size: 12, color: AppColors.white),
           const SizedBox(width: 4),
           Text(
             isLost ? AppStrings.lost : AppStrings.found,
-            style: AppTextStyles.boldStyle700(fontSize: 12, fontColor: AppColors.white),
+            style: AppTextStyles.boldStyle700(
+                fontSize: 12, fontColor: AppColors.white),
           ),
         ],
       ),
     );
+  }
+
+  Widget _buildYourPostBadge() {
+    return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: AppColors.secondary,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Text(AppStrings.yourPost,
+            style: AppTextStyles.boldStyle700(
+                fontSize: 12, fontColor: AppColors.textPrimary)));
   }
 
   Widget _buildHeader() {
@@ -159,10 +195,16 @@ class PostCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
         ),
+        Text(
+          AppDateUtils.getRelativeTimeShort(post.createdAt),
+          style: AppTextStyles.regularStyle400(
+              fontSize: 14, fontColor: AppColors.textSecondary),
+        ),
         if (distanceKm != null)
           Text(
-            '${distanceKm!.toStringAsFixed(1)} ${AppStrings.kmAway}',
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            ' • ${distanceKm!.toStringAsFixed(1)} ${AppStrings.kmAway}',
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textSecondary),
           ),
       ],
     );
@@ -175,7 +217,8 @@ class PostCard extends StatelessWidget {
         if (post.breed.isNotEmpty)
           Text(
             '${post.breed} • ${post.color}',
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textSecondary),
           ),
         const SizedBox(height: 4),
         Text(
@@ -194,29 +237,31 @@ class PostCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.person_outline, size: 14, color: AppColors.textSecondary),
+            const Icon(Icons.person_outline,
+                size: 14, color: AppColors.textSecondary),
             const SizedBox(width: 4),
             Text(
-              post.userName,
-              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+              _isOwner
+                  ? AppStrings.yourPost
+                  : post.userName.orDefault(AppStrings.anonymous),
+              style: AppTextStyles.regularStyle400(
+                  fontSize: 14, fontColor: AppColors.textSecondary),
             ),
           ],
         ),
         const SizedBox(height: 4),
         Row(
           children: [
-            const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
+            const Icon(Icons.location_on,
+                size: 14, color: AppColors.textSecondary),
             const SizedBox(width: 4),
             Expanded(
               child: Text(
                 post.locationName,
-                style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                style: AppTextStyles.regularStyle400(
+                    fontSize: 14, fontColor: AppColors.textSecondary),
                 overflow: TextOverflow.ellipsis,
               ),
-            ),
-            Text(
-              AppDateUtils.getRelativeTimeShort(post.createdAt),
-              style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
             ),
           ],
         ),

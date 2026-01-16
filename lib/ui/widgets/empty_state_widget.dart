@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_constants.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
@@ -60,7 +62,7 @@ class EmptyStateWidget extends StatelessWidget {
     this.onAction,
     this.secondaryActionText,
     this.onSecondaryAction,
-    this.illustrationSize = 120.0,
+    this.illustrationSize = 140.0,
     this.showCard = true,
     this.hints,
   }) : assert(
@@ -91,7 +93,8 @@ class EmptyStateWidget extends StatelessWidget {
         if (subtitle != null) ...[
           AppSpacing.vertical10,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppConstants.space16),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppConstants.space16),
             child: Text(
               subtitle!,
               style: AppTextStyles.regularStyle400(
@@ -114,7 +117,8 @@ class EmptyStateWidget extends StatelessWidget {
         if (actionText != null && onAction != null) ...[
           AppSpacing.vertical28,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppConstants.space24),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppConstants.space24),
             child: CommonButton(
               text: actionText!,
               onPressed: onAction,
@@ -182,53 +186,10 @@ class EmptyStateWidget extends StatelessWidget {
   }
 
   Widget _buildIllustration() {
-    if (lottieAsset != null) {
-      return SizedBox(
-        width: illustrationSize,
-        height: illustrationSize,
-        child: lottieAsset!.startsWith('http')
-            ? Lottie.network(
-                lottieAsset!,
-                fit: BoxFit.contain,
-                repeat: true,
-                errorBuilder: (context, error, stackTrace) {
-                  return _buildIconFallback();
-                },
-              )
-            : Lottie.asset(
-          lottieAsset!,
-          fit: BoxFit.contain,
-          repeat: true,
-                errorBuilder: (context, error, stackTrace) {
-                  return _buildIconFallback();
-                },
-        ),
-      );
-    }
-
-    return _buildIconFallback();
-  }
-
-  Widget _buildIconFallback() {
-    return Container(
-      width: illustrationSize,
+    return SvgPicture.asset(
+      AppIcons.noPostsIcon,
       height: illustrationSize,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            (iconBackgroundColor ?? AppColors.primary).withValues(alpha: 0.15),
-            (iconBackgroundColor ?? AppColors.primaryLight).withValues(alpha: 0.1),
-          ],
-        ),
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        icon,
-        size: illustrationSize * 0.42,
-        color: iconColor ?? AppColors.primary.withValues(alpha: 0.8),
-      ),
+      width: illustrationSize,
     );
   }
 

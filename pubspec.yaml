@@ -60,4 +60,5 @@ flutter:
     - assets/auth/
     - assets/home/
     - assets/pets/
+    - assets/posts/
     - .env

@@ -78,7 +78,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
       icon: Icons.article_outlined,
       title: AppStrings.noMyPostsYet,
       subtitle: AppStrings.noMyPostsSubtitle,
-      actionText: AppStrings.createPost,
+      actionText: AppStrings.createLostFoundPost,
       onAction: () async {
         await context.push('/community/create');
         if (mounted) {
@@ -134,6 +134,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
             children: [
               PostCard(
                 post: post,
+                isFromYourPosts: true,
                 onTap: () async {
                   await context.push('/community/${post.id}');
                   if (mounted) {
@@ -146,7 +147,8 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
                   top: 16,
                   right: 24,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppColors.textSecondary,
                       borderRadius: BorderRadius.circular(16),

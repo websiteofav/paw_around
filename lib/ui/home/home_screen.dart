@@ -7,6 +7,7 @@ import 'package:paw_around/bloc/home/home_event.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
 import 'package:paw_around/bloc/community/community_event.dart';
 import 'package:paw_around/bloc/community/community_state.dart';
+import 'package:paw_around/constants/api_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -51,18 +52,36 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load community posts for lost pets section
-    context.read<CommunityBloc>().add(LoadPosts());
-    // Load user location for distance calculation
-    _loadUserLocation();
+    // Load user location first, then load community posts with location
+    _loadUserLocationAndPosts();
   }
 
-  Future<void> _loadUserLocation() async {
+  Future<void> _loadUserLocationAndPosts() async {
     final result = await _locationService.getCurrentLocation();
-    if (result.isSuccess && result.position != null && mounted) {
+    if (mounted) {
       setState(() {
-        _userPosition = result.position;
+        if (result.isSuccess && result.position != null) {
+          _userPosition = result.position;
+        } else {
+          _userPosition = null;
+        }
       });
+      // Load community posts with location if available
+      _loadCommunityPosts();
+    }
+  }
+
+  void _loadCommunityPosts() {
+    if (_userPosition != null) {
+      context.read<CommunityBloc>().add(
+            LoadPosts(
+              userLocation: _userPosition,
+              radiusMeters: ApiConstants.defaultCommunityRadius,
+            ),
+          );
+    } else {
+      // Fallback to all posts if location unavailable
+      context.read<CommunityBloc>().add(const LoadPosts());
     }
   }
 
@@ -79,9 +98,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _onRefresh() async {
     context.read<PetListBloc>().add(const LoadPetList());
-    context.read<CommunityBloc>().add(LoadPosts());
-    // Refresh user location as well
-    _loadUserLocation();
+    // Refresh user location and then load community posts
+    await _loadUserLocationAndPosts();
     // Wait for the bloc to complete loading
     await Future.delayed(const Duration(milliseconds: 500));
   }
