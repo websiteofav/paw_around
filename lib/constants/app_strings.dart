@@ -210,7 +210,9 @@ class AppStrings {
   static const String found = 'Found';
   static const String reportLostPet = 'Report Lost Pet';
   static const String reportFoundPet = 'Report Found Pet';
-  static const String createPost = 'Create Post';
+  static const String createLostFoundPost = 'Create Lost/Found Post';
+  static const String postLostPet = 'Post Lost Pet';
+  static const String postFoundPet = 'Post Found Pet';
   static const String petDescription = 'Pet Description';
   static const String color = 'Color';
   static const String location = 'Location';
@@ -222,12 +224,15 @@ class AppStrings {
   static const String enterContactPhone = 'Enter contact phone number';
   static const String postCreatedSuccessfully = 'Post created successfully!';
   static const String noPostsYet = 'No posts near you';
-  static const String beTheFirstToPost =
-      'Be the first to help a lost pet find its way home!';
   static const String helpReunitePets =
       'Help reunite lost pets with their families';
   static const String alertNearbyParents =
       'Alert pet parents in your neighborhood';
+  static const String locationRequiredForNearbyPosts =
+      'Location permission required to see nearby posts';
+  static const String enableLocationToSeeNearbyPosts =
+      'Enable location to see lost and found posts near you';
+  static const String noPostsInYourArea = 'No posts found in your area';
   static const String markAsResolved = 'Mark as Resolved';
   static const String reopenPost = 'Reopen Post';
   static const String postReopenedSuccessfully = 'Post reopened successfully';
@@ -533,8 +538,20 @@ class AppStrings {
       'You can email us at support@pawaround.app. We typically respond within 24-48 hours.';
   static const String oneTimeVaccine = 'One-time vaccine';
 
-  static const String mostPetsNeedMonthlyPrevention = 'Most pets need monthly prevention';
-  static const String chooseHowOftenYouGroomYourPet = 'Choose how often you groom your pet';
+  static const String mostPetsNeedMonthlyPrevention =
+      'Most pets need monthly prevention';
+  static const String chooseHowOftenYouGroomYourPet =
+      'Choose how often you groom your pet';
 
+  static const String lostPetsAreOftenFoundWithinTheFirst2448Hours =
+      'Lost pets are often found within the first 24–48 hours';
+  static const String shareDetailsToHelpIdentifyPet =
+      'The more details you share, the easier it is to identify your pet.';
+  static const String lastSeenLocation = 'Last seen location';
+  static const String yourContactWillOnlyBeVisibleToPeopleViewingThisPost =
+      'Your contact will only be visible to people viewing this post.';
+  static const String anonymous = 'Anonymous';
+  static const String details = 'Details';
+  static const String yourPost = 'Your post';
   AppStrings._();
 }

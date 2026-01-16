@@ -18,6 +18,7 @@ import 'package:paw_around/repositories/community_repository.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/utils/date_utils.dart';
 import 'package:paw_around/utils/url_utils.dart';
+import 'package:paw_around/utils/utils.dart';
 
 class PostDetailScreen extends StatefulWidget {
   final String postId;
@@ -99,7 +100,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
               const SizedBox(height: 8),
               Text(
                 AppStrings.deletePostConfirmation,
-                style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                style: AppTextStyles.regularStyle400(
+                    fontSize: 14, fontColor: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -110,7 +112,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       text: AppStrings.cancel,
                       variant: ButtonVariant.secondary,
                       size: ButtonSize.small,
-                      onPressed: _isDeleting ? null : () => Navigator.of(dialogContext).pop(),
+                      onPressed: _isDeleting
+                          ? null
+                          : () => Navigator.of(dialogContext).pop(),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -125,7 +129,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           : () async {
                               setDialogState(() => _isDeleting = true);
                               setState(() => _isDeleting = true);
-                              context.read<CommunityBloc>().add(DeletePost(widget.postId));
+                              context
+                                  .read<CommunityBloc>()
+                                  .add(DeletePost(widget.postId));
                             },
                     ),
                   ),
@@ -154,13 +160,17 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         } else if (state is PostResolved) {
           HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Post marked as resolved'), backgroundColor: AppColors.success),
+            const SnackBar(
+                content: Text('Post marked as resolved'),
+                backgroundColor: AppColors.success),
           );
           context.pop();
         } else if (state is PostUnresolved) {
           HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text(AppStrings.postReopenedSuccessfully), backgroundColor: AppColors.success),
+            const SnackBar(
+                content: Text(AppStrings.postReopenedSuccessfully),
+                backgroundColor: AppColors.success),
           );
           context.pop();
         } else if (state is CommunityError) {
@@ -173,7 +183,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       child: Scaffold(
         backgroundColor: AppColors.background,
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+            ? const Center(
+                child: CircularProgressIndicator(color: AppColors.primary))
             : _post == null
                 ? const Center(child: Text('Post not found'))
                 : SafeArea(
@@ -184,7 +195,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                       ],
                     ),
                   ),
-        bottomNavigationBar: _post != null && !_isOwner ? _buildBottomBar() : null,
+        bottomNavigationBar:
+            _post != null && !_isOwner ? _buildBottomBar() : null,
       ),
     );
   }
@@ -283,7 +295,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (isLost ? AppColors.error : AppColors.success).withValues(alpha: 0.3),
+            color: (isLost ? AppColors.error : AppColors.success)
+                .withValues(alpha: 0.3),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -314,11 +327,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Pet name and basic info
-          Text(_post?.petName ?? '', style: AppTextStyles.boldStyle700(fontSize: 24)),
+          Text(_post?.petName ?? '',
+              style: AppTextStyles.boldStyle700(fontSize: 24)),
           const SizedBox(height: 6),
           Text(
             '${_post?.breed ?? ''} • ${_post?.color ?? ''}',
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textSecondary),
           ),
           const SizedBox(height: 16),
 
@@ -332,7 +347,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ],
 
           // Details Card
-          _buildSectionHeader('DETAILS', icon: Icons.info_outline),
+          _buildSectionHeader(AppStrings.details, icon: Icons.info_outline),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -342,7 +357,13 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             ),
             child: Column(
               children: [
-                _buildInfoRow(Icons.person_outline, AppStrings.postedBy, _post?.userName ?? ''),
+                _buildInfoRow(
+                    Icons.person_outline,
+                    AppStrings.postedBy,
+                    _isOwner
+                        ? AppStrings.yourPost
+                        : _post?.userName.orDefault(AppStrings.anonymous) ??
+                            ''),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(height: 1, color: AppColors.border),
@@ -356,19 +377,21 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(height: 1, color: AppColors.border),
                 ),
-                _buildInfoRow(Icons.phone_outlined, AppStrings.contactPhone, _post!.contactPhone),
+                _buildInfoRow(Icons.phone_outlined, AppStrings.contactPhone,
+                    _post!.contactPhone),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12),
                   child: Divider(height: 1, color: AppColors.border),
                 ),
-                _buildInfoRow(Icons.access_time, AppStrings.posted, AppDateUtils.getRelativeTime(_post!.createdAt)),
+                _buildInfoRow(Icons.access_time, AppStrings.posted,
+                    AppDateUtils.getRelativeTime(_post!.createdAt)),
               ],
             ),
           ),
           const SizedBox(height: 20),
 
           // Location Section
-          _buildSectionHeader('LOCATION', icon: Icons.map_outlined),
+          _buildSectionHeader(AppStrings.location, icon: Icons.map_outlined),
           _buildMap(),
           const SizedBox(height: 24),
 
@@ -453,7 +476,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             children: [
               Text(
                 label,
-                style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+                style: AppTextStyles.regularStyle400(
+                    fontSize: 12, fontColor: AppColors.textSecondary),
               ),
               const SizedBox(height: 2),
               Text(
@@ -512,7 +536,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.white,
-        boxShadow: [BoxShadow(color: AppColors.shadowOverlay.withValues(alpha: 0.1), blurRadius: 8, offset: const Offset(0, -2))],
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.shadowOverlay.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, -2))
+        ],
       ),
       child: SafeArea(
         child: Row(
@@ -530,7 +559,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
             Expanded(
               child: CommonButton(
                 text: AppStrings.getDirections,
-                onPressed: () => UrlUtils.openDirections(latitude: _post!.latitude, longitude: _post!.longitude),
+                onPressed: () => UrlUtils.openDirections(
+                    latitude: _post!.latitude, longitude: _post!.longitude),
                 variant: ButtonVariant.primary,
                 icon: Icons.directions,
                 size: ButtonSize.small,

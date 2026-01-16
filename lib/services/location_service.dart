@@ -45,7 +45,8 @@ class LocationService {
     if (!serviceEnabled) {
       return const LocationResult(
         status: LocationStatus.serviceDisabled,
-        errorMessage: 'Location services are disabled. Please enable them in settings.',
+        errorMessage:
+            'Location services are disabled. Please enable them in settings.',
       );
     }
 
@@ -57,7 +58,8 @@ class LocationService {
       if (permission == LocationPermission.denied) {
         return const LocationResult(
           status: LocationStatus.permissionDenied,
-          errorMessage: 'Location permission denied. Please grant permission to use this feature.',
+          errorMessage:
+              'Location permission denied. Please grant permission to use this feature.',
         );
       }
     }
@@ -65,7 +67,8 @@ class LocationService {
     if (permission == LocationPermission.deniedForever) {
       return const LocationResult(
         status: LocationStatus.permissionDeniedForever,
-        errorMessage: 'Location permission permanently denied. Please enable in app settings.',
+        errorMessage:
+            'Location permission permanently denied. Please enable in app settings.',
       );
     }
 

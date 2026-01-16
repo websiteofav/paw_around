@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 
 abstract class CommunityEvent extends Equatable {
@@ -8,7 +9,14 @@ abstract class CommunityEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class LoadPosts extends CommunityEvent {}
+class LoadPosts extends CommunityEvent {
+  final Position? userLocation;
+  final int? radiusMeters;
+  const LoadPosts({this.userLocation, this.radiusMeters});
+
+  @override
+  List<Object?> get props => [userLocation, radiusMeters];
+}
 
 class CreatePost extends CommunityEvent {
   final LostFoundPost post;
