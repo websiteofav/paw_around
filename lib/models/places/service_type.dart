@@ -46,9 +46,9 @@ extension ServiceTypeExtension on ServiceType {
       case ServiceType.vet:
         return AppColors.vetServiceBg;
       case ServiceType.groomer:
-        return AppColors.groomingServiceBg;
+        return AppColors.primary;
       case ServiceType.petStore:
-        return AppColors.petStoreBg;
+        return AppColors.primary;
     }
   }
 

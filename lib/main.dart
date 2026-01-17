@@ -34,8 +34,7 @@ void main() async {
 
   // Initialize Firebase App Check for Play Integrity
   await FirebaseAppCheck.instance.activate(
-    androidProvider:
-        kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+    androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
     appleProvider: AppleProvider.deviceCheck,
   );
 
@@ -54,8 +53,7 @@ void main() async {
 
   // Determine if onboarding has already been completed
   final prefs = await SharedPreferences.getInstance();
-  final hasCompletedOnboarding =
-      prefs.getBool(PreferencesConstants.hasCompletedOnboarding) ?? false;
+  final hasCompletedOnboarding = prefs.getBool(PreferencesConstants.hasCompletedOnboarding) ?? false;
 
   // Configure router with correct initial route (onboarding vs auth)
   AppRouter.init(hasCompletedOnboarding: hasCompletedOnboarding);

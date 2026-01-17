@@ -26,7 +26,7 @@ class PlacesLoaded extends PlacesState {
     required this.userLatitude,
     required this.userLongitude,
     this.selectedPlaceId,
-    this.isMapView = true,
+    this.isMapView = false,
     this.selectedServiceType = ServiceType.all,
   });
 

@@ -87,16 +87,16 @@ class _MapScreenState extends State<MapScreen> {
               final isMapView = state is PlacesLoaded && state.isMapView;
               return DashboardAppBar(
                 title: AppStrings.petServices,
-                actions: [
-                  if (state is PlacesLoaded)
-                    DashboardAppBarAction(
-                      // Show opposite icon: map icon when in list view, list icon when in map view
-                      icon: isMapView ? Icons.view_list_rounded : Icons.map_rounded,
-                      onTap: () {
-                        context.read<PlacesBloc>().add(const ToggleMapView());
-                      },
-                    ),
-                ],
+                // actions: [
+                //   if (state is PlacesLoaded)
+                //     DashboardAppBarAction(
+                //       // Show opposite icon: map icon when in list view, list icon when in map view
+                //       icon: isMapView ? Icons.view_list_rounded : Icons.map_rounded,
+                //       onTap: () {
+                //         context.read<PlacesBloc>().add(const ToggleMapView());
+                //       },
+                //     ),
+                // ],
               );
             },
           ),

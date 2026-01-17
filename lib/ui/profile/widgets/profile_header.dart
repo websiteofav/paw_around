@@ -42,37 +42,25 @@ class ProfileHeader extends StatelessWidget {
             width: 72,
             height: 72,
             decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  AppColors.groomingGradientStart,
-                  AppColors.groomingGradientEnd,
-                ],
-              ),
+              // gradient: const LinearGradient(
+              //   begin: Alignment.topLeft,
+              //   end: Alignment.bottomRight,
+              //   colors: [
+              //     AppColors.groomingGradientStart,
+              //     AppColors.groomingGradientEnd,
+              //   ],
+              // ),
+
+              color: AppColors.primary,
               borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.groomingGradientStart.withValues(alpha: 0.3),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(18),
-              child: photoUrl != null
-                  ? Image.network(
-                      photoUrl,
-                      width: 72,
-                      height: 72,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return _buildPawIcon();
-                      },
-                    )
-                  : _buildPawIcon(),
-            ),
+                borderRadius: BorderRadius.circular(18),
+                child: const Icon(
+                  Icons.person,
+                  color: AppColors.profileHeaderBg,
+                  size: 40,
+                )),
           ),
           const SizedBox(width: 16),
 

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary Colors (Green theme)
-  static const Color primary = Color(0xFF5CBF7A);
+  static const Color primary = Color(0xFF00C8A6);
   static const Color primaryLight = Color(0xFF8DD4A0);
   static const Color primaryDark = Color(0xFF3E8F5A);
 
@@ -83,20 +83,17 @@ class AppColors {
   static const Color urgentBadgeText = Color(0xFF7F1D1D);
 
   // Gradient Colors - Grooming (Emerald - lighter shades)
-  static const Color groomingGradientStart =
-      Color(0xFF34D399); // Lighter emerald-400
-  static const Color groomingGradientEnd = Color(0xFF10B981); // Emerald-500
+  static const Color groomingGradientStart = Color(0xFF34D399); // Lighter emerald-400
+  static const Color groomingGradientEnd = Color(0xFF00C8A6); // Emerald-500
   static const Color groomingBadge = Color(0xFFD1FAE5); // Lighter emerald-100
-  static const Color groomingBadgeText =
-      Color(0xFF065F46); // Lighter emerald-800
+  static const Color groomingBadgeText = Color(0xFF065F46); // Lighter emerald-800
 
   // Gradient Colors - Care Summary (Purple/Pink)
   static const Color summaryGradientStart = Color(0xFFF3E8FF);
   static const Color summaryGradientEnd = Color(0xFFFCE7F3);
 
   // Gradient Colors - Tick & Flea (Blue - lighter shades)
-  static const Color tickFleaGradientStart =
-      Color(0xFF60A5FA); // Lighter blue-400
+  static const Color tickFleaGradientStart = Color(0xFF60A5FA); // Lighter blue-400
   static const Color tickFleaGradientEnd = Color(0xFF3B82F6); // Blue-500
   static const Color tickFleaBadge = Color(0xFFDBEAFE); // Lighter blue-100
   static const Color tickFleaBadgeText = Color(0xFF2563EB); // Lighter blue-600
@@ -125,6 +122,8 @@ class AppColors {
 
   // Map
   static const Color mapBackground = Color(0xFFF5F5F5);
+
+  static const Color profileHeaderBg = Color(0XFFE8F6E9);
 
   // Private constructor to prevent instantiation
   AppColors._();

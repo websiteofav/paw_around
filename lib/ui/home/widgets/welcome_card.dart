@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:paw_around/constants/app_colors.dart';
@@ -28,8 +29,7 @@ class _WelcomeCardState extends State<WelcomeCard> {
   }
 
   Future<void> _loadAnimation() async {
-    final path =
-        await AnimationService.getLottieFile(AppIcons.addPetAnimationFileName);
+    final path = await AnimationService.getLottieFile(AppIcons.addPetAnimationFileName);
     if (mounted) {
       setState(() {
         _lottiePath = path;
@@ -63,14 +63,7 @@ class _WelcomeCardState extends State<WelcomeCard> {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Lottie Animation from Firebase Storage with fallback
-          SizedBox(
-            height: 144,
-            child: _loading
-                ? _buildLoadingState()
-                : _lottiePath != null
-                    ? _buildLottieAnimation()
-                    : _buildIconFallback(),
-          ),
+          SizedBox(height: 144, child: SvgPicture.asset(AppIcons.addPetIcon)),
           const SizedBox(height: 20),
 
           // Title
