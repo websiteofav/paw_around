@@ -166,16 +166,13 @@ class _DashboardState extends State<Dashboard> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              isSelected ? activeIcon : icon,
-              color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive,
-              size: 24,
-            ),
+            Icon(isSelected ? activeIcon : icon,
+                color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive, size: 24, weight: 12),
             const SizedBox(height: 4),
             Text(
               label,
               style: isSelected
-                  ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.navigationActive)
+                  ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.primary)
                   : AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.navigationInactive),
             ),
           ],

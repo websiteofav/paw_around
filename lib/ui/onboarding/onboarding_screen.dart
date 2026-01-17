@@ -89,22 +89,20 @@ class _OnboardingViewState extends State<OnboardingView> {
                     child: PageView(
                       controller: _pageController,
                       onPageChanged: (index) {
-                        context
-                            .read<OnboardingBloc>()
-                            .add(OnboardingPageChanged(index));
+                        context.read<OnboardingBloc>().add(OnboardingPageChanged(index));
                       },
                       children: [
                         // Page 1: Tracking (FIRST)
                         _buildPage(
                           title: AppStrings.onboarding1Title,
                           description: AppStrings.onboarding1Description,
-                          image: SvgPicture.asset(AppIcons.introIcon2),
+                          image: SvgPicture.asset(AppIcons.introIcon1),
                         ),
                         // Page 2: Nearby services
                         _buildPage(
                           title: AppStrings.onboarding2Title,
                           description: AppStrings.onboarding2Description,
-                          image: SvgPicture.asset(AppIcons.introIcon1),
+                          image: SvgPicture.asset(AppIcons.introIcon2),
                         ),
                         // Page 3: Community & safety (LAST)
                         _buildPage(
@@ -163,9 +161,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                             height: 52,
                             child: ElevatedButton(
                               onPressed: () {
-                                context
-                                    .read<OnboardingBloc>()
-                                    .add(OnboardingNextPage());
+                                context.read<OnboardingBloc>().add(OnboardingNextPage());
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.onboardingButton,
@@ -193,9 +189,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                                     duration: const Duration(milliseconds: 300),
                                     curve: Curves.easeInOut,
                                   );
-                                  context
-                                      .read<OnboardingBloc>()
-                                      .add(OnboardingNextPage());
+                                  context.read<OnboardingBloc>().add(OnboardingNextPage());
                                 },
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -236,7 +230,7 @@ class _OnboardingViewState extends State<OnboardingView> {
     return LayoutBuilder(
       builder: (context, constraints) {
         // Calculate max illustration height (45% of available height)
-        final maxIllustrationHeight = constraints.maxHeight * 0.55;
+        final maxIllustrationHeight = constraints.maxHeight * 0.4;
 
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),

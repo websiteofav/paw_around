@@ -56,16 +56,15 @@ class AppRouter {
   /// This MUST be called before [AppRouter.router] is accessed.
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
-      initialLocation:
-          !hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+      initialLocation: hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],
       redirect: (context, state) {
         final authRepository = sl<AuthRepository>();
         final isLoggedIn = authRepository.isLoggedIn;
-        final isAuthRoute = state.matchedLocation == AppRoutes.phoneLogin ||
-            state.matchedLocation == AppRoutes.otpVerification;
+        final isAuthRoute =
+            state.matchedLocation == AppRoutes.phoneLogin || state.matchedLocation == AppRoutes.otpVerification;
         final isPublicRoute = state.matchedLocation == AppRoutes.splash ||
             state.matchedLocation == AppRoutes.intro ||
             state.matchedLocation == AppRoutes.onboarding;

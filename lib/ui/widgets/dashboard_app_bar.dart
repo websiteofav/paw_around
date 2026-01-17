@@ -109,14 +109,12 @@ class DashboardAppBar extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: AppTextStyles.boldStyle700(
-                            fontSize: 20, fontColor: AppColors.textPrimary),
+                        style: AppTextStyles.boldStyle700(fontSize: 20, fontColor: AppColors.textPrimary),
                       ),
                       if (subtitle != null)
                         Text(
                           subtitle!,
-                          style: AppTextStyles.regularStyle400(
-                              fontSize: 14, fontColor: AppColors.textSecondary),
+                          style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
                         ),
                     ],
                   ),
@@ -223,10 +221,10 @@ class DashboardAppBar extends StatelessWidget {
 
   Widget _buildPawIcon() {
     return Center(
-      child: SvgPicture.asset(
-        AppIcons.pawPrintIcon,
-        width: 22,
-        height: 22,
+      child: Image.asset(
+        AppIcons.appIcon,
+        width: 40,
+        height: 40,
       ),
     );
   }
@@ -258,20 +256,15 @@ class DashboardAppBar extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: action.isActive
-              ? AppColors.primary.withValues(alpha: 0.1)
-              : AppColors.progressBarBg,
+          color: action.isActive ? AppColors.primary.withValues(alpha: 0.1) : AppColors.progressBarBg,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Stack(
           alignment: Alignment.center,
           children: [
             Icon(
-              action.isActive
-                  ? (action.activeIcon ?? action.icon)
-                  : action.icon,
-              color:
-                  action.isActive ? AppColors.primary : AppColors.textSecondary,
+              action.isActive ? (action.activeIcon ?? action.icon) : action.icon,
+              color: action.isActive ? AppColors.primary : AppColors.textSecondary,
               size: 22,
             ),
             if (action.badgeCount != null && action.badgeCount! > 0)
@@ -329,8 +322,7 @@ class DashboardAppBar extends StatelessWidget {
       ),
       child: Text(
         count > 99 ? '99+' : count.toString(),
-        style: AppTextStyles.boldStyle700(
-            fontSize: 10, fontColor: AppColors.white),
+        style: AppTextStyles.boldStyle700(fontSize: 10, fontColor: AppColors.white),
         textAlign: TextAlign.center,
       ),
     );
