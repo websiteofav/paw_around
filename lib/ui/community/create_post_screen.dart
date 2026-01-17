@@ -76,8 +76,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 },
               ),
               ListTile(
-                leading:
-                    const Icon(Icons.photo_library, color: AppColors.primary),
+                leading: const Icon(Icons.photo_library, color: AppColors.primary),
                 title: const Text('Choose from gallery'),
                 onTap: () {
                   Navigator.pop(sheetContext);
@@ -87,12 +86,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               if (hasImage) ...[
                 const Divider(),
                 ListTile(
-                  leading:
-                      const Icon(Icons.delete_outline, color: AppColors.error),
+                  leading: const Icon(Icons.delete_outline, color: AppColors.error),
                   title: Text(
                     'Remove photo',
-                    style: AppTextStyles.regularStyle400(
-                        fontColor: AppColors.error),
+                    style: AppTextStyles.regularStyle400(fontColor: AppColors.error),
                   ),
                   onTap: () {
                     Navigator.pop(sheetContext);
@@ -144,8 +141,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       if (imageUrl == null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Failed to upload image. Please try again.')),
+          const SnackBar(content: Text('Failed to upload image. Please try again.')),
         );
         setState(() => _isSubmitting = false);
         return;
@@ -182,16 +178,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           setState(() => _isSubmitting = false);
           HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(AppStrings.postCreatedSuccessfully),
-                backgroundColor: AppColors.success),
+            const SnackBar(content: Text(AppStrings.postCreatedSuccessfully), backgroundColor: AppColors.success),
           );
           context.pop();
         } else if (state is CommunityError) {
           setState(() => _isSubmitting = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(state.message), backgroundColor: AppColors.error),
+            SnackBar(content: Text(state.message), backgroundColor: AppColors.error),
           );
         }
       },
@@ -200,8 +193,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         appBar: AppBar(
           title: Text(
             AppStrings.createLostFoundPost,
-            style:
-                AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
+            style: AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
           ),
           backgroundColor: AppColors.navigationBackground,
           elevation: 0,
@@ -259,8 +251,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   controller: _petNameController,
                   hintText: AppStrings.petName,
                   labelText: AppStrings.petName,
-                  validator: (value) =>
-                      Validators.required(value, AppStrings.petName),
+                  validator: (value) => Validators.required(value, AppStrings.petName),
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -270,8 +261,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         controller: _breedController,
                         hintText: AppStrings.breed,
                         labelText: AppStrings.breed,
-                        validator: (value) =>
-                            Validators.required(value, AppStrings.breed),
+                        validator: (value) => Validators.required(value, AppStrings.breed),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -280,8 +270,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         controller: _colorController,
                         hintText: AppStrings.color,
                         labelText: AppStrings.color,
-                        validator: (value) =>
-                            Validators.required(value, AppStrings.color),
+                        validator: (value) => Validators.required(value, AppStrings.color),
                       ),
                     ),
                   ],
@@ -292,14 +281,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                   hintText: AppStrings.describeThePet,
                   labelText: AppStrings.petDescription,
                   maxLines: 3,
-                  validator: (value) =>
-                      Validators.required(value, AppStrings.petDescription),
+                  validator: (value) => Validators.required(value, AppStrings.petDescription),
                 ),
                 const SizedBox(height: 24),
 
                 // Location Section
-                _buildSectionHeader(AppStrings.lastSeenLocation,
-                    icon: Icons.location_on_outlined),
+                _buildSectionHeader(AppStrings.lastSeenLocation, icon: Icons.location_on_outlined),
                 _buildLocationField(),
                 const SizedBox(height: 24),
 
@@ -314,8 +301,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  AppStrings
-                      .yourContactWillOnlyBeVisibleToPeopleViewingThisPost,
+                  AppStrings.yourContactWillOnlyBeVisibleToPeopleViewingThisPost,
                   style: AppTextStyles.regularStyle400(
                     fontSize: 12,
                     fontColor: AppColors.textSecondary,
@@ -347,20 +333,17 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: Row(
         children: [
           Expanded(
-            child: _buildTypeButton(
-                PostType.lost, AppStrings.lost, Icons.search, AppColors.error),
+            child: _buildTypeButton(PostType.lost, AppStrings.lost, Icons.search, AppColors.error),
           ),
           Expanded(
-            child: _buildTypeButton(PostType.found, AppStrings.found,
-                Icons.favorite, AppColors.success),
+            child: _buildTypeButton(PostType.found, AppStrings.found, Icons.favorite, AppColors.success),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildTypeButton(
-      PostType type, String label, IconData icon, Color color) {
+  Widget _buildTypeButton(PostType type, String label, IconData icon, Color color) {
     final isSelected = _postType == type;
     return GestureDetector(
       onTap: () => setState(() => _postType = type),
@@ -371,12 +354,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           color: isSelected ? color : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                      color: color.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2))
-                ]
+              ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))]
               : null,
         ),
         child: Row(
@@ -447,8 +425,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.white, width: 2),
                     ),
-                    child: const Icon(Icons.camera_alt,
-                        size: 18, color: Colors.white),
+                    child: const Icon(Icons.camera_alt, size: 18, color: Colors.white),
                   ),
                 ),
               ],
@@ -515,19 +492,16 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border:
-                  Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+              border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.check_circle,
-                    size: 16, color: AppColors.success),
+                const Icon(Icons.check_circle, size: 16, color: AppColors.success),
                 const SizedBox(width: 6),
                 Text(
                   'Location set',
-                  style: AppTextStyles.semiBoldStyle600(
-                      fontSize: 12, fontColor: AppColors.success),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.success),
                 ),
               ],
             ),
@@ -542,9 +516,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       builder: (context, state) {
         final isLoading = _isSubmitting || state is PostCreating;
         return CommonButton(
-          text: _postType == PostType.lost
-              ? AppStrings.postLostPet
-              : AppStrings.postFoundPet,
+          text: _postType == PostType.lost ? AppStrings.postLostPet : AppStrings.postFoundPet,
           onPressed: isLoading ? null : _submitPost,
           isLoading: isLoading,
           variant: ButtonVariant.primary,

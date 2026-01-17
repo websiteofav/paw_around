@@ -66,18 +66,24 @@ class _DashboardState extends State<Dashboard> {
           final mapFilter = state is HomeTabSelected ? state.mapServiceFilter : null;
 
           return Scaffold(
-            backgroundColor: AppColors.background,
-            body: _getTabContent(currentIndex, mapFilter: mapFilter),
-            bottomNavigationBar: Container(
+            backgroundColor: AppColors.white,
+            body: Padding(
+              padding: const EdgeInsets.only(bottom: 80),
+              child: _getTabContent(currentIndex, mapFilter: mapFilter),
+            ),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                color: AppColors.navigationBackground,
+                color: Colors.white,
                 border: const Border(
                   top: BorderSide(color: AppColors.border, width: 1),
                 ),
+                borderRadius: BorderRadius.circular(24),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.shadowOverlay.withValues(alpha: 0.04),
-                    offset: const Offset(0, -2),
+                    color: AppColors.primary.withValues(alpha: 0.3),
+                    offset: const Offset(0, 1),
                     blurRadius: 8,
                   ),
                 ],
@@ -85,7 +91,7 @@ class _DashboardState extends State<Dashboard> {
               child: SafeArea(
                 child: Container(
                   height: 80,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -101,7 +107,7 @@ class _DashboardState extends State<Dashboard> {
                         context: context,
                         icon: Icons.location_on_outlined,
                         activeIcon: Icons.location_on,
-                        label: AppStrings.mapTab,
+                        label: AppStrings.explore,
                         index: 1,
                         isSelected: currentIndex == 1,
                       ),
@@ -109,7 +115,7 @@ class _DashboardState extends State<Dashboard> {
                         context: context,
                         icon: Icons.people_outline,
                         activeIcon: Icons.people,
-                        label: AppStrings.communityTab,
+                        label: AppStrings.pawCircle,
                         index: 2,
                         isSelected: currentIndex == 2,
                       ),
