@@ -45,8 +45,8 @@ class SecondaryActionCard extends StatelessWidget {
           children: [
             // Icon in circular background
             Container(
-              width: 48,
-              height: 48,
+              width: 36,
+              height: 36,
               decoration: BoxDecoration(
                 color: iconBackgroundColor,
                 borderRadius: BorderRadius.circular(24),
@@ -67,14 +67,12 @@ class SecondaryActionCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: AppTextStyles.semiBoldStyle600(
-                            fontSize: 16, fontColor: AppColors.textPrimary),
+                        style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
                       ),
                       if (showRecommended) ...[
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
@@ -93,8 +91,7 @@ class SecondaryActionCard extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: AppTextStyles.regularStyle400(
-                        fontSize: 14, fontColor: AppColors.textSecondary),
+                    style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
                   ),
                 ],
               ),
