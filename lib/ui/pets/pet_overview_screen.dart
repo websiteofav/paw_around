@@ -54,8 +54,7 @@ class PetOverviewScreen extends StatelessWidget {
         ),
         title: Text(
           pet.name,
-          style: AppTextStyles.semiBoldStyle600(
-              fontSize: 20, fontColor: AppColors.textPrimary),
+          style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
         ),
         centerTitle: true,
       ),
@@ -189,8 +188,7 @@ class PetOverviewScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 AppStrings.deletePetConfirmMessage,
-                style: AppTextStyles.regularStyle400(
-                    fontSize: 14, fontColor: AppColors.textSecondary),
+                style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -202,9 +200,7 @@ class PetOverviewScreen extends StatelessWidget {
                       text: AppStrings.cancel,
                       variant: ButtonVariant.secondary,
                       size: ButtonSize.small,
-                      onPressed: isDeleting
-                          ? null
-                          : () => Navigator.of(builderContext).pop(),
+                      onPressed: isDeleting ? null : () => Navigator.of(builderContext).pop(),
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -231,8 +227,7 @@ class PetOverviewScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _deletePet(
-      BuildContext context, PetModel pet, BuildContext dialogContext) async {
+  Future<void> _deletePet(BuildContext context, PetModel pet, BuildContext dialogContext) async {
     try {
       await sl<PetRepository>().deletePet(pet.id);
       if (context.mounted) {
@@ -293,33 +288,25 @@ class PetOverviewScreen extends StatelessWidget {
               height: 88,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primary.withValues(alpha: 0.8),
-                    AppColors.primaryLight,
-                  ],
-                ),
+                color: AppColors.profileHeaderBg,
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
+                    color: AppColors.primary.withValues(alpha: 0.1),
                     blurRadius: 12,
                     offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: Padding(
-                padding: const EdgeInsets.all(3),
+                padding: const EdgeInsets.all(2),
                 child: Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _getSpeciesColor(pet.species),
+                    color: AppColors.profileHeaderBg,
                     border: Border.all(color: AppColors.white, width: 2),
                   ),
                   child: ClipOval(
-                    child: pet.imagePath != null &&
-                            pet.imagePath!.startsWith('http')
+                    child: pet.imagePath != null && pet.imagePath!.startsWith('http')
                         ? Image.network(
                             pet.imagePath!,
                             width: 82,
@@ -344,25 +331,21 @@ class PetOverviewScreen extends StatelessWidget {
               children: [
                 Text(
                   pet.name,
-                  style: AppTextStyles.semiBoldStyle600(
-                      fontSize: 20, fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   _formatAge(pet.dateOfBirth),
-                  style: AppTextStyles.regularStyle400(
-                      fontSize: 14, fontColor: AppColors.textSecondary),
+                  style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
                 ),
                 if (hasCareDue) ...[
                   const SizedBox(height: 8),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppColors.warning.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: AppColors.warning.withValues(alpha: 0.3)),
+                      border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -375,8 +358,7 @@ class PetOverviewScreen extends StatelessWidget {
                         const SizedBox(width: 4),
                         Text(
                           AppStrings.someCareDue,
-                          style: AppTextStyles.semiBoldStyle600(
-                              fontSize: 12, fontColor: AppColors.warning),
+                          style: AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.warning),
                         ),
                       ],
                     ),
@@ -392,9 +374,8 @@ class PetOverviewScreen extends StatelessWidget {
 
   Widget _buildVaccinesSection(BuildContext context, PetModel pet) {
     final upcomingCount = pet.upcomingVaccinesCount;
-    final headerText = upcomingCount > 0
-        ? '${AppStrings.vaccines} ($upcomingCount ${AppStrings.comingUp})'
-        : AppStrings.vaccines;
+    final headerText =
+        upcomingCount > 0 ? '${AppStrings.vaccines} ($upcomingCount ${AppStrings.comingUp})' : AppStrings.vaccines;
 
     return Container(
       decoration: BoxDecoration(
@@ -425,8 +406,7 @@ class PetOverviewScreen extends StatelessWidget {
                 const SizedBox(width: 8),
                 Text(
                   headerText,
-                  style: AppTextStyles.semiBoldStyle600(
-                      fontSize: 16, fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
                 ),
               ],
             ),
@@ -438,8 +418,7 @@ class PetOverviewScreen extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
               child: Text(
                 AppStrings.noVaccinesAdded,
-                style: AppTextStyles.regularStyle400(
-                    fontSize: 14, fontColor: AppColors.textSecondary),
+                style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
               ),
             )
           else
@@ -451,12 +430,7 @@ class PetOverviewScreen extends StatelessWidget {
               return Column(
                 children: [
                   _buildVaccineRow(context, vaccine),
-                  if (!isLast)
-                    const Divider(
-                        height: 1,
-                        indent: 16,
-                        endIndent: 16,
-                        color: AppColors.border),
+                  if (!isLast) const Divider(height: 1, indent: 16, endIndent: 16, color: AppColors.border),
                 ],
               );
             }),
@@ -497,8 +471,7 @@ class PetOverviewScreen extends StatelessWidget {
             const SizedBox(width: 12),
             Text(
               AppStrings.addVaccine,
-              style: AppTextStyles.mediumStyle500(
-                  fontSize: 15, fontColor: AppColors.primary),
+              style: AppTextStyles.mediumStyle500(fontSize: 15, fontColor: AppColors.primary),
             ),
           ],
         ),
@@ -508,8 +481,7 @@ class PetOverviewScreen extends StatelessWidget {
 
   Widget _buildVaccineRow(BuildContext context, VaccineModel vaccine) {
     final bool hasNextDueDate = vaccine.nextDueDate != null;
-    final daysUntilDue =
-        vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
+    final daysUntilDue = vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
     final isOverdue = daysUntilDue < 0;
     final isDueSoon = daysUntilDue >= 0 && daysUntilDue <= 30;
     final isSnoozed = vaccine.isSnoozed;
@@ -552,14 +524,12 @@ class PetOverviewScreen extends StatelessWidget {
                     children: [
                       Text(
                         vaccine.vaccineName,
-                        style: AppTextStyles.mediumStyle500(
-                            fontSize: 15, fontColor: AppColors.textPrimary),
+                        style: AppTextStyles.mediumStyle500(fontSize: 15, fontColor: AppColors.textPrimary),
                       ),
                       if (isSnoozed) ...[
                         const SizedBox(width: 8),
                         Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: AppColors.warning.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(4),
@@ -567,13 +537,11 @@ class PetOverviewScreen extends StatelessWidget {
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(Icons.snooze,
-                                  size: 10, color: AppColors.warning),
+                              const Icon(Icons.snooze, size: 10, color: AppColors.warning),
                               const SizedBox(width: 2),
                               Text(
                                 AppStrings.snoozed,
-                                style: AppTextStyles.semiBoldStyle600(
-                                    fontSize: 10, fontColor: AppColors.warning),
+                                style: AppTextStyles.semiBoldStyle600(fontSize: 10, fontColor: AppColors.warning),
                               ),
                             ],
                           ),
@@ -587,17 +555,13 @@ class PetOverviewScreen extends StatelessWidget {
                       isSnoozed
                           ? AppStrings.tapToUnsnooze
                           : isOverdue
-                              ? AppStrings.overdueByDays.replaceAll(
-                                  '%s', daysUntilDue.abs().toString())
+                              ? AppStrings.overdueByDays.replaceAll('%s', daysUntilDue.abs().toString())
                               : daysUntilDue == 0
                                   ? AppStrings.dueToday
-                                  : AppStrings.dueInDays.replaceAll(
-                                      '%s', daysUntilDue.abs().toString()),
+                                  : AppStrings.dueInDays.replaceAll('%s', daysUntilDue.abs().toString()),
                       style: AppTextStyles.regularStyle400(
                         fontSize: 12,
-                        fontColor: isOverdue && !isSnoozed
-                            ? AppColors.error
-                            : AppColors.textSecondary,
+                        fontColor: isOverdue && !isSnoozed ? AppColors.error : AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -663,8 +627,7 @@ class PetOverviewScreen extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: AppTextStyles.semiBoldStyle600(
-                            fontSize: 14, fontColor: AppColors.textPrimary),
+                        style: AppTextStyles.semiBoldStyle600(fontSize: 14, fontColor: AppColors.textPrimary),
                       ),
                       if (status != null) ...[
                         const SizedBox(width: 8),
@@ -675,8 +638,7 @@ class PetOverviewScreen extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: AppTextStyles.regularStyle400(
-                        fontSize: 14, fontColor: AppColors.textSecondary),
+                    style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
                   ),
                 ],
               ),
@@ -766,8 +728,7 @@ class PetOverviewScreen extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             label,
-            style: AppTextStyles.semiBoldStyle600(
-                fontSize: 11, fontColor: textColor),
+            style: AppTextStyles.semiBoldStyle600(fontSize: 11, fontColor: textColor),
           ),
         ],
       ),
@@ -776,8 +737,7 @@ class PetOverviewScreen extends StatelessWidget {
 
   String _formatAge(DateTime dateOfBirth) {
     final now = DateTime.now();
-    final months =
-        (now.year - dateOfBirth.year) * 12 + (now.month - dateOfBirth.month);
+    final months = (now.year - dateOfBirth.year) * 12 + (now.month - dateOfBirth.month);
 
     if (months == 0) {
       final days = now.difference(dateOfBirth).inDays;

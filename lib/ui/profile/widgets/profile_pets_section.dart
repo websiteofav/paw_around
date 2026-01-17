@@ -289,7 +289,7 @@ class ProfilePetsSection extends StatelessWidget {
 
     return ScaleButton(
       onPressed: () {
-        if(Navigator.canPop(context)) {
+        if (Navigator.canPop(context)) {
           context.pop();
         }
         context.pushNamed(AppRoutes.petOverview, extra: pet);
@@ -306,14 +306,14 @@ class ProfilePetsSection extends StatelessWidget {
                 height: 60,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: speciesColor,
+                  color: AppColors.profileHeaderBg,
                   border: Border.all(
                     color: hasImage ? AppColors.white : Colors.transparent,
                     width: 2,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: _getSpeciesAccentColor(pet.species).withValues(alpha: 0.3),
+                      color: AppColors.primary.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 3),
                     ),
@@ -354,8 +354,15 @@ class ProfilePetsSection extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: speciesColor,
+                          color: AppColors.profileHeaderBg,
                           borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withValues(alpha: 0.06),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -363,14 +370,14 @@ class ProfilePetsSection extends StatelessWidget {
                             Icon(
                               _getSpeciesIcon(pet.species),
                               size: 12,
-                              color: _getSpeciesAccentColor(pet.species),
+                              color: AppColors.primary,
                             ),
                             const SizedBox(width: 4),
                             Text(
                               pet.species,
                               style: AppTextStyles.semiBoldStyle600(
                                 fontSize: 12,
-                                fontColor: _getSpeciesAccentColor(pet.species),
+                                fontColor: AppColors.primary,
                               ),
                             ),
                           ],
@@ -467,7 +474,7 @@ class ProfilePetsSection extends StatelessWidget {
       child: Icon(
         _getSpeciesIcon(species),
         size: 28,
-        color: _getSpeciesAccentColor(species),
+        color: AppColors.primary,
       ),
     );
   }

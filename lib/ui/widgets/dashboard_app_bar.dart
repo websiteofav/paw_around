@@ -140,14 +140,7 @@ class DashboardAppBar extends StatelessWidget {
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            AppColors.groomingGradientStart,
-            AppColors.groomingGradientEnd,
-          ],
-        ),
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(

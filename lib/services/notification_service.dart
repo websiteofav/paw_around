@@ -43,13 +43,11 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _plugin =
-      FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
 
   static const String _channelId = 'pet_care_reminders';
   static const String _channelName = 'Pet Care Reminders';
-  static const String _channelDescription =
-      'Reminders for vaccines, grooming, and tick/flea care';
+  static const String _channelDescription = 'Reminders for vaccines, grooming, and tick/flea care';
 
   bool _isInitialized = false;
 
@@ -59,8 +57,7 @@ class NotificationService {
 
     tz_data.initializeTimeZones();
 
-    const androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: false,
@@ -88,16 +85,14 @@ class NotificationService {
 
   /// Check if we have notification permission
   Future<bool> hasPermission() async {
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     if (android != null) {
       final granted = await android.areNotificationsEnabled();
       return granted ?? false;
     }
 
     // For iOS, check permission status
-    final ios = _plugin.resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>();
+    final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
     if (ios != null) {
       final granted = await ios.checkPermissions();
       return granted?.isEnabled ?? false;
@@ -109,16 +104,14 @@ class NotificationService {
   /// Request notification permission
   Future<bool> requestPermission() async {
     // Android 13+
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
     if (android != null) {
       final granted = await android.requestNotificationsPermission();
       return granted ?? false;
     }
 
     // iOS
-    final ios = _plugin.resolvePlatformSpecificImplementation<
-        IOSFlutterLocalNotificationsPlugin>();
+    final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
     if (ios != null) {
       final granted = await ios.requestPermissions(
         alert: true,
@@ -273,8 +266,7 @@ class NotificationService {
       baseId: baseId,
       petName: petName,
       careName: vaccine.vaccineName,
-      dueDate:
-          vaccine.nextDueDate ?? DateTime.now().add(const Duration(days: 365)),
+      dueDate: vaccine.nextDueDate ?? DateTime.now().add(const Duration(days: 365)),
     );
   }
 
