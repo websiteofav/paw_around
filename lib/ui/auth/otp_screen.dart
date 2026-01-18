@@ -84,6 +84,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
       if (mounted) {
         _isNavigating = true;
+        // Navigate to home - Dashboard will handle any pending deep links
         context.go(AppRoutes.home);
       }
     } on FirebaseAuthException catch (e) {
@@ -175,6 +176,7 @@ class _OTPScreenState extends State<OTPScreen> {
           );
           if (mounted) {
             _isNavigating = true;
+            // Navigate to home - Dashboard will handle any pending deep links
             context.go(AppRoutes.home);
           }
         } catch (e) {

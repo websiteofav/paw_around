@@ -50,4 +50,5 @@ class ApiConstants {
     'dog grooming',
     'cat grooming',
   ];
+  static const String pawAroundBaseUrl = 'https://pawaround.in';
 }

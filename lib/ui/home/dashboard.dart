@@ -11,6 +11,7 @@ import 'package:paw_around/bloc/home/home_state.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/models/places/service_type.dart';
+import 'package:paw_around/services/deep_link_service.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/community_screen.dart';
@@ -31,6 +32,14 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     // Load pets when dashboard is shown
     context.read<PetListBloc>().add(const LoadPetList());
+
+    // Set up deep link handling after dashboard is built
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Enable immediate deep link processing and provide context
+      DeepLinkService.instance.setAuthenticated(true, context);
+      // Process any pending deep link
+      DeepLinkService.instance.handlePendingUri();
+    });
   }
 
   Future<bool> _handleBackPress() async {
@@ -67,15 +76,12 @@ class _DashboardState extends State<Dashboard> {
 
           return Scaffold(
             backgroundColor: AppColors.white,
-            body: Padding(
-              padding: const EdgeInsets.only(bottom: 80),
-              child: _getTabContent(currentIndex, mapFilter: mapFilter),
-            ),
+            body: _getTabContent(currentIndex, mapFilter: mapFilter),
             floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
             floatingActionButton: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: AppColors.white,
                 border: const Border(
                   top: BorderSide(color: AppColors.border, width: 1),
                 ),

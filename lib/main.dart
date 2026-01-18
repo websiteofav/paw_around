@@ -16,6 +16,7 @@ import 'package:paw_around/core/observers/auth_bloc_observer.dart';
 import 'package:paw_around/firebase_options.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/core/di/service_locator.dart';
+import 'package:paw_around/services/deep_link_service.dart';
 import 'package:paw_around/services/notification_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paw_around/router/app_router.dart';
@@ -64,8 +65,19 @@ void main() async {
   runApp(const MainApp());
 }
 
-class MainApp extends StatelessWidget {
+class MainApp extends StatefulWidget {
   const MainApp({super.key});
+
+  @override
+  State<MainApp> createState() => _MainAppState();
+}
+
+class _MainAppState extends State<MainApp> {
+  @override
+  void initState() {
+    super.initState();
+    DeepLinkService.instance.init();
+  }
 
   @override
   Widget build(BuildContext context) {

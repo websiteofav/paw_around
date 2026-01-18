@@ -88,4 +88,5 @@ class AppConstants {
   static const double elevationMedium = 4.0;
   static const double elevationHigh = 8.0;
   static const double elevationXHigh = 12.0;
+  
 }

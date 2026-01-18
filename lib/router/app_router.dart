@@ -6,6 +6,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/constants/app_routes.dart';
+import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/constants/app_colors.dart';
@@ -63,11 +64,9 @@ class AppRouter {
       redirect: (context, state) {
         final authRepository = sl<AuthRepository>();
         final isLoggedIn = authRepository.isLoggedIn;
-        final isAuthRoute =
-            state.matchedLocation == AppRoutes.phoneLogin || state.matchedLocation == AppRoutes.otpVerification;
-        final isPublicRoute = state.matchedLocation == AppRoutes.splash ||
-            state.matchedLocation == AppRoutes.intro ||
-            state.matchedLocation == AppRoutes.onboarding;
+        final path = state.matchedLocation;
+        final isAuthRoute = path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
+        final isPublicRoute = path == AppRoutes.splash || path == AppRoutes.intro || path == AppRoutes.onboarding;
 
         // If user is logged in and trying to access auth routes, redirect to home
         if (isLoggedIn && isAuthRoute) {
@@ -301,8 +300,8 @@ class AppRouter {
               ),
               const SizedBox(height: 16),
               ElevatedButton(
-                onPressed: () => context.pushNamed(AppRoutes.home),
-                child: const Text('Go Home'),
+                onPressed: () => context.go(AppRoutes.home),
+                child: const Text(AppStrings.goToHome),
               ),
             ],
           ),
