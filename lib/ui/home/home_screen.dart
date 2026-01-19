@@ -242,7 +242,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+      padding: const EdgeInsets.fromLTRB(
+          16, 16, 16, 120), // Extra bottom padding for floating bar
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

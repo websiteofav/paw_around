@@ -109,12 +109,14 @@ class DashboardAppBar extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: AppTextStyles.boldStyle700(fontSize: 20, fontColor: AppColors.textPrimary),
+                        style: AppTextStyles.boldStyle700(
+                            fontSize: 20, fontColor: AppColors.textPrimary),
                       ),
                       if (subtitle != null)
                         Text(
                           subtitle!,
-                          style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                          style: AppTextStyles.regularStyle400(
+                              fontSize: 14, fontColor: AppColors.textSecondary),
                         ),
                     ],
                   ),
@@ -141,7 +143,7 @@ class DashboardAppBar extends StatelessWidget {
       height: 48,
       decoration: BoxDecoration(
         color: AppColors.primary,
-        borderRadius: BorderRadius.circular(14),
+        shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
             color: AppColors.groomingGradientStart.withValues(alpha: 0.3),
@@ -151,8 +153,7 @@ class DashboardAppBar extends StatelessWidget {
         ],
       ),
       child: avatarImageUrl != null && avatarImageUrl!.isNotEmpty
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(14),
+          ? ClipOval(
               child: Image.network(
                 avatarImageUrl!,
                 fit: BoxFit.cover,
@@ -213,11 +214,11 @@ class DashboardAppBar extends StatelessWidget {
   }
 
   Widget _buildPawIcon() {
-    return Center(
+    return ClipOval(
       child: Image.asset(
         AppIcons.appIcon,
-        width: 40,
-        height: 40,
+        width: 48,
+        height: 48,
       ),
     );
   }
@@ -249,15 +250,20 @@ class DashboardAppBar extends StatelessWidget {
         width: 44,
         height: 44,
         decoration: BoxDecoration(
-          color: action.isActive ? AppColors.primary.withValues(alpha: 0.1) : AppColors.progressBarBg,
+          color: action.isActive
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.progressBarBg,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Stack(
           alignment: Alignment.center,
           children: [
             Icon(
-              action.isActive ? (action.activeIcon ?? action.icon) : action.icon,
-              color: action.isActive ? AppColors.primary : AppColors.textSecondary,
+              action.isActive
+                  ? (action.activeIcon ?? action.icon)
+                  : action.icon,
+              color:
+                  action.isActive ? AppColors.primary : AppColors.textSecondary,
               size: 22,
             ),
             if (action.badgeCount != null && action.badgeCount! > 0)
@@ -315,7 +321,8 @@ class DashboardAppBar extends StatelessWidget {
       ),
       child: Text(
         count > 99 ? '99+' : count.toString(),
-        style: AppTextStyles.boldStyle700(fontSize: 10, fontColor: AppColors.white),
+        style: AppTextStyles.boldStyle700(
+            fontSize: 10, fontColor: AppColors.white),
         textAlign: TextAlign.center,
       ),
     );

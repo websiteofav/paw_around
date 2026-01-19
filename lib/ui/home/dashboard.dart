@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
-import 'package:paw_around/constants/text_styles.dart';
-import 'package:paw_around/bloc/home/home_bloc.dart';
-import 'package:paw_around/bloc/home/home_event.dart';
-import 'package:paw_around/bloc/home/home_state.dart';
-import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
-import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
-import 'package:paw_around/models/places/service_type.dart';
-import 'package:paw_around/services/deep_link_service.dart';
-import 'package:paw_around/ui/home/home_screen.dart';
-import 'package:paw_around/ui/home/map_screen.dart';
-import 'package:paw_around/ui/home/community_screen.dart';
-import 'package:paw_around/ui/profile/profile_screen.dart';
+import 'package:paw_around/ui/home/widgets/dashboard_bottom_bar.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+  final Widget child;
+  final String currentLocation;
+
+  const Dashboard({
+    super.key,
+    required this.child,
+    required this.currentLocation,
+  });
 
   @override
   State<Dashboard> createState() => _DashboardState();
@@ -27,27 +23,26 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   DateTime? _lastBackPressTime;
 
-  @override
-  void initState() {
-    super.initState();
-    // Load pets when dashboard is shown
-    context.read<PetListBloc>().add(const LoadPetList());
-
-    // Set up deep link handling after dashboard is built
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Enable immediate deep link processing and provide context
-      DeepLinkService.instance.setAuthenticated(true, context);
-      // Process any pending deep link
-      DeepLinkService.instance.handlePendingUri();
-    });
-  }
-
   Future<bool> _handleBackPress() async {
-    if (GoRouter.of(context).canPop()) {
+    final router = GoRouter.of(context);
+    final isHomeRoute = widget.currentLocation == AppRoutes.home;
+
+    // If we can pop, let GoRouter handle it normally
+    if (router.canPop()) {
       return false; // Don't handle - let GoRouter pop normally
     }
+
+    // If we can't pop and we're not at home (deep link opened directly),
+    // navigate to home instead of exiting
+    if (!isHomeRoute) {
+      router.go(AppRoutes.home);
+      return true; // Handled - navigated to home
+    }
+
+    // We're at home and can't pop - show exit confirmation
     final now = DateTime.now();
-    if (_lastBackPressTime == null || now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
+    if (_lastBackPressTime == null ||
+        now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
       _lastBackPressTime = now;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -56,7 +51,8 @@ class _DashboardState extends State<Dashboard> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppColors.textPrimary,
           margin: const EdgeInsets.all(16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
       return true; // Handled - don't pop
@@ -67,128 +63,19 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+    // Use location passed from ShellRoute builder (stable API)
+    final isHomeRoute = widget.currentLocation == AppRoutes.home;
+
     return BackButtonListener(
       onBackButtonPressed: _handleBackPress,
-      child: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          final currentIndex = state is HomeTabSelected ? state.currentTabIndex : 0;
-          final mapFilter = state is HomeTabSelected ? state.mapServiceFilter : null;
-
-          return Scaffold(
-            backgroundColor: AppColors.white,
-            body: _getTabContent(currentIndex, mapFilter: mapFilter),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                border: const Border(
-                  top: BorderSide(color: AppColors.border, width: 1),
-                ),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    offset: const Offset(0, 1),
-                    blurRadius: 8,
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                child: Container(
-                  height: 80,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildNavItem(
-                        context: context,
-                        icon: Icons.home_outlined,
-                        activeIcon: Icons.home,
-                        label: AppStrings.homeTab,
-                        index: 0,
-                        isSelected: currentIndex == 0,
-                      ),
-                      _buildNavItem(
-                        context: context,
-                        icon: Icons.location_on_outlined,
-                        activeIcon: Icons.location_on,
-                        label: AppStrings.explore,
-                        index: 1,
-                        isSelected: currentIndex == 1,
-                      ),
-                      _buildNavItem(
-                        context: context,
-                        icon: Icons.people_outline,
-                        activeIcon: Icons.people,
-                        label: AppStrings.pawCircle,
-                        index: 2,
-                        isSelected: currentIndex == 2,
-                      ),
-                      _buildNavItem(
-                        context: context,
-                        icon: Icons.person_outline,
-                        activeIcon: Icons.person,
-                        label: AppStrings.profileTab,
-                        index: 3,
-                        isSelected: currentIndex == 3,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _getTabContent(int currentIndex, {ServiceType? mapFilter}) {
-    switch (currentIndex) {
-      case 0:
-        return const HomeScreen();
-      case 1:
-        return MapScreen(initialFilter: mapFilter);
-      case 2:
-        return const CommunityScreen();
-      case 3:
-        return const ProfileScreen();
-      default:
-        return const HomeScreen();
-    }
-  }
-
-  Widget _buildNavItem({
-    required BuildContext context,
-    required IconData icon,
-    required IconData activeIcon,
-    required String label,
-    required int index,
-    required bool isSelected,
-  }) {
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          // Update BLoC state
-          context.read<HomeBloc>().add(HomeTabChanged(index));
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(isSelected ? activeIcon : icon,
-                color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive, size: 24, weight: 12),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: isSelected
-                  ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.primary)
-                  : AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.navigationInactive),
-            ),
-          ],
-        ),
+      child: Scaffold(
+        backgroundColor: AppColors.white,
+        extendBody: true, // Allow body to extend behind floating action button
+        body:
+            widget.child, // Content extends fully behind transparent bottom bar
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // Hide bottom nav when showing detail routes
+        floatingActionButton: isHomeRoute ? const DashboardBottomBar() : null,
       ),
     );
   }
