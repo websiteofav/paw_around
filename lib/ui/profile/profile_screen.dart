@@ -139,6 +139,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onRefresh: _onRefresh,
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.only(
+                      bottom:
+                          120, // Bottom bar (80) + margins (32) + extra space (8)
+                    ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -146,7 +150,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AnimatedCard(
                           index: 0,
                           child: ProfileHeader(
-                            onEditTap: () => context.pushNamed(AppRoutes.editProfile),
+                            onEditTap: () =>
+                                context.pushNamed(AppRoutes.editProfile),
                           ),
                         ),
                         AppSpacing.vertical20,
@@ -157,7 +162,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               if (state is PetListLoading) {
                                 return _buildPetsSectionSkeleton();
                               }
-                              final List<PetModel> pets = state is PetListLoaded ? state.pets : [];
+                              final List<PetModel> pets =
+                                  state is PetListLoaded ? state.pets : [];
                               return ProfilePetsSection(pets: pets);
                             },
                           ),
@@ -166,12 +172,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         AnimatedCard(
                           index: 2,
                           child: ProfileAccountSection(
-                            onMyPostsTap: () => context.pushNamed(AppRoutes.myPosts),
-                            onAccountSettingsTap: () => _showComingSoon(AppStrings.accountSettings),
-                            onNotificationsTap: () => _showComingSoon(AppStrings.notifications),
-                            onPrivacyTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
-                            onTermsTap: () => UrlUtils.openWebsite(AppStrings.termsOfServiceUrl),
-                            onHelpTap: () => context.pushNamed(AppRoutes.helpSupport),
+                            onMyPostsTap: () =>
+                                context.pushNamed(AppRoutes.myPosts),
+                            onAccountSettingsTap: () =>
+                                _showComingSoon(AppStrings.accountSettings),
+                            onNotificationsTap: () =>
+                                _showComingSoon(AppStrings.notifications),
+                            onPrivacyTap: () => UrlUtils.openWebsite(
+                                AppStrings.privacyPolicyUrl),
+                            onTermsTap: () => UrlUtils.openWebsite(
+                                AppStrings.termsOfServiceUrl),
+                            onHelpTap: () =>
+                                context.pushNamed(AppRoutes.helpSupport),
                             onDeleteAccountTap: () => showDeleteAccountDialog(
                               context,
                               onConfirm: _handleDeleteAccount,
@@ -191,10 +203,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
               ),
+              // const SizedBox(height: 100),
             ],
           ),
         ),
-        if (_isDeletingAccount) LoadingOverlay(message: AppStrings.deletingAccount),
+        if (_isDeletingAccount)
+          LoadingOverlay(message: AppStrings.deletingAccount),
       ],
     );
   }
