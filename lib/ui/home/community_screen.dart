@@ -8,6 +8,7 @@ import 'package:paw_around/bloc/community/community_state.dart';
 import 'package:paw_around/constants/api_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_constants.dart';
+import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -67,9 +68,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   Widget build(BuildContext context) {
     return BlocListener<CommunityBloc, CommunityState>(
       listener: (context, state) {
-        if (state is PostDeleted ||
-            state is PostResolved ||
-            state is PostUnresolved) {
+        if (state is PostDeleted || state is PostResolved || state is PostUnresolved) {
           _loadPosts();
         }
       },
@@ -122,8 +121,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   Widget _buildEmptyState() {
     // Show different message if location is unavailable
     final hasLocation = _userPosition != null;
-    final title =
-        hasLocation ? AppStrings.noPostsInYourArea : AppStrings.noPostsYet;
+    final title = hasLocation ? AppStrings.noPostsInYourArea : AppStrings.noPostsYet;
     final subtitle = hasLocation
         ? AppStrings.lostPetsAreOftenFoundWithinTheFirst2448Hours
         : AppStrings.enableLocationToSeeNearbyPosts;
@@ -204,7 +202,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
           return PostCard(
             post: post,
             onTap: () async {
-              await context.push('/community/${post.id}');
+              await context.push(AppRoutes.postDetail.replaceAll(':id', post.id));
               if (mounted) {
                 _loadPosts();
               }

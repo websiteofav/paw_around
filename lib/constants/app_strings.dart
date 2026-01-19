@@ -503,5 +503,15 @@ class AppStrings {
   static const String yourPost = 'Your post';
   static const String pawCircle = 'Paw Circle';
   static const String explore = 'Explore';
+
+  // Share
+  static const String sharePost = 'Share Post';
+  static const String lostPetAlert = 'Lost Pet Alert!';
+  static const String foundPetAlert = 'Found Pet Alert!';
+
+  static const String goToHome = 'Go to Home';
+
+  static const String community = 'community';
+
   AppStrings._();
 }

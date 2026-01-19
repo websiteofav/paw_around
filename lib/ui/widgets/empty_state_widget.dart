@@ -93,8 +93,7 @@ class EmptyStateWidget extends StatelessWidget {
         if (subtitle != null) ...[
           AppSpacing.vertical10,
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppConstants.space16),
+            padding: const EdgeInsets.symmetric(horizontal: AppConstants.space16),
             child: Text(
               subtitle!,
               style: AppTextStyles.regularStyle400(
@@ -116,16 +115,13 @@ class EmptyStateWidget extends StatelessWidget {
         // CTA Button
         if (actionText != null && onAction != null) ...[
           AppSpacing.vertical28,
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppConstants.space24),
-            child: CommonButton(
-              text: actionText!,
-              onPressed: onAction,
-              variant: ButtonVariant.primary,
-              size: ButtonSize.medium,
-              icon: Icons.add_circle_outline,
-            ),
+          CommonButton(
+            text: actionText!,
+            isFullWidth: false,
+            onPressed: onAction,
+            variant: ButtonVariant.primary,
+            size: ButtonSize.medium,
+            icon: Icons.add_circle_outline,
           ),
         ],
 

@@ -6,6 +6,7 @@ import 'package:paw_around/bloc/community/community_event.dart';
 import 'package:paw_around/bloc/community/community_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_constants.dart';
+import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -136,7 +137,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
                 post: post,
                 isFromYourPosts: true,
                 onTap: () async {
-                  await context.push('/community/${post.id}');
+                  await context.push(AppRoutes.postDetail.replaceAll(':id', post.id));
                   if (mounted) {
                     _loadMyPosts();
                   }
@@ -147,8 +148,7 @@ class _MyPostsScreenState extends State<MyPostsScreen> {
                   top: 16,
                   right: 24,
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: AppColors.textSecondary,
                       borderRadius: BorderRadius.circular(16),
