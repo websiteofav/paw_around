@@ -134,8 +134,8 @@ class AppRouter {
           builder: (context, state, child) {
             // Pass matchedLocation from state (stable API, not routerDelegate)
             return Dashboard(
+              currentLocation: state.uri.path,
               child: child,
-              currentLocation: state.matchedLocation,
             );
           },
           routes: [
