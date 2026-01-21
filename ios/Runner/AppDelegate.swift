@@ -1,4 +1,5 @@
 import Flutter
+import GoogleMaps
 import UIKit
 import flutter_local_notifications
 

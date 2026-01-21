@@ -68,9 +68,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   Widget build(BuildContext context) {
     return BlocListener<CommunityBloc, CommunityState>(
       listener: (context, state) {
-        if (state is PostDeleted ||
-            state is PostResolved ||
-            state is PostUnresolved) {
+        if (state is PostDeleted || state is PostResolved || state is PostUnresolved) {
           _loadPosts();
         }
       },
@@ -123,8 +121,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   Widget _buildEmptyState() {
     // Show different message if location is unavailable
     final hasLocation = _userPosition != null;
-    final title =
-        hasLocation ? AppStrings.noPostsInYourArea : AppStrings.noPostsYet;
+    final title = hasLocation ? AppStrings.noPostsInYourArea : AppStrings.noPostsYet;
     final subtitle = hasLocation
         ? AppStrings.lostPetsAreOftenFoundWithinTheFirst2448Hours
         : AppStrings.enableLocationToSeeNearbyPosts;
@@ -197,7 +194,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
       child: ListView.builder(
         padding: const EdgeInsets.only(
           top: AppConstants.space8,
-          bottom: 120, // Bottom bar (80) + margins (32) + extra space (8)
+          bottom: AppConstants.navigationHeight,
         ),
         itemCount: state.posts.length,
         itemBuilder: (context, index) {
@@ -205,8 +202,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
           return PostCard(
             post: post,
             onTap: () async {
-              await context
-                  .push(AppRoutes.postDetail.replaceAll(':id', post.id));
+              await context.push(AppRoutes.postDetail.replaceAll(':id', post.id));
               if (mounted) {
                 _loadPosts();
               }

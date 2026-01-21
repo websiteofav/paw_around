@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_around/bloc/community/community_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/constants/app_routes.dart';
@@ -8,14 +10,17 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/repositories/community_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/repositories/places_repository.dart';
+import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/ui/community/create_post_screen.dart';
 import 'package:paw_around/ui/community/post_detail_screen.dart';
 import 'package:paw_around/ui/home/dashboard.dart';
-import 'package:paw_around/ui/home/dashboard_home.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
 import 'package:paw_around/ui/onboarding/onboarding_screen.dart';
@@ -44,10 +49,6 @@ class AuthNotifier extends ChangeNotifier {
 class AppRouter {
   static final _authNotifier = AuthNotifier();
 
-  // Navigator keys for root and shell navigation
-  static final _rootNavigatorKey = GlobalKey<NavigatorState>();
-  static final _shellNavigatorKey = GlobalKey<NavigatorState>();
-
   // Router is initialized from main() so we can decide the initial location
   // (e.g., show onboarding only on first app open).
   static late final GoRouter _router;
@@ -56,9 +57,7 @@ class AppRouter {
   /// This MUST be called before [AppRouter.router] is accessed.
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
-      navigatorKey: _rootNavigatorKey,
-      initialLocation:
-          hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+      initialLocation: hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],
@@ -66,11 +65,8 @@ class AppRouter {
         final authRepository = sl<AuthRepository>();
         final isLoggedIn = authRepository.isLoggedIn;
         final path = state.matchedLocation;
-        final isAuthRoute =
-            path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
-        final isPublicRoute = path == AppRoutes.splash ||
-            path == AppRoutes.intro ||
-            path == AppRoutes.onboarding;
+        final isAuthRoute = path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
+        final isPublicRoute = path == AppRoutes.splash || path == AppRoutes.intro || path == AppRoutes.onboarding;
 
         // If user is logged in and trying to access auth routes, redirect to home
         if (isLoggedIn && isAuthRoute) {
@@ -128,26 +124,40 @@ class AppRouter {
           },
         ),
 
-        // ============ DASHBOARD SHELL ROUTE ============
+        // ============ AUTHENTICATED ROUTES (ShellRoute) ============
         ShellRoute(
-          navigatorKey: _shellNavigatorKey,
           builder: (context, state, child) {
-            // Pass matchedLocation from state (stable API, not routerDelegate)
-            return Dashboard(
-              currentLocation: state.uri.path,
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<CommunityBloc>(
+                  create: (_) => CommunityBloc(
+                    repository: sl<CommunityRepository>(),
+                  ),
+                ),
+                BlocProvider<PetListBloc>(
+                  create: (_) => PetListBloc(
+                    petRepository: sl<PetRepository>(),
+                  ),
+                ),
+                BlocProvider<PlacesBloc>(
+                  create: (_) => PlacesBloc(
+                    placesRepository: sl<PlacesRepository>(),
+                  ),
+                ),
+                BlocProvider<HomeBloc>(
+                  create: (_) => HomeBloc(),
+                ),
+              ],
               child: child,
             );
           },
           routes: [
-            // Home Route - Shows tab content
+            // Home Route
             GoRoute(
               path: AppRoutes.home,
               name: AppRoutes.home,
-              builder: (context, state) => const DashboardHome(),
+              builder: (context, state) => const Dashboard(),
             ),
-
-            // ============ DETAIL ROUTES (Children of Shell) ============
-            // These routes are inside Dashboard shell, bottom nav will be hidden
 
             // Add Pet Route - Creates fresh PetFormBloc each time
             GoRoute(
