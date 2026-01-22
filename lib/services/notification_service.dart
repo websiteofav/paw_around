@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -5,6 +6,7 @@ import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/ui/widgets/notification_permission_dialog.dart';
+import 'package:paw_around/utils/notification_handler.dart';
 
 /// Types of care reminders
 enum ReminderType {
@@ -43,11 +45,13 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
 
   static const String _channelId = 'pet_care_reminders';
   static const String _channelName = 'Pet Care Reminders';
-  static const String _channelDescription = 'Reminders for vaccines, grooming, and tick/flea care';
+  static const String _channelDescription =
+      'Reminders for vaccines, grooming, and tick/flea care';
 
   bool _isInitialized = false;
 
@@ -57,7 +61,24 @@ class NotificationService {
 
     tz_data.initializeTimeZones();
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    // Create Android notification channel explicitly
+    const androidChannel = AndroidNotificationChannel(
+      _channelId,
+      _channelName,
+      description: _channelDescription,
+      importance: Importance.high,
+      playSound: true,
+      enableVibration: true,
+    );
+
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
+    if (android != null) {
+      await android.createNotificationChannel(androidChannel);
+    }
+
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: false,
@@ -72,27 +93,25 @@ class NotificationService {
 
     await _plugin.initialize(
       settings,
-      onDidReceiveNotificationResponse: _onNotificationTapped,
+      onDidReceiveNotificationResponse:
+          NotificationHandler.handleNotificationTap,
     );
 
     _isInitialized = true;
   }
 
-  void _onNotificationTapped(NotificationResponse response) {
-    // Handle notification tap - can navigate to specific screen
-    debugPrint('Notification tapped: ${response.payload}');
-  }
-
   /// Check if we have notification permission
   Future<bool> hasPermission() async {
-    final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
     if (android != null) {
       final granted = await android.areNotificationsEnabled();
       return granted ?? false;
     }
 
     // For iOS, check permission status
-    final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+    final ios = _plugin.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
     if (ios != null) {
       final granted = await ios.checkPermissions();
       return granted?.isEnabled ?? false;
@@ -104,14 +123,16 @@ class NotificationService {
   /// Request notification permission
   Future<bool> requestPermission() async {
     // Android 13+
-    final android = _plugin.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    final android = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
     if (android != null) {
       final granted = await android.requestNotificationsPermission();
       return granted ?? false;
     }
 
     // iOS
-    final ios = _plugin.resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+    final ios = _plugin.resolvePlatformSpecificImplementation<
+        IOSFlutterLocalNotificationsPlugin>();
     if (ios != null) {
       final granted = await ios.requestPermissions(
         alert: true,
@@ -153,14 +174,15 @@ class NotificationService {
   /// Schedule countdown reminders (8 notifications: 7 days before through due day)
   Future<void> _scheduleCountdownReminders({
     required int baseId,
+    required String petId,
     required String petName,
     required String careName,
     required DateTime dueDate,
+    required ReminderType reminderType,
+    String? vaccineId,
   }) async {
     for (int daysBefore = 7; daysBefore >= 0; daysBefore--) {
       final notificationDate = dueDate.subtract(Duration(days: daysBefore));
-
-      // Skip if date is in the past
 
       final body = daysBefore == 0
           ? "$petName's $careName is due today!"
@@ -168,31 +190,44 @@ class NotificationService {
               ? "$petName's $careName is due tomorrow"
               : "$petName's $careName is due in $daysBefore days";
 
-      // Schedule at 9:00 AM
+      // Schedule at 10:00 AM
       final scheduledDate = DateTime(
         notificationDate.year,
         notificationDate.month,
         notificationDate.day,
-        10,
-        0,
+        20,
+        15,
       );
 
       // Skip if scheduled time has passed
       if (scheduledDate.isBefore(DateTime.now())) continue;
+
+      // Create payload for navigation
+      final payload = {
+        'petId': petId,
+        'reminderType': reminderType.name,
+        if (vaccineId != null) 'vaccineId': vaccineId,
+      };
 
       await _scheduleNotification(
         id: baseId + daysBefore,
         title: 'Care Reminder',
         body: body,
         scheduledDate: scheduledDate,
+        payload: jsonEncode(payload),
       );
     }
   }
 
   /// Cancel all countdown reminders for a base ID
   Future<void> _cancelCountdownReminders(int baseId) async {
-    for (int i = 0; i <= 7; i++) {
-      await _plugin.cancel(baseId + i);
+    try {
+      for (int i = 0; i <= 7; i++) {
+        await _plugin.cancel(baseId + i);
+      }
+    } catch (e) {
+      debugPrint('Error cancelling reminders: $e');
+      // Don't rethrow - allow app to continue
     }
   }
 
@@ -202,38 +237,45 @@ class NotificationService {
     required String title,
     required String body,
     required DateTime scheduledDate,
+    String? payload,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
-      _channelId,
-      _channelName,
-      channelDescription: _channelDescription,
-      importance: Importance.high,
-      priority: Priority.high,
-      icon: '@mipmap/ic_launcher',
-    );
+    try {
+      final androidDetails = AndroidNotificationDetails(
+        _channelId,
+        _channelName,
+        channelDescription: _channelDescription,
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      );
 
-    const iosDetails = DarwinNotificationDetails(
-      presentAlert: true,
-      presentBadge: true,
-      presentSound: true,
-    );
+      final iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
+      );
 
-    const details = NotificationDetails(
-      android: androidDetails,
-      iOS: iosDetails,
-    );
+      final details = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+      );
 
-    final tzScheduledDate = tz.TZDateTime.from(scheduledDate, tz.local);
+      final tzScheduledDate = tz.TZDateTime.from(scheduledDate, tz.local);
 
-    await _plugin.zonedSchedule(
-      id,
-      title,
-      body,
-      tzScheduledDate,
-      details,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: null,
-    );
+      await _plugin.zonedSchedule(
+        id,
+        title,
+        body,
+        tzScheduledDate,
+        details,
+        androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+        matchDateTimeComponents: null,
+        payload: payload,
+      );
+    } catch (e) {
+      debugPrint('Error scheduling notification: $e');
+      rethrow;
+    }
   }
 
   // ============ VACCINE REMINDERS ============
@@ -256,18 +298,27 @@ class NotificationService {
   }) async {
     if (!vaccine.setReminder) return;
 
-    final baseId = _vaccineBaseId(petId, vaccine.id);
+    try {
+      final baseId = _vaccineBaseId(petId, vaccine.id);
 
-    // Cancel any existing reminders first
-    await _cancelCountdownReminders(baseId);
+      // Cancel any existing reminders first
+      await _cancelCountdownReminders(baseId);
 
-    // Schedule new countdown
-    await _scheduleCountdownReminders(
-      baseId: baseId,
-      petName: petName,
-      careName: vaccine.vaccineName,
-      dueDate: vaccine.nextDueDate ?? DateTime.now().add(const Duration(days: 365)),
-    );
+      // Schedule new countdown
+      await _scheduleCountdownReminders(
+        baseId: baseId,
+        petId: petId,
+        petName: petName,
+        careName: vaccine.vaccineName,
+        dueDate: vaccine.nextDueDate ??
+            DateTime.now().add(const Duration(days: 365)),
+        reminderType: ReminderType.vaccine,
+        vaccineId: vaccine.id,
+      );
+    } catch (e) {
+      debugPrint('Error scheduling vaccine reminder: $e');
+      // Don't rethrow - allow app to continue even if notification fails
+    }
   }
 
   /// Cancel vaccine reminder
@@ -301,18 +352,25 @@ class NotificationService {
     final dueDate = settings.nextDueDate;
     if (dueDate == null) return;
 
-    final baseId = _careBaseId(petId, type);
+    try {
+      final baseId = _careBaseId(petId, type);
 
-    // Cancel any existing reminders first
-    await _cancelCountdownReminders(baseId);
+      // Cancel any existing reminders first
+      await _cancelCountdownReminders(baseId);
 
-    // Schedule new countdown
-    await _scheduleCountdownReminders(
-      baseId: baseId,
-      petName: petName,
-      careName: type.displayName,
-      dueDate: dueDate,
-    );
+      // Schedule new countdown
+      await _scheduleCountdownReminders(
+        baseId: baseId,
+        petId: petId,
+        petName: petName,
+        careName: type.displayName,
+        dueDate: dueDate,
+        reminderType: type,
+      );
+    } catch (e) {
+      debugPrint('Error scheduling care reminder: $e');
+      // Don't rethrow - allow app to continue even if notification fails
+    }
   }
 
   /// Cancel care reminder
@@ -339,12 +397,17 @@ class NotificationService {
     String petId,
     List<String> vaccineIds,
   ) async {
-    // Cancel care reminders
-    await cancelAllRemindersForPet(petId);
+    try {
+      // Cancel care reminders
+      await cancelAllRemindersForPet(petId);
 
-    // Cancel vaccine reminders
-    for (final vaccineId in vaccineIds) {
-      await cancelVaccineReminder(petId: petId, vaccineId: vaccineId);
+      // Cancel vaccine reminders
+      for (final vaccineId in vaccineIds) {
+        await cancelVaccineReminder(petId: petId, vaccineId: vaccineId);
+      }
+    } catch (e) {
+      debugPrint('Error cancelling all reminders: $e');
+      // Don't rethrow - allow app to continue
     }
   }
 }

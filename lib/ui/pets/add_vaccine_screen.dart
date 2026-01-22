@@ -245,21 +245,30 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
 
       await sl<PetRepository>().updateVaccine(widget.pet!.id, vaccine);
 
-      // Schedule notification if reminder is enabled
-      if (_setReminder && mounted) {
-        final notificationService = NotificationService();
-        final hasPermission =
-            await notificationService.requestPermissionIfNeeded(
-          context,
-          widget.pet!.name,
-          ReminderType.vaccine,
-        );
+      // Schedule or cancel notification based on reminder setting
+      if (mounted) {
+        if (_setReminder) {
+          // Schedule notification if reminder is enabled
+          final notificationService = NotificationService();
+          final hasPermission =
+              await notificationService.requestPermissionIfNeeded(
+            context,
+            widget.pet!.name,
+            ReminderType.vaccine,
+          );
 
-        if (hasPermission) {
-          await notificationService.scheduleVaccineReminder(
+          if (hasPermission) {
+            await notificationService.scheduleVaccineReminder(
+              petId: widget.pet!.id,
+              petName: widget.pet!.name,
+              vaccine: vaccine,
+            );
+          }
+        } else {
+          // Cancel existing reminders if reminder is disabled
+          await NotificationService().cancelVaccineReminder(
             petId: widget.pet!.id,
-            petName: widget.pet!.name,
-            vaccine: vaccine,
+            vaccineId: vaccine.id,
           );
         }
       }
