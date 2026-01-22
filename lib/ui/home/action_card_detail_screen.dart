@@ -19,6 +19,7 @@ import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/constants/vaccine_constants.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
+import 'package:paw_around/services/notification_service.dart';
 import 'package:paw_around/ui/home/widgets/action_info_card.dart';
 import 'package:paw_around/ui/home/widgets/action_cta_card.dart';
 import 'package:paw_around/ui/home/widgets/action_card_timeline.dart';
@@ -147,19 +148,108 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
 
     try {
       final repo = sl<PetRepository>();
+      final notificationService = NotificationService();
 
       switch (actionType) {
         case ActionType.vaccine:
           if (vaccine != null) {
             await repo.markVaccineAsDone(pet.id, vaccine!.id,
                 completionDate: completionDate);
+
+            // Fetch updated pet to get new nextDueDate
+            final updatedPet = await repo.getPetById(pet.id);
+            if (updatedPet != null && mounted) {
+              VaccineModel? updatedVaccine;
+              try {
+                updatedVaccine = updatedPet.vaccines.firstWhere(
+                  (v) => v.id == vaccine!.id,
+                );
+              } catch (_) {
+                // If vaccine not found, use first vaccine if available
+                updatedVaccine = updatedPet.vaccines.isNotEmpty
+                    ? updatedPet.vaccines.first
+                    : null;
+              }
+
+              // Reschedule notifications for the new nextDueDate
+              if (updatedVaccine != null && updatedVaccine.setReminder) {
+                final hasPermission =
+                    await notificationService.requestPermissionIfNeeded(
+                  context,
+                  updatedPet.name,
+                  ReminderType.vaccine,
+                );
+
+                if (hasPermission) {
+                  await notificationService.scheduleVaccineReminder(
+                    petId: updatedPet.id,
+                    petName: updatedPet.name,
+                    vaccine: updatedVaccine,
+                  );
+                }
+              }
+            }
           }
           break;
         case ActionType.grooming:
           await repo.markGroomingAsDone(pet.id, completionDate: completionDate);
+
+          // Fetch updated pet to get new settings
+          final updatedPet = await repo.getPetById(pet.id);
+          if (updatedPet != null &&
+              updatedPet.groomingSettings != null &&
+              mounted) {
+            final settings = updatedPet.groomingSettings!;
+
+            // Reschedule notifications for the new nextDueDate
+            if (settings.hasReminder) {
+              final hasPermission =
+                  await notificationService.requestPermissionIfNeeded(
+                context,
+                updatedPet.name,
+                ReminderType.grooming,
+              );
+
+              if (hasPermission) {
+                await notificationService.scheduleCareReminder(
+                  petId: updatedPet.id,
+                  petName: updatedPet.name,
+                  type: ReminderType.grooming,
+                  settings: settings,
+                );
+              }
+            }
+          }
           break;
         case ActionType.tickFlea:
           await repo.markTickFleaAsDone(pet.id, completionDate: completionDate);
+
+          // Fetch updated pet to get new settings
+          final updatedPet = await repo.getPetById(pet.id);
+          if (updatedPet != null &&
+              updatedPet.tickFleaSettings != null &&
+              mounted) {
+            final settings = updatedPet.tickFleaSettings!;
+
+            // Reschedule notifications for the new nextDueDate
+            if (settings.hasReminder) {
+              final hasPermission =
+                  await notificationService.requestPermissionIfNeeded(
+                context,
+                updatedPet.name,
+                ReminderType.tickFlea,
+              );
+
+              if (hasPermission) {
+                await notificationService.scheduleCareReminder(
+                  petId: updatedPet.id,
+                  petName: updatedPet.name,
+                  type: ReminderType.tickFlea,
+                  settings: settings,
+                );
+              }
+            }
+          }
           break;
       }
 
@@ -388,26 +478,29 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
                   ),
                   const Spacer(),
                   // Edit/Settings button (only for grooming and tick & flea)
-                  if (actionType == ActionType.grooming ||
-                      actionType == ActionType.tickFlea)
-                    IconButton(
-                      icon: const Icon(Icons.settings, color: AppColors.white),
-                      onPressed: () {
-                        switch (actionType) {
-                          case ActionType.grooming:
-                            context.pushNamed(AppRoutes.groomingSettings,
-                                extra: pet);
-                            break;
-                          case ActionType.tickFlea:
-                            context.pushNamed(AppRoutes.tickFleaSettings,
-                                extra: pet);
-                            break;
-                          case ActionType.vaccine:
-                            // Vaccines are managed individually, no general settings
-                            break;
-                        }
-                      },
-                    ),
+
+                  IconButton(
+                    icon: const Icon(Icons.settings, color: AppColors.white),
+                    onPressed: () {
+                      switch (actionType) {
+                        case ActionType.grooming:
+                          context.pushNamed(AppRoutes.groomingSettings,
+                              extra: pet);
+                          break;
+                        case ActionType.tickFlea:
+                          context.pushNamed(AppRoutes.tickFleaSettings,
+                              extra: pet);
+                          break;
+                        case ActionType.vaccine:
+                          context.pushNamed(AppRoutes.addVaccine, extra: {
+                            'pet': pet,
+                            'vaccine': vaccine,
+                          });
+                          break;
+                        // Vaccines are managed individually, no general settings
+                      }
+                    },
+                  ),
                 ],
               ),
 
