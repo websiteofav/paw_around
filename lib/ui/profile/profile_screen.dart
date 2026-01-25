@@ -141,7 +141,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.only(
                       bottom:
-                          120, // Bottom bar (80) + margins (32) + extra space (8)
+                          120
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,

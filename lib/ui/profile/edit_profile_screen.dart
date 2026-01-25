@@ -82,7 +82,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
               ),
               ListTile(
-                leading: const Icon(Icons.photo_library, color: AppColors.primary),
+                leading:
+                    const Icon(Icons.photo_library, color: AppColors.primary),
                 title: const Text('Choose from gallery'),
                 onTap: () {
                   Navigator.pop(sheetContext);
@@ -92,10 +93,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               if (hasImage) ...[
                 const Divider(),
                 ListTile(
-                  leading: const Icon(Icons.delete_outline, color: AppColors.error),
+                  leading:
+                      const Icon(Icons.delete_outline, color: AppColors.error),
                   title: Text(
-                    'Remove photo',
-                    style: AppTextStyles.regularStyle400(fontColor: AppColors.error),
+                    AppStrings.removePhoto,
+                    style: AppTextStyles.regularStyle400(
+                        fontColor: AppColors.error),
                   ),
                   onTap: () {
                     Navigator.pop(sheetContext);
@@ -183,7 +186,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
       // Update Firebase Auth profile
       await user.updateDisplayName(_nameController.text.trim());
-      if (photoUrl != null || _localImagePath != null || _currentPhotoUrl == null) {
+      if (photoUrl != null ||
+          _localImagePath != null ||
+          _currentPhotoUrl == null) {
         await user.updatePhotoURL(photoUrl);
       }
 
@@ -244,7 +249,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       appBar: AppBar(
         title: Text(
           AppStrings.editProfile,
-          style: AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
+          style:
+              AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
         ),
         backgroundColor: AppColors.navigationBackground,
         elevation: 0,
@@ -274,12 +280,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       controller: _nameController,
                       hintText: AppStrings.displayNameHint,
                       labelText: AppStrings.displayName,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 16),
 
@@ -291,7 +291,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value != null && value.trim().isNotEmpty) {
-                          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                          final emailRegex =
+                              RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
                           if (!emailRegex.hasMatch(value.trim())) {
                             return 'Please enter a valid email';
                           }
@@ -299,23 +300,28 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         return null;
                       },
                     ),
-                    if (_emailController.text.isNotEmpty && _emailController.text != _originalEmail) ...[
+                    if (_emailController.text.isNotEmpty &&
+                        _emailController.text != _originalEmail) ...[
                       const SizedBox(height: 8),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 8),
                         decoration: BoxDecoration(
                           color: AppColors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+                          border: Border.all(
+                              color: AppColors.warning.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline, size: 16, color: AppColors.warning),
+                            const Icon(Icons.info_outline,
+                                size: 16, color: AppColors.warning),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 AppStrings.emailChangeNote,
-                                style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.warning),
+                                style: AppTextStyles.regularStyle400(
+                                    fontSize: 12, fontColor: AppColors.warning),
                               ),
                             ),
                           ],
@@ -336,7 +342,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         AppStrings.phoneNumberCannotBeChangedHere,
                         style: AppTextStyles.regularStyle400(
                           fontSize: 12,
-                          fontColor: AppColors.textSecondary.withValues(alpha: 0.7),
+                          fontColor:
+                              AppColors.textSecondary.withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -387,14 +394,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   color: AppColors.iconBgLight,
                   borderRadius: BorderRadius.circular(70),
                   border: Border.all(
-                    color: _isImageLoading ? AppColors.primary : AppColors.border,
+                    color:
+                        _isImageLoading ? AppColors.primary : AppColors.border,
                     width: _isImageLoading ? 3 : 2,
                   ),
                   image: hasImage && !_isImageLoading
                       ? DecorationImage(
                           image: _localImagePath != null
                               ? FileImage(File(_localImagePath!))
-                              : NetworkImage(_currentPhotoUrl!) as ImageProvider,
+                              : NetworkImage(_currentPhotoUrl!)
+                                  as ImageProvider,
                           fit: BoxFit.cover,
                         )
                       : null,
@@ -477,7 +486,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: AppTextStyles.regularStyle400(fontSize: 15, fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.regularStyle400(
+                      fontSize: 15, fontColor: AppColors.textPrimary),
                 ),
               ],
             ),
