@@ -280,12 +280,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       controller: _nameController,
                       hintText: AppStrings.displayNameHint,
                       labelText: AppStrings.displayName,
-                      validator: (value) {
-                        if (value == null || value.trim().isEmpty) {
-                          return 'Please enter your name';
-                        }
-                        return null;
-                      },
                     ),
                     const SizedBox(height: 16),
 

@@ -569,6 +569,7 @@ class AppStrings {
   static const String goToHome = 'Go to Home';
   static const String removePhoto = 'Remove photo';
   static const String community = 'community';
+  static const String petParent = 'Pet Parent';
 
   AppStrings._();
 }

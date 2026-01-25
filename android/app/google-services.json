@@ -30,6 +30,22 @@
           }
         },
         {
+          "client_id": "716405823878-31lgrd8hlohqfflpulbcubmpposant52.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pawaround.app",
+            "certificate_hash": "7b1f6c8238783b81e4805803d0cced2e6da33b72"
+          }
+        },
+        {
+          "client_id": "716405823878-c32a51i1snsold8131ptdtb0lknv143v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pawaround.app",
+            "certificate_hash": "e3af7235cebad33f8830ec64310e46d38a64ec81"
+          }
+        },
+        {
           "client_id": "716405823878-4vvsubn280m0bd26hbp7md3gct31t37f.apps.googleusercontent.com",
           "client_type": 3
         }
