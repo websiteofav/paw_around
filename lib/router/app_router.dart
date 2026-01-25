@@ -24,7 +24,7 @@ import 'package:paw_around/ui/home/dashboard.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
 import 'package:paw_around/ui/onboarding/onboarding_screen.dart';
-import 'package:paw_around/ui/intro/intro_screen.dart';
+import 'package:paw_around/ui/onboarding/splash_screen.dart';
 import 'package:paw_around/ui/pets/add_pet_screen.dart';
 import 'package:paw_around/ui/pets/add_pet_details_screen.dart';
 import 'package:paw_around/ui/pets/add_vaccine_screen.dart';
@@ -57,7 +57,7 @@ class AppRouter {
   /// This MUST be called before [AppRouter.router] is accessed.
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
-      initialLocation: !hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+      initialLocation: AppRoutes.splash,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],
@@ -65,8 +65,10 @@ class AppRouter {
         final authRepository = sl<AuthRepository>();
         final isLoggedIn = authRepository.isLoggedIn;
         final path = state.matchedLocation;
-        final isAuthRoute = path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
-        final isPublicRoute = path == AppRoutes.splash || path == AppRoutes.intro || path == AppRoutes.onboarding;
+        final isAuthRoute =
+            path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
+        final isPublicRoute =
+            path == AppRoutes.splash || path == AppRoutes.onboarding;
 
         // If user is logged in and trying to access auth routes, redirect to home
         if (isLoggedIn && isAuthRoute) {
@@ -83,21 +85,22 @@ class AppRouter {
       },
       routes: [
         // ============ PUBLIC ROUTES ============
-        // Splash/Intro Route
+
+        // Onboarding Route
+
         GoRoute(
           path: AppRoutes.splash,
           name: AppRoutes.splash,
-          builder: (context, state) => const IntroScreen(),
+          pageBuilder: (context, state) {
+            return CustomTransitionPage(
+              transitionDuration: const Duration(milliseconds: 300),
+              child: const AppSplashScreen(),
+              transitionsBuilder: (context, animation, _, child) {
+                return FadeTransition(opacity: animation, child: child);
+              },
+            );
+          },
         ),
-
-        // Intro Route
-        GoRoute(
-          path: AppRoutes.intro,
-          name: AppRoutes.intro,
-          builder: (context, state) => const IntroScreen(),
-        ),
-
-        // Onboarding Route
         GoRoute(
           path: AppRoutes.onboarding,
           name: AppRoutes.onboarding,

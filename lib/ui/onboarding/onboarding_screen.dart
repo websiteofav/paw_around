@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/preferences_constants.dart';
+import 'package:paw_around/ui/onboarding/widgets/onboarding_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_icons.dart';
@@ -64,51 +65,50 @@ class _OnboardingViewState extends State<OnboardingView> {
             body: SafeArea(
               child: Column(
                 children: [
-                  // Skip button (top-right)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 16, right: 16),
-                    child: Align(
-                      alignment: Alignment.topRight,
-                      child: TextButton(
-                        onPressed: () {
-                          context.read<OnboardingBloc>().add(OnboardingSkip());
-                        },
-                        child: Text(
-                          AppStrings.skipButton,
-                          style: AppTextStyles.regularStyle400(
-                            fontSize: 14,
-                            fontColor: AppColors.textSecondary,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-
                   // Page content
                   Expanded(
                     child: PageView(
                       controller: _pageController,
                       onPageChanged: (index) {
-                        context.read<OnboardingBloc>().add(OnboardingPageChanged(index));
+                        context
+                            .read<OnboardingBloc>()
+                            .add(OnboardingPageChanged(index));
                       },
                       children: [
                         // Page 1: Tracking (FIRST)
-                        _buildPage(
-                          title: AppStrings.onboarding1Title,
-                          description: AppStrings.onboarding1Description,
-                          image: SvgPicture.asset(AppIcons.introIcon1),
+                        OnboardingPage(
+                          title: "Smarter care for your pet",
+                          subtitle:
+                              "Track vaccines, grooming schedules & important health reminders.",
+                          primaryButtonText: "Next",
+                          imageWidget: Image.asset(AppIcons.introIcon1),
+                          onPrimaryAction: () {},
+                          onSkip: () {},
+                          onNext: () {},
+                          index: 0,
                         ),
                         // Page 2: Nearby services
-                        _buildPage(
-                          title: AppStrings.onboarding2Title,
-                          description: AppStrings.onboarding2Description,
-                          image: SvgPicture.asset(AppIcons.introIcon2),
+                        OnboardingPage(
+                          title: "Because pets are family",
+                          subtitle: "Connect nearby. Share & find lost pets.",
+                          primaryButtonText: "Next",
+                          imageWidget: Image.asset(AppIcons.introIcon2),
+                          onPrimaryAction: () {},
+                          onSkip: () {},
+                          onNext: () {},
+                          index: 1,
                         ),
+
                         // Page 3: Community & safety (LAST)
-                        _buildPage(
-                          title: AppStrings.onboarding3Title,
-                          description: AppStrings.onboarding3Description,
-                          image: SvgPicture.asset(AppIcons.introIcon3),
+                        OnboardingPage(
+                          title: "Because pets are family",
+                          subtitle: "Connect nearby. Share & find lost pets.",
+                          primaryButtonText: "Next",
+                          imageWidget: Image.asset(AppIcons.introIcon3),
+                          onPrimaryAction: () {},
+                          onSkip: () {},
+                          onNext: () {},
+                          index: 2,
                         ),
                       ],
                     ),
@@ -151,131 +151,12 @@ class _OnboardingViewState extends State<OnboardingView> {
                       ],
                     ),
                   ),
-
-                  // Navigation buttons
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
-                    child: state.currentPage == 2
-                        ? SizedBox(
-                            width: double.infinity,
-                            height: 52,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                context.read<OnboardingBloc>().add(OnboardingNextPage());
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.onboardingButton,
-                                foregroundColor: AppColors.onboardingButtonText,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                elevation: 2,
-                              ),
-                              child: Text(
-                                AppStrings.getStartedButton,
-                                style: AppTextStyles.boldStyle700(
-                                  fontSize: 16,
-                                  fontColor: AppColors.onboardingButtonText,
-                                ),
-                              ),
-                            ),
-                          )
-                        : Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  _pageController.nextPage(
-                                    duration: const Duration(milliseconds: 300),
-                                    curve: Curves.easeInOut,
-                                  );
-                                  context.read<OnboardingBloc>().add(OnboardingNextPage());
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      AppStrings.nextButton,
-                                      style: AppTextStyles.semiBoldStyle600(
-                                        fontSize: 16,
-                                        fontColor: AppColors.onboardingText,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 4),
-                               const     Icon(
-                                      Icons.arrow_forward_ios,
-                                      size: 14,
-                                      color: AppColors.onboardingText,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                  ),
                 ],
               ),
             ),
           );
         },
       ),
-    );
-  }
-
-  Widget _buildPage({
-    required String title,
-    required String description,
-    required Widget image,
-  }) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        // Calculate max illustration height (45% of available height)
-        final maxIllustrationHeight = constraints.maxHeight * 0.4;
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Illustration (≤45% of screen height)
-              SizedBox(
-                height: maxIllustrationHeight,
-                child: Center(
-                  child: image,
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // Title
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.boldStyle700(
-                  fontSize: 26,
-                  fontColor: AppColors.textPrimary,
-                  height: 1.3,
-                ),
-              ),
-
-              const SizedBox(height: 16),
-
-              // Description
-              Text(
-                description,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.regularStyle400(
-                  fontSize: 16,
-                  fontColor: AppColors.textSecondary,
-                  height: 1.5,
-                ),
-              ),
-
-              const Spacer(),
-            ],
-          ),
-        );
-      },
     );
   }
 }

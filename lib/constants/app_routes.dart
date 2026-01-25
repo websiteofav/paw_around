@@ -1,7 +1,5 @@
 class AppRoutes {
   // Main Routes
-  static const String splash = '/';
-  static const String intro = '/intro';
   static const String onboarding = '/onboarding';
   static const String phoneLogin = '/phone-login';
   static const String otpVerification = '/otp-verification';
@@ -46,6 +44,7 @@ class AppRoutes {
   static const String vetLocation = '/vet/:vetId';
   static const String lostPetAlert = '/lost-pet/:alertId';
   static const String foundPetPost = '/found-pet/:postId';
+  static const String splash = '/splash';
 
   // Private constructor to prevent instantiation
   AppRoutes._();

@@ -17,5 +17,8 @@ class AppIcons {
   static const String noPostsIcon = 'assets/posts/no_posts_icon.svg';
   static const String addPetIcon = 'assets/home/app_pet_icon.svg';
 
+  static const String splashIcon = 'assets/splash_icon.png';
+  static const String pawIconIntro = 'assets/paw_icon.svg';
+
   AppIcons._();
 }
