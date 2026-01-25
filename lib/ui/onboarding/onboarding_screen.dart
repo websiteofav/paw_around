@@ -142,7 +142,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(25.0),
                                 color: index == state.currentPage
-                                    ? AppColors.onboardingDotActive
+                                    ? AppColors.primary
                                     : AppColors.onboardingDotInactive,
                               ),
                             ),
@@ -202,7 +202,7 @@ class _OnboardingViewState extends State<OnboardingView> {
                                       ),
                                     ),
                                     const SizedBox(width: 4),
-                                    Icon(
+                               const     Icon(
                                       Icons.arrow_forward_ios,
                                       size: 14,
                                       color: AppColors.onboardingText,

@@ -57,7 +57,7 @@ class AppRouter {
   /// This MUST be called before [AppRouter.router] is accessed.
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
-      initialLocation: hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+      initialLocation: !hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],

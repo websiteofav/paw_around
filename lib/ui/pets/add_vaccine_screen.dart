@@ -163,6 +163,13 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
     if (_nextDueDate == null && _setReminder) {
       _errors['nextDueDate'] = AppStrings.pleaseSelectNextDueDate;
     }
+    // Validate nextDueDate is after dateGiven
+    if (_dateGiven != null &&
+        _nextDueDate != null &&
+        _nextDueDate!.isBefore(_dateGiven!) &&
+        _setReminder) {
+      _errors['nextDueDate'] = AppStrings.nextDueDateAfterDateGiven;
+    }
 
     setState(() {});
     return _errors.isEmpty;
@@ -170,6 +177,19 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
 
   Future<void> _saveVaccine() async {
     if (!_validate()) {
+      return;
+    }
+
+    // Validate pet is available
+    if (widget.pet == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(AppStrings.petRequiredForVaccine),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
       return;
     }
 
@@ -194,10 +214,13 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
             oldDateGiven.day != newDateGiven.day;
 
         // Calculate original interval from stored nextDueDate and dateGiven
+        // Ensure interval is non-negative (nextDueDate should be after dateGiven)
         final originalInterval = widget.vaccineToEdit!.nextDueDate != null
-            ? widget.vaccineToEdit!.nextDueDate!
-                .difference(widget.vaccineToEdit!.dateGiven)
-                .inDays
+            ? (widget.vaccineToEdit!.nextDueDate!
+                    .difference(widget.vaccineToEdit!.dateGiven)
+                    .inDays)
+                .clamp(0, double.infinity)
+                .toInt()
             : 0;
 
         // If dateGiven changed, update the latest history entry
@@ -205,11 +228,14 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
           // Sort history descending first to ensure latest is at index 0
           updatedHistory.sort((a, b) => b.compareTo(a));
 
-          // Remove the entry that matches oldDateGiven (should be latest after sort)
-          updatedHistory.removeWhere((d) =>
+          // Remove only the first (latest) entry that matches oldDateGiven
+          final indexToRemove = updatedHistory.indexWhere((d) =>
               d.year == oldDateGiven.year &&
               d.month == oldDateGiven.month &&
               d.day == oldDateGiven.day);
+          if (indexToRemove != -1) {
+            updatedHistory.removeAt(indexToRemove);
+          }
 
           // Add the new dateGiven as the latest entry
           updatedHistory.add(newDateGiven);
@@ -219,9 +245,15 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
         }
 
         // Recalculate nextDueDate from new dateGiven and original interval
-        final calculatedNextDueDate = _setReminder && originalInterval > 0
-            ? newDateGiven.add(Duration(days: originalInterval))
-            : (_setReminder ? _nextDueDate : null);
+   // Check if nextDueDate was manually changed
+final nextDueDateChanged = widget.vaccineToEdit!.nextDueDate != null &&
+    _nextDueDate != null &&
+    widget.vaccineToEdit!.nextDueDate!.difference(_nextDueDate!).inDays != 0;
+
+// Use manual value if user changed it, otherwise recalculate
+final calculatedNextDueDate = _setReminder && originalInterval > 0 && !nextDueDateChanged
+    ? newDateGiven.add(Duration(days: originalInterval))
+    : (_setReminder ? _nextDueDate : null);
 
         vaccine = widget.vaccineToEdit!.copyWith(
           vaccineName: vaccineName,
@@ -281,8 +313,10 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
       if (mounted) {
         HapticFeedback.mediumImpact();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.vaccineAddedSuccessfully),
+          SnackBar(
+            content: Text(_isEditMode
+                ? AppStrings.vaccineSaved
+                : AppStrings.vaccineAddedSuccessfully),
             backgroundColor: AppColors.success,
           ),
         );
@@ -355,7 +389,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
               error: _errors['nextDueDate'],
               onTap: () => _selectNextDueDate(),
               helperText: _selectedVaccine != null
-                  ? 'Auto-calculated based on vaccine frequency. Disable reminder if its a one time vaccine.'
+                  ? AppStrings.autoCalculatedHelperText
                   : null,
             ),
             const SizedBox(height: 16),
@@ -1022,7 +1056,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
                   child: Text(
                     selectedDate != null
                         ? _formatDate(selectedDate)
-                        : 'Select date',
+                        : AppStrings.selectDate,
                     style: AppTextStyles.regularStyle400(
                       fontSize: 16,
                       fontColor: selectedDate != null

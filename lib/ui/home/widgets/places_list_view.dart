@@ -26,7 +26,12 @@ class PlacesListView extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.only(
+        bottom: 120,
+        left: 16,
+        right: 16,
+        top: 16,
+      ),
       itemCount: places.length,
       itemBuilder: (context, index) {
         return AnimatedCard(
@@ -35,8 +40,10 @@ class PlacesListView extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 12),
             child: PlaceCard(
               place: places[index],
-              onTap: onPlaceTap != null ? () => onPlaceTap!(places[index]) : null,
-              onDirectionsTap: () => UrlUtils.launch(places[index].directionsUrl),
+              onTap:
+                  onPlaceTap != null ? () => onPlaceTap!(places[index]) : null,
+              onDirectionsTap: () =>
+                  UrlUtils.launch(places[index].directionsUrl),
             ),
           ),
         );

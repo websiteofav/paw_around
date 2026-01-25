@@ -1,13 +1,15 @@
 class AppStrings {
   // App Information
   static const String appName = 'PawAround';
-  static const String appTagline = 'Discover vets, groomers\n& pet friends nearby';
+  static const String appTagline =
+      'Discover vets, groomers\n& pet friends nearby';
   static const String getStartedButton = 'Get Started';
   static const String welcomeMessage = 'Welcome to PawAround! 🐾';
 
   // Intro Screen
   static const String introTitle = 'PawAround';
-  static const String introDescription = 'Discover vets, groomers\n& pet friends nearby';
+  static const String introDescription =
+      'Discover vets, groomers\n& pet friends nearby';
 
   // Onboarding Screen
   static const String skipButton = 'Skip';
@@ -15,19 +17,23 @@ class AppStrings {
 
   // Onboarding Page 1 - Tracking (FIRST)
   static const String onboarding1Title = 'Track vaccines & care';
-  static const String onboarding1Description = 'Smart reminders so you never miss what your pet needs';
+  static const String onboarding1Description =
+      'Smart reminders so you never miss what your pet needs';
 
   // Onboarding Page 2 - Nearby services
   static const String onboarding2Title = 'Find trusted care near you';
-  static const String onboarding2Description = 'Vets, groomers, and pet stores around you';
+  static const String onboarding2Description =
+      'Vets, groomers, and pet stores around you';
 
   // Onboarding Page 3 - Community & safety (LAST)
   static const String onboarding3Title = 'Get help from your community';
-  static const String onboarding3Description = 'Alert nearby pet parents when it matters most';
+  static const String onboarding3Description =
+      'Alert nearby pet parents when it matters most';
 
   // Authentication Screen - Phone Login
   static const String welcomeToPawAround = 'Welcome to Paw Around';
-  static const String authSubtitle = "Caring for your pet's health, every step of the way";
+  static const String authSubtitle =
+      "Caring for your pet's health, every step of the way";
   static const String phoneNumber = 'Phone Number';
   static const String continueButton = 'Continue';
   static const String orContinueWith = 'or continue with';
@@ -37,8 +43,10 @@ class AppStrings {
   static const String termsOfService = 'Terms of Service';
   static const String and = 'and';
   static const String privacyPolicyLink = 'Privacy Policy';
-  static const String privacyPolicyUrl = 'https://websiteofav.github.io/pawaround-privacy/';
-  static const String termsOfServiceUrl = 'https://websiteofav.github.io/pawaround-privacy/terms/';
+  static const String privacyPolicyUrl =
+      'https://websiteofav.github.io/pawaround-privacy/';
+  static const String termsOfServiceUrl =
+      'https://websiteofav.github.io/pawaround-privacy/terms/';
 
   // OTP Verification Screen
   static const String verifyYourNumber = 'Verify your number';
@@ -52,7 +60,8 @@ class AppStrings {
 
   // Legacy Auth Strings (for email login)
   static const String welcomeBack = 'Welcome Back?';
-  static const String loginInstruction = 'Log in to continue caring for your pet.';
+  static const String loginInstruction =
+      'Log in to continue caring for your pet.';
   static const String orSeparator = 'or';
   static const String emailAddress = 'Email Address';
   static const String password = 'Password';
@@ -76,13 +85,17 @@ class AppStrings {
   static const String homeWelcome = 'Welcome to Home';
   static const String homeDescription = 'Dashboard content will go here';
   static const String mapTitle = 'Services Map';
-  static const String mapDescription = 'Find vets, groomers & pet stores nearby';
+  static const String mapDescription =
+      'Find vets, groomers & pet stores nearby';
   static const String communityTitle = 'Lost & Found';
-  static const String communityDescription = 'Connect with pet parents in your area';
+  static const String communityDescription =
+      'Connect with pet parents in your area';
   static const String profileTitle = 'Your Profile';
-  static const String profileDescription = 'Manage your pets and account settings';
+  static const String profileDescription =
+      'Manage your pets and account settings';
   static const String addPet = 'Add Pet';
-  static const String upcomingVaccinesAndAppointments = 'Upcoming Vaccines & Appointments';
+  static const String upcomingVaccinesAndAppointments =
+      'Upcoming Vaccines & Appointments';
   static const String viewDetails = 'View Details';
   static const String lostAndFoundNearby = 'Lost & Found Nearby';
   static const String featuredServices = 'Featured Services';
@@ -119,12 +132,14 @@ class AppStrings {
   static const String addVaccine = 'Add Vaccine';
   static const String editVaccine = 'Edit Vaccine';
   static const String addVaccineFor = 'Add Vaccine for';
-  static const String petTypeOtherHelper = 'Some care reminders are currently available only for dogs and cats.';
+  static const String petTypeOtherHelper =
+      'Some care reminders are currently available only for dogs and cats.';
   static const String lessThan1Year = 'Less than 1 year';
   static const String oneToThreeYears = '1-3 years';
   static const String threeToSevenYears = '3-7 years';
   static const String moreThan7Years = '7+ years';
-  static const String pleaseEnterBirthdateOrAge = 'Please enter either birthdate or age';
+  static const String pleaseEnterBirthdateOrAge =
+      'Please enter either birthdate or age';
   static const String addYourPet = 'Add your pet';
 
   // Vaccine Management
@@ -139,12 +154,14 @@ class AppStrings {
   static const String vaccineAddedSuccessfully = 'Vaccine added successfully!';
   static const String vaccinations = 'Vaccinations';
   static const String noVaccinesAddedYet = 'No vaccines added yet';
-  static const String selectVaccineFromDropdown = 'Select a vaccine from the dropdown to add your first vaccine';
+  static const String selectVaccineFromDropdown =
+      'Select a vaccine from the dropdown to add your first vaccine';
   static const String given = 'Given';
   static const String next = 'Next';
   static const String removeVaccine = 'Remove vaccine';
   static const String reminderNotification = 'Reminder Notification';
-  static const String getNotifiedBeforeNextDose = 'Get notified before the next dose is due';
+  static const String getNotifiedBeforeNextDose =
+      'Get notified before the next dose is due';
 
   // Vaccines Setup Screen
   static const String vaccines = 'Vaccines';
@@ -153,7 +170,8 @@ class AppStrings {
   static const String edit = 'Edit';
   static const String lastGivenOn = 'Last given on';
   static const String lastGivenDate = 'Last given date';
-  static const String vaccinesForDogsCatsOnly = 'Vaccines are currently available only for dogs and cats.';
+  static const String vaccinesForDogsCatsOnly =
+      'Vaccines are currently available only for dogs and cats.';
 
   // Vaccine Selection Categories
   static const String requiredCore = 'Required / Core';
@@ -164,6 +182,11 @@ class AppStrings {
   static const String enterCustomVaccine = 'Enter a custom vaccine';
   static const String customVaccineName = 'Custom vaccine name';
   static const String vaccineSaved = 'Vaccine saved successfully!';
+  static const String autoCalculatedHelperText =
+      'Auto-calculated based on vaccine frequency. Disable reminder if it\'s a one-time vaccine.';
+  static const String nextDueDateAfterDateGiven =
+      'Next due date must be after date given';
+  static const String petRequiredForVaccine = 'Pet is required to save vaccine';
 
   // Map Screen
   static const String petServices = 'Pet Services';
@@ -173,10 +196,12 @@ class AppStrings {
   static const String retry = 'Retry';
   static const String petServicesFoundNearby = 'pet services found nearby';
   static const String noServicesNearby = 'No services nearby';
-  static const String tryDifferentLocation = 'Try searching in a different location';
+  static const String tryDifferentLocation =
+      'Try searching in a different location';
   static const String open = 'Open';
   static const String closed = 'Closed';
-  static const String locationPermissionRequired = 'Location Permission Required';
+  static const String locationPermissionRequired =
+      'Location Permission Required';
   static const String locationPermissionDeniedMessage =
       'Location permission has been permanently denied. Please enable it in app settings to use the map feature.';
   static const String openAppSettings = 'Open App Settings';
@@ -199,14 +224,19 @@ class AppStrings {
   static const String searchForLocation = 'Search for location';
   static const String contactPhone = 'Contact Phone';
   static const String selectPostType = 'Select Post Type';
-  static const String describeThePet = 'Describe the pet (size, markings, etc.)';
+  static const String describeThePet =
+      'Describe the pet (size, markings, etc.)';
   static const String enterContactPhone = 'Enter contact phone number';
   static const String postCreatedSuccessfully = 'Post created successfully!';
   static const String noPostsYet = 'No posts near you';
-  static const String helpReunitePets = 'Help reunite lost pets with their families';
-  static const String alertNearbyParents = 'Alert pet parents in your neighborhood';
-  static const String locationRequiredForNearbyPosts = 'Location permission required to see nearby posts';
-  static const String enableLocationToSeeNearbyPosts = 'Enable location to see lost and found posts near you';
+  static const String helpReunitePets =
+      'Help reunite lost pets with their families';
+  static const String alertNearbyParents =
+      'Alert pet parents in your neighborhood';
+  static const String locationRequiredForNearbyPosts =
+      'Location permission required to see nearby posts';
+  static const String enableLocationToSeeNearbyPosts =
+      'Enable location to see lost and found posts near you';
   static const String noPostsInYourArea = 'No posts found in your area';
   static const String markAsResolved = 'Mark as Resolved';
   static const String reopenPost = 'Reopen Post';
@@ -238,14 +268,16 @@ class AppStrings {
   static const String lostPetsNearYou = 'Lost pets near you';
   static const String seeAll = 'See all';
   static const String allSetForNow = 'All set for now';
-  static const String wellNotifyWhenDue = "We'll notify you when something is due.";
+  static const String wellNotifyWhenDue =
+      "We'll notify you when something is due.";
   static const String months = 'months';
   static const String daysUntilDue = 'days';
   static const String vaccineDueIn = 'vaccine due in';
 
   // Home Screen - Empty States
   static const String welcomeToPawAroundHome = 'Start by adding your pet';
-  static const String addPetToGetStarted = 'Track vaccines, grooming, and care reminders in one place.';
+  static const String addPetToGetStarted =
+      'Track vaccines, grooming, and care reminders in one place.';
   static const String addYourFirstPet = 'Add my pet';
   static const String completeHealthDetails = "Complete %s's health details";
   static const String addVaccineDetails = 'Add vaccine details';
@@ -259,10 +291,12 @@ class AppStrings {
   static const String step1Of2 = 'Step 1 of 2';
   static const String step2Of2Optional = 'Step 2 of 2 (Optional)';
   static const String addMoreDetailsOptional = 'Add more details (optional)';
-  static const String addMoreDetailsSubtitle = 'You can skip this and add it later anytime.';
+  static const String addMoreDetailsSubtitle =
+      'You can skip this and add it later anytime.';
   static const String saveDetails = 'Save details';
   static const String skipForNow = 'Skip for now';
-  static const String addBreedForBetterCare = 'Add breed to get better care suggestions';
+  static const String addBreedForBetterCare =
+      'Add breed to get better care suggestions';
 
   // Care Settings Screens
   static const String grooming = 'Grooming';
@@ -291,10 +325,14 @@ class AppStrings {
   // Home Screen - Care Setup
   static const String setUpCareForYourPet = 'Set up care for your pet';
   static const String recommended = 'Recommended';
-  static const String setRemindersForVaccines = 'Set reminders for upcoming vaccines';
-  static const String trackDewormingPreventive = 'Track deworming & preventive care';
-  static const String scheduleGroomingReminders = 'Schedule regular grooming reminders';
-  static const String noCareTasksYet = 'No care tasks yet — add one to get started';
+  static const String setRemindersForVaccines =
+      'Set reminders for upcoming vaccines';
+  static const String trackDewormingPreventive =
+      'Track deworming & preventive care';
+  static const String scheduleGroomingReminders =
+      'Schedule regular grooming reminders';
+  static const String noCareTasksYet =
+      'No care tasks yet — add one to get started';
 
   // Action Card Detail Screen
   static const String vaccine = 'Vaccine';
@@ -309,9 +347,11 @@ class AppStrings {
   static const String findGroomers = 'Find groomers';
   static const String viewTreatmentOptions = 'View treatment options';
   static const String vetsAvailableNearby = '3 vets available within 2 km';
-  static const String groomersAvailableNearby = '3 groomers available within 2 km';
+  static const String groomersAvailableNearby =
+      '3 groomers available within 2 km';
   static const String treatmentOptionsAvailable = 'Treatment options available';
-  static const String noNearbyServices = 'No nearby services found. Try expanding your search.';
+  static const String noNearbyServices =
+      'No nearby services found. Try expanding your search.';
   static const String vaccineExplanation =
       'Rabies vaccination is essential to protect your pet and is required by law in many places.';
   static const String groomingExplanation =
@@ -330,7 +370,8 @@ class AppStrings {
 
   // Mark as Done
   static const String confirmMarkDone = 'Mark as completed?';
-  static const String markDoneDescription = 'This will update the last completed date and calculate the next due date.';
+  static const String markDoneDescription =
+      'This will update the last completed date and calculate the next due date.';
   static const String confirm = 'Confirm';
   static const String markedAsDone = 'Marked as done';
   static const String doneToday = 'Done today';
@@ -358,10 +399,13 @@ class AppStrings {
   static const String displayName = 'Display Name';
   static const String displayNameHint = 'Enter your name';
   static const String emailHint = 'Enter your email';
-  static const String emailChangeNote = 'A verification email will be sent to confirm this change';
-  static const String emailVerificationSent = 'Verification email sent! Please check your inbox.';
+  static const String emailChangeNote =
+      'A verification email will be sent to confirm this change';
+  static const String emailVerificationSent =
+      'Verification email sent! Please check your inbox.';
   static const String updateProfile = 'Update Profile';
-  static const String profileUpdatedSuccessfully = 'Profile updated successfully!';
+  static const String profileUpdatedSuccessfully =
+      'Profile updated successfully!';
   static const String upgradeToPremium = 'Upgrade to Premium';
   static const String helpAndSupport = 'Help & support';
   static const String privacyPolicy = 'Privacy Policy';
@@ -381,7 +425,8 @@ class AppStrings {
   static const String currentlySelected = 'currently selected';
   static const String accountSettings = 'Account settings';
   static const String logOutConfirmTitle = 'Log out?';
-  static const String logOutConfirmMessage = 'You will need to sign in again to access Paw Around.';
+  static const String logOutConfirmMessage =
+      'You will need to sign in again to access Paw Around.';
   static const String daysOld = 'days old';
   static const String monthsOld = 'months old';
   static const String yearsOld = 'years old';
@@ -408,8 +453,10 @@ class AppStrings {
   static const String optionalNotesHint = 'Optional notes...';
   static const String deleteVaccine = 'Delete Vaccine';
   static const String deleteVaccineConfirmTitle = 'Delete Vaccine?';
-  static const String deleteVaccineConfirmMessage = 'Are you sure you want to delete this vaccine record?';
-  static const String vaccineDeletedSuccessfully = 'Vaccine deleted successfully';
+  static const String deleteVaccineConfirmMessage =
+      'Are you sure you want to delete this vaccine record?';
+  static const String vaccineDeletedSuccessfully =
+      'Vaccine deleted successfully';
   static const String allGood = 'All good';
   static const String thisWeek = 'This Week';
   static const String groomingSession = 'Grooming Session';
@@ -430,12 +477,15 @@ class AppStrings {
       'This will permanently delete your account and all associated data including:';
   static const String deleteAccountBullet1 = 'Your profile information';
   static const String deleteAccountBullet2 = 'All your pets and their records';
-  static const String deleteAccountBullet3 = 'Your posts and community activity';
+  static const String deleteAccountBullet3 =
+      'Your posts and community activity';
   static const String deleteAccountFinal = 'This action cannot be undone.';
   static const String deleteAccountConfirm = 'Delete My Account';
   static const String deletingAccount = 'Deleting account...';
-  static const String accountDeletedSuccessfully = 'Account deleted successfully';
-  static const String reAuthRequired = 'Please sign in again to confirm deletion';
+  static const String accountDeletedSuccessfully =
+      'Account deleted successfully';
+  static const String reAuthRequired =
+      'Please sign in again to confirm deletion';
 
   // Pet Overview Screen
   static const String tapToUnsnooze = 'Tap to unsnooze';
@@ -446,19 +496,22 @@ class AppStrings {
   // Private constructor to prevent instantiation
 
   // Edit Profile Screen
-  static const String phoneNumberCannotBeChangedHere = 'Phone number cannot be changed here';
+  static const String phoneNumberCannotBeChangedHere =
+      'Phone number cannot be changed here';
   static const String mobileNumber = 'Mobile Number';
 
   // My Posts Screen
   static const String noMyPostsYet = "You haven't posted yet";
-  static const String noMyPostsSubtitle = 'Your lost & found posts will appear here';
+  static const String noMyPostsSubtitle =
+      'Your lost & found posts will appear here';
   static const String resolved = 'Resolved';
 
   // Help & Support Screen
   static const String frequentlyAskedQuestions = 'Frequently Asked Questions';
   static const String contactUs = 'Contact Us';
   static const String stillNeedHelp = 'Still need help?';
-  static const String sendUsEmail = 'Send us an email and we\'ll get back to you as soon as possible.';
+  static const String sendUsEmail =
+      'Send us an email and we\'ll get back to you as soon as possible.';
   static const String emailSupport = 'Email Support';
   static const String supportEmail = 'avinashlabs.dev@gmail.com';
 
@@ -467,11 +520,13 @@ class AppStrings {
   static const String faqAddPetAnswer =
       'Tap the "Add Pet" button on the home screen or go to Profile > My Pets > Add Pet. Fill in your pet\'s details like name, breed, and birthdate.';
 
-  static const String faqVaccineRemindersQuestion = 'How do vaccine reminders work?';
+  static const String faqVaccineRemindersQuestion =
+      'How do vaccine reminders work?';
   static const String faqVaccineRemindersAnswer =
       'Once you add vaccine records for your pet, we\'ll automatically calculate the next due date and send you reminders before it\'s due. You can manage reminders in your pet\'s profile.';
 
-  static const String faqLostFoundQuestion = 'How do I report a lost or found pet?';
+  static const String faqLostFoundQuestion =
+      'How do I report a lost or found pet?';
   static const String faqLostFoundAnswer =
       'Go to the Community tab and tap the "+" button. Select whether you\'re reporting a lost or found pet, add details and a photo, and set the location where the pet was last seen or found.';
 
@@ -488,8 +543,10 @@ class AppStrings {
       'You can email us at support@pawaround.app. We typically respond within 24-48 hours.';
   static const String oneTimeVaccine = 'One-time vaccine';
 
-  static const String mostPetsNeedMonthlyPrevention = 'Most pets need monthly prevention';
-  static const String chooseHowOftenYouGroomYourPet = 'Choose how often you groom your pet';
+  static const String mostPetsNeedMonthlyPrevention =
+      'Most pets need monthly prevention';
+  static const String chooseHowOftenYouGroomYourPet =
+      'Choose how often you groom your pet';
 
   static const String lostPetsAreOftenFoundWithinTheFirst2448Hours =
       'Lost pets are often found within the first 24–48 hours';
@@ -510,7 +567,7 @@ class AppStrings {
   static const String foundPetAlert = 'Found Pet Alert!';
 
   static const String goToHome = 'Go to Home';
-
+  static const String removePhoto = 'Remove photo';
   static const String community = 'community';
 
   AppStrings._();
