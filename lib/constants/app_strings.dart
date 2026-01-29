@@ -570,6 +570,17 @@ class AppStrings {
   static const String removePhoto = 'Remove photo';
   static const String community = 'community';
   static const String petParent = 'Pet Parent';
+  static const String onboardingTitle1 = 'Track vaccines & care';
+  static const String onboardingSubtitle1 =
+      'Smart reminders so you never miss what your pet needs';
+  static const String onboardingTitle2 = 'Find trusted care near you';
+  static const String onboardingSubtitle2 =
+      'Vets, groomers, and pet stores around you';
+  static const String onboardingTitle3 = 'Get help from your community';
+  static const String onboardingSubtitle3 =
+      'Alert nearby pet parents when it matters most';
+
+  static const String startExploring = 'Start Exploring';
 
   AppStrings._();
 }

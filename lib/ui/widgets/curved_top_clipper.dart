@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CurvedTopClipper extends CustomClipper<Path> {
+  final bool isInverted;
+
+  CurvedTopClipper({this.isInverted = false});
+
   @override
   Path getClip(Size size) {
     final path = Path();
@@ -9,7 +13,7 @@ class CurvedTopClipper extends CustomClipper<Path> {
 
     path.quadraticBezierTo(
       size.width / 2,
-      0,
+      isInverted ? size.height : 0,
       size.width,
       40,
     );

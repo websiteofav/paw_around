@@ -101,7 +101,8 @@ class CommonButton extends StatelessWidget {
           backgroundColor: customColor ?? AppColors.primary,
           foregroundColor: customTextColor ?? AppColors.background,
           elevation: 8,
-          shadowColor: (customColor ?? AppColors.primary).withValues(alpha: 0.3),
+          shadowColor:
+              (customColor ?? AppColors.primary).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(_getBorderRadius()),
           ),
@@ -111,7 +112,8 @@ class CommonButton extends StatelessWidget {
           backgroundColor: customColor ?? AppColors.secondary,
           foregroundColor: customTextColor ?? AppColors.background,
           elevation: 4,
-          shadowColor: (customColor ?? AppColors.secondary).withValues(alpha: 0.3),
+          shadowColor:
+              (customColor ?? AppColors.secondary).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(_getBorderRadius()),
           ),
@@ -153,7 +155,8 @@ class CommonButton extends StatelessWidget {
   }
 
   TextStyle _getTextStyle() {
-    final baseStyle = AppTextStyles.semiBoldStyle600(fontColor: _getTextColor(), letterSpacing: 0.5);
+    final baseStyle = AppTextStyles.semiBoldStyle600(
+        fontColor: _getTextColor(), letterSpacing: 0.5);
 
     switch (size) {
       case ButtonSize.small:

@@ -77,10 +77,9 @@ class _OnboardingViewState extends State<OnboardingView> {
                       children: [
                         // Page 1: Tracking (FIRST)
                         OnboardingPage(
-                          title: "Smarter care for your pet",
-                          subtitle:
-                              "Track vaccines, grooming schedules & important health reminders.",
-                          primaryButtonText: "Next",
+                          title: AppStrings.onboardingTitle1,
+                          subtitle: AppStrings.onboardingSubtitle1,
+                          primaryButtonText: AppStrings.next,
                           imageWidget: Image.asset(AppIcons.introIcon1),
                           onPrimaryAction: () {},
                           onSkip: () {},
@@ -89,9 +88,9 @@ class _OnboardingViewState extends State<OnboardingView> {
                         ),
                         // Page 2: Nearby services
                         OnboardingPage(
-                          title: "Because pets are family",
-                          subtitle: "Connect nearby. Share & find lost pets.",
-                          primaryButtonText: "Next",
+                          title: AppStrings.onboardingTitle2,
+                          subtitle: AppStrings.onboardingSubtitle2,
+                          primaryButtonText: AppStrings.next,
                           imageWidget: Image.asset(AppIcons.introIcon2),
                           onPrimaryAction: () {},
                           onSkip: () {},
@@ -101,9 +100,9 @@ class _OnboardingViewState extends State<OnboardingView> {
 
                         // Page 3: Community & safety (LAST)
                         OnboardingPage(
-                          title: "Because pets are family",
-                          subtitle: "Connect nearby. Share & find lost pets.",
-                          primaryButtonText: "Next",
+                          title: AppStrings.onboardingTitle3,
+                          subtitle: AppStrings.onboardingSubtitle3,
+                          primaryButtonText: AppStrings.next,
                           imageWidget: Image.asset(AppIcons.introIcon3),
                           onPrimaryAction: () {},
                           onSkip: () {},

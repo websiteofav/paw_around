@@ -11,17 +11,23 @@ class AuthLogo extends StatelessWidget {
   });
 
   @override
+  @override
   Widget build(BuildContext context) {
     return Container(
+      alignment: Alignment.centerLeft,
       width: size,
       height: size,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppColors.primary,
-        shape: BoxShape.circle,
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: ClipOval(
-        child: Center(
-          child: Image.asset(AppIcons.appIcon, width: size, height: size),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: Image.asset(
+          AppIcons.appIcon,
+          width: size,
+          height: size,
+          fit: BoxFit.cover,
         ),
       ),
     );

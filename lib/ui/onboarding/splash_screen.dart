@@ -43,9 +43,10 @@ class _AppSplashScreenState extends State<AppSplashScreen>
           prefs.getBool(PreferencesConstants.hasCompletedOnboarding) ?? false;
       final isLoggedIn = authRepo.isLoggedIn;
       if (mounted) {
-        if (!hasCompletedOnboarding) {
-          context.goNamed(AppRoutes.onboarding);
-        } else if (!isLoggedIn) {
+        // if (!hasCompletedOnboarding) {
+        //   context.goNamed(AppRoutes.onboarding);
+        // } else
+        if (!isLoggedIn) {
           context.goNamed(AppRoutes.phoneLogin);
         } else {
           context.goNamed(AppRoutes.home);
