@@ -7,7 +7,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
-import 'package:paw_around/ui/home/community_screen.dart';
+import 'package:paw_around/ui/home/paw_circle_screen.dart';
 import 'package:paw_around/ui/profile/profile_screen.dart';
 
 class DashboardHome extends StatefulWidget {
@@ -46,7 +46,7 @@ class _DashboardHomeState extends State<DashboardHome> {
       case 1:
         return MapScreen(initialFilter: mapFilter);
       case 2:
-        return const CommunityScreen();
+        return const PawCircleScreen();
       case 3:
         return const ProfileScreen();
       default:

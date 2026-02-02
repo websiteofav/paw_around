@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
+import 'package:paw_around/bloc/moments/pet_moments_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
@@ -11,15 +12,18 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
+import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/repositories/community_repository.dart';
+import 'package:paw_around/repositories/pet_moments_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/repositories/places_repository.dart';
 import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/ui/community/create_post_screen.dart';
 import 'package:paw_around/ui/community/post_detail_screen.dart';
+import 'package:paw_around/ui/moments/create_moment_screen.dart';
 import 'package:paw_around/ui/home/dashboard.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
@@ -57,7 +61,8 @@ class AppRouter {
   /// This MUST be called before [AppRouter.router] is accessed.
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
-      initialLocation: !hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+      initialLocation:
+          !hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],
@@ -65,8 +70,11 @@ class AppRouter {
         final authRepository = sl<AuthRepository>();
         final isLoggedIn = authRepository.isLoggedIn;
         final path = state.matchedLocation;
-        final isAuthRoute = path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
-        final isPublicRoute = path == AppRoutes.splash || path == AppRoutes.intro || path == AppRoutes.onboarding;
+        final isAuthRoute =
+            path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
+        final isPublicRoute = path == AppRoutes.splash ||
+            path == AppRoutes.intro ||
+            path == AppRoutes.onboarding;
 
         // If user is logged in and trying to access auth routes, redirect to home
         if (isLoggedIn && isAuthRoute) {
@@ -144,6 +152,11 @@ class AppRouter {
                     placesRepository: sl<PlacesRepository>(),
                   ),
                 ),
+                BlocProvider<PetMomentsBloc>(
+                  create: (_) => PetMomentsBloc(
+                    repository: sl<PetMomentsRepository>(),
+                  ),
+                ),
                 BlocProvider<HomeBloc>(
                   create: (_) => HomeBloc(),
                 ),
@@ -214,7 +227,18 @@ class AppRouter {
             GoRoute(
               path: AppRoutes.createPost,
               name: AppRoutes.createPost,
-              builder: (context, state) => const CreatePostScreen(),
+              builder: (context, state) {
+                final extra = state.extra;
+                final initialType = extra is PostType ? extra : null;
+                return CreatePostScreen(initialType: initialType);
+              },
+            ),
+
+            // Pet Moments - Create Moment Route
+            GoRoute(
+              path: AppRoutes.createMoment,
+              name: AppRoutes.createMoment,
+              builder: (context, state) => const CreateMomentScreen(),
             ),
 
             // Community - Post Detail Route

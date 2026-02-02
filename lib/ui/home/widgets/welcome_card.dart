@@ -20,7 +20,6 @@ class WelcomeCard extends StatefulWidget {
 
 class _WelcomeCardState extends State<WelcomeCard> {
   String? _lottiePath;
-  bool _loading = true;
 
   @override
   void initState() {
@@ -29,11 +28,11 @@ class _WelcomeCardState extends State<WelcomeCard> {
   }
 
   Future<void> _loadAnimation() async {
-    final path = await AnimationService.getLottieFile(AppIcons.addPetAnimationFileName);
+    final path =
+        await AnimationService.getLottieFile(AppIcons.addPetAnimationFileName);
     if (mounted) {
       setState(() {
         _lottiePath = path;
-        _loading = false;
       });
     }
   }
@@ -122,43 +121,8 @@ class _WelcomeCardState extends State<WelcomeCard> {
     );
   }
 
-  Widget _buildLottieAnimation() {
-    // Check if it's a network URL or local file path
-    if (_lottiePath!.startsWith('http')) {
-      return Lottie.network(
-        _lottiePath!,
-        height: 144,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildIconFallback();
-        },
-      );
-    } else {
-      // Local cached file
-      return Lottie.file(
-        File(_lottiePath!),
-        height: 144,
-        fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) {
-          return _buildIconFallback();
-        },
-      );
-    }
-  }
 
-  Widget _buildLoadingState() {
-    return Container(
-      height: 144,
-      width: 144,
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
-      child: const Center(
-        child: CircularProgressIndicator(color: AppColors.primary),
-      ),
-    );
-  }
+
 
   Widget _buildIconFallback() {
     return Container(

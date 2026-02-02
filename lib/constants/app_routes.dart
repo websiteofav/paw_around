@@ -42,6 +42,11 @@ class AppRoutes {
   static const String createPost = '/community/create';
   static const String postDetail = '/community/:id';
 
+  // Pet Moments Routes
+  static const String petMomentsTab = '/home/moments';
+  static const String createMoment = '/moments/create';
+  static const String momentDetail = '/moments/:id';
+
   // Deep Link Routes
   static const String vetLocation = '/vet/:vetId';
   static const String lostPetAlert = '/lost-pet/:alertId';
