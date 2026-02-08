@@ -27,7 +27,6 @@ class _MomentsTabState extends State<MomentsTab> {
   @override
   void initState() {
     super.initState();
-    context.read<PetMomentsBloc>().add(const LoadMoments());
   }
 
   void _handleLike(PetMoment moment) {
