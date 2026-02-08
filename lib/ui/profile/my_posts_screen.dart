@@ -38,21 +38,14 @@ class _MyPostsScreenState extends State<MyPostsScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    _tabController.addListener(_onTabChanged);
     _loadMyPosts();
+    _loadMyMoments();
   }
 
   @override
   void dispose() {
-    _tabController.removeListener(_onTabChanged);
     _tabController.dispose();
     super.dispose();
-  }
-
-  void _onTabChanged() {
-    if (_tabController.index == 1 && _tabController.indexIsChanging == false) {
-      _loadMyMoments();
-    }
   }
 
   void _loadMyPosts() {
