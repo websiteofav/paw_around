@@ -20,6 +20,15 @@ class PetMomentsRepository {
     return snapshot.docs.map((doc) => PetMoment.fromFirestore(doc)).toList();
   }
 
+  /// Fetch moments for a specific user (for "My Moments")
+  Future<List<PetMoment>> getMomentsByUserId(String userId) async {
+    final snapshot = await _momentsRef
+        .where('userId', isEqualTo: userId)
+        .orderBy('createdAt', descending: true)
+        .get();
+    return snapshot.docs.map((doc) => PetMoment.fromFirestore(doc)).toList();
+  }
+
   /// Stream of moments for real-time updates
   Stream<List<PetMoment>> getMomentsStream() {
     return _momentsRef

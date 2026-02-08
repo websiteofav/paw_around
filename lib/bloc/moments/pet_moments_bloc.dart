@@ -11,6 +11,7 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       : _repository = repository,
         super(PetMomentsInitial()) {
     on<LoadMoments>(_onLoadMoments);
+    on<LoadMyMoments>(_onLoadMyMoments);
     on<CreateMoment>(_onCreateMoment);
     on<LikeMoment>(_onLikeMoment);
     on<AddComment>(_onAddComment);
@@ -22,6 +23,18 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
     emit(PetMomentsLoading());
     try {
       final moments = await _repository.getMoments();
+      emit(PetMomentsLoaded(moments: moments));
+    } catch (e) {
+      emit(PetMomentsError(e.toString()));
+      rethrow;
+    }
+  }
+
+  Future<void> _onLoadMyMoments(
+      LoadMyMoments event, Emitter<PetMomentsState> emit) async {
+    emit(PetMomentsLoading());
+    try {
+      final moments = await _repository.getMomentsByUserId(event.userId);
       emit(PetMomentsLoaded(moments: moments));
     } catch (e) {
       emit(PetMomentsError(e.toString()));
@@ -113,8 +126,6 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
     try {
       await _repository.deleteMoment(event.momentId);
       emit(MomentDeleted());
-      // Reload moments after deletion
-      add(const LoadMoments());
     } catch (e) {
       emit(PetMomentsError(e.toString()));
       rethrow;

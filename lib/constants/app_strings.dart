@@ -416,7 +416,7 @@ class AppStrings {
   static const String appVersion = 'Version';
   static const String pressBackAgainToExit = 'Press back again to exit';
   static const String pets = 'pets';
-  static const String posts = 'posts';
+  static const String posts = 'Posts';
   static const String activity = 'Activity';
   static const String settings = 'Settings';
   static const String account = 'Account';
@@ -587,6 +587,13 @@ class AppStrings {
   static const String postMoment = 'Post Moment';
   static const String momentPosted = 'Moment posted successfully';
   static const String momentDeleted = 'Moment deleted';
+  static const String deleteMoment = 'Delete Moment';
+  static const String deleteMomentConfirmation =
+      'Are you sure you want to delete this moment? This action cannot be undone.';
+  static const String myMoments = 'My Moments';
+  static const String noMyMomentsYet = "You haven't shared any moments yet";
+  static const String noMyMomentsSubtitle =
+      'Create a moment to share with the community';
   static const String selectImageForMoment = 'Select Image';
   static const String takePhoto = 'Take a photo';
   static const String chooseFromGallery = 'Choose from gallery';

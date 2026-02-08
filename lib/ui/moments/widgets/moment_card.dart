@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/moments/pet_moment_model.dart';
@@ -11,12 +12,14 @@ class MomentCard extends StatelessWidget {
   final PetMoment moment;
   final VoidCallback? onLike;
   final VoidCallback? onComment;
+  final VoidCallback? onDelete;
 
   const MomentCard({
     super.key,
     required this.moment,
     this.onLike,
     this.onComment,
+    this.onDelete,
   });
 
   bool get _isLiked {
@@ -148,6 +151,40 @@ class MomentCard extends StatelessWidget {
             fontColor: AppColors.textSecondary,
           ),
         ),
+        if (onDelete != null)
+          PopupMenuButton<String>(
+            icon: Icon(
+              Icons.more_vert,
+              color: AppColors.textSecondary,
+              size: 20,
+            ),
+            padding: EdgeInsets.zero,
+            onSelected: (value) {
+              if (value == 'delete') onDelete!();
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.delete_forever_rounded,
+                      color: AppColors.error,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      AppStrings.deleteMoment,
+                      style: AppTextStyles.mediumStyle500(
+                        fontSize: 14,
+                        fontColor: AppColors.error,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
       ],
     );
   }

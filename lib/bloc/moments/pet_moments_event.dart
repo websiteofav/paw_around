@@ -12,6 +12,14 @@ class LoadMoments extends PetMomentsEvent {
   const LoadMoments();
 }
 
+class LoadMyMoments extends PetMomentsEvent {
+  final String userId;
+  const LoadMyMoments(this.userId);
+
+  @override
+  List<Object?> get props => [userId];
+}
+
 class CreateMoment extends PetMomentsEvent {
   final PetMoment moment;
   const CreateMoment(this.moment);

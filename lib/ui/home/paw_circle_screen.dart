@@ -61,9 +61,6 @@ class _PawCircleScreenState extends State<PawCircleScreen>
               controller: _tabController,
               indicatorColor: AppColors.primary,
               indicatorSize: TabBarIndicatorSize.tab,
-              // indicatorPadding: EdgeInsets.only(
-              //     right: _tabController.index == 0 ? 16 : 0,
-              //     left: _tabController.index == 1 ? 16 : 0),
               labelColor: AppColors.primary,
               unselectedLabelColor: AppColors.textSecondary,
               labelStyle: AppTextStyles.semiBoldStyle600(fontSize: 14),

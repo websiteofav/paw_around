@@ -13,6 +13,7 @@ import 'package:paw_around/models/moments/pet_moment_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/ui/moments/widgets/moment_card.dart';
 import 'package:paw_around/ui/moments/widgets/moment_comments.dart';
+import 'package:paw_around/ui/profile/widgets/profile_dialogs.dart';
 import 'package:paw_around/ui/widgets/empty_state_widget.dart';
 
 class MomentsTab extends StatefulWidget {
@@ -57,13 +58,21 @@ class _MomentsTabState extends State<MomentsTab> {
     );
   }
 
+  void _confirmDeleteMoment(BuildContext context, String momentId) {
+    showDeleteMomentDialog(
+      context,
+      onConfirm: () =>
+          context.read<PetMomentsBloc>().add(DeleteMoment(momentId)),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<PetMomentsBloc, PetMomentsState>(
       listener: (context, state) {
         if (state is MomentCreated) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text(AppStrings.momentPosted),
               backgroundColor: AppColors.success,
             ),
@@ -76,6 +85,7 @@ class _MomentsTabState extends State<MomentsTab> {
               backgroundColor: AppColors.success,
             ),
           );
+          context.read<PetMomentsBloc>().add(const LoadMoments());
         }
       },
       child: BlocBuilder<PetMomentsBloc, PetMomentsState>(
@@ -168,15 +178,19 @@ class _MomentsTabState extends State<MomentsTab> {
   }
 
   Widget _buildMomentsList(List<PetMoment> moments) {
+    final currentUserId = sl<AuthRepository>().currentUser?.uid;
     return ListView.builder(
       padding: const EdgeInsets.only(bottom: 120),
       itemCount: moments.length,
       itemBuilder: (context, index) {
         final moment = moments[index];
+        final isOwner = currentUserId != null && moment.userId == currentUserId;
         return MomentCard(
           moment: moment,
           onLike: () => _handleLike(moment),
           onComment: () => _handleComment(moment),
+          onDelete:
+              isOwner ? () => _confirmDeleteMoment(context, moment.id) : null,
         );
       },
     );
