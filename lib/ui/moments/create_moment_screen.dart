@@ -292,6 +292,7 @@ class _CreateMomentScreenState extends State<CreateMomentScreen> {
                       text: _isSubmitting
                           ? AppStrings.postingMoment
                           : AppStrings.postMoment,
+                      isLoading: _isSubmitting,
                       onPressed: _isSubmitting ? null : _submitMoment,
                       variant: ButtonVariant.primary,
                     ),
@@ -336,31 +337,11 @@ class _CreateMomentScreenState extends State<CreateMomentScreen> {
               )
             : ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Stack(
-                  children: [
-                    Image.file(
-                      File(_imagePath!),
-                      width: double.infinity,
-                      height: 300,
-                      fit: BoxFit.cover,
-                    ),
-                    Positioned(
-                      top: 8,
-                      right: 8,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          color: AppColors.error,
-                          shape: BoxShape.circle,
-                        ),
-                        child: IconButton(
-                          icon: const Icon(Icons.close, color: AppColors.white),
-                          onPressed: () {
-                            setState(() => _imagePath = null);
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
+                child: Image.file(
+                  File(_imagePath!),
+                  width: double.infinity,
+                  height: 300,
+                  fit: BoxFit.cover,
                 ),
               ),
       ),

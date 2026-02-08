@@ -57,92 +57,97 @@ class _MomentCommentsState extends State<MomentComments> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Handle bar
-          Center(
-            child: Container(
-              width: 40,
-              height: 4,
-              margin: const EdgeInsets.only(bottom: 24),
-              decoration: BoxDecoration(
-                color: AppColors.border,
-                borderRadius: BorderRadius.circular(2),
+    final bottomInset = MediaQuery.viewInsetsOf(context).bottom;
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomInset),
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: const BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Handle bar
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 24),
+                decoration: BoxDecoration(
+                  color: AppColors.border,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
-          // Title
-          Text(
-            AppStrings.comments,
-            style: AppTextStyles.semiBoldStyle600(
-              fontSize: 20,
-              fontColor: AppColors.textPrimary,
+            // Title
+            Text(
+              AppStrings.comments,
+              style: AppTextStyles.semiBoldStyle600(
+                fontSize: 20,
+                fontColor: AppColors.textPrimary,
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          // Comments list
-          Flexible(
-            child: BlocBuilder<PetMomentsBloc, PetMomentsState>(
-              builder: (context, state) {
-                // Reload moment to get updated comments
-                if (state is PetMomentsLoaded) {
-                  final updatedMoment = state.moments.firstWhere(
-                    (m) => m.id == widget.moment.id,
-                    orElse: () => widget.moment,
-                  );
-                  return _buildCommentsList(updatedMoment);
-                }
-                return _buildCommentsList(widget.moment);
-              },
+            const SizedBox(height: 16),
+            // Comments list
+            Flexible(
+              child: BlocBuilder<PetMomentsBloc, PetMomentsState>(
+                builder: (context, state) {
+                  // Reload moment to get updated comments
+                  if (state is PetMomentsLoaded) {
+                    final updatedMoment = state.moments.firstWhere(
+                      (m) => m.id == widget.moment.id,
+                      orElse: () => widget.moment,
+                    );
+                    return _buildCommentsList(updatedMoment);
+                  }
+                  return _buildCommentsList(widget.moment);
+                },
+              ),
             ),
-          ),
-          const SizedBox(height: 16),
-          // Comment input
-          _buildCommentInput(),
-        ],
+            const SizedBox(height: 16),
+            // Comment input
+            _buildCommentInput(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildCommentsList(PetMoment moment) {
-    if (moment.comments.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.chat_bubble_outline,
-                size: 48,
-                color: AppColors.textLight,
+    final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    if (moment.comments.isEmpty && !isKeyboardVisible) {
+      return Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.chat_bubble_outline,
+              size: 48,
+              color: AppColors.textLight,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              AppStrings.noCommentsYet,
+              style: AppTextStyles.regularStyle400(
+                fontSize: 14,
+                fontColor: AppColors.textSecondary,
               ),
-              const SizedBox(height: 16),
-              Text(
-                AppStrings.noCommentsYet,
-                style: AppTextStyles.regularStyle400(
-                  fontSize: 14,
-                  fontColor: AppColors.textSecondary,
-                ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              AppStrings.beFirstToComment,
+              style: AppTextStyles.regularStyle400(
+                fontSize: 12,
+                fontColor: AppColors.textLight,
               ),
-              const SizedBox(height: 4),
-              Text(
-                AppStrings.beFirstToComment,
-                style: AppTextStyles.regularStyle400(
-                  fontSize: 12,
-                  fontColor: AppColors.textLight,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }

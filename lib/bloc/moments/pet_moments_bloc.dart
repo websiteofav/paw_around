@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/moments/pet_moments_event.dart';
 import 'package:paw_around/bloc/moments/pet_moments_state.dart';
+import 'package:paw_around/models/moments/pet_moment_model.dart';
 import 'package:paw_around/repositories/pet_moments_repository.dart';
 
 class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
@@ -44,11 +45,28 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
 
   Future<void> _onLikeMoment(
       LikeMoment event, Emitter<PetMomentsState> emit) async {
+    final currentState = state;
+    List<PetMoment>? previousMoments;
+    if (currentState is PetMomentsLoaded) {
+      previousMoments = currentState.moments;
+      final updatedMoments = previousMoments.map((moment) {
+        if (moment.id != event.momentId) return moment;
+        final likes = List<String>.from(moment.likes);
+        if (likes.contains(event.userId)) {
+          likes.remove(event.userId);
+        } else {
+          likes.add(event.userId);
+        }
+        return moment.copyWith(likes: likes);
+      }).toList();
+      emit(PetMomentsLoaded(moments: updatedMoments));
+    }
     try {
       await _repository.likeMoment(event.momentId, event.userId);
-      // Reload moments to get updated like count
-      add(const LoadMoments());
     } catch (e) {
+      if (previousMoments != null) {
+        emit(PetMomentsLoaded(moments: previousMoments));
+      }
       emit(PetMomentsError(e.toString()));
       rethrow;
     }
@@ -56,6 +74,24 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
 
   Future<void> _onAddComment(
       AddComment event, Emitter<PetMomentsState> emit) async {
+    final currentState = state;
+    List<PetMoment>? previousMoments;
+    if (currentState is PetMomentsLoaded) {
+      previousMoments = currentState.moments;
+      final newComment = PetMomentComment(
+        userId: event.userId,
+        userName: event.userName,
+        text: event.text,
+        createdAt: DateTime.now(),
+      );
+      final updatedMoments = previousMoments.map((moment) {
+        if (moment.id != event.momentId) return moment;
+        final comments = List<PetMomentComment>.from(moment.comments)
+          ..add(newComment);
+        return moment.copyWith(comments: comments);
+      }).toList();
+      emit(PetMomentsLoaded(moments: updatedMoments));
+    }
     try {
       await _repository.addComment(
         event.momentId,
@@ -63,9 +99,10 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
         event.userName,
         event.text,
       );
-      // Reload moments to get updated comment count
-      add(const LoadMoments());
     } catch (e) {
+      if (previousMoments != null) {
+        emit(PetMomentsLoaded(moments: previousMoments));
+      }
       emit(PetMomentsError(e.toString()));
       rethrow;
     }
