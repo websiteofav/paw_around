@@ -49,7 +49,9 @@ class _MapScreenState extends State<MapScreen> {
         widget.initialFilter != _appliedFilter &&
         widget.initialFilter != ServiceType.all) {
       _appliedFilter = widget.initialFilter;
-      context.read<PlacesBloc>().add(FilterByServiceType(widget.initialFilter!));
+      context
+          .read<PlacesBloc>()
+          .add(FilterByServiceType(widget.initialFilter!));
     }
   }
 
@@ -84,8 +86,8 @@ class _MapScreenState extends State<MapScreen> {
           // Custom App Bar
           BlocBuilder<PlacesBloc, PlacesState>(
             builder: (context, state) {
-              final isMapView = state is PlacesLoaded && state.isMapView;
-              return DashboardAppBar(
+              //   final isMapView = state is PlacesLoaded && state.isMapView;
+              return const DashboardAppBar(
                 title: AppStrings.petServices,
                 // actions: [
                 //   if (state is PlacesLoaded)
@@ -133,7 +135,9 @@ class _MapScreenState extends State<MapScreen> {
                 }
 
                 if (state is PlacesLoaded) {
-                  return state.isMapView ? _buildMapView(state) : PlacesListView(places: state.filteredPlaces);
+                  return state.isMapView
+                      ? _buildMapView(state)
+                      : PlacesListView(places: state.filteredPlaces);
                 }
 
                 return _buildInitialState();

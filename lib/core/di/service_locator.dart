@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/repositories/community_repository.dart';
+import 'package:paw_around/repositories/pet_moments_repository.dart';
 import 'package:paw_around/repositories/places_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/location_service.dart';
@@ -17,6 +18,7 @@ Future<void> init() async {
   sl.registerLazySingleton<AuthRepository>(() => AuthRepository());
   sl.registerLazySingleton<PlacesRepository>(() => PlacesRepository());
   sl.registerLazySingleton<CommunityRepository>(() => CommunityRepository());
+  sl.registerLazySingleton<PetMomentsRepository>(() => PetMomentsRepository());
 
   // PetRepository depends on AuthRepository for user ID
   sl.registerLazySingleton<PetRepository>(

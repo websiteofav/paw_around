@@ -7,7 +7,6 @@ import 'package:paw_around/bloc/community/community_event.dart';
 import 'package:paw_around/bloc/community/community_state.dart';
 import 'package:paw_around/constants/api_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
-import 'package:paw_around/constants/app_constants.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -16,17 +15,16 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/home/widgets/post_card.dart';
 import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
-import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/ui/widgets/empty_state_widget.dart';
 
-class CommunityScreen extends StatefulWidget {
-  const CommunityScreen({super.key});
+class LostFoundTab extends StatefulWidget {
+  const LostFoundTab({super.key});
 
   @override
-  State<CommunityScreen> createState() => _CommunityScreenState();
+  State<LostFoundTab> createState() => _LostFoundTabState();
 }
 
-class _CommunityScreenState extends State<CommunityScreen> {
+class _LostFoundTabState extends State<LostFoundTab> {
   final LocationService _locationService = sl<LocationService>();
   Position? _userPosition;
 
@@ -74,48 +72,22 @@ class _CommunityScreenState extends State<CommunityScreen> {
           _loadPosts();
         }
       },
-      child: Scaffold(
-        backgroundColor: AppColors.background,
-        body: Column(
-          children: [
-            // Custom App Bar
-            DashboardAppBar(
-              title: AppStrings.communityTitle,
-              actions: [
-                DashboardAppBarAction(
-                  icon: Icons.add_circle_outline,
-                  onTap: () async {
-                    await context.push('/community/create');
-                    if (mounted) {
-                      _loadPosts();
-                    }
-                  },
-                ),
-              ],
-            ),
-
-            // Content
-            Expanded(
-              child: BlocBuilder<CommunityBloc, CommunityState>(
-                builder: (context, state) {
-                  if (state is CommunityLoading) {
-                    return const CommunitySkeleton();
-                  }
-                  if (state is CommunityError) {
-                    return _buildError(state.message);
-                  }
-                  if (state is CommunityLoaded) {
-                    if (state.posts.isEmpty) {
-                      return _buildEmptyState();
-                    }
-                    return _buildPostsList(state);
-                  }
-                  return const CommunitySkeleton();
-                },
-              ),
-            ),
-          ],
-        ),
+      child: BlocBuilder<CommunityBloc, CommunityState>(
+        builder: (context, state) {
+          if (state is CommunityLoading) {
+            return const CommunitySkeleton();
+          }
+          if (state is CommunityError) {
+            return _buildError(state.message);
+          }
+          if (state is CommunityLoaded) {
+            if (state.posts.isEmpty) {
+              return _buildEmptyState();
+            }
+            return _buildPostsList(state);
+          }
+          return const CommunitySkeleton();
+        },
       ),
     );
   }
@@ -163,7 +135,7 @@ class _CommunityScreenState extends State<CommunityScreen> {
   Widget _buildError(String message) {
     return Center(
       child: Padding(
-        padding: AppEdgeInsets.allLarge,
+        padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -78,6 +78,7 @@ class AppStrings {
   // Navigation
   static const String homeTab = 'Home';
   static const String mapTab = 'Map';
+  static const String momentsTab = 'Moments';
   static const String communityTab = 'Community';
   static const String profileTab = 'Profile';
 
@@ -415,7 +416,7 @@ class AppStrings {
   static const String appVersion = 'Version';
   static const String pressBackAgainToExit = 'Press back again to exit';
   static const String pets = 'pets';
-  static const String posts = 'posts';
+  static const String posts = 'Posts';
   static const String activity = 'Activity';
   static const String settings = 'Settings';
   static const String account = 'Account';
@@ -570,6 +571,53 @@ class AppStrings {
   static const String removePhoto = 'Remove photo';
   static const String community = 'community';
   static const String petParent = 'Pet Parent';
+
+  // Moments
+  static const String createMoment = 'Create Moment';
+  static const String addCaption = 'Add Caption';
+  static const String selectPet = 'Select Pet';
+  static const String momentCaptionHint = 'What\'s happening with your pet?';
+  static const String noMomentsYet = 'No moments yet';
+  static const String noMomentsDescription =
+      'Share your pet\'s special moments with the community';
+  static const String likeMoment = 'Like';
+  static const String unlikeMoment = 'Unlike';
+  static const String addComment = 'Add Comment';
+  static const String commentHint = 'Write a comment...';
+  static const String postMoment = 'Post Moment';
+  static const String momentPosted = 'Moment posted successfully';
+  static const String momentDeleted = 'Moment deleted';
+  static const String deleteMoment = 'Delete Moment';
+  static const String deleteMomentConfirmation =
+      'Are you sure you want to delete this moment? This action cannot be undone.';
+  static const String myMoments = 'My Moments';
+  static const String noMyMomentsYet = "You haven't shared any moments yet";
+  static const String noMyMomentsSubtitle =
+      'Create a moment to share with the community';
+  static const String selectImageForMoment = 'Select Image';
+  static const String takePhoto = 'Take a photo';
+  static const String chooseFromGallery = 'Choose from gallery';
+  static const String postingMoment = 'Posting moment...';
+  static const String failedToPostMoment =
+      'Failed to post moment. Please try again.';
+  static const String failedToUploadImage =
+      'Failed to upload image. Please try again.';
+  static const String pleaseSelectImage = 'Please select an image';
+  static const String pleaseEnterCaption = 'Please enter a caption';
+  static const String pleaseSelectPet = 'Please select a pet';
+  static const String comments = 'Comments';
+  static const String noCommentsYet = 'No comments yet';
+  static const String beFirstToComment = 'Be the first to comment!';
+
+  // Community Action Bottom Sheet
+  static const String whatWouldYouLikeToShare = 'What would you like to share?';
+  static const String shareMoment = 'Share a Moment';
+  static const String reportLostPetDescription =
+      'Help reunite a lost pet with their family';
+  static const String reportFoundPetDescription = 'Report a pet you found';
+  static const String shareMomentDescription =
+      'Share a special moment with your pet';
+  static const String lostAndFoundTab = 'Lost & Found';
 
   AppStrings._();
 }

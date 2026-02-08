@@ -14,7 +14,7 @@ import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/deep_link_service.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
-import 'package:paw_around/ui/home/community_screen.dart';
+import 'package:paw_around/ui/home/paw_circle_screen.dart';
 import 'package:paw_around/ui/profile/profile_screen.dart';
 
 class Dashboard extends StatefulWidget {
@@ -47,7 +47,8 @@ class _DashboardState extends State<Dashboard> {
       return false; // Don't handle - let GoRouter pop normally
     }
     final now = DateTime.now();
-    if (_lastBackPressTime == null || now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
+    if (_lastBackPressTime == null ||
+        now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
       _lastBackPressTime = now;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -56,7 +57,8 @@ class _DashboardState extends State<Dashboard> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppColors.textPrimary,
           margin: const EdgeInsets.all(16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
       return true; // Handled - don't pop
@@ -71,13 +73,16 @@ class _DashboardState extends State<Dashboard> {
       onBackButtonPressed: _handleBackPress,
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
-          final currentIndex = state is HomeTabSelected ? state.currentTabIndex : 0;
-          final mapFilter = state is HomeTabSelected ? state.mapServiceFilter : null;
+          final currentIndex =
+              state is HomeTabSelected ? state.currentTabIndex : 0;
+          final mapFilter =
+              state is HomeTabSelected ? state.mapServiceFilter : null;
 
           return Scaffold(
             backgroundColor: AppColors.white,
             body: _getTabContent(currentIndex, mapFilter: mapFilter),
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerDocked,
             floatingActionButton: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               decoration: BoxDecoration(
@@ -97,7 +102,8 @@ class _DashboardState extends State<Dashboard> {
               child: SafeArea(
                 child: Container(
                   height: 80,
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -151,7 +157,7 @@ class _DashboardState extends State<Dashboard> {
       case 1:
         return MapScreen(initialFilter: mapFilter);
       case 2:
-        return const CommunityScreen();
+        return const PawCircleScreen();
       case 3:
         return const ProfileScreen();
       default:
@@ -179,13 +185,19 @@ class _DashboardState extends State<Dashboard> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(isSelected ? activeIcon : icon,
-                color: isSelected ? AppColors.navigationActive : AppColors.navigationInactive, size: 24, weight: 12),
+                color: isSelected
+                    ? AppColors.navigationActive
+                    : AppColors.navigationInactive,
+                size: 24,
+                weight: 12),
             const SizedBox(height: 4),
             Text(
               label,
               style: isSelected
-                  ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.primary)
-                  : AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.navigationInactive),
+                  ? AppTextStyles.semiBoldStyle600(
+                      fontSize: 12, fontColor: AppColors.primary)
+                  : AppTextStyles.mediumStyle500(
+                      fontSize: 12, fontColor: AppColors.navigationInactive),
             ),
           ],
         ),

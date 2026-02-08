@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:lottie/lottie.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_constants.dart';
 import 'package:paw_around/constants/app_icons.dart';
@@ -12,7 +11,7 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 /// title, subtitle, and call-to-action button.
 class EmptyStateWidget extends StatelessWidget {
   /// Path to a Lottie animation file (e.g., 'assets/lottie/add_pet.json')
-  final String? lottieAsset;
+  final String? imagePath;
 
   /// Icon to display if no Lottie asset is provided
   final IconData? icon;
@@ -52,7 +51,7 @@ class EmptyStateWidget extends StatelessWidget {
 
   const EmptyStateWidget({
     super.key,
-    this.lottieAsset,
+    this.imagePath,
     this.icon,
     this.iconColor,
     this.iconBackgroundColor,
@@ -66,8 +65,8 @@ class EmptyStateWidget extends StatelessWidget {
     this.showCard = true,
     this.hints,
   }) : assert(
-          lottieAsset != null || icon != null,
-          'Either lottieAsset or icon must be provided',
+          imagePath != null || icon != null,
+          'Either imagePath or icon must be provided',
         );
 
   @override
@@ -93,7 +92,8 @@ class EmptyStateWidget extends StatelessWidget {
         if (subtitle != null) ...[
           AppSpacing.vertical10,
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppConstants.space16),
+            padding:
+                const EdgeInsets.symmetric(horizontal: AppConstants.space16),
             child: Text(
               subtitle!,
               style: AppTextStyles.regularStyle400(

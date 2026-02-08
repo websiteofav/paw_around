@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
@@ -36,13 +37,15 @@ void showLogoutDialog(BuildContext context) {
           const SizedBox(height: 20),
           Text(
             AppStrings.logOutConfirmTitle,
-            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
+            style: AppTextStyles.semiBoldStyle600(
+                fontSize: 20, fontColor: AppColors.textPrimary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             AppStrings.logOutConfirmMessage,
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -83,7 +86,8 @@ void showLogoutDialog(BuildContext context) {
                   ),
                   child: Text(
                     AppStrings.logout,
-                    style: AppTextStyles.semiBoldStyle600(fontSize: 15, fontColor: AppColors.white),
+                    style: AppTextStyles.semiBoldStyle600(
+                        fontSize: 15, fontColor: AppColors.white),
                   ),
                 ),
               ),
@@ -127,13 +131,15 @@ void showDeleteAccountDialog(
           const SizedBox(height: 20),
           Text(
             AppStrings.deleteAccountTitle,
-            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
+            style: AppTextStyles.semiBoldStyle600(
+                fontSize: 20, fontColor: AppColors.textPrimary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
           Text(
             AppStrings.deleteAccountWarning,
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 12),
@@ -158,7 +164,8 @@ void showDeleteAccountDialog(
                 Expanded(
                   child: Text(
                     AppStrings.deleteAccountFinal,
-                    style: AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.error),
+                    style: AppTextStyles.mediumStyle500(
+                        fontSize: 12, fontColor: AppColors.error),
                   ),
                 ),
               ],
@@ -202,8 +209,87 @@ void showDeleteAccountDialog(
                   ),
                   child: Text(
                     AppStrings.delete,
-                    style: AppTextStyles.semiBoldStyle600(fontSize: 15, fontColor: AppColors.white),
+                    style: AppTextStyles.semiBoldStyle600(
+                        fontSize: 15, fontColor: AppColors.white),
                   ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+/// Shows delete moment confirmation dialog (app-compliant)
+void showDeleteMomentDialog(
+  BuildContext context, {
+  required VoidCallback onConfirm,
+}) {
+  showDialog(
+    context: context,
+    builder: (dialogContext) => AlertDialog(
+      backgroundColor: AppColors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppBorderRadius.xl,
+      ),
+      contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 64,
+            height: 64,
+            decoration: BoxDecoration(
+              color: AppColors.error.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.delete_forever_rounded,
+              size: 32,
+              color: AppColors.error,
+            ),
+          ),
+          AppSpacing.vertical16,
+          Text(
+            AppStrings.deleteMoment,
+            style: AppTextStyles.semiBoldStyle600(
+              fontSize: 20,
+              fontColor: AppColors.textPrimary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AppStrings.deleteMomentConfirmation,
+            style: AppTextStyles.regularStyle400(
+              fontSize: 14,
+              fontColor: AppColors.textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: CommonButton(
+                  text: AppStrings.cancel,
+                  variant: ButtonVariant.secondary,
+                  size: ButtonSize.small,
+                  onPressed: () => Navigator.of(dialogContext).pop(),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: CommonButton(
+                  text: AppStrings.delete,
+                  variant: ButtonVariant.danger,
+                  size: ButtonSize.small,
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    onConfirm();
+                  },
                 ),
               ),
             ],
@@ -249,13 +335,15 @@ void showReAuthDialog(
           const SizedBox(height: 20),
           Text(
             'Confirm Identity',
-            style: AppTextStyles.semiBoldStyle600(fontSize: 20, fontColor: AppColors.textPrimary),
+            style: AppTextStyles.semiBoldStyle600(
+                fontSize: 20, fontColor: AppColors.textPrimary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
             AppStrings.reAuthRequired,
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -286,7 +374,8 @@ void showReAuthDialog(
             onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text(
               AppStrings.cancel,
-              style: AppTextStyles.regularStyle400(fontColor: AppColors.textSecondary),
+              style: AppTextStyles.regularStyle400(
+                  fontColor: AppColors.textSecondary),
             ),
           ),
         ],
@@ -312,7 +401,8 @@ Widget _buildBullet(String text) {
         Expanded(
           child: Text(
             text,
-            style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
+            style: AppTextStyles.regularStyle400(
+                fontSize: 13, fontColor: AppColors.textSecondary),
           ),
         ),
       ],

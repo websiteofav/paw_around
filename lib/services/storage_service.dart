@@ -5,7 +5,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 class StorageService {
   final FirebaseStorage _storage;
 
-  StorageService({FirebaseStorage? storage}) : _storage = storage ?? FirebaseStorage.instance;
+  StorageService({FirebaseStorage? storage})
+      : _storage = storage ?? FirebaseStorage.instance;
 
   /// Upload an image file and return the download URL
   /// Returns null if upload fails
@@ -88,6 +89,34 @@ class StorageService {
 
       final fileName = '${userId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final ref = _storage.ref().child('profile_images').child(fileName);
+
+      final uploadTask = ref.putFile(
+        file,
+        SettableMetadata(contentType: 'image/jpeg'),
+      );
+
+      final snapshot = await uploadTask;
+      final downloadUrl = await snapshot.ref.getDownloadURL();
+
+      return downloadUrl;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// Upload a moment image
+  Future<String?> uploadMomentImage({
+    required String localPath,
+    required String userId,
+  }) async {
+    try {
+      final file = File(localPath);
+      if (!await file.exists()) {
+        return null;
+      }
+
+      final fileName = '${userId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final ref = _storage.ref().child('moment_images').child(fileName);
 
       final uploadTask = ref.putFile(
         file,
