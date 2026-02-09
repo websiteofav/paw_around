@@ -42,30 +42,33 @@ class PetQrScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: AppEdgeInsets.allLarge,
-          child: Column(
-            children: [
-              Text(
-                pet.name,
-                style: AppTextStyles.semiBoldStyle600(
-                  fontSize: 22,
-                  fontColor: AppColors.textPrimary,
+          padding: AppEdgeInsets.screenAll,
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  pet.name,
+                  style: AppTextStyles.semiBoldStyle600(
+                    fontSize: 22,
+                    fontColor: AppColors.textPrimary,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              if (qrData != null) _buildQrCard(context, qrData),
-              if (qrData == null) _buildUnavailableMessage(context),
-              const SizedBox(height: 24),
-              Text(
-                AppStrings.scanMeToHelpGetHome,
-                style: AppTextStyles.regularStyle400(
-                  fontSize: 14,
-                  fontColor: AppColors.textSecondary,
+                const SizedBox(height: 24),
+                if (qrData != null) _buildQrCard(context, qrData),
+                if (qrData == null) _buildUnavailableMessage(context),
+                const SizedBox(height: 24),
+                Text(
+                  AppStrings.scanMeToHelpGetHome,
+                  style: AppTextStyles.regularStyle400(
+                    fontSize: 14,
+                    fontColor: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -105,7 +108,7 @@ class PetQrScreen extends StatelessWidget {
 
   Widget _buildUnavailableMessage(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: AppBorderRadius.xl,
