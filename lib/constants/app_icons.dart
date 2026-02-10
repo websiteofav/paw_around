@@ -16,6 +16,8 @@ class AppIcons {
   static const String pawPrintIcon = 'assets/pets/paw_print_icon.svg';
   static const String noPostsIcon = 'assets/posts/no_posts_icon.svg';
   static const String addPetIcon = 'assets/home/app_pet_icon.svg';
+  static const String heroPetIcon = 'assets/web/hero_pet_icon.png';
+  static const String petWithQrIcon = 'assets/web/pet_with_qr_icon.png';
 
   AppIcons._();
 }

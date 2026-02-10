@@ -75,4 +75,5 @@ flutter:
     - assets/home/
     - assets/pets/
     - assets/posts/
+    - assets/web/
     - .env

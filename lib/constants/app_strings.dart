@@ -619,5 +619,50 @@ class AppStrings {
       'Share a special moment with your pet';
   static const String lostAndFoundTab = 'Lost & Found';
 
+  // Web Landing Page - Navigation
+  static const String landingNavHome = 'Home';
+  static const String landingNavAbout = 'About';
+  static const String landingNavFaq = 'FAQ';
+  static const String landingNavContact = 'Contact';
+
+  // Web Landing Page - Hero Section
+  static const String landingHeroTitle =
+      'All Your Pet\'s Care, Safety & Community in One App';
+  static const String landingHeroSubtitle =
+      'Keeping your pet healthy and safe has never been easier.';
+  static const String landingDownloadOnAndroid = 'Download on Android';
+  static const String landingIosComingSoon = 'iOS Coming Soon';
+
+  // Web Landing Page - Feature Cards
+  static const String landingFeaturePetCareRemindersTitle =
+      'Pet Care Reminders';
+  static const String landingFeaturePetCareRemindersBody =
+      'Never miss a vet visit or grooming.';
+  static const String landingFeatureLostFoundTitle = 'Lost & Found QR Tags';
+  static const String landingFeatureLostFoundBody =
+      'Find your pet quickly if they go missing.';
+  static const String landingFeatureNearbyVetsTitle = 'Nearby Vets & Groomers';
+  static const String landingFeatureNearbyVetsBody =
+      'Book local services in seconds.';
+
+  // Web Landing Page - QR Safety Section
+  static const String landingQrHeading = 'Lost Pet? Scan the QR Tag!';
+  static const String landingQrBody =
+      'If your pet is lost, anyone can scan their tag to contact you instantly.';
+  static const String landingStaySafeCta = 'Stay Safe';
+
+  // Web Landing Page - Download Section
+  static const String landingDownloadHeading = 'Get Paw Around Today!';
+
+  // Web Landing Page - Footer
+  static const String landingFooterAbout = 'About';
+  static const String landingFooterPrivacyPolicy = 'Privacy Policy';
+  static const String landingFooterTermsOfService = 'Terms of Service';
+  static const String landingFooterCopyright =
+      '© 2024 Paw Around. All rights reserved.';
+  static const String landingFooterFacebook = 'Facebook';
+  static const String landingFooterInstagram = 'Instagram';
+  static const String landingFooterTwitter = 'Twitter';
+
   AppStrings._();
 }
