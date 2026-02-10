@@ -20,7 +20,7 @@ class LandingPage extends StatelessWidget {
         return Scaffold(
           backgroundColor: AppColors.background,
           body: Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -32,24 +32,21 @@ class LandingPage extends StatelessWidget {
             ),
             child: SingleChildScrollView(
               child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1200),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      LandingNavBar(isMobile: isMobile),
-                      AppSpacing.vertical40,
-                      HeroSection(isMobile: isMobile),
-                      AppSpacing.vertical48,
-                      const FeatureCardsSection(),
-                      AppSpacing.vertical48,
-                      QrSafetySection(isMobile: isMobile),
-                      AppSpacing.vertical48,
-                      const DownloadSection(),
-                      AppSpacing.vertical40,
-                      const LandingFooter(),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    LandingNavBar(isMobile: isMobile),
+                    AppSpacing.vertical40,
+                    HeroSection(isMobile: isMobile),
+                    AppSpacing.vertical48,
+                    const FeatureCardsSection(),
+                    AppSpacing.vertical48,
+                    QrSafetySection(isMobile: isMobile),
+                    AppSpacing.vertical48,
+                    const DownloadSection(),
+                    AppSpacing.vertical40,
+                    const LandingFooter(),
+                  ],
                 ),
               ),
             ),
