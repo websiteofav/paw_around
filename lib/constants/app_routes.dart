@@ -17,6 +17,7 @@ class AppRoutes {
   static const String addPet = '/add-pet';
   static const String addPetDetails = '/add-pet/details';
   static const String petOverview = '/pet-overview';
+  static const String petQr = '/pet-qr';
   static const String addVaccine = '/add-vaccine';
   static const String groomingSettings = '/pets/grooming-settings';
   static const String tickFleaSettings = '/pets/tick-flea-settings';
