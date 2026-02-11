@@ -673,6 +673,17 @@ class AppStrings {
 
   // Web Landing Page - Download Section
   static const String landingDownloadHeading = 'Get Paw Around Today!';
+  static const String landingDownloadSubheading =
+      'Join 10,000+ pet parents keeping their furry friends safe';
+  static const String landingDownloadOrScan = 'Or scan to download';
+  static const String landingDownloadTrustFree = 'Free Forever';
+  static const String landingDownloadTrustSecure = 'Secure & Trusted';
+  static const String landingDownloadTrustPrivacy = 'Privacy First';
+  static const String landingDownloadSocialDownloads = '10,000+ downloads';
+  static const String landingDownloadRating = '4.8';
+  static const String landingDownloadFeatureReminders = 'Pet care reminders';
+  static const String landingDownloadFeatureQr = 'QR safety tags';
+  static const String landingDownloadFeatureVets = 'Find nearby vets';
 
   // Web Landing Page - Footer
   static const String landingFooterAbout = 'About';
