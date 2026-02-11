@@ -62,7 +62,7 @@ class AppRouter {
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
       initialLocation:
-          !hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+          hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],

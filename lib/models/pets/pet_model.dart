@@ -1,7 +1,11 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
+
+const _undefined = Object();
 
 class PetModel extends Equatable {
   final String id;
@@ -18,6 +22,8 @@ class PetModel extends Equatable {
   final CareSettingsModel? tickFleaSettings;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String? petPublicId;
+  final bool isLost;
 
   const PetModel({
     required this.id,
@@ -34,7 +40,23 @@ class PetModel extends Equatable {
     this.tickFleaSettings,
     required this.createdAt,
     required this.updatedAt,
+    this.petPublicId,
+    this.isLost = false,
   });
+
+  static const String _petPublicIdPrefix = 'pet_';
+  static const String _idAlphabet =
+      'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  static const int _idLength = 20;
+
+  static String _generatePetPublicId() {
+    final random = Random.secure();
+    final buffer = StringBuffer(_petPublicIdPrefix);
+    for (var i = 0; i < _idLength; i++) {
+      buffer.write(_idAlphabet[random.nextInt(_idAlphabet.length)]);
+    }
+    return buffer.toString();
+  }
 
   // Factory constructor for creating a new pet
   factory PetModel.create({
@@ -66,6 +88,8 @@ class PetModel extends Equatable {
       tickFleaSettings: tickFleaSettings,
       createdAt: now,
       updatedAt: now,
+      petPublicId: _generatePetPublicId(),
+      isLost: false,
     );
   }
 
@@ -85,6 +109,8 @@ class PetModel extends Equatable {
     CareSettingsModel? tickFleaSettings,
     DateTime? createdAt,
     DateTime? updatedAt,
+    Object? petPublicId = _undefined,
+    bool? isLost,
   }) {
     return PetModel(
       id: id ?? this.id,
@@ -101,6 +127,9 @@ class PetModel extends Equatable {
       tickFleaSettings: tickFleaSettings ?? this.tickFleaSettings,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      petPublicId:
+          petPublicId == _undefined ? this.petPublicId : petPublicId as String?,
+      isLost: isLost ?? this.isLost,
     );
   }
 
@@ -120,6 +149,8 @@ class PetModel extends Equatable {
       'tickFleaSettings': tickFleaSettings?.toFirestore(),
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
+      'petPublicId': petPublicId,
+      'isLost': isLost,
     };
   }
 
@@ -151,6 +182,8 @@ class PetModel extends Equatable {
           : null,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
+      petPublicId: data['petPublicId'] as String?,
+      isLost: (data['isLost'] as bool?) ?? false,
     );
   }
 
@@ -171,6 +204,8 @@ class PetModel extends Equatable {
       'tickFleaSettings': tickFleaSettings?.toJson(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
+      'petPublicId': petPublicId,
+      'isLost': isLost,
     };
   }
 
@@ -200,6 +235,8 @@ class PetModel extends Equatable {
           : null,
       createdAt: DateTime.parse(json['createdAt'] as String),
       updatedAt: DateTime.parse(json['updatedAt'] as String),
+      petPublicId: json['petPublicId'] as String?,
+      isLost: (json['isLost'] as bool?) ?? false,
     );
   }
 
@@ -256,7 +293,8 @@ class PetModel extends Equatable {
     if (supportsMedicalCare) {
       for (final vaccine in vaccines) {
         if (vaccine.nextDueDate
-            ?.isBefore(DateTime.now().add(const Duration(days: 30))) ?? false) {
+                ?.isBefore(DateTime.now().add(const Duration(days: 30))) ??
+            false) {
           return true;
         }
       }
@@ -332,5 +370,7 @@ class PetModel extends Equatable {
         tickFleaSettings,
         createdAt,
         updatedAt,
+        petPublicId,
+        isLost,
       ];
 }

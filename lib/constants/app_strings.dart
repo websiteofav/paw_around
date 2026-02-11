@@ -494,6 +494,16 @@ class AppStrings {
   static const String overdueByDays = 'Overdue by %s days';
   static const String dueInDays = 'Due in %s days';
   static const String yourPet = 'Your Pet';
+
+  // Pet ID & QR
+  static const String markPetAsLost = 'Mark pet as lost';
+  static const String scanMeToHelpGetHome = 'Scan me to help me get home 🐾';
+  static const String qrNotAvailableForPet =
+      'QR code not available for this pet';
+  static const String petMarkedAsLost = 'Pet marked as lost';
+  static const String petNoLongerMarkedAsLost = 'Pet no longer marked as lost';
+  static const String viewPetQr = 'Pet ID & QR Code';
+
   // Private constructor to prevent instantiation
 
   // Edit Profile Screen
