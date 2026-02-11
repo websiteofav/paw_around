@@ -655,6 +655,12 @@ class AppStrings {
   static const String landingFeatureNearbyVetsBody =
       'Book local services in seconds.';
 
+  // Web Landing Page - Feature Section
+  static const String landingFeatureSectionTitle =
+      'Why Pet Parents Love Paw Around';
+  static const String landingFeatureSectionSubtitle =
+      'Everything your pet needs in one app';
+
   // Web Landing Page - QR Safety Section
   static const String landingQrHeading = 'Lost Pet? Scan the QR Tag!';
   static const String landingQrBody =
@@ -673,6 +679,12 @@ class AppStrings {
   static const String landingFooterFacebook = 'Facebook';
   static const String landingFooterInstagram = 'Instagram';
   static const String landingFooterTwitter = 'Twitter';
+
+  // Web Landing Page - Hero CTAs
+  static const String landingPlayStoreOpenError =
+      'Unable to open Google Play Store right now. Please try again later.';
+  static const String landingIosComingSoonMessage =
+      'Paw Around is coming soon to iOS. Stay tuned!';
 
   AppStrings._();
 }

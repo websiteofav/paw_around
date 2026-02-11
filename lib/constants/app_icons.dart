@@ -18,6 +18,8 @@ class AppIcons {
   static const String addPetIcon = 'assets/home/app_pet_icon.svg';
   static const String heroPetIcon = 'assets/web/hero_pet_icon.png';
   static const String petWithQrIcon = 'assets/web/pet_with_qr_icon.png';
+  static const String playStoreIcon = 'assets/web/play_store_icon.png';
+  static const String appStoreIcon = 'assets/web/app_store_icon.png';
 
   AppIcons._();
 }
