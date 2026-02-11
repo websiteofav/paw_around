@@ -35,7 +35,6 @@ import 'package:paw_around/ui/pets/add_vaccine_screen.dart';
 import 'package:paw_around/ui/pets/grooming_settings_screen.dart';
 import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
-import 'package:paw_around/ui/pets/pet_qr_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
 import 'package:paw_around/ui/profile/my_posts_screen.dart';
@@ -63,7 +62,7 @@ class AppRouter {
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
       initialLocation:
-          !hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+          hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],
@@ -205,16 +204,6 @@ class AppRouter {
               builder: (context, state) {
                 final pet = state.extra as PetModel;
                 return PetOverviewScreen(pet: pet);
-              },
-            ),
-
-            // Pet QR Route
-            GoRoute(
-              path: AppRoutes.petQr,
-              name: AppRoutes.petQr,
-              builder: (context, state) {
-                final pet = state.extra as PetModel;
-                return PetQrScreen(pet: pet);
               },
             ),
 
