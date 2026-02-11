@@ -694,6 +694,30 @@ class AppStrings {
   static const String landingFooterFacebook = 'Facebook';
   static const String landingFooterInstagram = 'Instagram';
   static const String landingFooterTwitter = 'Twitter';
+  static const String landingFooterTagline = "Your pet's best friend";
+  static const String landingFooterCompanyDescription =
+      'Keep your pets safe, healthy, and connected with the pet care app trusted by thousands.';
+  static const String landingFooterProduct = 'Product';
+  static const String landingFooterFeatures = 'Features';
+  static const String landingFooterHowItWorks = 'How it Works';
+  static const String landingFooterPricing = 'Pricing';
+  static const String landingFooterFaq = 'FAQ';
+  static const String landingFooterCompany = 'Company';
+  static const String landingFooterCareers = 'Careers';
+  static const String landingFooterContact = 'Contact';
+  static const String landingFooterBlog = 'Blog';
+  static const String landingFooterSupport = 'Support';
+  static const String landingFooterHelpCenter = 'Help Center';
+  static const String landingFooterDownload = 'Download';
+  static const String landingFooterStayUpdated = 'Stay Updated';
+  static const String landingFooterNewsletterHint = 'Enter your email';
+  static const String landingFooterSubscribe = 'Subscribe';
+  static const String landingFooterNewsletterSuccess =
+      'Thanks for subscribing! We\'ll send pet care tips to your inbox.';
+  static const String landingFooterNewsletterInvalid =
+      'Please enter a valid email.';
+  static const String landingFooterSupportEmail = 'support@pawaround.com';
+  static const String landingFooterContactUs = 'Contact Us';
 
   // Web Landing Page - Hero CTAs
   static const String landingPlayStoreOpenError =

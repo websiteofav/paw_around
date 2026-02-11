@@ -144,7 +144,20 @@ class _LandingPageState extends State<LandingPage> {
                     AppSpacing.vertical40,
                     KeyedSubtree(
                       key: _footerKey,
-                      child: const LandingFooter(),
+                      child: LandingFooter(
+                        onScrollToSection: (index) {
+                          final sections = [
+                            LandingSection.home,
+                            LandingSection.features,
+                            LandingSection.qrSafety,
+                            LandingSection.download,
+                            LandingSection.footer,
+                          ];
+                          if (index >= 0 && index < sections.length) {
+                            _scrollToSection(sections[index]);
+                          }
+                        },
+                      ),
                     ),
                   ],
                 ),
