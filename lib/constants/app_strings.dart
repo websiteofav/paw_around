@@ -662,9 +662,13 @@ class AppStrings {
       'Everything your pet needs in one app';
 
   // Web Landing Page - QR Safety Section
+  static const String landingQrEyebrow = 'SAFETY FIRST';
   static const String landingQrHeading = 'Lost Pet? Scan the QR Tag!';
   static const String landingQrBody =
       'If your pet is lost, anyone can scan their tag to contact you instantly.';
+  static const String landingQrCtaPrimary = "Protect Your Pet Now";
+  static const String landingQrCtaSecondary = 'Learn how it works';
+  static const String landingQrTrustBadge = '10,000+ pets protected';
   static const String landingStaySafeCta = 'Stay Safe';
 
   // Web Landing Page - Download Section

@@ -130,7 +130,11 @@ class _LandingPageState extends State<LandingPage> {
                     AppSpacing.vertical48,
                     KeyedSubtree(
                       key: _qrSafetyKey,
-                      child: QrSafetySection(isMobile: isMobile),
+                      child: QrSafetySection(
+                        isMobile: isMobile,
+                        onCtaPressed: () =>
+                            _scrollToSection(LandingSection.download),
+                      ),
                     ),
                     AppSpacing.vertical48,
                     KeyedSubtree(
