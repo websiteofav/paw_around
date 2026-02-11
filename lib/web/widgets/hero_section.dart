@@ -17,14 +17,13 @@ class HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = Padding(
+    return Padding(
       padding: AppEdgeInsets.horizontalLarge.copyWith(
-        bottom: AppConstants.space40,
+        top: AppConstants.space48,
+        bottom: AppConstants.space48,
       ),
       child: isMobile ? _buildMobileLayout() : _buildDesktopLayout(),
     );
-
-    return content;
   }
 
   Widget _buildDesktopLayout() {
@@ -32,15 +31,15 @@ class HeroSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
-          flex: 5,
+          flex: 6,
           child: _buildTextContent(
             textAlign: TextAlign.left,
-            ctaAlignment: MainAxisAlignment.start,
+            ctaAlignment: WrapAlignment.start,
           ),
         ),
-        AppSpacing.horizontal32,
+        AppSpacing.horizontal40,
         Expanded(
-          flex: 5,
+          flex: 6,
           child: _buildHeroImage(),
         ),
       ],
@@ -53,9 +52,9 @@ class HeroSection extends StatelessWidget {
       children: [
         _buildTextContent(
           textAlign: TextAlign.center,
-          ctaAlignment: MainAxisAlignment.center,
+          ctaAlignment: WrapAlignment.center,
         ),
-        AppSpacing.vertical32,
+        AppSpacing.vertical40,
         _buildHeroImage(),
       ],
     );
@@ -63,7 +62,7 @@ class HeroSection extends StatelessWidget {
 
   Widget _buildTextContent({
     required TextAlign textAlign,
-    required MainAxisAlignment ctaAlignment,
+    required WrapAlignment ctaAlignment,
   }) {
     return Column(
       crossAxisAlignment: textAlign == TextAlign.left
@@ -73,7 +72,7 @@ class HeroSection extends StatelessWidget {
         Text(
           AppStrings.landingHeroTitle,
           style: AppTextStyles.extraBoldStyle800(
-            fontSize: isMobile ? 30 : 38,
+            fontSize: isMobile ? 32 : 40,
             fontColor: AppColors.textPrimary,
             height: 1.2,
           ),
@@ -83,29 +82,30 @@ class HeroSection extends StatelessWidget {
         Text(
           AppStrings.landingHeroSubtitle,
           style: AppTextStyles.regularStyle400(
-            fontSize: 16,
+            fontSize: 17,
             fontColor: AppColors.textSecondary,
-            height: 1.5,
+            height: 1.6,
           ),
           textAlign: textAlign,
         ),
-        AppSpacing.vertical24,
-        Row(
-          mainAxisAlignment: ctaAlignment,
+        AppSpacing.vertical32,
+
+        /// CTA buttons
+        Wrap(
+          alignment: ctaAlignment,
+          spacing: AppConstants.space16,
+          runSpacing: AppConstants.space12,
           children: [
             CommonButton(
               text: AppStrings.landingDownloadOnAndroid,
               onPressed: () {},
-              isFullWidth: false,
               size: ButtonSize.large,
               icon: Icons.android,
               customColor: AppColors.authPrimaryButton,
             ),
-            AppSpacing.horizontal16,
             CommonButton(
               text: AppStrings.landingIosComingSoon,
-              onPressed: () {},
-              isFullWidth: false,
+              onPressed: null,
               size: ButtonSize.large,
               variant: ButtonVariant.secondary,
               customColor: AppColors.surface,
@@ -119,29 +119,9 @@ class HeroSection extends StatelessWidget {
   }
 
   Widget _buildHeroImage() {
-    return Container(
-      padding: const EdgeInsets.all(AppConstants.space24),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppBorderRadius.xl,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowOverlay.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: AspectRatio(
-        aspectRatio: 4 / 3,
-        child: ClipRRect(
-          borderRadius: AppBorderRadius.lg,
-          child: Image.asset(
-            AppIcons.heroPetIcon,
-            fit: BoxFit.cover,
-          ),
-        ),
-      ),
+    return Image.asset(
+      AppIcons.heroPetIcon,
+      fit: BoxFit.contain,
     );
   }
 }
