@@ -160,11 +160,11 @@ class _LandingFooterState extends State<LandingFooter> {
           _FooterLinkRow(
             onScrollToSection: widget.onScrollToSection,
             onPrivacyTap: () => _launchUrl(
-              'https://pawaround.com/privacy',
+              AppStrings.privacyPolicyUrl,
               AppStrings.landingFooterPrivacyPolicy,
             ),
             onTermsTap: () => _launchUrl(
-              'https://pawaround.com/terms',
+              AppStrings.termsOfServiceUrl,
               AppStrings.landingFooterTermsOfService,
             ),
             centerAlign: true,
@@ -195,11 +195,11 @@ class _LandingFooterState extends State<LandingFooter> {
         _FooterLinkRow(
           onScrollToSection: widget.onScrollToSection,
           onPrivacyTap: () => _launchUrl(
-            'https://pawaround.com/privacy',
+            AppStrings.privacyPolicyUrl,
             AppStrings.landingFooterPrivacyPolicy,
           ),
           onTermsTap: () => _launchUrl(
-            'https://pawaround.com/terms',
+            AppStrings.termsOfServiceUrl,
             AppStrings.landingFooterTermsOfService,
           ),
           centerAlign: false,
@@ -245,24 +245,12 @@ class _CompanyColumn extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Container(
-              width: 44,
-              height: 44,
-              padding: const EdgeInsets.all(AppConstants.space6),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: const LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.primary,
-                    AppColors.primaryDark,
-                  ],
-                ),
-              ),
+            ClipOval(
               child: Image.asset(
                 AppIcons.appIcon,
                 fit: BoxFit.contain,
+                width: 44,
+                height: 44,
               ),
             ),
             AppSpacing.horizontal10,
@@ -317,9 +305,9 @@ class _ProductColumn extends StatelessWidget {
       links: [
         (AppStrings.landingFooterFeatures, 1),
         (AppStrings.landingFooterHowItWorks, 2),
-        (AppStrings.landingFooterPricing, null),
-        (AppStrings.landingFooterFaq, null),
-        (AppStrings.landingFooterHelpCenter, null),
+        //  (AppStrings.landingFooterPricing, null),
+        //  (AppStrings.landingFooterFaq, null),
+        //  (AppStrings.landingFooterHelpCenter, null),
       ],
       onScrollToSection: onScrollToSection,
       onExternalTap: (label) {
@@ -618,7 +606,7 @@ class _DownloadColumn extends StatelessWidget {
           ],
         ),
         AppSpacing.vertical20,
-        _SocialIcons(),
+        //  _SocialIcons(),
       ],
     );
   }

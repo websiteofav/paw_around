@@ -137,33 +137,12 @@ class _LandingNavBarState extends State<LandingNavBar> {
         splashColor: AppColors.primary.withValues(alpha: 0.1),
         highlightColor: AppColors.primary.withValues(alpha: 0.05),
         focusColor: AppColors.primary.withValues(alpha: 0.08),
-        child: Container(
-          width: size,
-          height: size,
-          padding: const EdgeInsets.all(AppConstants.space6),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                AppColors.primary,
-                AppColors.primaryDark,
-              ],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.primary.withValues(alpha: 0.2),
-                blurRadius: 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
-          child: ClipOval(
-            child: Image.asset(
-              AppIcons.appIcon,
-              fit: BoxFit.contain,
-            ),
+        child: ClipOval(
+          child: Image.asset(
+            AppIcons.appIcon,
+            fit: BoxFit.contain,
+            width: size,
+            height: size,
           ),
         ),
       ),

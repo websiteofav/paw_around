@@ -690,7 +690,7 @@ class AppStrings {
   static const String landingFooterPrivacyPolicy = 'Privacy Policy';
   static const String landingFooterTermsOfService = 'Terms of Service';
   static const String landingFooterCopyright =
-      '© 2024 Paw Around. All rights reserved.';
+      '© 2026 Paw Around. All rights reserved.';
   static const String landingFooterFacebook = 'Facebook';
   static const String landingFooterInstagram = 'Instagram';
   static const String landingFooterTwitter = 'Twitter';
