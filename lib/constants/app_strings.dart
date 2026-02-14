@@ -727,6 +727,9 @@ class AppStrings {
 
   // Public Pet Profile (web /p/:petId)
   static const String publicProfileAppTitle = 'Paw Around';
+  static const String publicPetTopBarTagline = 'Pet Safety & Care';
+  static const String publicPetTopBarDownloadApp = 'Download App';
+  static const String publicPetTopBarTrustBadge = '10,000+ users';
   static const String publicPetStatusMissing = 'Missing!';
   static const String publicPetStatusSafeAtHome = 'Safe at Home';
   static const String messageOwner = 'Message Owner';
@@ -746,6 +749,43 @@ class AppStrings {
   static const String contactViaPawAround = 'Contact via Paw Around app';
   static const String youFoundThisPetShareLocation =
       'You found this pet. You can share your location.';
+
+  // Public Pet Hero - CTAs and dialogs
+  static const String publicPetHeroIFoundYourPet = 'I Found Your Pet!';
+  static const String publicPetHeroShareLocationConfirmTitle =
+      'Share Your Location?';
+  static const String publicPetHeroShareLocationConfirmContent =
+      'Send your current location to the pet owner so they can find you.';
+  static const String publicPetHeroShareLocationConfirmButton =
+      'Share Location';
+  static const String publicPetHeroNoContactAvailable =
+      'No contact information available for this pet.';
+  static const String publicPetHeroSendSms = 'Send SMS';
+  static const String publicPetHeroWhatsApp = 'WhatsApp';
+  static const String publicPetHeroMessageChoiceTitle = 'Send Message';
+  static const String publicPetHeroSmsBodyFound =
+      'Hi, I found your pet! I\'m here: ';
+  static const String publicPetHeroWhatsAppTextFound =
+      'Hi, I found your pet! I\'m here: ';
+
+  // Public Pet Hero - Urgency
+  static const String publicPetHeroMissingRecently = 'Recently missing';
+  static const String publicPetHeroMissingHours = 'Missing for %s hours';
+  static const String publicPetHeroMissingDays = 'Missing for %s days';
+  static const String publicPetHeroUrgentPrefix = 'URGENT: ';
+  static const String publicPetHeroLastSeen = 'Last seen %s ago';
+  static const String publicPetHeroLastSeenLocation = 'Last seen: %s';
+
+  // Public Pet Hero - Image and errors
+  static const String publicPetHeroNoPhotoAvailable = 'No photo available';
+  static const String publicPetHeroLocationError =
+      'Could not get location. Please check permissions.';
+  static const String publicPetHeroLocationShared =
+      'Opening message app to share your location.';
+
+  // Public Pet Hero - Optional
+  static const String publicPetHeroPetProfile = 'Pet Profile';
+  static const String publicPetHeroLookFor = 'Look for: %s';
 
   AppStrings._();
 }

@@ -86,6 +86,14 @@ class _PublicPetPageState extends State<PublicPetPage> {
                             PublicPetHeroSection(
                               pet: _pet!,
                               isWideLayout: isWide,
+                              ownerPhone: '+919876543210',
+                              ownerWhatsApp: null,
+                              lastSeenAt: _pet!.isLost
+                                  ? DateTime.now()
+                                      .subtract(const Duration(hours: 12))
+                                  : null,
+                              lastSeenLocation:
+                                  _pet!.isLost ? 'Central Park' : null,
                             ),
                             AppSpacing.vertical24,
                             if (isWide)
