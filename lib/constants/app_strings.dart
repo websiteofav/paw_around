@@ -725,5 +725,27 @@ class AppStrings {
   static const String landingIosComingSoonMessage =
       'Paw Around is coming soon to iOS. Stay tuned!';
 
+  // Public Pet Profile (web /p/:petId)
+  static const String publicProfileAppTitle = 'Paw Around';
+  static const String publicPetStatusMissing = 'Missing!';
+  static const String publicPetStatusSafeAtHome = 'Safe at Home';
+  static const String messageOwner = 'Message Owner';
+  static const String shareLocation = 'Share Location';
+  static const String basicInfo = 'Basic Info';
+  static const String emergencyInfo = 'Emergency Info';
+  static const String notesOrSpecialInstructions = 'Notes';
+  static const String owner = 'Owner';
+  static const String alternateContact = 'Alternate Contact';
+  static const String iFoundThisPet = 'I Found This Pet';
+  static const String sendMessageToOwner = 'Send a message to the owner...';
+  static const String vaccinationStatus = 'Vaccination Status';
+  static const String vaccinationUpToDate = 'Up-to-date';
+  static const String primaryOwner = 'Primary Owner';
+  static const String copyrightPawAround2026 = '© 2026 Paw Around';
+  static const String petNotFound = 'Pet not found';
+  static const String contactViaPawAround = 'Contact via Paw Around app';
+  static const String youFoundThisPetShareLocation =
+      'You found this pet. You can share your location.';
+
   AppStrings._();
 }
