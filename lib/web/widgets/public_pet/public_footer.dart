@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/utils/url_utils.dart';
@@ -10,27 +11,33 @@ class PublicPetFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          AppStrings.copyrightPawAround2026,
-          style: AppTextStyles.regularStyle400(
-            fontSize: 12,
-            fontColor: AppColors.textSecondary,
-          ),
-        ),
-        const SizedBox(height: 4),
-        GestureDetector(
-          onTap: () => UrlUtils.launch(AppStrings.privacyPolicyUrl),
-          child: Text(
-            AppStrings.privacyPolicyLink,
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Divider(color: AppColors.divider, height: 1),
+          AppSpacing.vertical16,
+          Text(
+            AppStrings.copyrightPawAround2026,
             style: AppTextStyles.regularStyle400(
               fontSize: 12,
-              fontColor: AppColors.primary,
+              fontColor: AppColors.textSecondary,
             ),
           ),
-        ),
-      ],
+          const SizedBox(height: 4),
+          GestureDetector(
+            onTap: () => UrlUtils.launch(AppStrings.privacyPolicyUrl),
+            child: Text(
+              AppStrings.privacyPolicyLink,
+              style: AppTextStyles.regularStyle400(
+                fontSize: 12,
+                fontColor: AppColors.primary,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

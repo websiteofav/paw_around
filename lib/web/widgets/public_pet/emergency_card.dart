@@ -16,9 +16,8 @@ class PublicPetEmergencyCard extends StatelessWidget {
     if (pet.notes.isEmpty) return const SizedBox.shrink();
 
     return Container(
-      padding: AppEdgeInsets.cardPadding,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: AppColors.surface,
         borderRadius: AppBorderRadius.lg,
         border: Border.all(color: AppColors.border),
         boxShadow: [
@@ -29,37 +28,61 @@ class PublicPetEmergencyCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
+        clipBehavior: Clip.none,
         children: [
-          Text(
-            AppStrings.emergencyInfo,
-            style: AppTextStyles.semiBoldStyle600(
-              fontSize: 18,
-              fontColor: AppColors.textPrimary,
+          Positioned(
+            left: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 3,
+              decoration: BoxDecoration(
+                color: AppColors.warning,
+                borderRadius: BorderRadius.only(
+                  topLeft: AppBorderRadius.lg.topLeft,
+                  bottomLeft: AppBorderRadius.lg.bottomLeft,
+                ),
+              ),
             ),
           ),
-          AppSpacing.vertical16,
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                Icons.note_outlined,
-                size: 20,
-                color: AppColors.textSecondary,
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  pet.notes,
-                  style: AppTextStyles.regularStyle400(
-                    fontSize: 14,
+          Padding(
+            padding: AppEdgeInsets.cardPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  AppStrings.emergencyInfo,
+                  style: AppTextStyles.semiBoldStyle600(
+                    fontSize: 18,
                     fontColor: AppColors.textPrimary,
                   ),
                 ),
-              ),
-            ],
+                AppSpacing.vertical16,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.note_outlined,
+                      size: 20,
+                      color: AppColors.textSecondary,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        pet.notes,
+                        style: AppTextStyles.regularStyle400(
+                          fontSize: 14,
+                          fontColor: AppColors.textPrimary,
+                          height: 1.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ],
       ),

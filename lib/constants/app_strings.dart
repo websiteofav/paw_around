@@ -787,5 +787,8 @@ class AppStrings {
   static const String publicPetHeroPetProfile = 'Pet Profile';
   static const String publicPetHeroLookFor = 'Look for: %s';
 
+  // Public Pet Owner Card
+  static const String publicPetOwnerTapToCall = 'Tap to call';
+
   AppStrings._();
 }

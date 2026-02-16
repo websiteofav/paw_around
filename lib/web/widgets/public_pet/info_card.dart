@@ -42,29 +42,29 @@ class PublicPetInfoCard extends StatelessWidget {
             ),
           ),
           AppSpacing.vertical16,
-          ...rows.map((row) => Padding(
-                padding: const EdgeInsets.only(bottom: 12),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(
-                      row.icon,
-                      size: 20,
-                      color: AppColors.textSecondary,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        row.value,
-                        style: AppTextStyles.regularStyle400(
-                          fontSize: 14,
-                          fontColor: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                  ],
+          for (var i = 0; i < rows.length; i++) ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  rows[i].icon,
+                  size: 20,
+                  color: AppColors.textSecondary,
                 ),
-              )),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    rows[i].value,
+                    style: AppTextStyles.regularStyle400(
+                      fontSize: 14,
+                      fontColor: AppColors.textPrimary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            if (i != rows.length - 1) AppSpacing.vertical12,
+          ],
         ],
       ),
     );

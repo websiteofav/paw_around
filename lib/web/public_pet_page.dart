@@ -82,7 +82,7 @@ class _PublicPetPageState extends State<PublicPetPage> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            AppSpacing.vertical24,
+                            AppSpacing.vertical32,
                             PublicPetHeroSection(
                               pet: _pet!,
                               isWideLayout: isWide,
@@ -125,7 +125,7 @@ class _PublicPetPageState extends State<PublicPetPage> {
             ],
           ),
         ),
-        const SizedBox(width: 20),
+        AppSpacing.horizontal20,
         Expanded(
           child: Column(
             children: [
