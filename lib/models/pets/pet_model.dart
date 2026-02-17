@@ -24,6 +24,8 @@ class PetModel extends Equatable {
   final DateTime updatedAt;
   final String? petPublicId;
   final bool isLost;
+  final DateTime? lastSeenAt;
+  final String? lastSeenLocation;
 
   const PetModel({
     required this.id,
@@ -42,6 +44,8 @@ class PetModel extends Equatable {
     required this.updatedAt,
     this.petPublicId,
     this.isLost = false,
+    this.lastSeenAt,
+    this.lastSeenLocation,
   });
 
   static const String _petPublicIdPrefix = 'pet_';
@@ -111,6 +115,8 @@ class PetModel extends Equatable {
     DateTime? updatedAt,
     Object? petPublicId = _undefined,
     bool? isLost,
+    Object? lastSeenAt = _undefined,
+    Object? lastSeenLocation = _undefined,
   }) {
     return PetModel(
       id: id ?? this.id,
@@ -130,6 +136,11 @@ class PetModel extends Equatable {
       petPublicId:
           petPublicId == _undefined ? this.petPublicId : petPublicId as String?,
       isLost: isLost ?? this.isLost,
+      lastSeenAt:
+          lastSeenAt == _undefined ? this.lastSeenAt : lastSeenAt as DateTime?,
+      lastSeenLocation: lastSeenLocation == _undefined
+          ? this.lastSeenLocation
+          : lastSeenLocation as String?,
     );
   }
 
@@ -151,6 +162,8 @@ class PetModel extends Equatable {
       'updatedAt': Timestamp.fromDate(updatedAt),
       'petPublicId': petPublicId,
       'isLost': isLost,
+      'lastSeenAt': lastSeenAt != null ? Timestamp.fromDate(lastSeenAt!) : null,
+      'lastSeenLocation': lastSeenLocation,
     };
   }
 
@@ -184,6 +197,8 @@ class PetModel extends Equatable {
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
       petPublicId: data['petPublicId'] as String?,
       isLost: (data['isLost'] as bool?) ?? false,
+      lastSeenAt: (data['lastSeenAt'] as Timestamp?)?.toDate(),
+      lastSeenLocation: data['lastSeenLocation'] as String?,
     );
   }
 
@@ -206,6 +221,8 @@ class PetModel extends Equatable {
       'updatedAt': updatedAt.toIso8601String(),
       'petPublicId': petPublicId,
       'isLost': isLost,
+      'lastSeenAt': lastSeenAt?.toIso8601String(),
+      'lastSeenLocation': lastSeenLocation,
     };
   }
 
@@ -237,6 +254,10 @@ class PetModel extends Equatable {
       updatedAt: DateTime.parse(json['updatedAt'] as String),
       petPublicId: json['petPublicId'] as String?,
       isLost: (json['isLost'] as bool?) ?? false,
+      lastSeenAt: json['lastSeenAt'] != null
+          ? DateTime.tryParse(json['lastSeenAt'] as String)
+          : null,
+      lastSeenLocation: json['lastSeenLocation'] as String?,
     );
   }
 
@@ -372,5 +393,7 @@ class PetModel extends Equatable {
         updatedAt,
         petPublicId,
         isLost,
+        lastSeenAt,
+        lastSeenLocation,
       ];
 }

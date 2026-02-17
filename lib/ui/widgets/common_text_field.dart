@@ -14,6 +14,7 @@ class CommonTextField extends StatelessWidget {
   final int maxLines;
   final Widget? suffixIcon;
   final FocusNode? focusNode;
+  final Color? fillColor;
 
   const CommonTextField({
     super.key,
@@ -28,6 +29,7 @@ class CommonTextField extends StatelessWidget {
     this.maxLines = 1,
     this.suffixIcon,
     this.focusNode,
+    this.fillColor,
   });
 
   @override
@@ -43,20 +45,21 @@ class CommonTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,
-        hintStyle: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
+        hintStyle: AppTextStyles.regularStyle400(
+            fontSize: 16, fontColor: AppColors.textSecondary),
         filled: true,
-        fillColor: AppColors.background,
+        fillColor: fillColor ?? AppColors.background,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.patternColor),
+          borderSide: const BorderSide(color: AppColors.patternColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.patternColor),
+          borderSide: const BorderSide(color: AppColors.patternColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.primary, width: 2),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -66,7 +69,8 @@ class CommonTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Colors.red, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         suffixIcon: isPassword ? _buildPasswordSuffix() : suffixIcon,
       ),
     );

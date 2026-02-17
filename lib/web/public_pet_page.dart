@@ -4,6 +4,7 @@ import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/models/public_pet/public_pet_profile.dart';
 import 'package:paw_around/repositories/public_pet_repository.dart';
 import 'package:paw_around/web/widgets/public_pet/emergency_card.dart';
 import 'package:paw_around/web/widgets/public_pet/found_pet_section.dart';
@@ -24,7 +25,7 @@ class PublicPetPage extends StatefulWidget {
 
 class _PublicPetPageState extends State<PublicPetPage> {
   final _repository = PublicPetRepository();
-  PetModel? _pet;
+  PublicPetProfile? _profile;
   bool _loading = true;
   bool _error = false;
 
@@ -39,12 +40,12 @@ class _PublicPetPageState extends State<PublicPetPage> {
       _loading = true;
       _error = false;
     });
-    final pet = await _repository.getByPublicId(widget.petPublicId);
+    final profile = await _repository.getByPublicId(widget.petPublicId);
     if (mounted) {
       setState(() {
-        _pet = pet;
+        _profile = profile;
         _loading = false;
-        _error = pet == null && widget.petPublicId.isNotEmpty;
+        _error = profile == null && widget.petPublicId.isNotEmpty;
       });
     }
   }
@@ -67,7 +68,7 @@ class _PublicPetPageState extends State<PublicPetPage> {
                 ? const Center(
                     child: CircularProgressIndicator(color: AppColors.primary),
                   )
-                : _error || _pet == null
+                : _error || _profile == null
                     ? Center(
                         child: Text(
                           AppStrings.petNotFound,
@@ -84,16 +85,12 @@ class _PublicPetPageState extends State<PublicPetPage> {
                           children: [
                             AppSpacing.vertical32,
                             PublicPetHeroSection(
-                              pet: _pet!,
+                              pet: _profile!.pet,
                               isWideLayout: isWide,
-                              ownerPhone: '+919876543210',
+                              ownerPhone: _profile!.owner?.primaryPhone,
                               ownerWhatsApp: null,
-                              lastSeenAt: _pet!.isLost
-                                  ? DateTime.now()
-                                      .subtract(const Duration(hours: 12))
-                                  : null,
-                              lastSeenLocation:
-                                  _pet!.isLost ? 'Central Park' : null,
+                              lastSeenAt: _profile!.lastSeen?.at,
+                              lastSeenLocation: _profile!.lastSeen?.location,
                             ),
                             AppSpacing.vertical24,
                             if (isWide)
@@ -112,7 +109,7 @@ class _PublicPetPageState extends State<PublicPetPage> {
   }
 
   Widget _buildWideCards() {
-    final basicRows = _basicInfoRows(_pet!);
+    final basicRows = _basicInfoRows(_profile!.pet);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -121,7 +118,7 @@ class _PublicPetPageState extends State<PublicPetPage> {
             children: [
               PublicPetInfoCard(title: AppStrings.basicInfo, rows: basicRows),
               AppSpacing.vertical20,
-              PublicPetEmergencyCard(pet: _pet!),
+              PublicPetEmergencyCard(pet: _profile!.pet),
             ],
           ),
         ),
@@ -130,12 +127,12 @@ class _PublicPetPageState extends State<PublicPetPage> {
           child: Column(
             children: [
               PublicPetOwnerCard(
-                ownerName: 'John Doe',
-                ownerPhone: '+91 98765 43210',
+                ownerName: _profile!.owner?.name,
+                ownerPhone: _profile!.owner?.primaryPhone,
                 alternatePhone: null,
               ),
               AppSpacing.vertical20,
-              PublicPetFoundSection(pet: _pet!),
+              PublicPetFoundSection(pet: _profile!.pet),
             ],
           ),
         ),
@@ -144,21 +141,21 @@ class _PublicPetPageState extends State<PublicPetPage> {
   }
 
   Widget _buildNarrowCards() {
-    final basicRows = _basicInfoRows(_pet!);
+    final basicRows = _basicInfoRows(_profile!.pet);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         PublicPetInfoCard(title: AppStrings.basicInfo, rows: basicRows),
         AppSpacing.vertical20,
-        PublicPetEmergencyCard(pet: _pet!),
+        PublicPetEmergencyCard(pet: _profile!.pet),
         AppSpacing.vertical20,
         PublicPetOwnerCard(
-          ownerName: 'John Doe',
-          ownerPhone: '+91 98765 43210',
+          ownerName: _profile!.owner?.name,
+          ownerPhone: _profile!.owner?.primaryPhone,
           alternatePhone: null,
         ),
         AppSpacing.vertical20,
-        PublicPetFoundSection(pet: _pet!),
+        PublicPetFoundSection(pet: _profile!.pet),
       ],
     );
   }

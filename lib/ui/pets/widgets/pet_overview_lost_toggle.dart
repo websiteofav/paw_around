@@ -8,6 +8,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/ui/pets/widgets/mark_lost_bottom_sheet.dart';
 
 class PetOverviewLostToggle extends StatelessWidget {
   final PetModel pet;
@@ -49,11 +50,32 @@ class _LostToggleRowState extends State<_LostToggleRow> {
 
   Future<void> _onToggle(bool newValue) async {
     if (_isUpdating) return;
+    if (newValue) {
+      await MarkLostBottomSheet.show(
+        context: context,
+        pet: widget.pet,
+        onSave: (lastSeenAt, lastSeenLocation) => _updatePetAsLost(
+          lastSeenAt: lastSeenAt,
+          lastSeenLocation: lastSeenLocation,
+        ),
+      );
+      return;
+    }
+    await _updatePetAsFound();
+  }
+
+  Future<void> _updatePetAsLost({
+    required DateTime lastSeenAt,
+    required String lastSeenLocation,
+  }) async {
+    if (_isUpdating) return;
     setState(() => _isUpdating = true);
     try {
       await sl<PetRepository>().updatePet(
         widget.pet.copyWith(
-          isLost: newValue,
+          isLost: true,
+          lastSeenAt: lastSeenAt,
+          lastSeenLocation: lastSeenLocation.isEmpty ? null : lastSeenLocation,
           updatedAt: DateTime.now(),
         ),
       );
@@ -61,11 +83,44 @@ class _LostToggleRowState extends State<_LostToggleRow> {
         context.read<PetListBloc>().add(const LoadPetList());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              newValue
-                  ? AppStrings.petMarkedAsLost
-                  : AppStrings.petNoLongerMarkedAsLost,
-            ),
+            content: Text(AppStrings.petMarkedAsLost),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isUpdating = false);
+      }
+    }
+  }
+
+  Future<void> _updatePetAsFound() async {
+    if (_isUpdating) return;
+    setState(() => _isUpdating = true);
+    try {
+      await sl<PetRepository>().updatePet(
+        widget.pet.copyWith(
+          isLost: false,
+          lastSeenAt: null,
+          lastSeenLocation: null,
+          updatedAt: DateTime.now(),
+        ),
+      );
+      if (mounted) {
+        context.read<PetListBloc>().add(const LoadPetList());
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppStrings.petNoLongerMarkedAsLost),
             backgroundColor: AppColors.success,
           ),
         );

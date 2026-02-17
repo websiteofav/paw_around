@@ -503,6 +503,13 @@ class AppStrings {
   static const String petMarkedAsLost = 'Pet marked as lost';
   static const String petNoLongerMarkedAsLost = 'Pet no longer marked as lost';
   static const String viewPetQr = 'Pet ID & QR Code';
+  static const String markLostLastSeenTitle = 'When & where last seen';
+  static const String markLostLastSeenDescription =
+      'Help finders by adding when and where you last saw your pet.';
+  static const String lastSeenDateAndTime = 'Date & time';
+  static const String lastSeenLocationLabel = 'Last seen location';
+  static const String lastSeenLocationHint =
+      'e.g. Central Park, near the fountain';
 
   // Private constructor to prevent instantiation
 
