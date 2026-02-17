@@ -124,21 +124,44 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
   void _showOverlay() {
     _removeOverlay();
 
+    final renderObject = context.findRenderObject();
+    final RenderBox? fieldBox = renderObject is RenderBox ? renderObject : null;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+    const minHeightForItems = 200.0;
+    bool showAbove = false;
+    double overlayMaxHeight = 250;
+
+    if (fieldBox != null) {
+      final position = fieldBox.localToGlobal(Offset.zero);
+      final fieldHeight = fieldBox.size.height;
+      final spaceBelow =
+          screenHeight - position.dy - fieldHeight - keyboardHeight;
+      showAbove = spaceBelow < minHeightForItems;
+      if (showAbove) {
+        overlayMaxHeight = 220;
+      }
+    }
+
+    final overlayWidth = fieldBox != null
+        ? fieldBox.size.width
+        : MediaQuery.of(context).size.width - 40;
+    final offsetY = showAbove ? -overlayMaxHeight : 60.0;
+
     _overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        width: context.findRenderObject() != null
-            ? (context.findRenderObject() as RenderBox).size.width
-            : MediaQuery.of(context).size.width - 40,
+        width: overlayWidth,
         child: CompositedTransformFollower(
           link: _layerLink,
           showWhenUnlinked: false,
-          offset: const Offset(0, 60),
+          offset: Offset(0, offsetY),
           child: Material(
             elevation: 8,
             borderRadius: BorderRadius.circular(12),
             color: AppColors.surface,
             child: Container(
-              constraints: const BoxConstraints(maxHeight: 250),
+              constraints: BoxConstraints(maxHeight: overlayMaxHeight),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border),
