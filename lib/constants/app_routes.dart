@@ -53,6 +53,9 @@ class AppRoutes {
   static const String lostPetAlert = '/lost-pet/:alertId';
   static const String foundPetPost = '/found-pet/:postId';
 
+  // Public Pet Profile (web: pawaround.in/p/:petId, no auth)
+  static const String publicPetProfile = '/p/:petId';
+
   // Private constructor to prevent instantiation
   AppRoutes._();
 }

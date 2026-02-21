@@ -223,9 +223,18 @@ class CareSettingsModel extends Equatable {
     List<DateTime> history = [];
     if (json['completionHistory'] != null) {
       final historyList = json['completionHistory'] as List<dynamic>?;
-      history = historyList
-              ?.map((dateStr) => DateTime.parse(dateStr as String))
-              .toList() ??
+      history = historyList?.map<DateTime>((value) {
+            if (value is String) {
+              // Stored as ISO string
+              return DateTime.parse(value);
+            }
+            if (value is Timestamp) {
+              // Coming directly from Firestore
+              return value.toDate();
+            }
+            // Fallback: try parsing string representation
+            return DateTime.parse(value.toString());
+          }).toList() ??
           [];
     } else if (json['lastDate'] != null) {
       history = [DateTime.parse(json['lastDate'] as String)];
@@ -235,14 +244,20 @@ class CareSettingsModel extends Equatable {
       frequency:
           CareFrequencyExtension.fromString(json['frequency'] as String?),
       lastDate: json['lastDate'] != null
-          ? DateTime.parse(json['lastDate'] as String)
+          ? (json['lastDate'] is Timestamp
+              ? (json['lastDate'] as Timestamp).toDate()
+              : DateTime.parse(json['lastDate'] as String))
           : null,
       snoozedUntil: json['snoozedUntil'] != null
-          ? DateTime.parse(json['snoozedUntil'] as String)
+          ? (json['snoozedUntil'] is Timestamp
+              ? (json['snoozedUntil'] as Timestamp).toDate()
+              : DateTime.parse(json['snoozedUntil'] as String))
           : null,
       completionHistory: history,
       updatedAt: json['updatedAt'] != null
-          ? DateTime.parse(json['updatedAt'] as String)
+          ? (json['updatedAt'] is Timestamp
+              ? (json['updatedAt'] as Timestamp).toDate()
+              : DateTime.parse(json['updatedAt'] as String))
           : DateTime.now(),
     );
   }

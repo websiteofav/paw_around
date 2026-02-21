@@ -2,7 +2,8 @@
 // Modified to use environment variables for API keys.
 // ignore_for_file: type=lint
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
-import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb, TargetPlatform;
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
@@ -18,10 +19,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -69,6 +67,18 @@ class DefaultFirebaseOptions {
       storageBucket: 'paw-around-f487d.firebasestorage.app',
       iosClientId: dotenv.env['FIREBASE_IOS_CLIENT_ID'] ?? '',
       iosBundleId: 'com.pawaround.app',
+    );
+  }
+
+  static FirebaseOptions get web {
+    return FirebaseOptions(
+      apiKey: "AIzaSyAVj8d0Ls_SYR_P67XJQlMSrK6MJFbkpM0",
+      authDomain: "paw-around-f487d.firebaseapp.com",
+      projectId: "paw-around-f487d",
+      storageBucket: "paw-around-f487d.firebasestorage.app",
+      messagingSenderId: "716405823878",
+      appId: "1:716405823878:web:2139ecf13f8403e54a3407",
+      measurementId: "G-R5H1LYCD0H",
     );
   }
 }

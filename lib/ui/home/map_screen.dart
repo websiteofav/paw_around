@@ -135,9 +135,11 @@ class _MapScreenState extends State<MapScreen> {
                 }
 
                 if (state is PlacesLoaded) {
-                  return state.isMapView
-                      ? _buildMapView(state)
-                      : PlacesListView(places: state.filteredPlaces);
+                  return
+                      // state.isMapView
+                      //     ?
+                      _buildMapView(state);
+                  //  : PlacesListView(places: state.filteredPlaces);
                 }
 
                 return _buildInitialState();

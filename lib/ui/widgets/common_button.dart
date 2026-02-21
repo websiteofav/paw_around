@@ -28,6 +28,7 @@ class CommonButton extends StatelessWidget {
   final Color? customColor;
   final Color? customTextColor;
   final double? textSize;
+  final String? imagePath;
 
   const CommonButton({
     super.key,
@@ -41,6 +42,7 @@ class CommonButton extends StatelessWidget {
     this.customColor,
     this.customTextColor,
     this.textSize,
+    this.imagePath,
   });
 
   @override
@@ -87,6 +89,16 @@ class CommonButton extends StatelessWidget {
         ],
       );
     }
+    if (imagePath != null) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(imagePath!),
+          const SizedBox(width: 8),
+          Text(text, style: _getTextStyle()),
+        ],
+      );
+    }
 
     return Text(
       text,
@@ -101,7 +113,8 @@ class CommonButton extends StatelessWidget {
           backgroundColor: customColor ?? AppColors.primary,
           foregroundColor: customTextColor ?? AppColors.background,
           elevation: 8,
-          shadowColor: (customColor ?? AppColors.primary).withValues(alpha: 0.3),
+          shadowColor:
+              (customColor ?? AppColors.primary).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(_getBorderRadius()),
           ),
@@ -111,7 +124,8 @@ class CommonButton extends StatelessWidget {
           backgroundColor: customColor ?? AppColors.secondary,
           foregroundColor: customTextColor ?? AppColors.background,
           elevation: 4,
-          shadowColor: (customColor ?? AppColors.secondary).withValues(alpha: 0.3),
+          shadowColor:
+              (customColor ?? AppColors.secondary).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(_getBorderRadius()),
           ),
@@ -153,7 +167,8 @@ class CommonButton extends StatelessWidget {
   }
 
   TextStyle _getTextStyle() {
-    final baseStyle = AppTextStyles.semiBoldStyle600(fontColor: _getTextColor(), letterSpacing: 0.5);
+    final baseStyle = AppTextStyles.semiBoldStyle600(
+        fontColor: _getTextColor(), letterSpacing: 0.5);
 
     switch (size) {
       case ButtonSize.small:

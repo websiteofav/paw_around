@@ -442,6 +442,7 @@ class AppStrings {
   static const String upcomingSoon = 'Upcoming soon';
   static const String nextDoseSoon = 'Next dose soon';
   static const String notSet = 'Not set';
+  static const String valueNotSet = '--';
   static const String noVaccinesAdded = 'No vaccines added';
   static const String petNameHint = "Pet's name";
   static const String delete = 'Delete';
@@ -503,6 +504,13 @@ class AppStrings {
   static const String petMarkedAsLost = 'Pet marked as lost';
   static const String petNoLongerMarkedAsLost = 'Pet no longer marked as lost';
   static const String viewPetQr = 'Pet ID & QR Code';
+  static const String markLostLastSeenTitle = 'When & where last seen';
+  static const String markLostLastSeenDescription =
+      'Help finders by adding when and where you last saw your pet.';
+  static const String lastSeenDateAndTime = 'Date & time';
+  static const String lastSeenLocationLabel = 'Last seen location';
+  static const String lastSeenLocationHint =
+      'e.g. Central Park, near the fountain';
 
   // Private constructor to prevent instantiation
 
@@ -628,6 +636,171 @@ class AppStrings {
   static const String shareMomentDescription =
       'Share a special moment with your pet';
   static const String lostAndFoundTab = 'Lost & Found';
+
+  // Web Landing Page - Navigation
+  static const String landingNavHome = 'Home';
+  static const String landingNavAbout = 'About';
+  static const String landingNavFaq = 'FAQ';
+  static const String landingNavContact = 'Contact';
+
+  // Web Landing Page - Hero Section
+  static const String landingHeroTitle =
+      'All Your Pet\'s Care, Safety & Community in One App';
+  static const String landingHeroSubtitle =
+      'Keeping your pet healthy and safe has never been easier.';
+  static const String landingDownloadOnAndroid = 'Download on Android';
+  static const String landingIosComingSoon = 'iOS Coming Soon';
+
+  // Web Landing Page - Feature Cards
+  static const String landingFeaturePetCareRemindersTitle =
+      'Pet Care Reminders';
+  static const String landingFeaturePetCareRemindersBody =
+      'Never miss a vet visit or grooming.';
+  static const String landingFeatureLostFoundTitle = 'Lost & Found QR Tags';
+  static const String landingFeatureLostFoundBody =
+      'Find your pet quickly if they go missing.';
+  static const String landingFeatureNearbyVetsTitle = 'Nearby Vets & Groomers';
+  static const String landingFeatureNearbyVetsBody =
+      'Book local services in seconds.';
+
+  // Web Landing Page - Feature Section
+  static const String landingFeatureSectionTitle =
+      'Why Pet Parents Love Paw Around';
+  static const String landingFeatureSectionSubtitle =
+      'Everything your pet needs in one app';
+
+  // Web Landing Page - QR Safety Section
+  static const String landingQrEyebrow = 'SAFETY FIRST';
+  static const String landingQrHeading = 'Lost Pet? Scan the QR Tag!';
+  static const String landingQrBody =
+      'If your pet is lost, anyone can scan their tag to contact you instantly.';
+  static const String landingQrCtaPrimary = "Protect Your Pet Now";
+  static const String landingQrCtaSecondary = 'Learn how it works';
+  static const String landingQrTrustBadge = '10,000+ pets protected';
+  static const String landingStaySafeCta = 'Stay Safe';
+
+  // Web Landing Page - Download Section
+  static const String landingDownloadHeading = 'Get Paw Around Today!';
+  static const String landingDownloadSubheading =
+      'Join 10,000+ pet parents keeping their furry friends safe';
+  static const String landingDownloadOrScan = 'Or scan to download';
+  static const String landingDownloadTrustFree = 'Free Forever';
+  static const String landingDownloadTrustSecure = 'Secure & Trusted';
+  static const String landingDownloadTrustPrivacy = 'Privacy First';
+  static const String landingDownloadSocialDownloads = '10,000+ downloads';
+  static const String landingDownloadRating = '4.8';
+  static const String landingDownloadFeatureReminders = 'Pet care reminders';
+  static const String landingDownloadFeatureQr = 'QR safety tags';
+  static const String landingDownloadFeatureVets = 'Find nearby vets';
+
+  // Web Landing Page - Footer
+  static const String landingFooterAbout = 'About';
+  static const String landingFooterPrivacyPolicy = 'Privacy Policy';
+  static const String landingFooterTermsOfService = 'Terms of Service';
+  static const String landingFooterCopyright =
+      '© 2026 Paw Around. All rights reserved.';
+  static const String landingFooterFacebook = 'Facebook';
+  static const String landingFooterInstagram = 'Instagram';
+  static const String landingFooterTwitter = 'Twitter';
+  static const String landingFooterTagline = "Your pet's best friend";
+
+  /// One-liner for meta, manifest, and footer. QR first.
+  static const String appShortDescription =
+      'Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
+  static const String landingFooterCompanyDescription =
+      'Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
+  static const String landingFooterProduct = 'Product';
+  static const String landingFooterFeatures = 'Features';
+  static const String landingFooterHowItWorks = 'How it Works';
+  static const String landingFooterPricing = 'Pricing';
+  static const String landingFooterFaq = 'FAQ';
+  static const String landingFooterCompany = 'Company';
+  static const String landingFooterCareers = 'Careers';
+  static const String landingFooterContact = 'Contact';
+  static const String landingFooterBlog = 'Blog';
+  static const String landingFooterSupport = 'Support';
+  static const String landingFooterHelpCenter = 'Help Center';
+  static const String landingFooterDownload = 'Download';
+  static const String landingFooterStayUpdated = 'Stay Updated';
+  static const String landingFooterNewsletterHint = 'Enter your email';
+  static const String landingFooterSubscribe = 'Subscribe';
+  static const String landingFooterNewsletterSuccess =
+      'Thanks for subscribing! We\'ll send pet care tips to your inbox.';
+  static const String landingFooterNewsletterInvalid =
+      'Please enter a valid email.';
+  static const String landingFooterSupportEmail = 'support@pawaround.com';
+  static const String landingFooterContactUs = 'Contact Us';
+
+  // Web Landing Page - Hero CTAs
+  static const String landingPlayStoreOpenError =
+      'Unable to open Google Play Store right now. Please try again later.';
+  static const String landingIosComingSoonMessage =
+      'Paw Around is coming soon to iOS. Stay tuned!';
+
+  // Public Pet Profile (web /p/:petId)
+  static const String publicProfileAppTitle = 'Paw Around';
+  static const String publicPetTopBarTagline = 'Pet Safety & Care';
+  static const String publicPetTopBarDownloadApp = 'Download App';
+  static const String publicPetTopBarTrustBadge = '10,000+ users';
+  static const String publicPetStatusMissing = 'Missing!';
+  static const String publicPetStatusSafeAtHome = 'Safe at Home';
+  static const String messageOwner = 'Message Owner';
+  static const String shareLocation = 'Share Location';
+  static const String basicInfo = 'Basic Info';
+  static const String emergencyInfo = 'Emergency Info';
+  static const String notesOrSpecialInstructions = 'Notes';
+  static const String owner = 'Owner';
+  static const String alternateContact = 'Alternate Contact';
+  static const String iFoundThisPet = 'I Found This Pet';
+  static const String sendMessageToOwner = 'Send a message to the owner...';
+  static const String vaccinationStatus = 'Vaccination Status';
+  static const String vaccinationUpToDate = 'Up-to-date';
+  static const String primaryOwner = 'Primary Owner';
+  static const String copyrightPawAround2026 = '© 2026 Paw Around';
+  static const String petNotFound = 'Pet not found';
+  static const String contactViaPawAround = 'Contact via Paw Around app';
+  static const String youFoundThisPetShareLocation =
+      'You found this pet. You can share your location.';
+
+  // Public Pet Hero - CTAs and dialogs
+  static const String publicPetHeroIFoundYourPet = 'I Found Your Pet!';
+  static const String publicPetHeroShareLocationConfirmTitle =
+      'Share Your Location?';
+  static const String publicPetHeroShareLocationConfirmContent =
+      'Send your current location to the pet owner so they can find you.';
+  static const String publicPetHeroShareLocationConfirmButton =
+      'Share Location';
+  static const String publicPetHeroNoContactAvailable =
+      'No contact information available for this pet.';
+  static const String publicPetHeroSendSms = 'Send SMS';
+  static const String publicPetHeroWhatsApp = 'WhatsApp';
+  static const String publicPetHeroMessageChoiceTitle = 'Send Message';
+  static const String publicPetHeroSmsBodyFound =
+      'Hi, I found your pet! I\'m here: ';
+  static const String publicPetHeroWhatsAppTextFound =
+      'Hi, I found your pet! I\'m here: ';
+
+  // Public Pet Hero - Urgency
+  static const String publicPetHeroMissingRecently = 'Recently missing';
+  static const String publicPetHeroMissingHours = 'Missing for %s hours';
+  static const String publicPetHeroMissingDays = 'Missing for %s days';
+  static const String publicPetHeroUrgentPrefix = 'URGENT: ';
+  static const String publicPetHeroLastSeen = 'Last seen %s ago';
+  static const String publicPetHeroLastSeenLocation = 'Last seen: %s';
+
+  // Public Pet Hero - Image and errors
+  static const String publicPetHeroNoPhotoAvailable = 'No photo available';
+  static const String publicPetHeroLocationError =
+      'Could not get location. Please check permissions.';
+  static const String publicPetHeroLocationShared =
+      'Opening message app to share your location.';
+
+  // Public Pet Hero - Optional
+  static const String publicPetHeroPetProfile = 'Pet Profile';
+  static const String publicPetHeroLookFor = 'Look for: %s';
+
+  // Public Pet Owner Card
+  static const String publicPetOwnerTapToCall = 'Tap to call';
 
   AppStrings._();
 }

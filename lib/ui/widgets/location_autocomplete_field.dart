@@ -12,7 +12,8 @@ import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/widgets/common_text_field.dart';
 
 /// Callback when a place is selected
-typedef OnPlaceSelected = void Function(String address, double latitude, double longitude);
+typedef OnPlaceSelected = void Function(
+    String address, double latitude, double longitude);
 
 /// Location autocomplete field with dropdown suggestions
 class LocationAutocompleteField extends StatefulWidget {
@@ -22,6 +23,7 @@ class LocationAutocompleteField extends StatefulWidget {
   final String? Function(String?)? validator;
   final OnPlaceSelected? onPlaceSelected;
   final bool showCurrentLocationButton;
+  final Color? fillColor;
 
   const LocationAutocompleteField({
     super.key,
@@ -31,10 +33,12 @@ class LocationAutocompleteField extends StatefulWidget {
     this.validator,
     this.onPlaceSelected,
     this.showCurrentLocationButton = true,
+    this.fillColor,
   });
 
   @override
-  State<LocationAutocompleteField> createState() => _LocationAutocompleteFieldState();
+  State<LocationAutocompleteField> createState() =>
+      _LocationAutocompleteFieldState();
 }
 
 class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
@@ -120,21 +124,44 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
   void _showOverlay() {
     _removeOverlay();
 
+    final renderObject = context.findRenderObject();
+    final RenderBox? fieldBox = renderObject is RenderBox ? renderObject : null;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+    const minHeightForItems = 200.0;
+    bool showAbove = false;
+    double overlayMaxHeight = 250;
+
+    if (fieldBox != null) {
+      final position = fieldBox.localToGlobal(Offset.zero);
+      final fieldHeight = fieldBox.size.height;
+      final spaceBelow =
+          screenHeight - position.dy - fieldHeight - keyboardHeight;
+      showAbove = spaceBelow < minHeightForItems;
+      if (showAbove) {
+        overlayMaxHeight = 220;
+      }
+    }
+
+    final overlayWidth = fieldBox != null
+        ? fieldBox.size.width
+        : MediaQuery.of(context).size.width - 40;
+    final offsetY = showAbove ? -overlayMaxHeight : 60.0;
+
     _overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
-        width: context.findRenderObject() != null
-            ? (context.findRenderObject() as RenderBox).size.width
-            : MediaQuery.of(context).size.width - 40,
+        width: overlayWidth,
         child: CompositedTransformFollower(
           link: _layerLink,
           showWhenUnlinked: false,
-          offset: const Offset(0, 60),
+          offset: Offset(0, offsetY),
           child: Material(
             elevation: 8,
             borderRadius: BorderRadius.circular(12),
-            color: AppColors.white,
+            color: AppColors.surface,
             child: Container(
-              constraints: const BoxConstraints(maxHeight: 250),
+              constraints: BoxConstraints(maxHeight: overlayMaxHeight),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(color: AppColors.border),
@@ -145,7 +172,8 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
                   itemCount: _predictions.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1, color: AppColors.border),
+                  separatorBuilder: (_, __) =>
+                      const Divider(height: 1, color: AppColors.border),
                   itemBuilder: (context, index) {
                     final prediction = _predictions[index];
                     return _buildPredictionTile(prediction);
@@ -227,8 +255,9 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
     final details = await _placesRepository.getPlaceDetails(prediction.placeId);
 
     if (details != null && mounted) {
-      final address =
-          prediction.fullText.isNotEmpty ? prediction.fullText : '${prediction.mainText}, ${prediction.secondaryText}';
+      final address = prediction.fullText.isNotEmpty
+          ? prediction.fullText
+          : '${prediction.mainText}, ${prediction.secondaryText}';
       widget.controller.text = address;
       widget.onPlaceSelected?.call(
         address,
@@ -253,7 +282,8 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
       _userPosition = result.position;
 
       // Reverse geocode to get address
-      String locationName = '${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}';
+      String locationName =
+          '${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}';
       try {
         // Use geocoding package
         final placemarks = await _getAddressFromCoordinates(lat, lng);
@@ -271,7 +301,8 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result.errorMessage ?? 'Failed to get location')),
+          SnackBar(
+              content: Text(result.errorMessage ?? 'Failed to get location')),
         );
       }
     }
@@ -319,12 +350,14 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
         labelText: widget.labelText ?? AppStrings.location,
         hintText: widget.hintText ?? AppStrings.searchForLocation,
         validator: widget.validator,
+        fillColor: widget.fillColor,
         suffixIcon: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (widget.showCurrentLocationButton)
               IconButton(
-                onPressed: _isLoadingCurrentLocation ? null : _getCurrentLocation,
+                onPressed:
+                    _isLoadingCurrentLocation ? null : _getCurrentLocation,
                 icon: _isLoadingCurrentLocation
                     ? const SizedBox(
                         width: 24,

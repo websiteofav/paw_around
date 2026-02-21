@@ -168,7 +168,18 @@ class VaccineModel extends Equatable {
     // Backward compatibility: if completionHistory is missing or empty, initialize with dateGiven
     final historyStrings = json['completionHistory'] as List<dynamic>?;
     final history = historyStrings != null
-        ? historyStrings.map((s) => DateTime.parse(s as String)).toList()
+        ? historyStrings.map<DateTime>((value) {
+            if (value is String) {
+              // Stored as ISO string (older JSON or already converted)
+              return DateTime.parse(value);
+            }
+            if (value is Timestamp) {
+              // Coming directly from Firestore via public profile mapping
+              return value.toDate();
+            }
+            // Fallback: try parsing string representation
+            return DateTime.parse(value.toString());
+          }).toList()
         : <DateTime>[];
 
     // If history is empty, seed it with existing dateGiven
@@ -178,7 +189,9 @@ class VaccineModel extends Equatable {
       id: json['id'] as String,
       vaccineName: json['vaccineName'] as String,
       dateGiven: dateGiven,
-      nextDueDate: DateTime.parse(json['nextDueDate'] as String),
+      nextDueDate: json['nextDueDate'] != null
+          ? DateTime.parse(json['nextDueDate'] as String)
+          : null,
       notes: json['notes'] as String,
       setReminder: json['setReminder'] as bool,
       snoozedUntil: json['snoozedUntil'] != null
