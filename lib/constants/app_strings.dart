@@ -442,6 +442,7 @@ class AppStrings {
   static const String upcomingSoon = 'Upcoming soon';
   static const String nextDoseSoon = 'Next dose soon';
   static const String notSet = 'Not set';
+  static const String valueNotSet = '--';
   static const String noVaccinesAdded = 'No vaccines added';
   static const String petNameHint = "Pet's name";
   static const String delete = 'Delete';
@@ -702,8 +703,11 @@ class AppStrings {
   static const String landingFooterInstagram = 'Instagram';
   static const String landingFooterTwitter = 'Twitter';
   static const String landingFooterTagline = "Your pet's best friend";
+  /// One-liner for meta, manifest, and footer. QR first.
+  static const String appShortDescription =
+      'Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
   static const String landingFooterCompanyDescription =
-      'Keep your pets safe, healthy, and connected with the pet care app trusted by thousands.';
+      'Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
   static const String landingFooterProduct = 'Product';
   static const String landingFooterFeatures = 'Features';
   static const String landingFooterHowItWorks = 'How it Works';

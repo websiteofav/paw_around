@@ -98,7 +98,7 @@ class _PublicPetHeroSectionState extends State<PublicPetHeroSection>
               AppSpacing.vertical16,
               if (phone != null && phone.isNotEmpty)
                 ListTile(
-                  leading: Icon(
+                  leading: const Icon(
                     Icons.message_outlined,
                     color: AppColors.primary,
                   ),
@@ -409,6 +409,13 @@ class _PublicPetHeroSectionState extends State<PublicPetHeroSection>
   }
 
   Widget _buildDetails(double nameFontSize) {
+    final breedDisplay = widget.pet.breed.trim().isEmpty
+        ? AppStrings.valueNotSet
+        : widget.pet.breed;
+    final ageDisplay =
+        (widget.pet.ageInMonths == 0 && widget.pet.ageInYears == 0)
+            ? AppStrings.valueNotSet
+            : widget.pet.ageString;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -430,14 +437,14 @@ class _PublicPetHeroSectionState extends State<PublicPetHeroSection>
         ),
         AppSpacing.vertical8,
         Text(
-          widget.pet.breed,
+          breedDisplay,
           style: AppTextStyles.regularStyle400(
             fontSize: 16,
             fontColor: AppColors.textSecondary,
           ),
         ),
         Text(
-          widget.pet.ageString,
+          ageDisplay,
           style: AppTextStyles.regularStyle400(
             fontSize: 16,
             fontColor: AppColors.textSecondary,
@@ -449,7 +456,7 @@ class _PublicPetHeroSectionState extends State<PublicPetHeroSection>
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
+              const Icon(
                 Icons.visibility_outlined,
                 size: 18,
                 color: AppColors.textSecondary,
@@ -719,17 +726,6 @@ class PublicPetHeroActions extends StatelessWidget {
                 isFullWidth: true,
               ),
             ),
-            AppSpacing.horizontal16,
-            Expanded(
-              child: CommonButton(
-                text: AppStrings.publicPetTopBarDownloadApp,
-                icon: Icons.download_outlined,
-                onPressed: onDownloadApp,
-                variant: ButtonVariant.outline,
-                size: ButtonSize.large,
-                isFullWidth: true,
-              ),
-            ),
           ],
         ],
       );
@@ -783,15 +779,6 @@ class PublicPetHeroActions extends StatelessWidget {
           text: AppStrings.messageOwner,
           icon: Icons.message_outlined,
           onPressed: onMessage,
-          variant: ButtonVariant.outline,
-          size: ButtonSize.large,
-          isFullWidth: true,
-        ),
-        AppSpacing.vertical16,
-        CommonButton(
-          text: AppStrings.publicPetTopBarDownloadApp,
-          icon: Icons.download_outlined,
-          onPressed: onDownloadApp,
           variant: ButtonVariant.outline,
           size: ButtonSize.large,
           isFullWidth: true,

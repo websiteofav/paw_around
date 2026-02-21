@@ -1,11 +1,11 @@
 {
-    "name": "paw_around",
-    "short_name": "paw_around",
+    "name": "Paw Around",
+    "short_name": "Paw Around",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#ffffff",
+    "theme_color": "#00C8A6",
+    "description": "Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

@@ -161,25 +161,22 @@ class _PublicPetPageState extends State<PublicPetPage> {
   }
 
   List<PublicPetInfoRow> _basicInfoRows(PetModel pet) {
-    final vaccinationText = pet.overdueVaccines.isNotEmpty
-        ? AppStrings.overdue
-        : (pet.upcomingVaccines.isNotEmpty
-            ? '${pet.upcomingVaccines.first.vaccineName}'
-            : AppStrings.vaccinationUpToDate);
+    final genderEmpty = pet.gender.trim().isEmpty;
+    final genderIcon = genderEmpty
+        ? Icons.pets
+        : (pet.gender.toLowerCase() == 'female' ? Icons.female : Icons.male);
+    final genderValue = genderEmpty ? AppStrings.valueNotSet : pet.gender;
+    final weightValue =
+        pet.weight == 0 ? AppStrings.valueNotSet : '${pet.weight.toInt()} kg';
+    final speciesValue =
+        pet.species.trim().isEmpty ? AppStrings.valueNotSet : pet.species;
     return [
-      PublicPetInfoRow(
-        icon: pet.gender.toLowerCase() == 'female' ? Icons.female : Icons.male,
-        value: pet.gender,
-      ),
+      PublicPetInfoRow(icon: genderIcon, value: genderValue),
       PublicPetInfoRow(
         icon: Icons.monitor_weight_outlined,
-        value: '${pet.weight.toInt()} kg',
+        value: weightValue,
       ),
-      PublicPetInfoRow(icon: Icons.pets, value: pet.species),
-      PublicPetInfoRow(
-        icon: Icons.medical_services_outlined,
-        value: vaccinationText,
-      ),
+      PublicPetInfoRow(icon: Icons.pets, value: speciesValue),
     ];
   }
 }
