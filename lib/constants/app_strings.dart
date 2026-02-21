@@ -703,6 +703,7 @@ class AppStrings {
   static const String landingFooterInstagram = 'Instagram';
   static const String landingFooterTwitter = 'Twitter';
   static const String landingFooterTagline = "Your pet's best friend";
+
   /// One-liner for meta, manifest, and footer. QR first.
   static const String appShortDescription =
       'Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
