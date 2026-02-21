@@ -55,6 +55,10 @@ class NotificationService {
 
   bool _isInitialized = false;
 
+  static String encodePayload(Map<String, dynamic> payload) {
+    return jsonEncode(payload);
+  }
+
   /// Initialize the notification plugin (no permission request)
   Future<void> init() async {
     if (_isInitialized) return;
@@ -97,7 +101,45 @@ class NotificationService {
           NotificationHandler.handleNotificationTap,
     );
 
+    final launchDetails = await _plugin.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp == true &&
+        launchDetails?.notificationResponse != null) {
+      await NotificationHandler.handleNotificationTap(
+        launchDetails!.notificationResponse!,
+        resolveNow: false,
+      );
+    }
+
     _isInitialized = true;
+  }
+
+  Future<void> showInstantNotification({
+    required String title,
+    required String body,
+    required String payload,
+  }) async {
+    final androidDetails = AndroidNotificationDetails(
+      _channelId,
+      _channelName,
+      channelDescription: _channelDescription,
+      importance: Importance.high,
+      priority: Priority.high,
+      icon: '@mipmap/ic_launcher',
+    );
+
+    final iosDetails = DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    final details = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+    );
+
+    final id = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    await _plugin.show(id, title, body, details, payload: payload);
   }
 
   /// Check if we have notification permission

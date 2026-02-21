@@ -18,6 +18,7 @@ import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/services/deep_link_service.dart';
 import 'package:paw_around/services/notification_service.dart';
+import 'package:paw_around/services/push_message_service.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:paw_around/router/app_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +33,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  PushMessageService.registerBackgroundHandler();
 
   // Initialize Firebase App Check for Play Integrity
   await FirebaseAppCheck.instance.activate(
@@ -51,6 +53,7 @@ void main() async {
 
   // Initialize notification service
   await NotificationService().init();
+  await PushMessageService.instance.init();
 
   // Determine if onboarding has already been completed
   final prefs = await SharedPreferences.getInstance();
@@ -58,6 +61,7 @@ void main() async {
 
   // Configure router with correct initial route (onboarding vs auth)
   AppRouter.init(hasCompletedOnboarding: hasCompletedOnboarding);
+  DeepLinkService.instance.init();
 
   // Register global bloc observer for auth error handling
   Bloc.observer = AuthBlocObserver();
@@ -73,12 +77,6 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  @override
-  void initState() {
-    super.initState();
-    DeepLinkService.instance.init();
-  }
-
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(

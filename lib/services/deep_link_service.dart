@@ -3,7 +3,8 @@ import 'dart:developer';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
-import 'package:paw_around/router/app_router.dart';
+import 'package:paw_around/models/navigation/pending_intent.dart';
+import 'package:paw_around/services/pending_intent_service.dart';
 
 /// Singleton class to manage deep links across the app.
 /// Handles both pre-auth and post-auth scenarios.
@@ -19,32 +20,24 @@ class DeepLinkService {
 
   final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri>? _sub;
-  Uri? _pendingUri;
-  bool _isAuthenticated = false;
-  BuildContext? _currentContext;
 
   void init() async {
-    // Cold start - check for initial deep link and store it
     try {
       final initialUri = await _appLinks.getInitialLink();
       if (initialUri != null) {
-        _pendingUri = initialUri;
         log('DeepLink cold start stored: $initialUri');
+        await _storeUri(initialUri);
+        await PendingIntentService.instance.resolveIfPossible();
       }
     } catch (e) {
       log('DeepLink getInitialLink error: $e');
     }
 
-    // Warm start - listen for links when app is already running
     _sub = _appLinks.uriLinkStream.listen(
-      (uri) {
+      (uri) async {
         log('DeepLink warm start received: $uri');
-        _pendingUri = uri;
-
-        // If app is authenticated and we have context, navigate immediately
-        if (_isAuthenticated && _currentContext != null && _currentContext!.mounted) {
-          _processUri(_currentContext!);
-        }
+        await _storeUri(uri);
+        await PendingIntentService.instance.resolveIfPossible();
       },
       onError: (err) {
         log('DeepLink stream error: $err');
@@ -52,57 +45,37 @@ class DeepLinkService {
     );
   }
 
-  /// Call this from Dashboard after authentication to enable immediate deep link processing.
-  /// This handles the case where deep links arrive while app is in background.
   void setAuthenticated(bool isAuthenticated, BuildContext? context) {
-    _isAuthenticated = isAuthenticated;
-    _currentContext = context;
-
-    // If we have a pending URI and we're now authenticated, process it
-    if (isAuthenticated && _pendingUri != null && context != null && context.mounted) {
-      _processUri(context);
+    if (context != null && !context.mounted) {
+      return;
+    }
+    if (isAuthenticated) {
+      PendingIntentService.instance.resolveIfPossible();
     }
   }
 
-  /// Process any pending deep link URI.
-  /// Call this from Dashboard after it's built.
   void handlePendingUri() {
-    if (_pendingUri == null) {
-      return;
-    }
-
-    if (_currentContext != null && _currentContext!.mounted) {
-      _processUri(_currentContext!);
-    }
+    PendingIntentService.instance.resolveIfPossible();
   }
 
-  /// Navigate to the pending URI path using push (so Dashboard stays as base).
-  void _processUri(BuildContext context) {
-    if (_pendingUri == null) {
-      return;
-    }
-
-    final uri = _pendingUri!;
-    _pendingUri = null;
-
-    log('DeepLink processing: ${uri.path}');
-
-    // Use push so back button returns to Dashboard
-    AppRouter.router.push(uri.path);
+  Future<void> _storeUri(Uri uri) async {
+    final path = uri.path.isEmpty ? '/' : uri.path;
+    final requiresAuth = PendingIntentService.instance.routeRequiresAuth(path);
+    final intent = PendingIntent(
+      source: PendingIntentSource.deepLink,
+      type: PendingIntentType.route,
+      requiresAuth: requiresAuth,
+      payload: {'path': uri.toString()},
+      createdAt: DateTime.now(),
+    );
+    await PendingIntentService.instance.save(intent);
   }
 
-  /// Check if there's a pending deep link
-  bool get hasPendingUri => _pendingUri != null;
-
-  /// Clear any pending deep link
   void clearPendingUri() {
-    _pendingUri = null;
+    PendingIntentService.instance.clear();
   }
 
   void dispose() {
-    _pendingUri = null;
-    _currentContext = null;
-    _isAuthenticated = false;
     _sub?.cancel();
   }
 }
