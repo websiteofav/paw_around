@@ -280,6 +280,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       controller: _nameController,
                       hintText: AppStrings.displayNameHint,
                       labelText: AppStrings.displayName,
+                      enabled: !_isSaving,
                     ),
                     const SizedBox(height: 16),
 
@@ -289,6 +290,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       hintText: AppStrings.emailHint,
                       labelText: AppStrings.emailAddress,
                       keyboardType: TextInputType.emailAddress,
+                      enabled: !_isSaving,
                       validator: (value) {
                         if (value != null && value.trim().isNotEmpty) {
                           final emailRegex =
@@ -360,15 +362,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 ),
               ),
             ),
-
-            // Loading overlay
-            if (_isSaving)
-              Container(
-                color: Colors.black26,
-                child: const Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                ),
-              ),
           ],
         ),
       ),

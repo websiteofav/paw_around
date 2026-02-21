@@ -15,6 +15,7 @@ class CommonTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final FocusNode? focusNode;
   final Color? fillColor;
+  final bool enabled;
 
   const CommonTextField({
     super.key,
@@ -30,6 +31,7 @@ class CommonTextField extends StatelessWidget {
     this.suffixIcon,
     this.focusNode,
     this.fillColor,
+    this.enabled = true,
   });
 
   @override
@@ -42,6 +44,7 @@ class CommonTextField extends StatelessWidget {
       validator: validator,
       autovalidateMode: AutovalidateMode.onUserInteraction,
       maxLines: isPassword ? 1 : maxLines,
+      enabled: enabled,
       decoration: InputDecoration(
         hintText: hintText,
         labelText: labelText,

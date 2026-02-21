@@ -139,10 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   onRefresh: _onRefresh,
                   child: SingleChildScrollView(
                     physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.only(
-                      bottom:
-                          120
-                    ),
+                    padding: const EdgeInsets.only(bottom: 120),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
