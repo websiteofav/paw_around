@@ -53,23 +53,21 @@ class PetMomentsRepository {
   }
 
   /// Toggle like on a moment
+
   Future<void> likeMoment(String momentId, String userId) async {
     final momentRef = _momentsRef.doc(momentId);
-    final moment = await getMomentById(momentId);
+    final momentSnap = await momentRef.get();
+    if (!momentSnap.exists) return;
 
-    if (moment == null) return;
+    final data = momentSnap.data() ?? {};
+    final likes = List<String>.from((data['likes'] as List?) ?? const []);
 
-    final currentLikes = List<String>.from(moment.likes);
-
-    if (currentLikes.contains(userId)) {
-      // Unlike: remove userId from likes array
-      currentLikes.remove(userId);
-    } else {
-      // Like: add userId to likes array
-      currentLikes.add(userId);
-    }
-
-    await momentRef.update({'likes': currentLikes});
+    final isLiked = likes.contains(userId);
+    await momentRef.update({
+      'likes': isLiked
+          ? FieldValue.arrayRemove([userId])
+          : FieldValue.arrayUnion([userId]),
+    });
   }
 
   /// Add a comment to a moment
@@ -80,22 +78,25 @@ class PetMomentsRepository {
     String text,
   ) async {
     final momentRef = _momentsRef.doc(momentId);
-    final moment = await getMomentById(momentId);
 
-    if (moment == null) return;
+    await _firestore.runTransaction((transaction) async {
+      final snapshot = await transaction.get(momentRef);
+      if (!snapshot.exists) return;
 
-    final newComment = PetMomentComment(
-      userId: userId,
-      userName: userName,
-      text: text,
-      createdAt: DateTime.now(),
-    );
+      final data = snapshot.data() ?? <String, dynamic>{};
+      final currentComments = List<Map<String, dynamic>>.from(
+          (data['comments'] as List?) ?? const []);
 
-    final currentComments = List<PetMomentComment>.from(moment.comments);
-    currentComments.add(newComment);
+      final newComment = PetMomentComment(
+        userId: userId,
+        userName: userName,
+        text: text,
+        createdAt: DateTime.now(),
+      );
 
-    await momentRef.update({
-      'comments': currentComments.map((c) => c.toMap()).toList(),
+      currentComments.add(newComment.toMap());
+
+      transaction.update(momentRef, {'comments': currentComments});
     });
   }
 

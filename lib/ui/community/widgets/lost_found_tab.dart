@@ -24,14 +24,41 @@ class LostFoundTab extends StatefulWidget {
   State<LostFoundTab> createState() => _LostFoundTabState();
 }
 
-class _LostFoundTabState extends State<LostFoundTab> {
+class _LostFoundTabState extends State<LostFoundTab>
+    with AutomaticKeepAliveClientMixin {
   final LocationService _locationService = sl<LocationService>();
   Position? _userPosition;
+  bool _hasLoadedOnce = false;
 
   @override
   void initState() {
     super.initState();
+    if (_hasLoadedOnce) return;
+    _hasLoadedOnce = true;
+
+    final communityState = context.read<CommunityBloc>().state;
+    final alreadyHasData =
+        communityState is CommunityLoaded || communityState is CommunityLoading;
+
+    if (alreadyHasData) {
+      // Keep existing feed data and only resolve location for distance labels.
+      _loadUserLocationOnly();
+      return;
+    }
+
     _loadUserLocationAndPosts();
+  }
+
+  Future<void> _loadUserLocationOnly() async {
+    final result = await _locationService.getCurrentLocation();
+    if (!mounted) return;
+    setState(() {
+      if (result.isSuccess && result.position != null) {
+        _userPosition = result.position;
+      } else {
+        _userPosition = null;
+      }
+    });
   }
 
   Future<void> _loadUserLocationAndPosts() async {
@@ -64,6 +91,7 @@ class _LostFoundTabState extends State<LostFoundTab> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return BlocListener<CommunityBloc, CommunityState>(
       listener: (context, state) {
         if (state is PostDeleted ||
@@ -91,6 +119,9 @@ class _LostFoundTabState extends State<LostFoundTab> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
   Widget _buildEmptyState() {
     // Show different message if location is unavailable

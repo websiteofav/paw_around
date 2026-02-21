@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:paw_around/bloc/moments/pet_moments_bloc.dart';
-import 'package:paw_around/bloc/moments/pet_moments_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -25,8 +22,6 @@ class _PawCircleScreenState extends State<PawCircleScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
-    // Load moments when tab is initialized
-    context.read<PetMomentsBloc>().add(const LoadMoments());
   }
 
   @override

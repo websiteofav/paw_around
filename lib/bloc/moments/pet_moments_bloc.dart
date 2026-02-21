@@ -26,7 +26,6 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       emit(PetMomentsLoaded(moments: moments));
     } catch (e) {
       emit(PetMomentsError(e.toString()));
-      rethrow;
     }
   }
 
@@ -38,7 +37,6 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       emit(PetMomentsLoaded(moments: moments));
     } catch (e) {
       emit(PetMomentsError(e.toString()));
-      rethrow;
     }
   }
 
@@ -52,7 +50,6 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       add(const LoadMoments());
     } catch (e) {
       emit(PetMomentsError(e.toString()));
-      rethrow;
     }
   }
 
@@ -81,7 +78,6 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
         emit(PetMomentsLoaded(moments: previousMoments));
       }
       emit(PetMomentsError(e.toString()));
-      rethrow;
     }
   }
 
@@ -117,7 +113,6 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
         emit(PetMomentsLoaded(moments: previousMoments));
       }
       emit(PetMomentsError(e.toString()));
-      rethrow;
     }
   }
 
@@ -128,7 +123,6 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       emit(MomentDeleted());
     } catch (e) {
       emit(PetMomentsError(e.toString()));
-      rethrow;
     }
   }
 }
