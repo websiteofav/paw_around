@@ -199,8 +199,6 @@ class _LostFoundTabState extends State<LostFoundTab>
       },
       child: ListView.builder(
         padding: const EdgeInsets.only(
-          left: 16,
-          right: 16,
           bottom: 120,
         ),
         itemCount: state.posts.length,
@@ -217,10 +215,11 @@ class _LostFoundTabState extends State<LostFoundTab>
             },
             distanceKm: _userPosition != null
                 ? _locationService.calculateDistance(
-                    startLatitude: post.latitude,
-                    startLongitude: post.longitude,
-                    endLatitude: _userPosition!.latitude,
-                    endLongitude: _userPosition!.longitude)
+                        startLatitude: post.latitude,
+                        startLongitude: post.longitude,
+                        endLatitude: _userPosition!.latitude,
+                        endLongitude: _userPosition!.longitude) /
+                    1000
                 : null,
           );
         },

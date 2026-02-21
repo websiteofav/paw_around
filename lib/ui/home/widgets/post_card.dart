@@ -124,7 +124,8 @@ class PostCard extends StatelessWidget {
         fit: BoxFit.cover,
         placeholder: (context, url) => Container(
           color: AppColors.surface,
-          child: const Center(child: CircularProgressIndicator(color: AppColors.primary)),
+          child: const Center(
+              child: CircularProgressIndicator(color: AppColors.primary)),
         ),
         errorWidget: (context, url, error) => _buildPlaceholder(),
       );
@@ -159,11 +160,13 @@ class PostCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(isLost ? Icons.search : Icons.favorite, size: 12, color: AppColors.white),
+          Icon(isLost ? Icons.search : Icons.favorite,
+              size: 12, color: AppColors.white),
           const SizedBox(width: 4),
           Text(
             isLost ? AppStrings.lost : AppStrings.found,
-            style: AppTextStyles.boldStyle700(fontSize: 12, fontColor: AppColors.white),
+            style: AppTextStyles.boldStyle700(
+                fontSize: 12, fontColor: AppColors.white),
           ),
         ],
       ),
@@ -178,7 +181,8 @@ class PostCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
         child: Text(AppStrings.yourPost,
-            style: AppTextStyles.boldStyle700(fontSize: 12, fontColor: AppColors.textPrimary)));
+            style: AppTextStyles.boldStyle700(
+                fontSize: 12, fontColor: AppColors.textPrimary)));
   }
 
   Widget _buildHeader() {
@@ -194,12 +198,14 @@ class PostCard extends StatelessWidget {
         ),
         Text(
           AppDateUtils.getRelativeTimeShort(post.createdAt),
-          style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+          style: AppTextStyles.regularStyle400(
+              fontSize: 14, fontColor: AppColors.textSecondary),
         ),
         if (distanceKm != null)
           Text(
             ' • ${distanceKm!.toStringAsFixed(1)} ${AppStrings.kmAway}',
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textSecondary),
           ),
       ],
     );
@@ -212,7 +218,8 @@ class PostCard extends StatelessWidget {
         if (post.breed.isNotEmpty)
           Text(
             '${post.breed} • ${post.color}',
-            style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+            style: AppTextStyles.regularStyle400(
+                fontSize: 14, fontColor: AppColors.textSecondary),
           ),
         const SizedBox(height: 4),
         Text(
@@ -235,23 +242,29 @@ class PostCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.person_outline, size: 14, color: AppColors.textSecondary),
+                  const Icon(Icons.person_outline,
+                      size: 14, color: AppColors.textSecondary),
                   const SizedBox(width: 4),
                   Text(
-                    _isOwner ? AppStrings.yourPost : post.userName.orDefault(AppStrings.anonymous),
-                    style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                    _isOwner
+                        ? AppStrings.yourPost
+                        : post.userName.orDefault(AppStrings.anonymous),
+                    style: AppTextStyles.regularStyle400(
+                        fontSize: 14, fontColor: AppColors.textSecondary),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(Icons.location_on, size: 14, color: AppColors.textSecondary),
+                  const Icon(Icons.location_on,
+                      size: 14, color: AppColors.textSecondary),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
                       post.locationName,
-                      style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                      style: AppTextStyles.regularStyle400(
+                          fontSize: 14, fontColor: AppColors.textSecondary),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -261,7 +274,8 @@ class PostCard extends StatelessWidget {
           ),
         ),
         IconButton(
-          icon: const Icon(Icons.share_outlined, size: 20, color: AppColors.textSecondary),
+          icon: const Icon(Icons.share_outlined,
+              size: 20, color: AppColors.textSecondary),
           onPressed: () => ShareUtils.sharePost(post),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
