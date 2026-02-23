@@ -3,9 +3,11 @@ import 'package:paw_around/bloc/moments/pet_moments_event.dart';
 import 'package:paw_around/bloc/moments/pet_moments_state.dart';
 import 'package:paw_around/models/moments/pet_moment_model.dart';
 import 'package:paw_around/repositories/pet_moments_repository.dart';
+import 'package:paw_around/services/auth_error_interceptor.dart';
 
 class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
   final PetMomentsRepository _repository;
+  final AuthErrorInterceptor _authInterceptor = AuthErrorInterceptor();
 
   PetMomentsBloc({required PetMomentsRepository repository})
       : _repository = repository,
@@ -25,6 +27,7 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       final moments = await _repository.getMoments();
       emit(PetMomentsLoaded(moments: moments));
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(PetMomentsError(e.toString()));
     }
   }
@@ -36,6 +39,7 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       final moments = await _repository.getMomentsByUserId(event.userId);
       emit(PetMomentsLoaded(moments: moments));
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(PetMomentsError(e.toString()));
     }
   }
@@ -49,6 +53,7 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       // Reload moments after creation
       add(const LoadMoments());
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(PetMomentsError(e.toString()));
     }
   }
@@ -74,6 +79,7 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
     try {
       await _repository.likeMoment(event.momentId, event.userId);
     } catch (e) {
+      await _handleUnauthorizedError(e);
       if (previousMoments != null) {
         emit(PetMomentsLoaded(moments: previousMoments));
       }
@@ -109,6 +115,7 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
         event.text,
       );
     } catch (e) {
+      await _handleUnauthorizedError(e);
       if (previousMoments != null) {
         emit(PetMomentsLoaded(moments: previousMoments));
       }
@@ -122,7 +129,14 @@ class PetMomentsBloc extends Bloc<PetMomentsEvent, PetMomentsState> {
       await _repository.deleteMoment(event.momentId);
       emit(MomentDeleted());
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(PetMomentsError(e.toString()));
+    }
+  }
+
+  Future<void> _handleUnauthorizedError(Object error) async {
+    if (_authInterceptor.isUnauthorizedError(error)) {
+      await _authInterceptor.handleUnauthorizedError();
     }
   }
 }

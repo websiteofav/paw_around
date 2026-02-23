@@ -4,9 +4,11 @@ import 'package:paw_around/bloc/community/community_state.dart';
 import 'package:paw_around/constants/api_constants.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/repositories/community_repository.dart';
+import 'package:paw_around/services/auth_error_interceptor.dart';
 
 class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
   final CommunityRepository _repository;
+  final AuthErrorInterceptor _authInterceptor = AuthErrorInterceptor();
 
   CommunityBloc({required CommunityRepository repository})
       : _repository = repository,
@@ -41,8 +43,8 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       }
       emit(CommunityLoaded(posts: posts));
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(CommunityError(e.toString()));
-      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -53,8 +55,8 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       final posts = await _repository.getPostsByUser(event.userId);
       emit(MyPostsLoaded(posts: posts));
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(CommunityError(e.toString()));
-      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -67,8 +69,8 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       // Reload posts after creation (without location to show all posts)
       add(const LoadPosts());
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(CommunityError(e.toString()));
-      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -93,8 +95,8 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       await _repository.markAsResolved(event.postId);
       emit(PostResolved());
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(CommunityError(e.toString()));
-      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -104,8 +106,8 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       await _repository.unresolvePost(event.postId);
       emit(PostUnresolved());
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(CommunityError(e.toString()));
-      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
@@ -115,8 +117,14 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       await _repository.deletePost(event.postId);
       emit(PostDeleted());
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(CommunityError(e.toString()));
-      rethrow; // Let AuthBlocObserver handle auth errors
+    }
+  }
+
+  Future<void> _handleUnauthorizedError(Object error) async {
+    if (_authInterceptor.isUnauthorizedError(error)) {
+      await _authInterceptor.handleUnauthorizedError();
     }
   }
 }

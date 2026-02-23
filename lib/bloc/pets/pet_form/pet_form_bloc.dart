@@ -7,10 +7,12 @@ import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
+import 'package:paw_around/services/auth_error_interceptor.dart';
 import 'package:paw_around/services/storage_service.dart';
 
 class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
   final PetRepository _petRepository;
+  final AuthErrorInterceptor _authInterceptor = AuthErrorInterceptor();
 
   PetFormBloc({
     required PetRepository petRepository,
@@ -243,15 +245,21 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
         emit(state.copyWith(status: PetFormStatus.success, savedPet: savedPet));
       }
     } catch (e) {
+      await _handleUnauthorizedError(e);
       emit(state.copyWith(
         status: PetFormStatus.error,
         errorMessage: e.toString(),
       ));
-      rethrow; // Let AuthBlocObserver handle auth errors
     }
   }
 
   void _onResetForm(ResetForm event, Emitter<PetFormState> emit) {
     emit(const PetFormState());
+  }
+
+  Future<void> _handleUnauthorizedError(Object error) async {
+    if (_authInterceptor.isUnauthorizedError(error)) {
+      await _authInterceptor.handleUnauthorizedError();
+    }
   }
 }
