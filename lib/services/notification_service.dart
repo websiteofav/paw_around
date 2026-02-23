@@ -237,8 +237,8 @@ class NotificationService {
         notificationDate.year,
         notificationDate.month,
         notificationDate.day,
-        20,
-        15,
+        09,
+        00,
       );
 
       // Skip if scheduled time has passed
