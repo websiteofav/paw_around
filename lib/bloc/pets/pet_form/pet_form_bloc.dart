@@ -121,36 +121,24 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
   }
 
   void _onValidateForm(ValidateForm event, Emitter<PetFormState> emit) {
-    final errors = <String, String>{};
-
-    if (state.name.isEmpty) {
-      errors['name'] = 'Pet name is required';
-    }
-    if (state.species.isEmpty) {
-      errors['species'] = 'Pet type is required';
-    }
-
-    if (state.dateOfBirth == null) {
-      errors['dateOfBirth'] = 'Age or birthdate is required';
-    }
-
+    final errors = _buildValidationErrors(state);
     final isValid = errors.isEmpty;
     emit(state.copyWith(errors: errors, isValid: isValid));
   }
 
   Future<void> _onSubmitForm(
       SubmitForm event, Emitter<PetFormState> emit) async {
-    // Validate first (pass petToEdit for proper validation)
-    add(ValidateForm(petToEdit: event.petToEdit));
-
-    // Wait for validation to complete
-    await Future.delayed(const Duration(milliseconds: 50));
-
-    if (!state.isValid) {
+    final errors = _buildValidationErrors(state);
+    if (errors.isNotEmpty) {
+      emit(state.copyWith(errors: errors, isValid: false));
       return;
     }
 
-    emit(state.copyWith(status: PetFormStatus.saving));
+    emit(state.copyWith(
+      errors: const {},
+      isValid: true,
+      status: PetFormStatus.saving,
+    ));
 
     try {
       final storageService = sl<StorageService>();
@@ -255,6 +243,22 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
 
   void _onResetForm(ResetForm event, Emitter<PetFormState> emit) {
     emit(const PetFormState());
+  }
+
+  Map<String, String> _buildValidationErrors(PetFormState formState) {
+    final errors = <String, String>{};
+
+    if (formState.name.isEmpty) {
+      errors['name'] = 'Pet name is required';
+    }
+    if (formState.species.isEmpty) {
+      errors['species'] = 'Pet type is required';
+    }
+    if (formState.dateOfBirth == null) {
+      errors['dateOfBirth'] = 'Age or birthdate is required';
+    }
+
+    return errors;
   }
 
   Future<void> _handleUnauthorizedError(Object error) async {
