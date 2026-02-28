@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,18 +29,38 @@ class OTPScreen extends StatefulWidget {
 }
 
 class _OTPScreenState extends State<OTPScreen> {
+  static const int _resendCooldownSeconds = 60;
+
   TextEditingController? _otpController;
   bool _isOTPComplete = false;
   bool _isVerifying = false;
   bool _isNavigating = false;
   bool _isResending = false;
   late String _verificationId;
+  int _resendCountdown = 0;
+  Timer? _resendTimer;
 
   @override
   void initState() {
     super.initState();
     _otpController = TextEditingController();
     _verificationId = widget.verificationId;
+    _startResendCountdown();
+  }
+
+  void _startResendCountdown() {
+    _resendTimer?.cancel();
+    _resendCountdown = _resendCooldownSeconds;
+    _resendTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() {
+        _resendCountdown--;
+        if (_resendCountdown <= 0) {
+          _resendTimer?.cancel();
+          _resendTimer = null;
+        }
+      });
+    });
   }
 
   String get _maskedPhoneNumber {
@@ -145,6 +167,7 @@ class _OTPScreenState extends State<OTPScreen> {
             _verificationId = verificationId;
             _isResending = false;
           });
+          _startResendCountdown();
           HapticFeedback.mediumImpact();
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -205,6 +228,8 @@ class _OTPScreenState extends State<OTPScreen> {
 
   @override
   void dispose() {
+    _resendTimer?.cancel();
+    _resendTimer = null;
     if (!_isNavigating) {
       _otpController?.dispose();
     }
@@ -313,7 +338,7 @@ class _OTPScreenState extends State<OTPScreen> {
 
               const SizedBox(height: 24),
 
-              // Resend OTP
+              // Resend OTP (with countdown)
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -323,7 +348,7 @@ class _OTPScreenState extends State<OTPScreen> {
                       style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
                     ),
                     GestureDetector(
-                      onTap: _isResending ? null : _resendOTP,
+                      onTap: (_resendCountdown <= 0 && !_isResending) ? _resendOTP : null,
                       child: _isResending
                           ? const SizedBox(
                               width: 16,
@@ -334,8 +359,13 @@ class _OTPScreenState extends State<OTPScreen> {
                               ),
                             )
                           : Text(
-                              AppStrings.resendOTP,
-                              style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
+                              _resendCountdown > 0
+                                  ? AppStrings.resendOTPInSeconds(_resendCountdown)
+                                  : AppStrings.resendOTP,
+                              style: AppTextStyles.mediumStyle500(
+                                fontSize: 14,
+                                fontColor: _resendCountdown > 0 ? AppColors.textSecondary : AppColors.primary,
+                              ),
                             ),
                     ),
                   ],
