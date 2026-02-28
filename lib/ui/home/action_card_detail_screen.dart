@@ -481,7 +481,7 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
 
                   IconButton(
                     icon: const Icon(Icons.settings, color: AppColors.white),
-                    onPressed: () {
+                    onPressed: () async {
                       switch (actionType) {
                         case ActionType.grooming:
                           context.pushNamed(AppRoutes.groomingSettings,
@@ -492,10 +492,16 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
                               extra: pet);
                           break;
                         case ActionType.vaccine:
-                          context.pushNamed(AppRoutes.addVaccine, extra: {
+                          final result =
+                              await context.pushNamed(AppRoutes.addVaccine, extra: {
                             'pet': pet,
                             'vaccine': vaccine,
                           });
+                          if (!mounted) return;
+                          if (result is Map<String, dynamic> &&
+                              result['deleted'] == true) {
+                            context.goNamed(AppRoutes.home);
+                          }
                           break;
                         // Vaccines are managed individually, no general settings
                       }

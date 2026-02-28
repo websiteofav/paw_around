@@ -543,7 +543,11 @@ final calculatedNextDueDate = _setReminder && originalInterval > 0 && !nextDueDa
             backgroundColor: AppColors.success,
           ),
         );
-        context.pop();
+        context.pop({
+          'deleted': true,
+          'vaccineId': widget.vaccineToEdit!.id,
+          'petId': widget.pet!.id,
+        });
       }
     } catch (e) {
       if (dialogContext.mounted) {
