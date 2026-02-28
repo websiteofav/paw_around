@@ -55,6 +55,8 @@ class AppStrings {
   static const String verify = 'Verify';
   static const String didntReceiveCode = "Didn't receive the code?";
   static const String resendOTP = 'Resend';
+  /// Use for countdown, e.g. resendOTPInSeconds(45) => "Resend in 45s"
+  static String resendOTPInSeconds(int seconds) => 'Resend in ${seconds}s';
   static const String invalidOTP = 'Invalid OTP. Please try again.';
   static const String otpSentSuccessfully = 'OTP sent successfully';
 
