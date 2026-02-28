@@ -487,3 +487,15 @@ class MyScreen extends StatelessWidget {
 - If you need to add a new string/color/style, add it to the appropriate constants file first
 - Keep screens focused and extract complex widgets
 - Always prioritize code readability and maintainability
+
+## Edit Safety & Approvals
+
+- Default behavior: **do not apply code changes directly**. Propose patches/snippets and wait for the user to apply them or explicitly request “apply now”.
+- In **Ask mode**, never modify files. Only:
+  - Read/search the codebase
+  - Explain behavior, propose code, or suggest diffs
+- In **Agent mode**, before editing files:
+  - Prefer showing a concise patch or code snippet first
+  - Only write to files when the user clearly asks for implementation (e.g. “implement”, “apply now”, “go ahead and make the change”).
+- Never bypass Cursor’s diff/review flow on large or risky changes unless the user explicitly confirms.
+- For multi-file edits, explain the plan and affected files before making changes.
