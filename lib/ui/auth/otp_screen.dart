@@ -67,7 +67,8 @@ class _OTPScreenState extends State<OTPScreen> {
     if (widget.phoneNumber.length < 4) {
       return widget.phoneNumber;
     }
-    final lastFour = widget.phoneNumber.substring(widget.phoneNumber.length - 4);
+    final lastFour =
+        widget.phoneNumber.substring(widget.phoneNumber.length - 4);
     return '+${'•' * (widget.phoneNumber.length - 5)}$lastFour';
   }
 
@@ -263,7 +264,8 @@ class _OTPScreenState extends State<OTPScreen> {
               // Title
               Text(
                 AppStrings.verifyYourNumber,
-                style: AppTextStyles.boldStyle700(fontSize: 28, fontColor: AppColors.textPrimary),
+                style: AppTextStyles.boldStyle700(
+                    fontSize: 28, fontColor: AppColors.textPrimary),
               ),
 
               const SizedBox(height: 8),
@@ -271,14 +273,17 @@ class _OTPScreenState extends State<OTPScreen> {
               // Subtitle with masked phone
               RichText(
                 text: TextSpan(
-                  style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
+                  style: AppTextStyles.regularStyle400(
+                      fontSize: 16, fontColor: AppColors.textSecondary),
                   children: [
                     TextSpan(
                         text: '${AppStrings.otpSentTo} ',
-                        style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary)),
+                        style: AppTextStyles.regularStyle400(
+                            fontSize: 16, fontColor: AppColors.textSecondary)),
                     TextSpan(
                       text: _maskedPhoneNumber,
-                      style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
+                      style: AppTextStyles.mediumStyle500(
+                          fontSize: 16, fontColor: AppColors.textPrimary),
                     ),
                   ],
                 ),
@@ -289,7 +294,8 @@ class _OTPScreenState extends State<OTPScreen> {
               // Enter Code Label
               Text(
                 AppStrings.enterCode,
-                style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
+                style: AppTextStyles.mediumStyle500(
+                    fontSize: 14, fontColor: AppColors.textPrimary),
               ),
 
               const SizedBox(height: 16),
@@ -309,7 +315,8 @@ class _OTPScreenState extends State<OTPScreen> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: _isOTPComplete && !_isVerifying ? _verifyOTP : null,
+                  onPressed:
+                      _isOTPComplete && !_isVerifying ? _verifyOTP : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     disabledBackgroundColor: AppColors.border,
@@ -325,13 +332,17 @@ class _OTPScreenState extends State<OTPScreen> {
                           height: 24,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(AppColors.white),
                           ),
                         )
                       : Text(
                           AppStrings.verify,
                           style: AppTextStyles.semiBoldStyle600(
-                              fontSize: 16, fontColor: _isOTPComplete ? AppColors.white : AppColors.textSecondary),
+                              fontSize: 16,
+                              fontColor: _isOTPComplete
+                                  ? AppColors.white
+                                  : AppColors.textSecondary),
                         ),
                 ),
               ),
@@ -345,26 +356,33 @@ class _OTPScreenState extends State<OTPScreen> {
                   children: [
                     Text(
                       '${AppStrings.didntReceiveCode} ',
-                      style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textSecondary),
+                      style: AppTextStyles.regularStyle400(
+                          fontSize: 14, fontColor: AppColors.textSecondary),
                     ),
                     GestureDetector(
-                      onTap: (_resendCountdown <= 0 && !_isResending) ? _resendOTP : null,
+                      onTap: (_resendCountdown <= 0 && !_isResending)
+                          ? _resendOTP
+                          : null,
                       child: _isResending
                           ? const SizedBox(
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppColors.primary),
                               ),
                             )
                           : Text(
                               _resendCountdown > 0
-                                  ? AppStrings.resendOTPInSeconds(_resendCountdown)
+                                  ? AppStrings.resendOTPInSeconds(
+                                      _resendCountdown)
                                   : AppStrings.resendOTP,
                               style: AppTextStyles.mediumStyle500(
                                 fontSize: 14,
-                                fontColor: _resendCountdown > 0 ? AppColors.textSecondary : AppColors.primary,
+                                fontColor: _resendCountdown > 0
+                                    ? AppColors.textSecondary
+                                    : AppColors.primary,
                               ),
                             ),
                     ),
