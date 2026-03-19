@@ -16,19 +16,21 @@ class AppStrings {
   static const String nextButton = 'Next';
 
   // Onboarding Page 1 - Tracking (FIRST)
-  static const String onboarding1Title = 'Track vaccines & care';
+  static const String onboarding1Title = "Never miss your pet's care";
   static const String onboarding1Description =
-      'Smart reminders so you never miss what your pet needs';
+      'Track vaccines, vet visits, and health records with smart reminders.';
 
   // Onboarding Page 2 - Nearby services
-  static const String onboarding2Title = 'Find trusted care near you';
+  static const String onboarding2Title = 'Trusted pet services, nearby';
   static const String onboarding2Description =
-      'Vets, groomers, and pet stores around you';
+      'Discover vets, groomers, and pet stores around you in seconds.';
 
   // Onboarding Page 3 - Community & safety (LAST)
-  static const String onboarding3Title = 'Get help from your community';
+  static const String onboarding3Title = "You're never alone";
   static const String onboarding3Description =
-      'Alert nearby pet parents when it matters most';
+      'Connect with nearby pet parents and get help when it matters most.';
+
+  static const String loginSignupButton = 'Login / Signup';
 
   // Authentication Screen - Phone Login
   static const String welcomeToPawAround = 'Welcome to Paw Around';

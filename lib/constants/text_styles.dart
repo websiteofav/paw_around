@@ -91,79 +91,69 @@ class AppTextStyles {
         height: height,
       );
 
-  // Light (w300)
-  static TextStyle lightStyle300({
+  // Regular (w400)
+  static TextStyle interRegularStyle400({
     double fontSize = 16,
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
     double? height,
   }) =>
-      GoogleFonts.nunito(
+      GoogleFonts.inter(
         fontSize: fontSize,
-        fontWeight: FontWeight.w300,
+        fontWeight: FontWeight.w400,
         color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
         height: height,
       );
 
-  // Convenience aliases for common use cases
-  static TextStyle semiBoldTextStyle({
+  // Medium (w500)
+  static TextStyle interMediumStyle500({
     double fontSize = 16,
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
     double? height,
   }) =>
-      semiBoldStyle600(
+      GoogleFonts.inter(
         fontSize: fontSize,
-        fontColor: fontColor,
+        fontWeight: FontWeight.w500,
+        color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
         height: height,
       );
 
-  static TextStyle boldTextStyle({
+  // Semi-bold (w600)
+  static TextStyle interSemiBoldStyle600({
     double fontSize = 16,
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
     double? height,
   }) =>
-      boldStyle700(
+      GoogleFonts.inter(
         fontSize: fontSize,
-        fontColor: fontColor,
+        fontWeight: FontWeight.w600,
+        color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
         height: height,
       );
 
-  static TextStyle regularTextStyle({
+  // Bold (w700)
+  static TextStyle interBoldStyle700({
     double fontSize = 16,
     Color? fontColor,
     TextDecoration? decoration,
     double? letterSpacing,
     double? height,
   }) =>
-      regularStyle400(
+      GoogleFonts.inter(
         fontSize: fontSize,
-        fontColor: fontColor,
-        decoration: decoration,
-        letterSpacing: letterSpacing,
-        height: height,
-      );
-
-  static TextStyle mediumTextStyle({
-    double fontSize = 16,
-    Color? fontColor,
-    TextDecoration? decoration,
-    double? letterSpacing,
-    double? height,
-  }) =>
-      mediumStyle500(
-        fontSize: fontSize,
-        fontColor: fontColor,
+        fontWeight: FontWeight.w700,
+        color: fontColor ?? AppColors.textPrimary,
         decoration: decoration,
         letterSpacing: letterSpacing,
         height: height,

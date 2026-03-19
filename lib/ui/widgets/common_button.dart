@@ -29,6 +29,9 @@ class CommonButton extends StatelessWidget {
   final Color? customTextColor;
   final double? textSize;
   final String? imagePath;
+  final double? buttonHeight;
+  final double? buttonWidth;
+  final TextStyle? textStyle;
 
   const CommonButton({
     super.key,
@@ -43,13 +46,16 @@ class CommonButton extends StatelessWidget {
     this.customTextColor,
     this.textSize,
     this.imagePath,
+    this.buttonHeight,
+    this.buttonWidth,
+    this.textStyle,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: isFullWidth ? double.infinity : null,
-      height: _getButtonHeight(),
+      width: isFullWidth ? double.infinity : buttonWidth,
+      height: buttonHeight ?? _getButtonHeight(),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: _getButtonStyle(),
@@ -84,7 +90,7 @@ class CommonButton extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             text,
-            style: _getTextStyle(),
+            style: textStyle ?? _getTextStyle(),
           ),
         ],
       );
@@ -95,14 +101,14 @@ class CommonButton extends StatelessWidget {
         children: [
           Image.asset(imagePath!),
           const SizedBox(width: 8),
-          Text(text, style: _getTextStyle()),
+          Text(text, style: textStyle ?? _getTextStyle()),
         ],
       );
     }
 
     return Text(
       text,
-      style: _getTextStyle(),
+      style: textStyle ?? _getTextStyle(),
     );
   }
 
