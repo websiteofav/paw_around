@@ -28,7 +28,6 @@ import 'package:paw_around/ui/home/dashboard.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
 import 'package:paw_around/ui/onboarding/onboarding_screen.dart';
-import 'package:paw_around/ui/intro/intro_screen.dart';
 import 'package:paw_around/ui/pets/add_pet_screen.dart';
 import 'package:paw_around/ui/pets/add_pet_details_screen.dart';
 import 'package:paw_around/ui/pets/add_vaccine_screen.dart';
@@ -73,9 +72,8 @@ class AppRouter {
         final path = state.matchedLocation;
         final isAuthRoute =
             path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
-        final isPublicRoute = path == AppRoutes.splash ||
-            path == AppRoutes.intro ||
-            path == AppRoutes.onboarding;
+        final isPublicRoute =
+            path == AppRoutes.intro || path == AppRoutes.onboarding;
 
         // If user is logged in and trying to access auth routes, redirect to home
         if (isLoggedIn && isAuthRoute) {
@@ -92,19 +90,6 @@ class AppRouter {
       },
       routes: [
         // ============ PUBLIC ROUTES ============
-        // Splash/Intro Route
-        GoRoute(
-          path: AppRoutes.splash,
-          name: AppRoutes.splash,
-          builder: (context, state) => const IntroScreen(),
-        ),
-
-        // Intro Route
-        GoRoute(
-          path: AppRoutes.intro,
-          name: AppRoutes.intro,
-          builder: (context, state) => const IntroScreen(),
-        ),
 
         // Onboarding Route
         GoRoute(

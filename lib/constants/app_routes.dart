@@ -1,6 +1,5 @@
 class AppRoutes {
   // Main Routes
-  static const String splash = '/';
   static const String intro = '/intro';
   static const String onboarding = '/onboarding';
   static const String phoneLogin = '/phone-login';

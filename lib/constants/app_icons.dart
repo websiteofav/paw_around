@@ -21,5 +21,6 @@ class AppIcons {
   static const String playStoreIcon = 'assets/web/play_store_icon.png';
   static const String appStoreIcon = 'assets/web/app_store_icon.png';
 
+  static const String loginDogIcon = 'assets/auth/login_dog_icon.png';
   AppIcons._();
 }

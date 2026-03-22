@@ -36,7 +36,12 @@ class AppStrings {
   static const String welcomeToPawAround = 'Welcome to Paw Around';
   static const String authSubtitle =
       "Caring for your pet's health, every step of the way";
-  static const String phoneNumber = 'Phone Number';
+  static const String loginTitle = "Let's get started";
+  static const String loginSubtitle = "Because great pet care starts with you.";
+  static const String enterYourNumber = 'Enter your number';
+  static const String phoneVerificationSms =
+      "We'll send you a verification code via SMS.";
+  static const String phoneNumber = 'Phone number';
   static const String continueButton = 'Continue';
   static const String orContinueWith = 'or continue with';
   static const String continueWithGoogle = 'Continue with Google';

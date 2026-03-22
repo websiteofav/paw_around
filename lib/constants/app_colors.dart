@@ -130,7 +130,11 @@ class AppColors {
 
   static const Color grey100 = Color(0xFFE4E5E7);
   static const Color grey600 = Color(0xFF747474);
+  static const Color grey700 = Color(0xFF62666A);
   static const Color grey1000 = Color(0xFF181818);
+
+  static const Color neutral300 = Color(0xFFAFB2B6);
+  static const Color neutral900 = Color(0xFF18191B);
 
   // Private constructor to prevent instantiation
   AppColors._();

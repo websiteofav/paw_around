@@ -11,7 +11,6 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/services/animation_service.dart';
-import 'package:paw_around/ui/auth/widgets/auth_logo.dart';
 import 'package:paw_around/utils/url_utils.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
@@ -29,7 +28,6 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   @override
   void initState() {
     super.initState();
-    // Preload Lottie animation in background while user is logging in
     _preloadAnimation();
   }
 
@@ -37,16 +35,12 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
     AnimationService.getLottieFile(AppIcons.addPetAnimationFileName)
         .then((_) {})
         .catchError((error) {
-      // Silently fail - welcome card will handle fallback
       debugPrint('Failed to preload animation: $error');
     });
   }
 
   Future<void> _onContinuePressed() async {
-    if (!_isPhoneValid || _completePhoneNumber.isEmpty) {
-      return;
-    }
-
+    if (!_isPhoneValid || _completePhoneNumber.isEmpty) return;
     setState(() => _isLoading = true);
 
     await sl<AuthRepository>().verifyPhoneNumber(
@@ -67,10 +61,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
         if (mounted) {
           setState(() => _isLoading = false);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(error),
-              backgroundColor: AppColors.error,
-            ),
+            SnackBar(content: Text(error), backgroundColor: AppColors.error),
           );
         }
       },
@@ -81,9 +72,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
             name: AnalyticsEvents.loginSuccess,
             parameters: {AnalyticsParams.method: 'phone'},
           );
-          if (mounted) {
-            context.go(AppRoutes.home);
-          }
+          if (mounted) context.go(AppRoutes.home);
         } catch (e) {
           AnalyticsService.logEvent(
             name: AnalyticsEvents.loginFailed,
@@ -108,150 +97,197 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isKeyboardVsisible =
+        MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
-      backgroundColor: AppColors.authBackground,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+      backgroundColor: AppColors.white,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SafeArea(
+          bottom: false,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 48),
+              const SizedBox(height: 16),
 
-              // Logo
-              const AuthLogo(size: 80),
+              // Back button
+              GestureDetector(
+                onTap: () => context.canPop() ? context.pop() : null,
+                child: const Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 20,
+                  color: AppColors.neutral900,
+                ),
+              ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               // Title
               Text(
-                AppStrings.welcomeToPawAround,
-                style: AppTextStyles.semiBoldStyle600(fontSize: 24),
-                textAlign: TextAlign.center,
+                AppStrings.loginTitle,
+                style: AppTextStyles.boldStyle700(
+                  fontSize: 24,
+                  fontColor: AppColors.grey1000,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Subtitle
+              Text(
+                AppStrings.loginSubtitle,
+                style: AppTextStyles.interMediumStyle500(
+                  fontSize: 16,
+                  fontColor: AppColors.grey700,
+                ),
+              ),
+
+              const SizedBox(height: 36),
+
+              // Phone label
+              Text(
+                AppStrings.phoneNumber,
+                style: AppTextStyles.interRegularStyle400(
+                  fontSize: 14,
+                  fontColor: AppColors.grey1000,
+                ),
+              ),
+              const SizedBox(height: 8),
+
+              // Phone input
+              IntlPhoneField(
+                decoration: InputDecoration(
+                  hintText: AppStrings.enterYourNumber,
+                  hintStyle: AppTextStyles.regularStyle400(
+                      fontColor: AppColors.textSecondary),
+                  filled: true,
+                  fillColor: AppColors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.neutral300),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: AppColors.neutral300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                        color: AppColors.neutral300, width: 1.5),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                ),
+                disableLengthCheck: true,
+                initialCountryCode: 'IN',
+                
+                dropdownTextStyle: AppTextStyles.regularStyle400(
+                    fontSize: 16, fontColor: AppColors.textPrimary),
+                style: AppTextStyles.regularStyle400(
+                    fontSize: 16, fontColor: AppColors.textPrimary),
+                onChanged: (phone) {
+                  setState(() {
+                    _completePhoneNumber = phone.completeNumber;
+                    try {
+                      _isPhoneValid = phone.isValidNumber();
+                    } catch (_) {
+                      _isPhoneValid = false;
+                    }
+                  });
+                },
+                onCountryChanged: (_) {},
               ),
 
               const SizedBox(height: 8),
 
-              // Subtitle
+              // Helper text
               Text(
-                AppStrings.authSubtitle,
+                AppStrings.phoneVerificationSms,
                 style: AppTextStyles.regularStyle400(
-                    fontSize: 16, fontColor: AppColors.textSecondary),
-                textAlign: TextAlign.center,
+                  fontSize: 12,
+                  fontColor: AppColors.textSecondary,
+                ),
               ),
-
-              const SizedBox(height: 32),
-
-              // Phone Number Input
-              _buildPhoneInput(),
 
               const SizedBox(height: 24),
 
-              // Continue Button
-              _buildContinueButton(),
+              // Continue button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton(
+                  onPressed:
+                      _isPhoneValid && !_isLoading ? _onContinuePressed : null,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    disabledBackgroundColor:
+                        AppColors.primary.withValues(alpha: 0.4),
+                    foregroundColor: AppColors.white,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(28),
+                    ),
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 22,
+                          height: 22,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(AppColors.white),
+                          ),
+                        )
+                      : Text(
+                          AppStrings.continueButton,
+                          style: AppTextStyles.semiBoldStyle600(
+                            fontSize: 16,
+                            fontColor: AppColors.white,
+                          ),
+                        ),
+                ),
+              ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
-              // Terms Text
+              // Terms
               _buildTermsText(),
 
-              const SizedBox(height: 32),
+              const Spacer(),
+              if (!isKeyboardVsisible)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        AppIcons.loginDogIcon,
+                        width: 196,
+                        height: 295,
+                        fit: BoxFit.fitWidth,
+                      ),
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                AppColors.white.withValues(alpha: 0),
+                                AppColors.white,
+                              ],
+                              stops: const [0.65, 1.0],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildPhoneInput() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppStrings.phoneNumber,
-          style: AppTextStyles.mediumStyle500(
-              fontSize: 14, fontColor: AppColors.textPrimary),
-        ),
-        const SizedBox(height: 8),
-        IntlPhoneField(
-          decoration: InputDecoration(
-            hintText: '9990000000',
-            hintStyle: AppTextStyles.regularStyle400(
-                fontColor: AppColors.textSecondary),
-            filled: true,
-            fillColor: AppColors.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  BorderSide(color: AppColors.border.withValues(alpha: 0.6)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  BorderSide(color: AppColors.border.withValues(alpha: 0.6)),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide:
-                  const BorderSide(color: AppColors.primary, width: 1.5),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          ),
-          disableLengthCheck: true,
-          initialCountryCode: 'IN',
-          dropdownTextStyle: AppTextStyles.regularStyle400(
-              fontSize: 16, fontColor: AppColors.textPrimary),
-          style: AppTextStyles.regularStyle400(
-              fontSize: 16, fontColor: AppColors.textPrimary),
-          onChanged: (phone) {
-            setState(() {
-              _completePhoneNumber = phone.completeNumber;
-              try {
-                _isPhoneValid = phone.isValidNumber();
-              } catch (_) {
-                _isPhoneValid = false;
-              }
-            });
-          },
-          onCountryChanged: (country) {},
-        ),
-      ],
-    );
-  }
-
-  Widget _buildContinueButton() {
-    return SizedBox(
-      height: 52,
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: _isPhoneValid && !_isLoading ? _onContinuePressed : null,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
-          foregroundColor: AppColors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(14),
-          ),
-          elevation: 0,
-        ),
-        child: _isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(AppColors.white),
-                ),
-              )
-            : Text(
-                AppStrings.continueButton,
-                style: AppTextStyles.semiBoldStyle600(
-                  fontSize: 16,
-                  fontColor: _isPhoneValid
-                      ? AppColors.white
-                      : AppColors.white.withValues(alpha: 0.7),
-                ),
-              ),
       ),
     );
   }
@@ -270,7 +306,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
           onTap: () => UrlUtils.openWebsite(AppStrings.termsOfServiceUrl),
           child: Text(
             AppStrings.termsOfService,
-            style: AppTextStyles.mediumStyle500(
+            style: AppTextStyles.semiBoldStyle600(
                 fontSize: 12, fontColor: AppColors.primary),
           ),
         ),
@@ -283,7 +319,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
           onTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
           child: Text(
             AppStrings.privacyPolicyLink,
-            style: AppTextStyles.mediumStyle500(
+            style: AppTextStyles.semiBoldStyle600(
                 fontSize: 12, fontColor: AppColors.primary),
           ),
         ),
