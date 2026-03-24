@@ -136,6 +136,8 @@ class AppColors {
   static const Color neutral300 = Color(0xFFAFB2B6);
   static const Color neutral900 = Color(0xFF18191B);
 
+  static const disabledGreenColor = Color(0xFFC2F3E5 );
+
   // Private constructor to prevent instantiation
   AppColors._();
 }

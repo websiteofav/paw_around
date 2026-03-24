@@ -8,6 +8,7 @@ import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
+import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/services/animation_service.dart';
@@ -213,40 +214,12 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               const SizedBox(height: 24),
 
               // Continue button
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed:
-                      _isPhoneValid && !_isLoading ? _onContinuePressed : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    disabledBackgroundColor:
-                        AppColors.primary.withValues(alpha: 0.4),
-                    foregroundColor: AppColors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(28),
-                    ),
-                  ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(AppColors.white),
-                          ),
-                        )
-                      : Text(
-                          AppStrings.continueButton,
-                          style: AppTextStyles.semiBoldStyle600(
-                            fontSize: 16,
-                            fontColor: AppColors.white,
-                          ),
-                        ),
-                ),
+              CommonButton(
+                textStyle: AppTextStyles.interBoldStyle700(fontColor: AppColors.white, fontSize: 16),
+                text: AppStrings.continueButton,
+                onPressed:
+                    _isPhoneValid && !_isLoading ? _onContinuePressed : null,
+                isLoading: _isLoading,
               ),
 
               const SizedBox(height: 16),

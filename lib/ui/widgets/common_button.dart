@@ -116,15 +116,15 @@ class CommonButton extends StatelessWidget {
     switch (variant) {
       case ButtonVariant.primary:
         return ElevatedButton.styleFrom(
-          backgroundColor: customColor ?? AppColors.primary,
-          foregroundColor: customTextColor ?? AppColors.background,
-          elevation: 8,
-          shadowColor:
-              (customColor ?? AppColors.primary).withValues(alpha: 0.3),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
-          ),
-        );
+            backgroundColor: customColor ?? AppColors.primary,
+            foregroundColor: customTextColor ?? AppColors.background,
+            elevation: 8,
+            shadowColor:
+                (customColor ?? AppColors.primary).withValues(alpha: 0.3),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(_getBorderRadius()),
+            ),
+            disabledBackgroundColor: AppColors.disabledGreenColor);
       case ButtonVariant.secondary:
         return ElevatedButton.styleFrom(
           backgroundColor: customColor ?? AppColors.secondary,
