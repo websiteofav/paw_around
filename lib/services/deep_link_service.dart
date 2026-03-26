@@ -59,6 +59,18 @@ class DeepLinkService {
   }
 
   Future<void> _storeUri(Uri uri) async {
+    // Firebase Auth uses deep links for reCAPTCHA and email verification callbacks.
+    // These contain a `deep_link_id` param pointing to firebaseapp.com/__/auth/*.
+    // They are handled internally by the Firebase SDK and must NOT be routed by GoRouter.
+    final deepLinkId = uri.queryParameters['deep_link_id'];
+    if (deepLinkId != null) {
+      final inner = Uri.tryParse(deepLinkId);
+      if (inner != null && inner.path.contains('/__/auth/')) {
+        log('DeepLink skipped (Firebase Auth callback): $uri');
+        return;
+      }
+    }
+
     final path = uri.path.isEmpty ? '/' : uri.path;
     final requiresAuth = PendingIntentService.instance.routeRequiresAuth(path);
     final intent = PendingIntent(
