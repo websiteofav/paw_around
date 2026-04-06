@@ -182,7 +182,6 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                 ),
                 disableLengthCheck: true,
                 initialCountryCode: 'IN',
-                
                 dropdownTextStyle: AppTextStyles.regularStyle400(
                     fontSize: 16, fontColor: AppColors.textPrimary),
                 style: AppTextStyles.regularStyle400(
@@ -205,7 +204,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
               // Helper text
               Text(
                 AppStrings.phoneVerificationSms,
-                style: AppTextStyles.regularStyle400(
+                style: AppTextStyles.interRegularStyle400(
                   fontSize: 12,
                   fontColor: AppColors.textSecondary,
                 ),
@@ -215,7 +214,11 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
 
               // Continue button
               CommonButton(
-                textStyle: AppTextStyles.interBoldStyle700(fontColor: AppColors.white, fontSize: 16),
+                textStyle: AppTextStyles.interBoldStyle700(
+                    fontColor: _isPhoneValid && !_isLoading
+                        ? AppColors.black
+                        : AppColors.white,
+                    fontSize: 16),
                 text: AppStrings.continueButton,
                 onPressed:
                     _isPhoneValid && !_isLoading ? _onContinuePressed : null,
@@ -247,10 +250,10 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                               begin: Alignment.topCenter,
                               end: Alignment.bottomCenter,
                               colors: [
-                                AppColors.white.withValues(alpha: 0),
+                                AppColors.white.withValues(alpha: 0.15),
                                 AppColors.white,
                               ],
-                              stops: const [0.65, 1.0],
+                              stops: const [0.7, 1.0],
                             ),
                           ),
                         ),
@@ -272,28 +275,28 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       children: [
         Text(
           '${AppStrings.termsText} ',
-          style: AppTextStyles.regularStyle400(
-              fontSize: 12, fontColor: AppColors.textSecondary),
+          style: AppTextStyles.interRegularStyle400(
+              fontSize: 12, fontColor: AppColors.grey200),
         ),
         GestureDetector(
           onTap: () => UrlUtils.openWebsite(AppStrings.termsOfServiceUrl),
           child: Text(
             AppStrings.termsOfService,
             style: AppTextStyles.semiBoldStyle600(
-                fontSize: 12, fontColor: AppColors.primary),
+                fontSize: 12, fontColor: AppColors.secondaryCTA),
           ),
         ),
         Text(
           ' ${AppStrings.and} ',
-          style: AppTextStyles.regularStyle400(
-              fontSize: 12, fontColor: AppColors.textSecondary),
+          style: AppTextStyles.interRegularStyle400(
+              fontSize: 12, fontColor: AppColors.grey200),
         ),
         GestureDetector(
           onTap: () => UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
           child: Text(
             AppStrings.privacyPolicyLink,
             style: AppTextStyles.semiBoldStyle600(
-                fontSize: 12, fontColor: AppColors.primary),
+                fontSize: 12, fontColor: AppColors.secondaryCTA),
           ),
         ),
       ],

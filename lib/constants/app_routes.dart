@@ -4,6 +4,7 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String phoneLogin = '/phone-login';
   static const String otpVerification = '/otp-verification';
+  static const String profileSetup = '/profile-setup';
   static const String home = '/home';
 
   // Home Tab Routes

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Primary Colors (Green theme)
   static const Color primary = Color(0xFF00F3AE);
+  static const Color secondaryCTA = Color(0xFF27725D);
+  static const Color navColor = Color(0xFF1A4C3E);
   static const Color primaryLight = Color(0xFF8DD4A0);
   static const Color primaryDark = Color(0xFF3E8F5A);
 
@@ -129,14 +131,17 @@ class AppColors {
   static const Color profileHeaderBg = Color(0XFFE8F6E9);
 
   static const Color grey100 = Color(0xFFE4E5E7);
+  static const Color grey200 = Color(0xFFAEAEB2);
   static const Color grey600 = Color(0xFF747474);
   static const Color grey700 = Color(0xFF62666A);
   static const Color grey1000 = Color(0xFF181818);
 
+  static const Color neutral200 = Color(0XFFCACCCE);
   static const Color neutral300 = Color(0xFFAFB2B6);
   static const Color neutral900 = Color(0xFF18191B);
 
-  static const disabledGreenColor = Color(0xFFC2F3E5 );
+  static const disabledGreenColor = Color(0xFFC2F3E5);
+  static const Color black = Color(0xFF000000);
 
   // Private constructor to prevent instantiation
   AppColors._();

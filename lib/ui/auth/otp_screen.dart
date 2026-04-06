@@ -6,13 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/constants/app_colors.dart';
-import 'package:paw_around/constants/app_routes.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/ui/auth/widgets/otp_input_field.dart';
+import 'package:paw_around/ui/widgets/common_button.dart';
 
 class OTPScreen extends StatefulWidget {
   final String phoneNumber;
@@ -34,7 +35,6 @@ class _OTPScreenState extends State<OTPScreen> {
   TextEditingController? _otpController;
   bool _isOTPComplete = false;
   bool _isVerifying = false;
-  bool _isNavigating = false;
   bool _isResending = false;
   late String _verificationId;
   int _resendCountdown = 0;
@@ -64,52 +64,35 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   String get _maskedPhoneNumber {
-    if (widget.phoneNumber.length < 4) {
-      return widget.phoneNumber;
-    }
+    if (widget.phoneNumber.length < 4) return widget.phoneNumber;
     final lastFour =
         widget.phoneNumber.substring(widget.phoneNumber.length - 4);
     return '+${'•' * (widget.phoneNumber.length - 5)}$lastFour';
   }
 
   void _onOTPChanged(String value) {
-    setState(() {
-      _isOTPComplete = value.length == 6;
-    });
+    setState(() => _isOTPComplete = value.length == 6);
   }
 
   void _onOTPCompleted(String value) {
-    setState(() {
-      _isOTPComplete = true;
-    });
+    setState(() => _isOTPComplete = true);
     _verifyOTP();
   }
 
   Future<void> _verifyOTP() async {
-    if (!_isOTPComplete || _otpController == null) {
-      return;
-    }
+    if (!_isOTPComplete || _otpController == null) return;
 
-    setState(() {
-      _isVerifying = true;
-    });
+    setState(() => _isVerifying = true);
 
     try {
       await sl<AuthRepository>().signInWithOTP(
         verificationId: _verificationId,
         smsCode: _otpController!.text,
       );
-
       AnalyticsService.logEvent(
         name: AnalyticsEvents.loginSuccess,
         parameters: {AnalyticsParams.method: 'phone'},
       );
-
-      if (mounted) {
-        _isNavigating = true;
-        // Navigate to home - Dashboard will handle any pending deep links
-        context.go(AppRoutes.home);
-      }
     } on FirebaseAuthException catch (e) {
       AnalyticsService.logEvent(
         name: AnalyticsEvents.loginFailed,
@@ -119,9 +102,7 @@ class _OTPScreenState extends State<OTPScreen> {
         },
       );
       if (mounted) {
-        setState(() {
-          _isVerifying = false;
-        });
+        setState(() => _isVerifying = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(sl<AuthRepository>().getAuthErrorMessage(e)),
@@ -138,9 +119,7 @@ class _OTPScreenState extends State<OTPScreen> {
         },
       );
       if (mounted) {
-        setState(() {
-          _isVerifying = false;
-        });
+        setState(() => _isVerifying = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(e.toString()),
@@ -152,13 +131,9 @@ class _OTPScreenState extends State<OTPScreen> {
   }
 
   Future<void> _resendOTP() async {
-    if (_isResending) {
-      return;
-    }
+    if (_isResending) return;
 
-    setState(() {
-      _isResending = true;
-    });
+    setState(() => _isResending = true);
 
     await sl<AuthRepository>().verifyPhoneNumber(
       phoneNumber: widget.phoneNumber,
@@ -180,9 +155,7 @@ class _OTPScreenState extends State<OTPScreen> {
       },
       onError: (error) {
         if (mounted) {
-          setState(() {
-            _isResending = false;
-          });
+          setState(() => _isResending = false);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(error),
@@ -198,11 +171,6 @@ class _OTPScreenState extends State<OTPScreen> {
             name: AnalyticsEvents.loginSuccess,
             parameters: {AnalyticsParams.method: 'phone'},
           );
-          if (mounted) {
-            _isNavigating = true;
-            // Navigate to home - Dashboard will handle any pending deep links
-            context.go(AppRoutes.home);
-          }
         } catch (e) {
           AnalyticsService.logEvent(
             name: AnalyticsEvents.loginFailed,
@@ -212,9 +180,7 @@ class _OTPScreenState extends State<OTPScreen> {
             },
           );
           if (mounted) {
-            setState(() {
-              _isResending = false;
-            });
+            setState(() => _isResending = false);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(e.toString()),
@@ -231,74 +197,81 @@ class _OTPScreenState extends State<OTPScreen> {
   void dispose() {
     _resendTimer?.cancel();
     _resendTimer = null;
-    if (!_isNavigating) {
-      _otpController?.dispose();
-    }
     _otpController = null;
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final bool isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
     return Scaffold(
-      backgroundColor: AppColors.authBackground,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+      backgroundColor: AppColors.white,
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: SafeArea(
+          bottom: false,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
 
+              // Back button
               GestureDetector(
                 onTap: () => context.pop(),
                 child: const Icon(
-                  Icons.arrow_back,
-                  color: AppColors.textPrimary,
-                  size: 24,
+                  Icons.arrow_back_ios_new,
+                  size: 20,
+                  color: AppColors.neutral900,
                 ),
               ),
 
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
 
               // Title
               Text(
-                AppStrings.verifyYourNumber,
+                AppStrings.enterOTPCode,
                 style: AppTextStyles.boldStyle700(
-                    fontSize: 28, fontColor: AppColors.textPrimary),
+                  fontSize: 24,
+                  fontColor: AppColors.grey1000,
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // Subtitle — two lines
+              Text(
+                AppStrings.otpSentTo,
+                style: AppTextStyles.interMediumStyle500(
+                  fontSize: 16,
+                  fontColor: AppColors.grey700,
+                ),
+              ),
+              Text(
+                _maskedPhoneNumber,
+                style: AppTextStyles.boldStyle700(
+                  fontSize: 16,
+                  fontColor: AppColors.grey700,
+                ),
               ),
 
               const SizedBox(height: 8),
 
-              // Subtitle with masked phone
-              RichText(
-                text: TextSpan(
-                  style: AppTextStyles.regularStyle400(
-                      fontSize: 16, fontColor: AppColors.textSecondary),
-                  children: [
-                    TextSpan(
-                        text: '${AppStrings.otpSentTo} ',
-                        style: AppTextStyles.regularStyle400(
-                            fontSize: 16, fontColor: AppColors.textSecondary)),
-                    TextSpan(
-                      text: _maskedPhoneNumber,
-                      style: AppTextStyles.mediumStyle500(
-                          fontSize: 16, fontColor: AppColors.textPrimary),
-                    ),
-                  ],
+              // Edit Number
+              GestureDetector(
+                onTap: () => context.pop(),
+                child: Text(
+                  AppStrings.editNumber,
+                  style: AppTextStyles.interMediumStyle500(
+                    fontSize: 14,
+                    fontColor: AppColors.secondaryCTA,
+                  ).copyWith(
+                    decoration: TextDecoration.underline,
+                    decorationColor: AppColors.secondaryCTA,
+                  ),
                 ),
               ),
 
               const SizedBox(height: 32),
-
-              // Enter Code Label
-              Text(
-                AppStrings.enterCode,
-                style: AppTextStyles.mediumStyle500(
-                    fontSize: 14, fontColor: AppColors.textPrimary),
-              ),
-
-              const SizedBox(height: 16),
 
               // OTP Input
               if (_otpController != null)
@@ -310,54 +283,32 @@ class _OTPScreenState extends State<OTPScreen> {
 
               const SizedBox(height: 24),
 
-              // Verify Button
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed:
-                      _isOTPComplete && !_isVerifying ? _verifyOTP : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    disabledBackgroundColor: AppColors.border,
-                    foregroundColor: AppColors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: _isVerifying
-                      ? const SizedBox(
-                          width: 24,
-                          height: 24,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(AppColors.white),
-                          ),
-                        )
-                      : Text(
-                          AppStrings.verify,
-                          style: AppTextStyles.semiBoldStyle600(
-                              fontSize: 16,
-                              fontColor: _isOTPComplete
-                                  ? AppColors.white
-                                  : AppColors.textSecondary),
-                        ),
+              // Verify button
+              CommonButton(
+                textStyle: AppTextStyles.interBoldStyle700(
+                  fontColor: _isOTPComplete && !_isVerifying
+                      ? AppColors.black
+                      : AppColors.white,
+                  fontSize: 16,
                 ),
+                text: AppStrings.verifyOTP,
+                onPressed: _isOTPComplete && !_isVerifying ? _verifyOTP : null,
+                isLoading: _isVerifying,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
 
-              // Resend OTP (with countdown)
+              // Resend OTP
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       '${AppStrings.didntReceiveCode} ',
-                      style: AppTextStyles.regularStyle400(
-                          fontSize: 14, fontColor: AppColors.textSecondary),
+                      style: AppTextStyles.interMediumStyle500(
+                        fontSize: 14,
+                        fontColor: AppColors.grey200,
+                      ),
                     ),
                     GestureDetector(
                       onTap: (_resendCountdown <= 0 && !_isResending)
@@ -378,11 +329,11 @@ class _OTPScreenState extends State<OTPScreen> {
                                   ? AppStrings.resendOTPInSeconds(
                                       _resendCountdown)
                                   : AppStrings.resendOTP,
-                              style: AppTextStyles.mediumStyle500(
+                              style: AppTextStyles.interMediumStyle500(
                                 fontSize: 14,
                                 fontColor: _resendCountdown > 0
-                                    ? AppColors.textSecondary
-                                    : AppColors.primary,
+                                    ? AppColors.grey700
+                                    : AppColors.secondaryCTA,
                               ),
                             ),
                     ),
@@ -391,6 +342,38 @@ class _OTPScreenState extends State<OTPScreen> {
               ),
 
               const Spacer(),
+
+              // Cat illustration
+              if (!isKeyboardVisible)
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        AppIcons.otpCatIcon,
+                        //  width: 196,
+                        height: 295,
+                        fit: BoxFit.fitWidth,
+                      ),
+                      Positioned.fill(
+                        child: DecoratedBox(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                AppColors.white.withValues(alpha: 0.15),
+                                AppColors.white,
+                              ],
+                              stops: const [0.7, 1.0],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),

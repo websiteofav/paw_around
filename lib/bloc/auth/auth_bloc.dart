@@ -31,17 +31,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   void _onCheckAuthStatus(CheckAuthStatus event, Emitter<AuthState> emit) {
     final user = _authRepository.currentUser;
     if (user != null) {
-      emit(Authenticated(user: user, isPasswordVisible: state.isPasswordVisible));
+      emit(Authenticated(
+          user: user, isPasswordVisible: state.isPasswordVisible));
     } else {
       emit(Unauthenticated(isPasswordVisible: state.isPasswordVisible));
     }
   }
 
-  void _onTogglePasswordVisibility(TogglePasswordVisibility event, Emitter<AuthState> emit) {
-    emit(AuthPasswordVisibilityToggled(isPasswordVisible: !state.isPasswordVisible));
+  void _onTogglePasswordVisibility(
+      TogglePasswordVisibility event, Emitter<AuthState> emit) {
+    emit(AuthPasswordVisibilityToggled(
+        isPasswordVisible: !state.isPasswordVisible));
   }
 
-  Future<void> _onLoginWithEmail(LoginWithEmail event, Emitter<AuthState> emit) async {
+  Future<void> _onLoginWithEmail(
+      LoginWithEmail event, Emitter<AuthState> emit) async {
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
 
     try {
@@ -63,7 +67,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onSignupWithEmail(SignupWithEmail event, Emitter<AuthState> emit) async {
+  Future<void> _onSignupWithEmail(
+      SignupWithEmail event, Emitter<AuthState> emit) async {
     // Validate passwords match
 
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
@@ -92,7 +97,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onForgotPassword(ForgotPassword event, Emitter<AuthState> emit) async {
+  Future<void> _onForgotPassword(
+      ForgotPassword event, Emitter<AuthState> emit) async {
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
 
     try {
@@ -120,7 +126,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Auth state listener will emit Unauthenticated
   }
 
-  Future<void> _onLoginWithGoogle(LoginWithGoogle event, Emitter<AuthState> emit) async {
+  Future<void> _onLoginWithGoogle(
+      LoginWithGoogle event, Emitter<AuthState> emit) async {
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
     try {
       await _authRepository.signInWithGoogle();

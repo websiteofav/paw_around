@@ -57,11 +57,14 @@ class AppStrings {
 
   // OTP Verification Screen
   static const String verifyYourNumber = 'Verify your number';
+  static const String enterOTPCode = 'Enter OTP Code';
   static const String otpSentTo = 'We sent a 6-digit code to';
   static const String enterCode = 'Enter code';
   static const String verify = 'Verify';
+  static const String verifyOTP = 'Verify OTP';
+  static const String editNumber = 'Edit Number';
   static const String didntReceiveCode = "Didn't receive the code?";
-  static const String resendOTP = 'Resend';
+  static const String resendOTP = 'Resend OTP';
   /// Use for countdown, e.g. resendOTPInSeconds(45) => "Resend in 45s"
   static String resendOTPInSeconds(int seconds) => 'Resend in ${seconds}s';
   static const String invalidOTP = 'Invalid OTP. Please try again.';
@@ -83,6 +86,22 @@ class AppStrings {
   static const String createAccount = 'Create Your Account';
   static const String signupSubtitle = 'Join the pet parent community today.';
   static const String alreadyHaveAccount = 'Already have an account?';
+
+  // User Profile Setup Screen
+  static const String profileSetupTitle =
+      "Let's get to know you,\npet parent :)";
+  static const String stateLabel = 'State';
+  static const String cityLabel = 'City';
+  static const String searchOrSelectState = 'Search or select a state';
+  static const String searchOrSelectCity = 'Search or select a city';
+  static const String selectStateFirst = 'Select a state first';
+  static const String enterFullName = 'Enter your full name';
+  static const String searchHint = 'Search...';
+  static const String profileSavedSuccess = 'Welcome to PawAround!';
+  static const String profilePhotoTitle = 'Show us your smiling face';
+  static const String profilePhotoSubtitle =
+      'Your pet might be the star, but let\'s meet the human too!';
+  static const String profilePhotoUploading = 'Saving your photo...';
 
   // Navigation
   static const String homeTab = 'Home';

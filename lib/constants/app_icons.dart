@@ -22,5 +22,6 @@ class AppIcons {
   static const String appStoreIcon = 'assets/web/app_store_icon.png';
 
   static const String loginDogIcon = 'assets/auth/login_dog_icon.png';
+  static const String otpCatIcon = 'assets/auth/otp_cat_icon.png';
   AppIcons._();
 }
