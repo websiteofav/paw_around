@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_around/bloc/auth/auth_bloc.dart';
+import 'package:paw_around/bloc/auth/auth_state.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/bloc/home/home_event.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
@@ -16,6 +18,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/core/di/service_locator.dart';
+import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/pets/action_type.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
@@ -37,6 +40,7 @@ import 'package:paw_around/ui/home/widgets/welcome_card.dart';
 import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
 import 'package:paw_around/ui/widgets/animated_card.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
+import 'package:paw_around/utils/utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -137,20 +141,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
             return Column(
               children: [
-                // Custom App Bar
-                DashboardAppBar(
-                  title: activePet?.name ?? AppStrings.yourPet,
-                  subtitle: petAge,
-                  avatarImageUrl: activePet?.imagePath,
-                  hasMultiplePets: hasMultiplePets,
-                  onAvatarTap: hasMultiplePets
-                      ? () => _showPetSelector(pets, selectedPetId)
-                      : null,
-                  onTitleTap: activePet != null
-                      ? () => context.pushNamed(AppRoutes.petOverview,
-                          extra: activePet)
-                      : null,
-                ),
+                // App Bar: user header when no pets, pet header otherwise
+                if (pets.isEmpty)
+                  _HomeUserHeader(
+                    onProfileTap: () =>
+                        context.read<HomeBloc>().add(HomeTabChanged(3)),
+                  )
+                else
+                  DashboardAppBar(
+                    title: activePet?.name ?? AppStrings.yourPet,
+                    subtitle: petAge,
+                    avatarImageUrl: activePet?.imagePath,
+                    hasMultiplePets: hasMultiplePets,
+                    onAvatarTap: hasMultiplePets
+                        ? () => _showPetSelector(pets, selectedPetId)
+                        : null,
+                    onTitleTap: activePet != null
+                        ? () => context.pushNamed(AppRoutes.petOverview,
+                            extra: activePet)
+                        : null,
+                  ),
 
                 // Content based on state with pull-to-refresh
                 Expanded(
@@ -181,9 +191,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // State 1: Welcome state for new users
   Widget _buildWelcomeState() {
-    return const AnimatedCard(
-      index: 0,
-      child: WelcomeCard(),
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.of(context).size.height - 200,
+        ),
+        child: const Center(child: WelcomeCard()),
+      ),
     );
   }
 
@@ -767,5 +782,67 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     return overdueVaccine ?? upcomingVaccine;
+  }
+}
+
+class _HomeUserHeader extends StatelessWidget {
+  final VoidCallback onProfileTap;
+
+  const _HomeUserHeader({required this.onProfileTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state;
+    final String userName =
+        authState is Authenticated ? authState.profile?.name ?? '' : '';
+    final String photoUrl =
+        authState is Authenticated ? authState.profile?.photoUrl ?? '' : '';
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 20, 20, 12),
+      child: Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                AppStrings.hiGreeting,
+                style: AppTextStyles.interMediumStyle500(
+                  fontSize: 18,
+                  fontColor: AppColors.grey700,
+                ),
+              ),
+              Text(
+                userName,
+                style: AppTextStyles.boldStyle700(
+                  fontSize: 24,
+                  fontColor: AppColors.grey1000,
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          const Icon(
+            Icons.notifications_outlined,
+            size: 26,
+            color: AppColors.grey1000,
+          ),
+          const SizedBox(width: 12),
+          GestureDetector(
+            onTap: onProfileTap,
+            child: CircleAvatar(
+              radius: 24,
+              backgroundColor: AppColors.primary,
+              backgroundImage:
+                  photoUrl.isValidString ? NetworkImage(photoUrl) : null,
+              child: photoUrl == null
+                  ? const Icon(Icons.person, color: AppColors.white, size: 24)
+                  : null,
+            ),
+          ),
+          const SizedBox(width: 4),
+        ],
+      ),
+    );
   }
 }

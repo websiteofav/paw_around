@@ -65,6 +65,7 @@ class AppStrings {
   static const String editNumber = 'Edit Number';
   static const String didntReceiveCode = "Didn't receive the code?";
   static const String resendOTP = 'Resend OTP';
+
   /// Use for countdown, e.g. resendOTPInSeconds(45) => "Resend in 45s"
   static String resendOTPInSeconds(int seconds) => 'Resend in ${seconds}s';
   static const String invalidOTP = 'Invalid OTP. Please try again.';
@@ -308,6 +309,10 @@ class AppStrings {
   static const String addPetToGetStarted =
       'Track vaccines, grooming, and care reminders in one place.';
   static const String addYourFirstPet = 'Add my pet';
+  static const String hiGreeting = 'Hi';
+  static const String letsMeetYourPet = "Let's meet your pet";
+  static const String trackHealthGroomingCare =
+      "We'll help you track their health, grooming, and care";
   static const String completeHealthDetails = "Complete %s's health details";
   static const String addVaccineDetails = 'Add vaccine details';
 

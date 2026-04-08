@@ -23,5 +23,15 @@ class AppIcons {
 
   static const String loginDogIcon = 'assets/auth/login_dog_icon.png';
   static const String otpCatIcon = 'assets/auth/otp_cat_icon.png';
+
+  static const String homeCatDogAffectionIcon =
+      'assets/home/home_cat_dog_affection_icon.png';
+
+  static const String dashboardHomeIcon = 'assets/home/dashboard_home_icon.svg';
+  static const String dashboardExploreIcon =
+      'assets/home/dashboard_explore_icon.svg';
+  static const String dashboardPawCircleIcon =
+      'assets/home/dashboard_paw_circle_icon.svg';
+
   AppIcons._();
 }

@@ -1,141 +1,102 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:lottie/lottie.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
-import 'package:paw_around/services/animation_service.dart';
 
-class WelcomeCard extends StatefulWidget {
+class WelcomeCard extends StatelessWidget {
   const WelcomeCard({super.key});
 
   @override
-  State<WelcomeCard> createState() => _WelcomeCardState();
-}
-
-class _WelcomeCardState extends State<WelcomeCard> {
-  String? _lottiePath;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadAnimation();
-  }
-
-  Future<void> _loadAnimation() async {
-    final path =
-        await AnimationService.getLottieFile(AppIcons.addPetAnimationFileName);
-    if (mounted) {
-      setState(() {
-        _lottiePath = path;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(28),
-      margin: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.1),
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowOverlay.withValues(alpha: 0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        color: AppColors.white,
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 32),
       child: Column(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Lottie Animation from Firebase Storage with fallback
-          SizedBox(height: 144, child: SvgPicture.asset(AppIcons.addPetIcon)),
-          const SizedBox(height: 20),
-
-          // Title
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Image.asset(
+                AppIcons.homeCatDogAffectionIcon,
+                height: 280,
+                fit: BoxFit.contain,
+              ),
+              Positioned.fill(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        AppColors.white.withValues(alpha: 0.15),
+                        AppColors.white,
+                      ],
+                      stops: const [0.7, 1.0],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 28),
           Text(
-            AppStrings.welcomeToPawAroundHome,
+            AppStrings.letsMeetYourPet,
             style: AppTextStyles.boldStyle700(
-              fontSize: 22,
-              fontColor: AppColors.textPrimary,
-              height: 1.3,
+              fontSize: 24,
+              fontColor: AppColors.grey1000,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
-
-          // Subtitle
           Text(
-            AppStrings.addPetToGetStarted,
-            style: AppTextStyles.regularStyle400(
-              fontSize: 14,
-              fontColor: AppColors.textSecondary,
-              height: 1.5,
+            AppStrings.trackHealthGroomingCare,
+            style: AppTextStyles.interMediumStyle500(
+              fontSize: 16,
+              fontColor: AppColors.grey700,
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 28),
-
-          // CTA Button
-          SizedBox(
-            width: double.infinity,
-            height: 54,
-            child: ElevatedButton(
-              onPressed: () {
-                context.pushNamed(AppRoutes.addPet);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                foregroundColor: AppColors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
+          const SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () => context.pushNamed(AppRoutes.addPet),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.textPrimary,
+              elevation: 0,
+              shape: const StadiumBorder(),
+              padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: AppColors.grey1000,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: const Icon(Icons.add,
+                      size: 18, color: AppColors.grey1000),
                 ),
-                elevation: 2,
-                shadowColor: AppColors.primary.withValues(alpha: 0.3),
-              ),
-              child: Text(
-                AppStrings.addYourFirstPet,
-                style: AppTextStyles.semiBoldStyle600(
-                  fontSize: 16,
-                  fontColor: AppColors.white,
-                  letterSpacing: 0.3,
+                const SizedBox(width: 10),
+                Text(
+                  AppStrings.addYourFirstPet,
+                  style: AppTextStyles.interBoldStyle700(
+                    fontSize: 16,
+                    fontColor: AppColors.grey1000,
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ],
-      ),
-    );
-  }
-
-
-
-
-  Widget _buildIconFallback() {
-    return Container(
-      height: 144,
-      width: 144,
-      decoration: BoxDecoration(
-        color: AppColors.primary.withValues(alpha: 0.1),
-        shape: BoxShape.circle,
-      ),
-      child: const Icon(
-        Icons.pets,
-        size: 80,
-        color: AppColors.primary,
       ),
     );
   }

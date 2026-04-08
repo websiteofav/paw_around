@@ -2,8 +2,11 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:paw_around/bloc/auth/auth_bloc.dart';
+import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -27,7 +30,7 @@ class _UserProfileSetupScreenState extends State<UserProfileSetupScreen> {
   String? _selectedState;
   String? _selectedCity;
   bool _isSaving = false;
-  int _currentStep = 1;
+  int _currentStep = 0;
   XFile? _profileImage;
 
   bool get _isStep1Valid =>
@@ -117,7 +120,10 @@ class _UserProfileSetupScreenState extends State<UserProfileSetupScreen> {
             .uploadProfilePhoto(File(_profileImage!.path));
       }
       AppRouter.setProfileComplete(true);
-      if (mounted) context.go(AppRoutes.home);
+      if (mounted) {
+        context.read<AuthBloc>().add(RefreshUserProfile());
+        context.go(AppRoutes.home);
+      }
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
@@ -131,6 +137,7 @@ class _UserProfileSetupScreenState extends State<UserProfileSetupScreen> {
 
   void _skipPhoto() {
     AppRouter.setProfileComplete(true);
+    context.read<AuthBloc>().add(RefreshUserProfile());
     context.go(AppRoutes.home);
   }
 

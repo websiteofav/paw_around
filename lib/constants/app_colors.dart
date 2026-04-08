@@ -130,6 +130,7 @@ class AppColors {
 
   static const Color profileHeaderBg = Color(0XFFE8F6E9);
 
+  static const Color navBarShadow = Color(0xFFB0B0B0);
   static const Color grey100 = Color(0xFFE4E5E7);
   static const Color grey200 = Color(0xFFAEAEB2);
   static const Color grey600 = Color(0xFF747474);
