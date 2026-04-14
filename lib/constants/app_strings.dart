@@ -140,10 +140,17 @@ class AppStrings {
   static const String species = 'Species';
   static const String petType = 'Pet type';
   static const String gender = 'Gender';
-  static const String genderOptional = 'Gender (optional)';
+  static const String genderOptional = 'Gender';
   static const String dateOfBirth = 'Date of Birth';
   static const String birthdateOrAge = 'Birth Date or Age';
-  static const String weight = 'Weight (kg)';
+  static const String weight = 'Weight (in Kgs)';
+  static const String height = 'Height (in cm)';
+  static const String colour = 'Colour';
+  static const String aboutYourPet = 'About your pet';
+  static const String aboutYourPetHint = 'A little story about your pet';
+  static const String colourHint = 'e.g. - White, Brown';
+  static const String personality = 'Personality';
+  static const String addYourOwn = '+ Add your own';
   static const String notes = 'Notes';
   static const String addPhoto = 'Add Photo';
   static const String selectSpecies = 'Select Species';
@@ -834,6 +841,8 @@ class AppStrings {
 
   // Public Pet Owner Card
   static const String publicPetOwnerTapToCall = 'Tap to call';
+
+  static const String hintBreed = 'e.g. - Golden Retriever, Pug';
 
   AppStrings._();
 }

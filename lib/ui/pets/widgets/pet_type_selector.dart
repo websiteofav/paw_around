@@ -26,12 +26,14 @@ class PetTypeSelector extends StatelessWidget {
               children: [
                 Text(
                   AppStrings.petType,
-                  style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
+                  style: AppTextStyles.interRegularStyle400(
+                      fontSize: 14, fontColor: AppColors.grey1000),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   '*',
-                  style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.error),
+                  style: AppTextStyles.interRegularStyle400(
+                      fontSize: 14, fontColor: AppColors.grey1000),
                 ),
               ],
             ),
@@ -39,42 +41,33 @@ class PetTypeSelector extends StatelessWidget {
 
             // Dog and Cat row
             Row(
+              spacing: 8,
               children: [
                 Expanded(
                   child: _PetTypeOption(
                     label: AppStrings.dog,
-                    icon: AppIcons.dogIcon,
+                    icon: AppIcons.addPetDogIcon,
                     isSelected: selectedSpecies == 'dog',
                     onTap: () {
-                      context.read<PetFormBloc>().add(const SelectSpecies('Dog'));
+                      context
+                          .read<PetFormBloc>()
+                          .add(const SelectSpecies('Dog'));
                     },
                   ),
                 ),
-                const SizedBox(width: 12),
                 Expanded(
                   child: _PetTypeOption(
                     label: AppStrings.cat,
-                    icon: AppIcons.catIcon,
+                    icon: AppIcons.addPetCatIcon,
                     isSelected: selectedSpecies == 'cat',
                     onTap: () {
-                      context.read<PetFormBloc>().add(const SelectSpecies('Cat'));
+                      context
+                          .read<PetFormBloc>()
+                          .add(const SelectSpecies('Cat'));
                     },
                   ),
                 ),
               ],
-            ),
-
-            const SizedBox(height: 8),
-
-            // Other option (full width)
-            _PetTypeOption(
-              label: AppStrings.other,
-              icon: AppIcons.otherPetIcon,
-              isSelected: selectedSpecies == 'other',
-              showCheckmark: true,
-              onTap: () {
-                context.read<PetFormBloc>().add(const SelectSpecies('Other'));
-              },
             ),
 
             // Helper text when Other is selected
@@ -88,7 +81,8 @@ class PetTypeSelector extends StatelessWidget {
                 ),
                 child: Text(
                   AppStrings.petTypeOtherHelper,
-                  style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
+                  style: AppTextStyles.regularStyle400(
+                      fontSize: 13, fontColor: AppColors.textSecondary),
                 ),
               ),
             ],
@@ -99,7 +93,8 @@ class PetTypeSelector extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   state.errors['species']!,
-                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
+                  style: AppTextStyles.regularStyle400(
+                      fontSize: 12, fontColor: AppColors.error),
                 ),
               ),
           ],
@@ -113,14 +108,12 @@ class _PetTypeOption extends StatelessWidget {
   final String label;
   final String icon;
   final bool isSelected;
-  final bool showCheckmark;
   final VoidCallback onTap;
 
   const _PetTypeOption({
     required this.label,
     required this.icon,
     required this.isSelected,
-    this.showCheckmark = false,
     required this.onTap,
   });
 
@@ -129,42 +122,38 @@ class _PetTypeOption extends StatelessWidget {
     return ScaleButton(
       onPressed: onTap,
       child: AnimatedContainer(
+        height: 104,
+        width: 168,
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        alignment: Alignment.center,
+        //  padding: const EdgeInsets.symmetric(vertical: 20),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surface,
-          borderRadius: BorderRadius.circular(14),
+          color: isSelected ? AppColors.secondaryCTA : AppColors.white,
+          borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 1.5 : 1,
-          ),
+              color: isSelected ? AppColors.secondaryCTA : AppColors.neutral300,
+              width: 1),
         ),
-        child: Row(
-          mainAxisAlignment: showCheckmark ? MainAxisAlignment.start : MainAxisAlignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            if (showCheckmark) ...[
-              AnimatedCheckmark(isVisible: isSelected),
-              AnimatedSize(
-                duration: const Duration(milliseconds: 200),
-                child: SizedBox(width: isSelected ? 8 : 0),
-              ),
-            ],
             SvgPicture.asset(
               icon,
-              width: 20,
-              height: 20,
+              width: 52,
+              height: 52,
               colorFilter: ColorFilter.mode(
-                isSelected ? AppColors.primary : AppColors.textSecondary,
+                isSelected ? AppColors.white : AppColors.textPrimary,
                 BlendMode.srcIn,
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(height: 10),
             Text(
               label,
-              style: isSelected
-                  ? AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.primary)
-                  : AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
+              style: AppTextStyles.mediumStyle500(
+                fontSize: 16,
+                fontColor: isSelected ? AppColors.white : AppColors.textPrimary,
+              ),
             ),
           ],
         ),

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,15 +13,14 @@ import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/ui/pets/widgets/circular_photo_picker.dart';
 import 'package:paw_around/ui/pets/widgets/pet_type_selector.dart';
 import 'package:paw_around/ui/pets/widgets/birthdate_age_selector.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/common_form_field.dart';
-import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class AddPetScreen extends StatelessWidget {
   final PetModel? petToEdit;
-
   const AddPetScreen({super.key, this.petToEdit});
 
   @override
@@ -34,7 +31,6 @@ class AddPetScreen extends StatelessWidget {
 
 class _AddPetView extends StatefulWidget {
   final PetModel? petToEdit;
-
   const _AddPetView({this.petToEdit});
 
   @override
@@ -43,20 +39,18 @@ class _AddPetView extends StatefulWidget {
 
 class _AddPetViewState extends State<_AddPetView> {
   late TextEditingController _nameController;
-  late TextEditingController _breedController;
 
   @override
   void initState() {
     super.initState();
-    final pet = widget.petToEdit;
-    _nameController = TextEditingController(text: pet?.name ?? '');
-    _breedController = TextEditingController(text: pet?.breed ?? '');
+    _nameController = TextEditingController(
+      text: widget.petToEdit?.name ?? '',
+    );
   }
 
   @override
   void dispose() {
     _nameController.dispose();
-    _breedController.dispose();
     super.dispose();
   }
 
@@ -64,336 +58,153 @@ class _AddPetViewState extends State<_AddPetView> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: true,
-      onPopInvokedWithResult: (didPop, result) async {
-        if (didPop) {
-          return;
-        }
-        if (context.canPop()) {
-          context.pop();
-        } else {
-          context.pushNamed(AppRoutes.home);
-        }
-      },
       child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          title: Text(
-            widget.petToEdit != null ? 'Edit Pet' : AppStrings.addYourPet,
-            style:
-                AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
-          ),
-          backgroundColor: AppColors.navigationBackground,
-          elevation: 0,
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-            onPressed: () => context.pop(),
-          ),
-        ),
-        body: BlocListener<PetFormBloc, PetFormState>(
-          listener: (context, state) {
-            if (state.status == PetFormStatus.success) {
-              HapticFeedback.mediumImpact();
-              // If editing, show success and go home
-              if (widget.petToEdit != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: const Text('Pet updated successfully!'),
-                    backgroundColor: AppColors.success,
-                  ),
-                );
-                context.read<PetListBloc>().add(const LoadPetList());
-                context.pushNamed(AppRoutes.home);
-              } else {
-                // New pet: reload list and navigate to Step 2
-                context.read<PetListBloc>().add(const LoadPetList());
-                if (state.savedPet != null) {
-                  context.pushNamed(AppRoutes.addPetDetails,
-                      extra: state.savedPet);
+        backgroundColor: AppColors.white,
+        body: SafeArea(
+          child: BlocListener<PetFormBloc, PetFormState>(
+            listener: (context, state) {
+              if (state.status == PetFormStatus.success) {
+                HapticFeedback.mediumImpact();
+                if (widget.petToEdit != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Pet updated successfully!'),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
+                  context.read<PetListBloc>().add(const LoadPetList());
+                  context.pushNamed(AppRoutes.home);
+                } else {
+                  context.read<PetListBloc>().add(const LoadPetList());
+                  if (state.savedPet != null) {
+                    context.pushNamed(AppRoutes.addPetDetails,
+                        extra: state.savedPet);
+                  }
                 }
+              } else if (state.status == PetFormStatus.error &&
+                  state.errorMessage != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text(state.errorMessage!),
+                      backgroundColor: AppColors.error),
+                );
               }
-            } else if (state.status == PetFormStatus.error &&
-                state.errorMessage != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.errorMessage!),
-                  backgroundColor: AppColors.error,
-                ),
-              );
-            }
-          },
-          child: BlocBuilder<PetFormBloc, PetFormState>(
-            builder: (context, state) {
-              return _buildForm(context, state);
             },
+            child: BlocBuilder<PetFormBloc, PetFormState>(
+              builder: (context, state) => _buildBody(context, state),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildForm(BuildContext context, PetFormState formState) {
-    if (_nameController.text != formState.name) {
-      _nameController.text = formState.name;
+  Widget _buildBody(BuildContext context, PetFormState state) {
+    if (_nameController.text != state.name) {
+      _nameController.text = state.name;
     }
-
-    final bool isSaving = formState.status == PetFormStatus.saving;
+    final isSaving = state.status == PetFormStatus.saving;
 
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            // Progress indicator (only for new pets)
-            if (widget.petToEdit == null) ...[
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  AppStrings.step1Of2,
-                  style: AppTextStyles.regularStyle400(
-                    fontSize: 12,
-                    fontColor: AppColors.textSecondary,
+      child: Column(
+        children: [
+          _buildAppBar(context, state),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 24),
+                  const _StepIndicator(current: 0, total: 2),
+                  const SizedBox(height: 36),
+
+                  // Photo picker
+                  Center(
+                    child: CircularPhotoPicker(
+                      imagePath: state.imagePath,
+                      isLoading: state.isImageLoading,
+                      onTap: () => _showImagePickerOptions(context,
+                          hasImage: state.imagePath != null),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
+                  const SizedBox(height: 36),
 
-            // Image Picker (Optional)
-            _buildImagePicker(context, formState),
-            const SizedBox(height: 24),
-
-            // Pet Name Field
-            CommonFormField(
-              label: AppStrings.petName,
-              hintText: AppStrings.petNameHint,
-              controller: _nameController,
-              isRequired: true,
-              enabled: !isSaving,
-              onChanged: (value) {
-                context.read<PetFormBloc>().add(UpdateName(value));
-              },
-              errorText: formState.errors['name'],
-            ),
-            const SizedBox(height: 16),
-
-            // Breed Field (only when editing)
-            if (widget.petToEdit != null) ...[
-              CommonFormField(
-                label: AppStrings.breed,
-                hintText: 'e.g., Golden Retriever, Tabby',
-                controller: _breedController,
-                isRequired: false,
-                enabled: !isSaving,
-                onChanged: (value) {
-                  context.read<PetFormBloc>().add(UpdateBreed(value));
-                },
-              ),
-              const SizedBox(height: 16),
-            ],
-
-            // Pet Type Selector
-            IgnorePointer(
-              ignoring: isSaving,
-              child: Opacity(
-                opacity: isSaving ? 0.6 : 1.0,
-                child: const PetTypeSelector(),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Birthdate OR Age
-            IgnorePointer(
-              ignoring: isSaving,
-              child: Opacity(
-                opacity: isSaving ? 0.6 : 1.0,
-                child: const BirthdateAgeSelector(),
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Gender Selection (only when editing)
-            if (widget.petToEdit != null) ...[
-              IgnorePointer(
-                ignoring: isSaving,
-                child: Opacity(
-                  opacity: isSaving ? 0.6 : 1.0,
-                  child: _buildGenderSection(context, formState),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-            const SizedBox(height: 16),
-
-            // Save Button
-            CommonButton(
-              text: AppStrings.saveAndContinue,
-              onPressed: isSaving
-                  ? null
-                  : () {
-                      context
-                          .read<PetFormBloc>()
-                          .add(SubmitForm(petToEdit: widget.petToEdit));
-                    },
-              isLoading: isSaving,
-              size: ButtonSize.medium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGenderSection(BuildContext context, PetFormState state) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              AppStrings.gender,
-              style: AppTextStyles.mediumStyle500(
-                  fontSize: 14, fontColor: AppColors.textPrimary),
-            ),
-            const SizedBox(width: 4),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          children: [
-            Expanded(
-              child: _buildGenderButton(
-                context,
-                AppStrings.male,
-                state.gender == AppStrings.male,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: _buildGenderButton(
-                context,
-                AppStrings.female,
-                state.gender == AppStrings.female,
-              ),
-            ),
-          ],
-        ),
-        // Error message
-      ],
-    );
-  }
-
-  Widget _buildGenderButton(
-      BuildContext context, String gender, bool isSelected) {
-    return ScaleButton(
-      onPressed: () => context.read<PetFormBloc>().add(SelectGender(gender)),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.primary.withValues(alpha: 0.1)
-              : AppColors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Text(
-          gender,
-          textAlign: TextAlign.center,
-          style: isSelected
-              ? AppTextStyles.mediumStyle500(
-                  fontSize: 16, fontColor: AppColors.primary)
-              : AppTextStyles.regularStyle400(
-                  fontSize: 16, fontColor: AppColors.textPrimary),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImagePicker(BuildContext context, PetFormState state) {
-    final hasImage = state.imagePath != null && state.imagePath!.isNotEmpty;
-    final isLoading = state.isImageLoading;
-
-    return ScaleButton(
-      onPressed: isLoading
-          ? null
-          : () => _showImagePickerOptions(context, hasImage: hasImage),
-      child: Container(
-        height: 160,
-        width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-        child: Center(
-          child: Stack(
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                width: 140,
-                height: 140,
-                decoration: BoxDecoration(
-                  color: AppColors.iconBgLight,
-                  borderRadius: BorderRadius.circular(70),
-                  border: Border.all(
-                    color: isLoading ? AppColors.primary : AppColors.border,
-                    width: isLoading ? 3 : 2,
+                  CommonFormField(
+                    label: AppStrings.petName,
+                    hintText: AppStrings.petNameHint,
+                    controller: _nameController,
+                    isRequired: true,
+                    enabled: !isSaving,
+                    onChanged: (v) =>
+                        context.read<PetFormBloc>().add(UpdateName(v)),
+                    errorText: state.errors['name'],
                   ),
-                  image: hasImage && !isLoading
-                      ? DecorationImage(
-                          image: state.imagePath!.startsWith('http')
-                              ? NetworkImage(state.imagePath!) as ImageProvider
-                              : FileImage(File(state.imagePath!)),
-                          fit: BoxFit.cover,
-                        )
-                      : null,
-                ),
-                child: isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                          strokeWidth: 3,
-                        ),
-                      )
-                    : hasImage
+                  const SizedBox(height: 36),
+
+                  // Pet Type
+                  IgnorePointer(
+                    ignoring: isSaving,
+                    child: const PetTypeSelector(),
+                  ),
+                  const SizedBox(height: 36),
+
+                  // Birth Date
+                  const _FieldLabel(AppStrings.dateOfBirth, required: true),
+                  const SizedBox(height: 8),
+                  IgnorePointer(
+                    ignoring: isSaving,
+                    child: const BirthdateAgeSelector(),
+                  ),
+
+                  const SizedBox(height: 32),
+
+                  // Save & Continue
+                  CommonButton(
+                    text: AppStrings.saveAndContinue,
+                    onPressed: isSaving
                         ? null
-                        : const Icon(
-                            Icons.pets,
-                            size: 64,
-                            color: AppColors.primary,
-                          ),
-              ),
-              // Camera icon overlay
-              Positioned(
-                right: 0,
-                bottom: 0,
-                child: AnimatedOpacity(
-                  duration: const Duration(milliseconds: 200),
-                  opacity: isLoading ? 0.5 : 1.0,
-                  child: Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.surface,
-                        width: 2,
-                      ),
-                    ),
-                    child: const Icon(
-                      Icons.camera_alt,
-                      color: AppColors.white,
-                      size: 20,
+                        : () => context
+                            .read<PetFormBloc>()
+                            .add(SubmitForm(petToEdit: widget.petToEdit)),
+                    isLoading: isSaving,
+                    textStyle: AppTextStyles.interBoldStyle700(
+                      fontSize: 16,
+                      fontColor: AppColors.black,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 24),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAppBar(BuildContext context, PetFormState state) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => context.canPop()
+                ? context.pop()
+                : context.pushNamed(AppRoutes.home),
+            child: const Icon(Icons.arrow_back,
+                size: 24, color: AppColors.grey1000),
+          ),
+          const SizedBox(width: 12),
+          Text(
+            widget.petToEdit != null
+                ? AppStrings.editPetDetails
+                : AppStrings.addYourPet,
+            style: AppTextStyles.boldStyle700(
+                fontSize: 18, fontColor: AppColors.grey1000),
+          ),
+        ],
       ),
     );
   }
@@ -401,85 +212,137 @@ class _AddPetViewState extends State<_AddPetView> {
   void _showImagePickerOptions(BuildContext context, {bool hasImage = false}) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.primary),
-                title: const Text('Take a photo'),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading:
-                    const Icon(Icons.photo_library, color: AppColors.primary),
-                title: const Text('Choose from gallery'),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-              if (hasImage) ...[
-                const Divider(),
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => Container(
+        decoration: const BoxDecoration(
+          color: AppColors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                        color: AppColors.border,
+                        borderRadius: BorderRadius.circular(2))),
                 ListTile(
-                  leading:
-                      const Icon(Icons.delete_outline, color: AppColors.error),
-                  title: Text(
-                    'Remove photo',
-                    style: AppTextStyles.regularStyle400(
-                        fontColor: AppColors.error),
-                  ),
+                  leading: const Icon(Icons.camera_alt_outlined,
+                      color: AppColors.primary),
+                  title: Text(AppStrings.takePhoto,
+                      style: AppTextStyles.regularStyle400(
+                          fontSize: 16, fontColor: AppColors.textPrimary)),
                   onTap: () {
                     Navigator.pop(sheetContext);
-                    context.read<PetFormBloc>().add(const SelectImage(null));
+                    _pickImage(context, ImageSource.camera);
                   },
                 ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library_outlined,
+                      color: AppColors.primary),
+                  title: Text(AppStrings.chooseFromGallery,
+                      style: AppTextStyles.regularStyle400(
+                          fontSize: 16, fontColor: AppColors.textPrimary)),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _pickImage(context, ImageSource.gallery);
+                  },
+                ),
+                if (hasImage) ...[
+                  const Divider(),
+                  ListTile(
+                    leading: const Icon(Icons.delete_outline,
+                        color: AppColors.error),
+                    title: Text(AppStrings.removePhoto,
+                        style: AppTextStyles.regularStyle400(
+                            fontSize: 16, fontColor: AppColors.error)),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      context.read<PetFormBloc>().add(const SelectImage(null));
+                    },
+                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<void> _pickImage(ImageSource source) async {
-    // Show loading state
-    context.read<PetFormBloc>().add(const SetImageLoading(true));
-
+  Future<void> _pickImage(BuildContext context, ImageSource source) async {
+    final bloc = context.read<PetFormBloc>();
+    final messenger = ScaffoldMessenger.of(context);
+    bloc.add(const SetImageLoading(true));
     try {
       final picker = ImagePicker();
-      final pickedFile = await picker.pickImage(
-        source: source,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 85,
-      );
-
-      if (pickedFile != null && mounted) {
-        context.read<PetFormBloc>().add(SelectImage(pickedFile.path));
-      } else if (mounted) {
-        // User cancelled, hide loading
-        context.read<PetFormBloc>().add(const SetImageLoading(false));
+      final picked = await picker.pickImage(
+          source: source, maxWidth: 800, maxHeight: 800, imageQuality: 85);
+      if (!mounted) return;
+      if (picked != null) {
+        bloc.add(SelectImage(picked.path));
+      } else {
+        bloc.add(const SetImageLoading(false));
       }
     } catch (e) {
-      if (mounted) {
-        context.read<PetFormBloc>().add(const SetImageLoading(false));
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+      if (!mounted) return;
+      bloc.add(const SetImageLoading(false));
+      messenger.showSnackBar(
+        SnackBar(
             content: Text('Failed to pick image: $e'),
-            backgroundColor: AppColors.error,
+            backgroundColor: AppColors.error),
+      );
+    }
+  }
+}
+
+class _FieldLabel extends StatelessWidget {
+  final String text;
+  final bool required;
+  const _FieldLabel(this.text, {this.required = false});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text(text,
+            style: AppTextStyles.interRegularStyle400(
+                fontSize: 14, fontColor: AppColors.grey1000)),
+        if (required)
+          Text(' *',
+              style: AppTextStyles.interRegularStyle400(
+                  fontSize: 14, fontColor: AppColors.grey1000)),
+      ],
+    );
+  }
+}
+
+class _StepIndicator extends StatelessWidget {
+  final int current;
+  final int total;
+  const _StepIndicator({required this.current, required this.total});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: List.generate(total, (i) {
+        final isActive = i == current;
+        return Container(
+          margin: const EdgeInsets.only(right: 6),
+          width: isActive ? 32 : 24,
+          height: 8,
+          decoration: BoxDecoration(
+            color: isActive ? AppColors.primary : AppColors.border,
+            borderRadius: BorderRadius.circular(4),
           ),
         );
-      }
-    }
+      }),
+    );
   }
 }

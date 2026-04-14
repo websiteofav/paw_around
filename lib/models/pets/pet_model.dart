@@ -15,7 +15,10 @@ class PetModel extends Equatable {
   final String gender;
   final DateTime dateOfBirth;
   final double weight;
+  final double height;
+  final String colour;
   final String notes;
+  final List<String> personality;
   final String? imagePath;
   final List<VaccineModel> vaccines;
   final CareSettingsModel? groomingSettings;
@@ -35,7 +38,10 @@ class PetModel extends Equatable {
     required this.gender,
     required this.dateOfBirth,
     required this.weight,
+    this.height = 0.0,
+    this.colour = '',
     required this.notes,
+    this.personality = const [],
     this.imagePath,
     this.vaccines = const [],
     this.groomingSettings,
@@ -70,7 +76,10 @@ class PetModel extends Equatable {
     required String gender,
     required DateTime dateOfBirth,
     required double weight,
+    double height = 0.0,
+    String colour = '',
     required String notes,
+    List<String> personality = const [],
     String? imagePath,
     List<VaccineModel> vaccines = const [],
     CareSettingsModel? groomingSettings,
@@ -85,7 +94,10 @@ class PetModel extends Equatable {
       gender: gender,
       dateOfBirth: dateOfBirth,
       weight: weight,
+      height: height,
+      colour: colour,
       notes: notes,
+      personality: personality,
       imagePath: imagePath,
       vaccines: vaccines,
       groomingSettings: groomingSettings,
@@ -106,7 +118,10 @@ class PetModel extends Equatable {
     String? gender,
     DateTime? dateOfBirth,
     double? weight,
+    double? height,
+    String? colour,
     String? notes,
+    List<String>? personality,
     String? imagePath,
     List<VaccineModel>? vaccines,
     CareSettingsModel? groomingSettings,
@@ -126,7 +141,10 @@ class PetModel extends Equatable {
       gender: gender ?? this.gender,
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       weight: weight ?? this.weight,
+      height: height ?? this.height,
+      colour: colour ?? this.colour,
       notes: notes ?? this.notes,
+      personality: personality ?? this.personality,
       imagePath: imagePath ?? this.imagePath,
       vaccines: vaccines ?? this.vaccines,
       groomingSettings: groomingSettings ?? this.groomingSettings,
@@ -153,7 +171,10 @@ class PetModel extends Equatable {
       'gender': gender,
       'dateOfBirth': Timestamp.fromDate(dateOfBirth),
       'weight': weight,
+      'height': height,
+      'colour': colour,
       'notes': notes,
+      'personality': personality,
       'imagePath': imagePath,
       'vaccines': vaccines.map((v) => v.toFirestore()).toList(),
       'groomingSettings': groomingSettings?.toFirestore(),
@@ -178,7 +199,13 @@ class PetModel extends Equatable {
       gender: data['gender'] as String? ?? '',
       dateOfBirth: (data['dateOfBirth'] as Timestamp).toDate(),
       weight: (data['weight'] as num?)?.toDouble() ?? 0.0,
+      height: (data['height'] as num?)?.toDouble() ?? 0.0,
+      colour: data['colour'] as String? ?? '',
       notes: data['notes'] as String? ?? '',
+      personality: (data['personality'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       imagePath: data['imagePath'] as String?,
       vaccines: (data['vaccines'] as List<dynamic>?)
               ?.map(
@@ -212,7 +239,10 @@ class PetModel extends Equatable {
       'gender': gender,
       'dateOfBirth': dateOfBirth.toIso8601String(),
       'weight': weight,
+      'height': height,
+      'colour': colour,
       'notes': notes,
+      'personality': personality,
       'imagePath': imagePath,
       'vaccines': vaccines.map((v) => v.toJson()).toList(),
       'groomingSettings': groomingSettings?.toJson(),
@@ -236,7 +266,13 @@ class PetModel extends Equatable {
       gender: json['gender'] as String,
       dateOfBirth: DateTime.parse(json['dateOfBirth'] as String),
       weight: (json['weight'] as num).toDouble(),
+      height: (json['height'] as num?)?.toDouble() ?? 0.0,
+      colour: json['colour'] as String? ?? '',
       notes: json['notes'] as String,
+      personality: (json['personality'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          [],
       imagePath: json['imagePath'] as String?,
       vaccines: (json['vaccines'] as List<dynamic>?)
               ?.map((v) => VaccineModel.fromJson(v as Map<String, dynamic>))
@@ -384,7 +420,10 @@ class PetModel extends Equatable {
         gender,
         dateOfBirth,
         weight,
+        height,
+        colour,
         notes,
+        personality,
         imagePath,
         vaccines,
         groomingSettings,

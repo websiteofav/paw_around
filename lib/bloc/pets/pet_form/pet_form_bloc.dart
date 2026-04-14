@@ -22,6 +22,9 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
     on<UpdateName>(_onUpdateName);
     on<UpdateBreed>(_onUpdateBreed);
     on<UpdateWeight>(_onUpdateWeight);
+    on<UpdateHeight>(_onUpdateHeight);
+    on<UpdateColour>(_onUpdateColour);
+    on<UpdatePersonality>(_onUpdatePersonality);
     on<UpdateNotes>(_onUpdateNotes);
     on<SelectSpecies>(_onSelectSpecies);
     on<SelectGender>(_onSelectGender);
@@ -50,6 +53,18 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
 
   void _onUpdateWeight(UpdateWeight event, Emitter<PetFormState> emit) {
     emit(state.copyWith(weight: event.weight, status: PetFormStatus.editing));
+  }
+
+  void _onUpdateHeight(UpdateHeight event, Emitter<PetFormState> emit) {
+    emit(state.copyWith(height: event.height, status: PetFormStatus.editing));
+  }
+
+  void _onUpdateColour(UpdateColour event, Emitter<PetFormState> emit) {
+    emit(state.copyWith(colour: event.colour, status: PetFormStatus.editing));
+  }
+
+  void _onUpdatePersonality(UpdatePersonality event, Emitter<PetFormState> emit) {
+    emit(state.copyWith(personality: event.personality, status: PetFormStatus.editing));
   }
 
   void _onUpdateNotes(UpdateNotes event, Emitter<PetFormState> emit) {
@@ -109,8 +124,11 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
         breed: pet.breed,
         gender: pet.gender,
         dateOfBirth: pet.dateOfBirth,
-        weight: pet.weight.toString(),
+        weight: pet.weight > 0 ? pet.weight.toString() : '',
+        height: pet.height > 0 ? pet.height.toString() : '',
+        colour: pet.colour,
         notes: pet.notes,
+        personality: pet.personality,
         imagePath: pet.imagePath,
         vaccines: pet.vaccines,
         status: PetFormStatus.editing,
@@ -175,7 +193,12 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
           weight: state.weight.isNotEmpty
               ? double.tryParse(state.weight) ?? existingPet.weight
               : existingPet.weight,
+          height: state.height.isNotEmpty
+              ? double.tryParse(state.height) ?? existingPet.height
+              : existingPet.height,
+          colour: state.colour.isNotEmpty ? state.colour : existingPet.colour,
           notes: state.notes,
+          personality: state.personality,
           imagePath: imagePath,
           vaccines: state.vaccines,
           updatedAt: DateTime.now(),
@@ -210,8 +233,8 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
         final pet = PetModel.create(
           name: state.name,
           species: state.species,
-          breed: '', // Empty for Step 1, will be added in Step 2
-          gender: '', // Empty for Step 1, will be added in Step 2
+          breed: '',
+          gender: '',
           dateOfBirth: state.dateOfBirth!,
           weight: state.weight.isNotEmpty
               ? double.tryParse(state.weight) ?? 0.0
