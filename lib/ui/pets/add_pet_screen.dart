@@ -171,7 +171,7 @@ class _AddPetViewState extends State<_AddPetView> {
                     isLoading: isSaving,
                     textStyle: AppTextStyles.interBoldStyle700(
                       fontSize: 16,
-                      fontColor: AppColors.black,
+                      fontColor: AppColors.grey1000,
                     ),
                   ),
                   const SizedBox(height: 24),

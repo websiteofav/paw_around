@@ -57,10 +57,18 @@ class PetDetailsFormBody extends StatelessWidget {
         const PetStepIndicator(current: 1, total: 2),
         const SizedBox(height: 40),
         Center(
-          child: CircularPhotoPicker(imagePath: imagePath, isLoading: isImageLoading, onTap: onImageTap),
+          child: CircularPhotoPicker(
+              imagePath: imagePath,
+              isLoading: isImageLoading,
+              onTap: onImageTap),
         ),
         const SizedBox(height: 36),
-        CommonFormField(label: AppStrings.breed, hintText: AppStrings.hintBreed, controller: breedController, isRequired: false),
+        CommonFormField(
+          label: AppStrings.breed,
+          hintText: AppStrings.hintBreed,
+          controller: breedController,
+          isRequired: false,
+        ),
         const SizedBox(height: 36),
         const _FieldLabel(AppStrings.genderOptional),
         const SizedBox(height: 8),
@@ -68,36 +76,55 @@ class PetDetailsFormBody extends StatelessWidget {
         const SizedBox(height: 36),
         const _FieldLabel(AppStrings.weight),
         const SizedBox(height: 8),
-        PetStepperField(value: weightValue, step: 0.5, decimals: 2, onChanged: onWeightChanged),
+        PetStepperField(
+            value: weightValue,
+            step: 0.5,
+            decimals: 2,
+            onChanged: onWeightChanged),
         const SizedBox(height: 36),
         const _FieldLabel(AppStrings.height),
         const SizedBox(height: 8),
-        PetStepperField(value: heightValue, step: 0.5, decimals: 1, onChanged: onHeightChanged),
+        PetStepperField(
+            value: heightValue,
+            step: 0.5,
+            decimals: 1,
+            onChanged: onHeightChanged),
         const SizedBox(height: 36),
         const _FieldLabel(AppStrings.colour),
         const SizedBox(height: 8),
-        _PetTextField(controller: colourController, hint: AppStrings.colourHint),
+        _PetTextField(
+            controller: colourController, hint: AppStrings.colourHint),
         const SizedBox(height: 20),
         const _FieldLabel(AppStrings.aboutYourPet),
         const SizedBox(height: 8),
-        _PetTextField(controller: aboutController, hint: AppStrings.aboutYourPetHint, maxLines: 4),
+        _PetTextField(
+            controller: aboutController,
+            hint: AppStrings.aboutYourPetHint,
+            maxLines: 4),
         const SizedBox(height: 36),
         const _FieldLabel(AppStrings.personality),
         const SizedBox(height: 8),
-        PetPersonalitySelector(options: kPetPersonalityOptions, selected: selectedPersonality, onChanged: onPersonalityChanged),
+        PetPersonalitySelector(
+            options: kPetPersonalityOptions,
+            selected: selectedPersonality,
+            onChanged: onPersonalityChanged),
         const SizedBox(height: 32),
         CommonButton(
           text: AppStrings.saveDetails,
           onPressed: onSave,
           isLoading: isSaving,
-          textStyle: AppTextStyles.interBoldStyle700(fontSize: 16, fontColor: AppColors.black),
+          textStyle: AppTextStyles.interBoldStyle700(
+            fontSize: 16,
+            fontColor: AppColors.grey1000,
+          ),
         ),
         const SizedBox(height: 12),
         CommonButton(
           text: AppStrings.skipForNow,
           onPressed: onSkip,
           variant: ButtonVariant.outline,
-          textStyle: AppTextStyles.interBoldStyle700(fontSize: 16, fontColor: AppColors.primary),
+          textStyle: AppTextStyles.interBoldStyle700(
+              fontSize: 16, fontColor: AppColors.secondaryCTA),
         ),
         const SizedBox(height: 24),
       ],
@@ -112,7 +139,8 @@ class _FieldLabel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Text(text,
-        style: AppTextStyles.interRegularStyle400(fontSize: 14, fontColor: AppColors.grey1000));
+        style: AppTextStyles.interRegularStyle400(
+            fontSize: 14, fontColor: AppColors.grey1000));
   }
 }
 
@@ -120,23 +148,34 @@ class _PetTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
   final int maxLines;
-  const _PetTextField({required this.controller, required this.hint, this.maxLines = 1});
+  const _PetTextField(
+      {required this.controller, required this.hint, this.maxLines = 1});
 
   @override
   Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       maxLines: maxLines,
-      style: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textPrimary),
+      style: AppTextStyles.regularStyle400(
+          fontSize: 16, fontColor: AppColors.textPrimary),
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: AppTextStyles.regularStyle400(fontColor: AppColors.textSecondary),
+        hintStyle:
+            AppTextStyles.regularStyle400(fontColor: AppColors.textSecondary),
         filled: true,
         fillColor: AppColors.white,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.neutral300)),
-        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.neutral300)),
-        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.neutral300, width: 1.5)),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.neutral300)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: AppColors.neutral300)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide:
+                const BorderSide(color: AppColors.neutral300, width: 1.5)),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
     );
   }

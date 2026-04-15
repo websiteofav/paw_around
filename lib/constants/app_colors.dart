@@ -132,9 +132,11 @@ class AppColors {
 
   static const Color navBarShadow = Color(0xFFB0B0B0);
   static const Color grey100 = Color(0xFFE4E5E7);
+  static const Color grey150 = Color(0xFFCCCCCC);
   static const Color grey200 = Color(0xFFAEAEB2);
   static const Color grey600 = Color(0xFF747474);
   static const Color grey700 = Color(0xFF62666A);
+
   static const Color grey1000 = Color(0xFF181818);
 
   static const Color neutral200 = Color(0XFFCACCCE);
@@ -143,6 +145,12 @@ class AppColors {
 
   static const disabledGreenColor = Color(0xFFC2F3E5);
   static const Color black = Color(0xFF000000);
+
+  // Quick Action Card Colors
+  static const Color quickActionVaccines = Color(0xFFCCFFCE);
+  static const Color quickActionTickFlea = Color(0xFFFFE1CC);
+  static const Color quickActionGrooming = Color(0xFFD1CCFF);
+  static const Color quickActionLost = Color(0xFFFFCCCC);
 
   // Private constructor to prevent instantiation
   AppColors._();

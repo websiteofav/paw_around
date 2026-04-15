@@ -24,30 +24,19 @@ class OnboardingPage extends StatelessWidget {
         // Photo with bottom white fade
         SizedBox(
           height: imageHeight,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Colors.white.withValues(alpha: 0),
-                        Colors.white,
-                      ],
-                      stops: const [0.65, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          child: ShaderMask(
+            shaderCallback: (rect) => const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.5065, 1.0],
+              colors: [Colors.white, Colors.transparent],
+            ).createShader(rect),
+            blendMode: BlendMode.dstIn,
+            child: Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+              width: double.infinity,
+            ),
           ),
         ),
 

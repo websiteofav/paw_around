@@ -844,5 +844,21 @@ class AppStrings {
 
   static const String hintBreed = 'e.g. - Golden Retriever, Pug';
 
+  // Home Dashboard
+  static const String myBabies = 'My Babies';
+  static const String quickActions = 'Quick Actions';
+  static const String momentsFromPawCircle = 'Moments from Paw Circle';
+  static const String nearbyServices = 'Nearby Services';
+  static const String exploreAll = 'Explore All';
+  static const String becauseTheyreFamily = "Because they're family";
+  static const String nearby = 'Nearby';
+  static const String missing = 'Missing';
+  static const String reportLost = 'Report Lost';
+  static const String tickAndFlea = 'Tick & Flea';
+
+  static String getRecommedationText(String petName) {
+    return 'Recommended for $petName';
+  }
+
   AppStrings._();
 }

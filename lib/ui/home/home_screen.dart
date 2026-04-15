@@ -2,45 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:paw_around/bloc/auth/auth_bloc.dart';
-import 'package:paw_around/bloc/auth/auth_state.dart';
-import 'package:paw_around/bloc/home/home_bloc.dart';
-import 'package:paw_around/bloc/home/home_event.dart';
+import 'package:paw_around/bloc/bloc/places_bloc.dart';
+import 'package:paw_around/bloc/bloc/places_event.dart';
+import 'package:paw_around/bloc/bloc/places_state.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
 import 'package:paw_around/bloc/community/community_event.dart';
 import 'package:paw_around/bloc/community/community_state.dart';
-import 'package:paw_around/constants/api_constants.dart';
+import 'package:paw_around/bloc/home/home_bloc.dart';
+import 'package:paw_around/bloc/home/home_event.dart';
+import 'package:paw_around/bloc/moments/pet_moments_bloc.dart';
+import 'package:paw_around/bloc/moments/pet_moments_event.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
-import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
-import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
-import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/core/di/service_locator.dart';
-import 'package:paw_around/repositories/auth_repository.dart';
-import 'package:paw_around/models/pets/pet_model.dart';
-import 'package:paw_around/models/pets/action_type.dart';
-import 'package:paw_around/models/pets/care_settings_model.dart';
-import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
-import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/location_service.dart';
-import 'package:paw_around/ui/home/action_card_detail_screen.dart';
-import 'package:paw_around/ui/home/widgets/urgent_vaccine_card.dart';
-import 'package:paw_around/ui/home/widgets/pet_selector_bottom_sheet.dart';
-import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
-import 'package:paw_around/ui/home/widgets/grooming_due_card.dart';
-import 'package:paw_around/ui/home/widgets/care_progress_card.dart';
-import 'package:paw_around/ui/home/widgets/care_due_card.dart';
-import 'package:paw_around/ui/home/widgets/care_summary_section.dart';
-import 'package:paw_around/ui/home/widgets/secondary_action_card.dart';
+import 'package:paw_around/ui/home/widgets/home_header.dart';
+import 'package:paw_around/ui/home/widgets/home_hero_banner.dart';
+import 'package:paw_around/ui/home/widgets/home_moments_section.dart';
+import 'package:paw_around/ui/home/widgets/home_my_babies_section.dart';
+import 'package:paw_around/ui/home/widgets/home_quick_actions_grid.dart';
 import 'package:paw_around/ui/home/widgets/lost_pets_section.dart';
+import 'package:paw_around/ui/home/widgets/place_card.dart';
 import 'package:paw_around/ui/home/widgets/welcome_card.dart';
-import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
-import 'package:paw_around/ui/widgets/animated_card.dart';
-import 'package:paw_around/ui/widgets/scale_button.dart';
-import 'package:paw_around/utils/utils.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,55 +44,27 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    // Load user location first, then load community posts with location
-    _loadUserLocationAndPosts();
+    _loadLocationAndData();
   }
 
-  Future<void> _loadUserLocationAndPosts() async {
+  Future<void> _loadLocationAndData() async {
     final result = await _locationService.getCurrentLocation();
-    if (mounted) {
-      setState(() {
-        if (result.isSuccess && result.position != null) {
-          _userPosition = result.position;
-        } else {
-          _userPosition = null;
-        }
-      });
-      // Load community posts with location if available
-      _loadCommunityPosts();
-    }
-  }
-
-  void _loadCommunityPosts() {
+    if (!mounted) return;
+    setState(() => _userPosition = result.isSuccess ? result.position : null);
+    context.read<CommunityBloc>().add(_userPosition != null
+        ? LoadPosts(userLocation: _userPosition, radiusMeters: 50000)
+        : const LoadPosts());
+    context.read<PetMomentsBloc>().add(const LoadMoments());
     if (_userPosition != null) {
-      context.read<CommunityBloc>().add(
-            LoadPosts(
-              userLocation: _userPosition,
-              radiusMeters: ApiConstants.defaultCommunityRadius,
-            ),
-          );
-    } else {
-      // Fallback to all posts if location unavailable
-      context.read<CommunityBloc>().add(const LoadPosts());
+      context.read<PlacesBloc>().add(LoadNearbyPlaces(
+            latitude: _userPosition!.latitude,
+            longitude: _userPosition!.longitude,
+          ));
     }
-  }
-
-  void _showPetSelector(List<PetModel> pets, String? selectedPetId) {
-    PetSelectorBottomSheet.show(
-      context: context,
-      pets: pets,
-      selectedPetId: selectedPetId,
-      onPetSelected: (pet) {
-        context.read<PetListBloc>().add(SelectPet(petId: pet.id));
-      },
-    );
   }
 
   Future<void> _onRefresh() async {
-    context.read<PetListBloc>().add(const LoadPetList());
-    // Refresh user location and then load community posts
-    await _loadUserLocationAndPosts();
-    // Wait for the bloc to complete loading
+    await _loadLocationAndData();
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
@@ -115,63 +75,13 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: BlocBuilder<PetListBloc, PetListState>(
           builder: (context, petState) {
-            // Show skeleton while loading
-            if (petState is PetListLoading) {
-              return const Column(
-                children: [
-                  AppBarSkeleton(),
-                  Expanded(child: HomeSkeletonLoader()),
-                ],
-              );
-            }
-
-            List<PetModel> pets = [];
-            PetModel? activePet;
-            String? selectedPetId;
-
-            if (petState is PetListLoaded) {
-              pets = petState.pets;
-              activePet = petState.selectedPet;
-              selectedPetId = petState.selectedPetId;
-            }
-
-            final petAge =
-                activePet != null ? _calculateAge(activePet.dateOfBirth) : null;
-            final hasMultiplePets = pets.length > 1;
-
-            return Column(
-              children: [
-                // App Bar: user header when no pets, pet header otherwise
-                if (pets.isEmpty)
-                  _HomeUserHeader(
-                    onProfileTap: () =>
-                        context.read<HomeBloc>().add(HomeTabChanged(3)),
-                  )
-                else
-                  DashboardAppBar(
-                    title: activePet?.name ?? AppStrings.yourPet,
-                    subtitle: petAge,
-                    avatarImageUrl: activePet?.imagePath,
-                    hasMultiplePets: hasMultiplePets,
-                    onAvatarTap: hasMultiplePets
-                        ? () => _showPetSelector(pets, selectedPetId)
-                        : null,
-                    onTitleTap: activePet != null
-                        ? () => context.pushNamed(AppRoutes.petOverview,
-                            extra: activePet)
-                        : null,
-                  ),
-
-                // Content based on state with pull-to-refresh
-                Expanded(
-                  child: RefreshIndicator(
-                    onRefresh: _onRefresh,
-                    color: AppColors.primary,
-                    backgroundColor: AppColors.white,
-                    child: _buildContent(pets, activePet),
-                  ),
-                ),
-              ],
+            final hasPets =
+                petState is PetListLoaded && petState.pets.isNotEmpty;
+            return RefreshIndicator(
+              onRefresh: _onRefresh,
+              color: AppColors.primary,
+              backgroundColor: AppColors.white,
+              child: hasPets ? _buildDashboard(context) : _buildWelcomeState(),
             );
           },
         ),
@@ -179,670 +89,122 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildContent(List<PetModel> pets, PetModel? activePet) {
-    // State 1: No pets exist
-    if (pets.isEmpty) {
-      return _buildWelcomeState();
-    }
-
-    // Progressive state: Show available cards + setup prompts for missing items
-    return _buildProgressiveState(pets, activePet!);
-  }
-
-  // State 1: Welcome state for new users
   Widget _buildWelcomeState() {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minHeight: MediaQuery.of(context).size.height - 200,
-        ),
+        constraints:
+            BoxConstraints(minHeight: MediaQuery.of(context).size.height - 160),
         child: const Center(child: WelcomeCard()),
       ),
     );
   }
 
-  // Progressive state: Shows available due cards + setup prompts for missing items
-  Widget _buildProgressiveState(List<PetModel> pets, PetModel activePet) {
-    // Check if pet supports medical care (vaccines, tick & flea)
-    final supportsMedicalCare = activePet.supportsMedicalCare;
-
-    // Check for vaccines
-    final hasVaccines = activePet.vaccines.isNotEmpty;
-    final hasUpcomingVaccine =
-        supportsMedicalCare && _hasUpcomingVaccine(activePet);
-
-    // Check care settings (filter out snoozed)
-    final hasGroomingSettings = activePet.groomingSettings?.hasReminder == true;
-    final hasTickFleaSettings =
-        supportsMedicalCare && activePet.tickFleaSettings?.hasReminder == true;
-    final groomingSnoozed = activePet.groomingSettings?.isSnoozed == true;
-    final tickFleaSnoozed = activePet.tickFleaSettings?.isSnoozed == true;
-    final groomingDueSoon = !groomingSnoozed &&
-        (activePet.groomingSettings?.isDueSoon == true ||
-            activePet.groomingSettings?.isOverdue == true);
-    final tickFleaDueSoon = supportsMedicalCare &&
-        !tickFleaSnoozed &&
-        (activePet.tickFleaSettings?.isDueSoon == true ||
-            activePet.tickFleaSettings?.isOverdue == true);
-
-    // Calculate stats for summary
-    int activeTasks = 0;
-    int urgentCount = 0;
-    int scheduledCount = 0;
-
-    if (hasUpcomingVaccine) {
-      activeTasks++;
-      urgentCount++;
-    }
-    if (hasGroomingSettings && !groomingSnoozed) {
-      activeTasks++;
-      if (groomingDueSoon) {
-        urgentCount++;
-      } else {
-        scheduledCount++;
-      }
-    }
-    if (hasTickFleaSettings && !tickFleaSnoozed) {
-      activeTasks++;
-      if (tickFleaDueSoon) {
-        urgentCount++;
-      } else {
-        scheduledCount++;
-      }
-    }
-
-    // Track card index for staggered animation
-    int cardIndex = 0;
-
+  Widget _buildDashboard(BuildContext context) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
-      padding: const EdgeInsets.fromLTRB(
-          16, 16, 16, 120), // Extra bottom padding for floating bar
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Care Summary Section (moved to top)
-          Container(
-            margin: const EdgeInsets.only(bottom: 16),
-            decoration: BoxDecoration(
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.shadowOverlay.withValues(alpha: 0.12),
-                  blurRadius: 20,
-                  offset: const Offset(0, 8),
-                ),
-              ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 24),
+            HomeHeader(
+                onProfileTap: () =>
+                    context.read<HomeBloc>().add(HomeTabChanged(3))),
+            const SizedBox(height: 24),
+            const HomeMyBabiesSection(),
+            const SizedBox(height: 24),
+            HomeQuickActionsGrid(
+              onVaccines: () => context.pushNamed(AppRoutes.addVaccine),
+              onTickFlea: () => context.pushNamed(AppRoutes.tickFleaSettings),
+              onGrooming: () => context.pushNamed(AppRoutes.groomingSettings),
+              onReportLost: () => context.pushNamed(AppRoutes.createPost),
             ),
-            child: CareSummarySection(
-              activeTasks: activeTasks,
-              urgentCount: urgentCount,
-              scheduledCount: scheduledCount,
-            ),
-          ),
-
-          // Section Title: Set up care for your pet
-          // Only show if there are any missing care setups
-          if ((supportsMedicalCare && !hasVaccines) ||
-              !hasGroomingSettings ||
-              (supportsMedicalCare && !hasTickFleaSettings)) ...[
-            Text(
-              AppStrings.setUpCareForYourPet,
-              style: AppTextStyles.boldStyle700(
-                fontSize: 20,
-                fontColor: AppColors.textPrimary,
-              ),
-            ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
+            _buildLostPetsSection(),
+            const SizedBox(height: 24),
+            HomeMomentsSection(
+                onSeeAll: () =>
+                    context.read<HomeBloc>().add(HomeTabChanged(2))),
+            const SizedBox(height: 24),
+            _buildNearbyServicesSection(),
+            const SizedBox(height: 24),
+            const HomeHeroBanner(),
+            const SizedBox(height: 120),
           ],
-
-          // Vaccine Section (first - health critical)
-          if (supportsMedicalCare) ...[
-            if (hasUpcomingVaccine) ...[
-              // Urgent Vaccine Card (red gradient) - due within 30 days
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    final vaccine = _getUpcomingVaccine(activePet);
-                    if (vaccine != null) {
-                      context.pushNamed(
-                        AppRoutes.actionDetail,
-                        extra: ActionCardData(
-                          actionType: ActionType.vaccine,
-                          pet: activePet,
-                          vaccine: vaccine,
-                          customTitle: vaccine.vaccineName,
-                        ),
-                      );
-                    }
-                  },
-                  child: _buildUrgentVaccineCard(activePet),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ] else if (hasVaccines) ...[
-              // Vaccines exist but not due soon - show progress card
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    final nextVaccine = _getNextVaccine(activePet);
-                    if (nextVaccine != null) {
-                      context.pushNamed(
-                        AppRoutes.actionDetail,
-                        extra: ActionCardData(
-                          actionType: ActionType.vaccine,
-                          pet: activePet,
-                          vaccine: nextVaccine,
-                          customTitle: nextVaccine.vaccineName,
-                        ),
-                      );
-                    }
-                  },
-                  child: _buildVaccineProgressCard(activePet),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ] else ...[
-              // No vaccines - show add card
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    context.pushNamed(AppRoutes.addVaccine, extra: activePet);
-                  },
-                  child: const SecondaryActionCard(
-                    icon: Icons.vaccines_outlined,
-                    iconBackgroundColor: AppColors.cardRedIconBg,
-                    iconColor: AppColors.cardRedIcon,
-                    title: AppStrings.addVaccineDetails,
-                    subtitle: AppStrings.setRemindersForVaccines,
-                    showRecommended: true,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-          ],
-
-          // Tick & Flea Card (second - health critical)
-          if (supportsMedicalCare) ...[
-            if (hasTickFleaSettings && !tickFleaSnoozed) ...[
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    // Always navigate to action detail if settings exist
-                    context.pushNamed(
-                      AppRoutes.actionDetail,
-                      extra: ActionCardData(
-                        actionType: ActionType.tickFlea,
-                        pet: activePet,
-                      ),
-                    );
-                  },
-                  child: tickFleaDueSoon
-                      ? CareDueCard.tickFlea(
-                          badgeText: _getTickFleaBadgeText(activePet),
-                          subtitle: '${AppStrings.reminderToProtect} 🛡️',
-                          actionText: AppStrings.viewTreatmentOptions,
-                          isOverdue:
-                              activePet.tickFleaSettings?.isOverdue ?? false,
-                        )
-                      : CareProgressCard(
-                          icon: Icons.shield_outlined,
-                          title: AppStrings.tickFleaPrevention,
-                          subtitle: AppStrings.protectionActive,
-                          daysLeft:
-                              activePet.tickFleaSettings?.daysUntilDue ?? 30,
-                          totalDays: _getTickFleaTotalDays(activePet),
-                        ),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ] else if (!hasTickFleaSettings) ...[
-              // No tick/flea settings - show add card
-              AnimatedCard(
-                index: cardIndex++,
-                child: ScaleButton(
-                  onPressed: () {
-                    context.pushNamed(AppRoutes.tickFleaSettings,
-                        extra: activePet);
-                  },
-                  child: const SecondaryActionCard(
-                    icon: Icons.shield_outlined,
-                    iconBackgroundColor: AppColors.cardBlueIconBg,
-                    iconColor: AppColors.cardBlueIcon,
-                    title: AppStrings.addTickFleaDetails,
-                    subtitle: AppStrings.trackDewormingPreventive,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-            ],
-          ],
-
-          // Grooming Card (third - secondary)
-          if (hasGroomingSettings && !groomingSnoozed) ...[
-            AnimatedCard(
-              index: cardIndex++,
-              child: ScaleButton(
-                onPressed: () {
-                  // Always navigate to action detail if settings exist
-                  context.pushNamed(
-                    AppRoutes.actionDetail,
-                    extra: ActionCardData(
-                      actionType: ActionType.grooming,
-                      pet: activePet,
-                    ),
-                  );
-                },
-                child: groomingDueSoon
-                    ? GroomingDueCard(
-                        badgeText: _getGroomingBadgeText(activePet),
-                        isOverdue:
-                            activePet.groomingSettings?.isOverdue ?? false,
-                      )
-                    : CareProgressCard(
-                        icon: Icons.content_cut,
-                        title: AppStrings.grooming,
-                        subtitle: _getGroomingSubtitle(activePet),
-                        daysLeft:
-                            activePet.groomingSettings?.daysUntilDue ?? 30,
-                        totalDays: _getGroomingTotalDays(activePet),
-                      ),
-              ),
-            ),
-            const SizedBox(height: 12),
-          ] else if (!hasGroomingSettings) ...[
-            // No grooming settings - show add card
-            AnimatedCard(
-              index: cardIndex++,
-              child: ScaleButton(
-                onPressed: () {
-                  context.pushNamed(AppRoutes.groomingSettings,
-                      extra: activePet);
-                },
-                child: SecondaryActionCard(
-                  icon: Icons.content_cut,
-                  iconBackgroundColor: AppColors.iconBgLight,
-                  iconColor: AppColors.primary,
-                  title: AppStrings.addGroomingDetails,
-                  subtitle: AppStrings.scheduleGroomingReminders,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-          ],
-
-          const SizedBox(height: 24),
-
-          // Lost & Found Section (from Firebase)
-          AnimatedCard(
-            index: cardIndex++,
-            child: _buildLostPetsSection(),
-          ),
-
-          const SizedBox(height: 32),
-        ],
+        ),
       ),
     );
   }
 
-  String _getGroomingBadgeText(PetModel pet) {
-    final settings = pet.groomingSettings;
-    if (settings == null || settings.nextDueDate == null) {
-      return AppStrings.thisWeek;
-    }
-    final daysUntil = settings.daysUntilDue ?? 0;
-    if (daysUntil < 0) {
-      return 'Overdue by ${-daysUntil} days';
-    } else if (daysUntil == 0) {
-      return 'Today';
-    } else if (daysUntil <= 7) {
-      return AppStrings.thisWeek;
-    }
-    return 'In $daysUntil days';
-  }
-
-  int _getGroomingTotalDays(PetModel pet) {
-    final settings = pet.groomingSettings;
-    if (settings == null) {
-      return 30;
-    }
-    switch (settings.frequency) {
-      case CareFrequency.weekly:
-        return 7;
-      case CareFrequency.monthly:
-        return 30;
-      case CareFrequency.quarterly:
-        return 90;
-      default:
-        return 30;
-    }
-  }
-
-  int _getTickFleaTotalDays(PetModel pet) {
-    final settings = pet.tickFleaSettings;
-    if (settings == null) {
-      return 30;
-    }
-    switch (settings.frequency) {
-      case CareFrequency.monthly:
-        return 30;
-      case CareFrequency.quarterly:
-        return 90;
-      default:
-        return 30;
-    }
-  }
-
-  String _getGroomingSubtitle(PetModel pet) {
-    final settings = pet.groomingSettings;
-    if (settings == null || settings.nextDueDate == null) {
-      return '';
-    }
-    final daysUntil = settings.daysUntilDue ?? 0;
-    if (daysUntil < 0) {
-      return 'Overdue by ${-daysUntil} days';
-    }
-    return 'Due in $daysUntil days';
-  }
-
-  String _getTickFleaBadgeText(PetModel pet) {
-    final settings = pet.tickFleaSettings;
-    if (settings == null || settings.nextDueDate == null) {
-      return AppStrings.thisWeek;
-    }
-    final daysUntil = settings.daysUntilDue ?? 0;
-    if (daysUntil < 0) {
-      return 'Overdue by ${-daysUntil} days';
-    } else if (daysUntil == 0) {
-      return 'Today';
-    } else if (daysUntil <= 7) {
-      return AppStrings.thisWeek;
-    }
-    return 'In $daysUntil days';
-  }
-
-  Widget _buildUrgentVaccineCard(PetModel activePet) {
-    // Find the next upcoming non-snoozed vaccine for active pet
-    final vaccine = _getUpcomingVaccine(activePet);
-    if (vaccine == null) {
-      return const SizedBox.shrink();
-    }
-    final vaccineName = vaccine.vaccineName;
-    final daysUntil =
-        vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
-
-    return UrgentVaccineCard(
-      vaccineName: vaccineName,
-      daysUntilDue: daysUntil,
-      nearbyVetsCount: 3,
-      distanceKm: 2,
-      onFindVetsPressed: () {
-        // Navigate to map tab with vet filter
-        context.read<HomeBloc>().add(NavigateToMapWithFilter(ServiceType.vet));
+  Widget _buildLostPetsSection() {
+    return BlocBuilder<CommunityBloc, CommunityState>(
+      builder: (context, state) {
+        if (state is! CommunityLoaded) return const SizedBox.shrink();
+        final lostPets = state.posts
+            .where((p) => p.type == PostType.lost && !p.isResolved)
+            .take(3)
+            .map(
+              (p) => LostPetItem(
+                  id: p.id,
+                  name: p.petName,
+                  distance: _getDistanceText(p),
+                  imageUrl: p.imagePath,
+                  missingDays: DateTime.now().difference(p.createdAt).inDays,
+                  breed: p.breed,
+                  color: p.color),
+            )
+            .toList();
+        return LostPetsSection(
+            pets: lostPets,
+            onSeeAllTap: () => context.read<HomeBloc>().add(HomeTabChanged(2)),
+            onPetTap: (pet) => context.push('/community/${pet.id}'));
       },
     );
   }
 
-  Widget _buildVaccineProgressCard(PetModel pet) {
-    // Find the next upcoming vaccine (any date, not just within 30 days)
-    final nextVaccine = _getNextVaccine(pet);
-    if (nextVaccine == null) {
-      return const SizedBox.shrink();
-    }
-
-    final daysUntil =
-        nextVaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
-    final vaccineName = nextVaccine.vaccineName;
-
-    return CareProgressCard(
-      icon: Icons.vaccines_outlined,
-      title: vaccineName,
-      subtitle: 'Due in $daysUntil days',
-      daysLeft: daysUntil,
-      totalDays: 365,
-      isOneTimeVaccine: nextVaccine.nextDueDate == null,
-      dateGiven: nextVaccine.dateGiven, // Vaccines typically yearly
-    );
-  }
-
-  /// Get the next upcoming vaccine for a pet (regardless of due date)
-  VaccineModel? _getNextVaccine(PetModel pet) {
-    if (pet.vaccines.isEmpty) {
-      return null;
-    }
-
-    // Find the vaccine with the nearest due date
-    VaccineModel? nextVaccine;
-    int minDays = 999999;
-
-    for (final vaccine in pet.vaccines) {
-      if (vaccine.isSnoozed) {
-        continue;
-      }
-      final days = vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
-      if (days >= 0 && days < minDays && vaccine.nextDueDate != null) {
-        minDays = days;
-        nextVaccine = vaccine;
-      }
-    }
-
-    // If no vaccine with due date found, return the latest vaccine
-    if (nextVaccine == null) {
-      VaccineModel? latestVaccine;
-      DateTime? latestDate;
-
-      for (final vaccine in pet.vaccines) {
-        if (vaccine.isSnoozed) {
-          continue;
-        }
-
-        // Get the latest completion date from history, or use dateGiven
-        final latestCompletion = vaccine.completionHistory.isNotEmpty
-            ? vaccine.completionHistory.reduce((a, b) => a.isAfter(b) ? a : b)
-            : vaccine.dateGiven;
-
-        if (latestDate == null || latestCompletion.isAfter(latestDate)) {
-          latestDate = latestCompletion;
-          latestVaccine = vaccine;
-        }
-      }
-
-      return latestVaccine;
-    }
-
-    return nextVaccine;
-  }
-
-  Widget _buildLostPetsSection() {
-    return BlocBuilder<CommunityBloc, CommunityState>(
-      builder: (context, communityState) {
-        List<LostPetItem> lostPets = [];
-
-        if (communityState is CommunityLoaded) {
-          lostPets = communityState.posts
-              .where((p) => p.type == PostType.lost && !p.isResolved)
-              .take(2)
-              .map((p) => LostPetItem(
-                    id: p.id,
-                    name: p.petName,
-                    distance: _getDistanceText(p),
-                    imageUrl: p.imagePath,
-                  ))
-              .toList();
-        }
-
-        if (lostPets.isEmpty) {
+  Widget _buildNearbyServicesSection() {
+    return BlocBuilder<PlacesBloc, PlacesState>(
+      builder: (context, state) {
+        if (state is! PlacesLoaded || state.places.isEmpty) {
           return const SizedBox.shrink();
         }
-
-        return LostPetsSection(
-          pets: lostPets,
-          onSeeAllTap: () {
-            context.read<HomeBloc>().add(HomeTabChanged(2));
-          },
-          onPetTap: (pet) {
-            context.push('/community/${pet.id}');
-          },
-        );
+        void onExploreTap() => context.read<HomeBloc>().add(HomeTabChanged(1));
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            Text(AppStrings.nearbyServices,
+                style: AppTextStyles.boldStyle700(
+                    fontSize: 18, fontColor: AppColors.grey1000)),
+            GestureDetector(
+                onTap: onExploreTap,
+                child: Row(children: [
+                  Text(AppStrings.exploreAll,
+                      style: AppTextStyles.interBoldStyle700(
+                          fontSize: 16, fontColor: AppColors.secondaryCTA)),
+                  const Icon(Icons.chevron_right,
+                      color: AppColors.secondaryCTA, size: 18),
+                ])),
+          ]),
+          const SizedBox(height: 12),
+          ...state.places.take(3).map((p) => Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: PlaceCard(place: p, onDirectionsTap: onExploreTap),
+              )),
+        ]);
       },
     );
   }
 
   String _getDistanceText(LostFoundPost post) {
-    if (_userPosition == null) {
-      return 'Nearby';
-    }
-    return '${_formatDistance(post)} ${AppStrings.kmAway}';
-  }
-
-  String _formatDistance(LostFoundPost post) {
-    if (_userPosition == null) {
-      return '';
-    }
-
-    final distanceInMeters = _locationService.calculateDistance(
+    if (_userPosition == null) return AppStrings.nearby;
+    final dist = _locationService.calculateDistance(
       startLatitude: _userPosition!.latitude,
       startLongitude: _userPosition!.longitude,
       endLatitude: post.latitude,
       endLongitude: post.longitude,
     );
-
-    // Convert to km and format
-    final distanceInKm = distanceInMeters / 1000;
-    if (distanceInKm < 1) {
-      return '< 1';
-    }
-    return distanceInKm.toStringAsFixed(1);
-  }
-
-  String _calculateAge(DateTime? dateOfBirth) {
-    if (dateOfBirth == null) {
-      return '';
-    }
-
-    final now = DateTime.now();
-    final difference = now.difference(dateOfBirth);
-    final months = (difference.inDays / 30).floor();
-    if (months == 0) {
-      final days = difference.inDays;
-      return '$days ${AppStrings.daysOld}';
-    }
-    if (months < 12) {
-      return '$months ${AppStrings.months}';
-    } else {
-      final years = (months / 12).floor();
-      final remainingMonths = months % 12;
-      if (remainingMonths == 0) {
-        return '$years year${years > 1 ? 's' : ''}';
-      }
-      return '$years year${years > 1 ? 's' : ''} $remainingMonths mo';
-    }
-  }
-
-  /// Check if the active pet has an upcoming or overdue vaccine that needs attention
-  bool _hasUpcomingVaccine(PetModel pet) {
-    for (final vaccine in pet.vaccines) {
-      // Skip snoozed vaccines
-      if (vaccine.isSnoozed || vaccine.nextDueDate == null) {
-        continue;
-      }
-      final daysUntilDue =
-          vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
-      // Include overdue (negative) and due soon (0-30 days)
-      if (daysUntilDue <= 30) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /// Get the first non-snoozed vaccine for active pet (overdue first, then due soon)
-  VaccineModel? _getUpcomingVaccine(PetModel pet) {
-    VaccineModel? overdueVaccine;
-    VaccineModel? upcomingVaccine;
-
-    for (final vaccine in pet.vaccines) {
-      // Skip snoozed vaccines
-      if (vaccine.isSnoozed || vaccine.nextDueDate == null) {
-        continue;
-      }
-      final days = vaccine.nextDueDate?.difference(DateTime.now()).inDays ?? 0;
-
-      // Overdue takes priority
-      if (days < 0 && overdueVaccine == null) {
-        overdueVaccine = vaccine;
-      } else if (days >= 0 && days <= 30 && upcomingVaccine == null) {
-        upcomingVaccine = vaccine;
-      }
-    }
-
-    return overdueVaccine ?? upcomingVaccine;
-  }
-}
-
-class _HomeUserHeader extends StatelessWidget {
-  final VoidCallback onProfileTap;
-
-  const _HomeUserHeader({required this.onProfileTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final authState = context.watch<AuthBloc>().state;
-    final String userName =
-        authState is Authenticated ? authState.profile?.name ?? '' : '';
-    final String photoUrl =
-        authState is Authenticated ? authState.profile?.photoUrl ?? '' : '';
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 20, 20, 12),
-      child: Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppStrings.hiGreeting,
-                style: AppTextStyles.interMediumStyle500(
-                  fontSize: 18,
-                  fontColor: AppColors.grey700,
-                ),
-              ),
-              Text(
-                userName,
-                style: AppTextStyles.boldStyle700(
-                  fontSize: 24,
-                  fontColor: AppColors.grey1000,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          const Icon(
-            Icons.notifications_outlined,
-            size: 26,
-            color: AppColors.grey1000,
-          ),
-          const SizedBox(width: 12),
-          GestureDetector(
-            onTap: onProfileTap,
-            child: CircleAvatar(
-              radius: 24,
-              backgroundColor: AppColors.primary,
-              backgroundImage:
-                  photoUrl.isValidString ? NetworkImage(photoUrl) : null,
-              child: photoUrl == null
-                  ? const Icon(Icons.person, color: AppColors.white, size: 24)
-                  : null,
-            ),
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
-    );
+    final km = dist / 1000;
+    return '${km < 1 ? '< 1' : km.toStringAsFixed(1)} ${AppStrings.kmAway}';
   }
 }

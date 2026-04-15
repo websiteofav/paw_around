@@ -35,9 +35,13 @@ class AppIcons {
 
   static const String addPetDogIcon = "assets/pets/add_pet_dog_icon.svg";
   static const String addPetCatIcon = "assets/pets/add_pet_cat_icon.svg";
-  static const String groomingIcon = "assets/home/grooming_icon.svg";
-  static const String lostIcon = "assets/home/lost_icon.svg";
-  static const String tickAndFleaIcon = "assets/home/tick_and_flea_icon.svg";
-  static const String vaccineIcon = "assets/home/vaccine_icon.svg";
+  static const String groomingIcon = "assets/home/grooming_icon.png";
+  static const String reportLostIcon = "assets/home/report_lost_icon.png";
+  static const String tickAndFleaIcon = "assets/home/tick_and_flea_icon.png";
+  static const String vaccineIcon = "assets/home/vaccine_icon.png";
+  static const String dogLoveIcon = "assets/home/dog_love_icon.png";
+
+  static const String heartIcon = "assets/home/heart_icon.svg";
+  static const String commentIcon = "assets/home/comment_icon.svg";
   AppIcons._();
 }

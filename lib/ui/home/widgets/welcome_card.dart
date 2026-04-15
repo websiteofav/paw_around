@@ -16,30 +16,19 @@ class WelcomeCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Image.asset(
-                AppIcons.homeCatDogAffectionIcon,
-                height: 280,
-                fit: BoxFit.contain,
-              ),
-              Positioned.fill(
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        AppColors.white.withValues(alpha: 0.15),
-                        AppColors.white,
-                      ],
-                      stops: const [0.7, 1.0],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          ShaderMask(
+            shaderCallback: (rect) => const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: [0.5065, 1.0],
+              colors: [Colors.white, Colors.transparent],
+            ).createShader(rect),
+            blendMode: BlendMode.dstIn,
+            child: Image.asset(
+              AppIcons.homeCatDogAffectionIcon,
+              height: 280,
+              fit: BoxFit.contain,
+            ),
           ),
           const SizedBox(height: 28),
           Text(

@@ -347,31 +347,19 @@ class _OTPScreenState extends State<OTPScreen> {
               if (!isKeyboardVisible)
                 Align(
                   alignment: Alignment.bottomCenter,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      Image.asset(
-                        AppIcons.otpCatIcon,
-                        //  width: 196,
-                        height: 295,
-                        fit: BoxFit.fitWidth,
-                      ),
-                      Positioned.fill(
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                AppColors.white.withValues(alpha: 0.15),
-                                AppColors.white,
-                              ],
-                              stops: const [0.7, 1.0],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: ShaderMask(
+                    shaderCallback: (rect) => const LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      stops: [0.5065, 1.0],
+                      colors: [Colors.white, Colors.transparent],
+                    ).createShader(rect),
+                    blendMode: BlendMode.dstIn,
+                    child: Image.asset(
+                      AppIcons.otpCatIcon,
+                      height: 295,
+                      fit: BoxFit.fitWidth,
+                    ),
                   ),
                 ),
             ],
