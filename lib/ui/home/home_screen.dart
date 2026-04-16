@@ -125,8 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
             _buildLostPetsSection(),
             const SizedBox(height: 24),
             HomeMomentsSection(
-                onSeeAll: () =>
-                    context.read<HomeBloc>().add(HomeTabChanged(2))),
+                onSeeAll: () => context
+                    .read<HomeBloc>()
+                    .add(HomeTabChanged(2, pawCircleInitialTab: 1))),
             const SizedBox(height: 24),
             _buildNearbyServicesSection(),
             const SizedBox(height: 24),

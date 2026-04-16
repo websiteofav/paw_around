@@ -80,9 +80,12 @@ class _DashboardState extends State<Dashboard> {
           final mapFilter =
               state is HomeTabSelected ? state.mapServiceFilter : null;
 
+          final pawCircleInitialTab =
+              state is HomeTabSelected ? state.pawCircleInitialTab : null;
           return Scaffold(
             backgroundColor: AppColors.white,
-            body: _getTabContent(currentIndex, mapFilter: mapFilter),
+            body: _getTabContent(currentIndex,
+                mapFilter: mapFilter, pawCircleInitialTab: pawCircleInitialTab),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             floatingActionButton: Container(
@@ -157,14 +160,15 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _getTabContent(int currentIndex, {ServiceType? mapFilter}) {
+  Widget _getTabContent(int currentIndex,
+      {ServiceType? mapFilter, int? pawCircleInitialTab}) {
     switch (currentIndex) {
       case 0:
         return const HomeScreen();
       case 1:
         return MapScreen(initialFilter: mapFilter);
       case 2:
-        return const PawCircleScreen();
+        return PawCircleScreen(initialTab: pawCircleInitialTab);
       case 3:
         return const ProfileScreen();
       default:

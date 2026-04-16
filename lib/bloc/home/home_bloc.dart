@@ -9,7 +9,8 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   }
 
   void _onTabChanged(HomeTabChanged event, Emitter<HomeState> emit) {
-    emit(HomeTabSelected(event.tabIndex));
+    emit(HomeTabSelected(event.tabIndex,
+        pawCircleInitialTab: event.pawCircleInitialTab));
   }
 
   void _onNavigateToMapWithFilter(

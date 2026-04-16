@@ -11,6 +11,8 @@ class HomeInitial extends HomeState {
 class HomeTabSelected extends HomeState {
   final int currentTabIndex;
   final ServiceType? mapServiceFilter;
+  final int? pawCircleInitialTab;
 
-  HomeTabSelected(this.currentTabIndex, {this.mapServiceFilter});
+  HomeTabSelected(this.currentTabIndex,
+      {this.mapServiceFilter, this.pawCircleInitialTab});
 }

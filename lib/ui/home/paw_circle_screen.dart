@@ -8,7 +8,8 @@ import 'package:paw_around/ui/community/widgets/moments_tab.dart';
 import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 
 class PawCircleScreen extends StatefulWidget {
-  const PawCircleScreen({super.key});
+  final int? initialTab;
+  const PawCircleScreen({super.key, this.initialTab});
 
   @override
   State<PawCircleScreen> createState() => _PawCircleScreenState();
@@ -21,7 +22,8 @@ class _PawCircleScreenState extends State<PawCircleScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+        length: 2, vsync: this, initialIndex: widget.initialTab ?? 0);
   }
 
   @override
