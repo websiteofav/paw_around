@@ -63,8 +63,10 @@ class PetFormBloc extends Bloc<PetFormEvent, PetFormState> {
     emit(state.copyWith(colour: event.colour, status: PetFormStatus.editing));
   }
 
-  void _onUpdatePersonality(UpdatePersonality event, Emitter<PetFormState> emit) {
-    emit(state.copyWith(personality: event.personality, status: PetFormStatus.editing));
+  void _onUpdatePersonality(
+      UpdatePersonality event, Emitter<PetFormState> emit) {
+    emit(state.copyWith(
+        personality: event.personality, status: PetFormStatus.editing));
   }
 
   void _onUpdateNotes(UpdateNotes event, Emitter<PetFormState> emit) {

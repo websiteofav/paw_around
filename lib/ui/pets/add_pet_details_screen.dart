@@ -50,8 +50,10 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
     super.initState();
     final p = widget.pet;
     _breedController = TextEditingController(text: p.breed);
-    _weightController = TextEditingController(text: p.weight > 0 ? p.weight.toStringAsFixed(2) : '8.00');
-    _heightController = TextEditingController(text: p.height > 0 ? p.height.toStringAsFixed(1) : '10.0');
+    _weightController = TextEditingController(
+        text: p.weight > 0 ? p.weight.toStringAsFixed(2) : '8.00');
+    _heightController = TextEditingController(
+        text: p.height > 0 ? p.height.toStringAsFixed(1) : '30.0');
     _colourController = TextEditingController(text: p.colour);
     _aboutController = TextEditingController(text: p.notes);
     _selectedGender = p.gender.isNotEmpty ? p.gender : AppStrings.male;
@@ -61,10 +63,38 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
 
   @override
   void dispose() {
-    for (final c in [_breedController, _weightController, _heightController, _colourController, _aboutController]) {
+    for (final c in [
+      _breedController,
+      _weightController,
+      _heightController,
+      _colourController,
+      _aboutController
+    ]) {
       c.dispose();
     }
     super.dispose();
+  }
+
+  bool _hasChanges(String? finalImagePath) {
+    final p = widget.pet;
+    return _breedController.text.trim() != p.breed ||
+        (_selectedGender ?? '') != p.gender ||
+        (double.tryParse(_weightController.text.trim()) ?? p.weight) !=
+            p.weight ||
+        (double.tryParse(_heightController.text.trim()) ?? p.height) !=
+            p.height ||
+        _colourController.text.trim() != p.colour ||
+        _aboutController.text.trim() != p.notes ||
+        !_listsEqual(_selectedPersonality, p.personality) ||
+        (finalImagePath ?? p.imagePath) != p.imagePath;
+  }
+
+  bool _listsEqual(List<String> a, List<String> b) {
+    if (a.length != b.length) return false;
+    for (int i = 0; i < a.length; i++) {
+      if (a[i] != b[i]) return false;
+    }
+    return true;
   }
 
   Future<void> _saveDetails() async {
@@ -72,23 +102,34 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
     setState(() => _isSaving = true);
     try {
       String? finalImagePath = _imagePath;
-      if (_imagePath != null && _imagePath != widget.pet.imagePath && !_imagePath!.startsWith('http')) {
-        finalImagePath = await sl<StorageService>().uploadPetImage(localPath: _imagePath!, petId: widget.pet.id);
+      if (_imagePath != null &&
+          _imagePath != widget.pet.imagePath &&
+          !_imagePath!.startsWith('http')) {
+        finalImagePath = await sl<StorageService>()
+            .uploadPetImage(localPath: _imagePath!, petId: widget.pet.id);
         if (finalImagePath == null) {
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to upload pet image'), backgroundColor: AppColors.error),
+              const SnackBar(
+                  content: Text('Failed to upload pet image'),
+                  backgroundColor: AppColors.error),
             );
           }
           setState(() => _isSaving = false);
           return;
         }
       }
+      if (!_hasChanges(finalImagePath)) {
+        if (mounted) context.goNamed(AppRoutes.home);
+        return;
+      }
       final updatedPet = widget.pet.copyWith(
         breed: _breedController.text.trim(),
         gender: _selectedGender ?? '',
-        weight: double.tryParse(_weightController.text.trim()) ?? widget.pet.weight,
-        height: double.tryParse(_heightController.text.trim()) ?? widget.pet.height,
+        weight:
+            double.tryParse(_weightController.text.trim()) ?? widget.pet.weight,
+        height:
+            double.tryParse(_heightController.text.trim()) ?? widget.pet.height,
         colour: _colourController.text.trim(),
         notes: _aboutController.text.trim(),
         personality: _selectedPersonality,
@@ -104,7 +145,9 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to save: $e'), backgroundColor: AppColors.error),
+          SnackBar(
+              content: Text('Failed to save: $e'),
+              backgroundColor: AppColors.error),
         );
         setState(() => _isSaving = false);
       }
@@ -136,12 +179,18 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
                     isSaving: _isSaving,
                     selectedPersonality: _selectedPersonality,
                     onGenderChanged: (g) => setState(() => _selectedGender = g),
-                    onPersonalityChanged: (tags) => setState(() => _selectedPersonality = tags),
-                    onWeightChanged: (v) => setState(() => _weightController.text = v.toStringAsFixed(2)),
-                    onHeightChanged: (v) => setState(() => _heightController.text = v.toStringAsFixed(1)),
-                    onImageTap: () => _showImagePickerOptions(hasImage: _imagePath != null),
+                    onPersonalityChanged: (tags) =>
+                        setState(() => _selectedPersonality = tags),
+                    onWeightChanged: (v) => setState(
+                        () => _weightController.text = v.toStringAsFixed(2)),
+                    onHeightChanged: (v) => setState(
+                        () => _heightController.text = v.toStringAsFixed(1)),
+                    onImageTap: () =>
+                        _showImagePickerOptions(hasImage: _imagePath != null),
                     onSave: _isSaving ? null : _saveDetails,
-                    onSkip: _isSaving ? null : () => context.goNamed(AppRoutes.home),
+                    onSkip: _isSaving
+                        ? null
+                        : () => context.goNamed(AppRoutes.home),
                   ),
                 ),
               ),
@@ -159,11 +208,13 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
         children: [
           GestureDetector(
             onTap: () => context.pop(),
-            child: const Icon(Icons.arrow_back, size: 24, color: AppColors.grey1000),
+            child: const Icon(Icons.arrow_back,
+                size: 24, color: AppColors.grey1000),
           ),
           const SizedBox(width: 12),
           Text(AppStrings.addYourPet,
-              style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.grey1000)),
+              style: AppTextStyles.boldStyle700(
+                  fontSize: 18, fontColor: AppColors.grey1000)),
         ],
       ),
     );
@@ -183,7 +234,8 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
     setState(() => _isImageLoading = true);
     try {
       final picker = ImagePicker();
-      final picked = await picker.pickImage(source: source, maxWidth: 800, maxHeight: 800, imageQuality: 85);
+      final picked = await picker.pickImage(
+          source: source, maxWidth: 800, maxHeight: 800, imageQuality: 85);
       if (!mounted) return;
       setState(() {
         if (picked != null) _imagePath = picked.path;
@@ -193,7 +245,9 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
       if (!mounted) return;
       setState(() => _isImageLoading = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to pick image: $e'), backgroundColor: AppColors.error),
+        SnackBar(
+            content: Text('Failed to pick image: $e'),
+            backgroundColor: AppColors.error),
       );
     }
   }

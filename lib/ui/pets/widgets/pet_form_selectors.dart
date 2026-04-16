@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -9,7 +10,8 @@ import 'package:paw_around/ui/widgets/scale_button.dart';
 class PetGenderSelector extends StatelessWidget {
   final String? selected;
   final ValueChanged<String?> onChanged;
-  const PetGenderSelector({super.key, required this.selected, required this.onChanged});
+  const PetGenderSelector(
+      {super.key, required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,8 @@ class PetGenderSelector extends StatelessWidget {
             label: AppStrings.male,
             isSelected: selected == AppStrings.male,
             icon: Icons.male,
-            onTap: () => onChanged(selected == AppStrings.male ? null : AppStrings.male),
+            onTap: () =>
+                onChanged(selected == AppStrings.male ? null : AppStrings.male),
           ),
         ),
         const SizedBox(width: 12),
@@ -29,7 +32,8 @@ class PetGenderSelector extends StatelessWidget {
             label: AppStrings.female,
             icon: Icons.female_outlined,
             isSelected: selected == AppStrings.female,
-            onTap: () => onChanged(selected == AppStrings.female ? null : AppStrings.female),
+            onTap: () => onChanged(
+                selected == AppStrings.female ? null : AppStrings.female),
           ),
         ),
       ],
@@ -42,7 +46,11 @@ class _GenderButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
   final IconData icon;
-  const _GenderButton({required this.label, required this.isSelected, required this.onTap, required this.icon});
+  const _GenderButton(
+      {required this.label,
+      required this.isSelected,
+      required this.onTap,
+      required this.icon});
 
   @override
   Widget build(BuildContext context) {
@@ -55,12 +63,15 @@ class _GenderButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? AppColors.secondaryCTA : AppColors.white,
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: isSelected ? AppColors.primary : AppColors.neutral300),
+          border: Border.all(
+              color: isSelected ? AppColors.primary : AppColors.neutral300),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 48, color: isSelected ? AppColors.white : AppColors.grey1000),
+            Icon(icon,
+                size: 48,
+                color: isSelected ? AppColors.white : AppColors.grey1000),
             const SizedBox(height: 8),
             Text(
               label,
@@ -76,61 +87,98 @@ class _GenderButton extends StatelessWidget {
   }
 }
 
-// ── Stepper Field ─────────────────────────────────────────────────────────────
+// ── Ruler Field ───────────────────────────────────────────────────────────────
 
-class PetStepperField extends StatelessWidget {
+class PetRulerField extends StatefulWidget {
   final double value;
+  final int min;
+  final int max;
   final double step;
   final int decimals;
   final ValueChanged<double> onChanged;
-  const PetStepperField({
+
+  const PetRulerField({
     super.key,
     required this.value,
-    required this.step,
-    required this.decimals,
     required this.onChanged,
+    this.min = 0,
+    this.max = 150,
+    this.step = 0.5,
+    this.decimals = 1,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        _StepButton(
-          icon: Icons.remove,
-          onTap: value > 0 ? () => onChanged((value - step).clamp(0, 9999)) : null,
-        ),
-        Expanded(
-          child: Center(
-            child: Text(
-              value.toStringAsFixed(decimals),
-              style: AppTextStyles.boldStyle700(fontSize: 18, fontColor: AppColors.secondaryCTA),
-            ),
-          ),
-        ),
-        _StepButton(icon: Icons.add, onTap: () => onChanged(value + step)),
-      ],
-    );
-  }
+  State<PetRulerField> createState() => _PetRulerFieldState();
 }
 
-class _StepButton extends StatelessWidget {
-  final IconData icon;
-  final VoidCallback? onTap;
-  const _StepButton({required this.icon, required this.onTap});
+class _PetRulerFieldState extends State<PetRulerField> {
+  late RulerPickerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = RulerPickerController(value: widget.value);
+  }
+
+  @override
+  void didUpdateWidget(PetRulerField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.value != widget.value && _controller.value != widget.value) {
+      _controller.value = widget.value;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 36,
-        height: 36,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: onTap != null ? AppColors.secondaryCTA : AppColors.border,
+    return Column(
+      children: [
+        Text(
+          widget.value.toStringAsFixed(widget.decimals),
+          style: AppTextStyles.interBoldStyle700(
+              fontSize: 24, fontColor: AppColors.secondaryCTA),
         ),
-        child: Icon(icon, size: 20, color: AppColors.white),
-      ),
+        const SizedBox(height: 20),
+        RulerPicker(
+          controller: _controller,
+          width: MediaQuery.of(context).size.width - 48,
+          height: 52,
+          rulerMarginTop: 16,
+          rulerBackgroundColor: AppColors.white,
+          onValueChanged: (v) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) widget.onChanged(v.toDouble());
+            });
+          },
+          onBuildRulerScaleText: (_, v) => v.toStringAsFixed(0),
+          ranges: [
+            RulerRange(begin: widget.min, end: widget.max, scale: widget.step),
+          ],
+          rulerScaleTextStyle: const TextStyle(
+            color: AppColors.grey200,
+            fontSize: 12,
+          ),
+          scaleLineStyleList: const [
+            ScaleLineStyle(
+                scale: 0, color: AppColors.grey200, width: 1.5, height: 28),
+            ScaleLineStyle(
+                scale: -1, color: AppColors.grey100, width: 1, height: 16),
+          ],
+          marker: Container(
+            width: 2,
+            height: 68,
+            decoration: BoxDecoration(
+              color: AppColors.secondaryCTA,
+              borderRadius: BorderRadius.circular(1),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -140,7 +188,8 @@ class _StepButton extends StatelessWidget {
 class PetStepIndicator extends StatelessWidget {
   final int current;
   final int total;
-  const PetStepIndicator({super.key, required this.current, required this.total});
+  const PetStepIndicator(
+      {super.key, required this.current, required this.total});
 
   @override
   Widget build(BuildContext context) {

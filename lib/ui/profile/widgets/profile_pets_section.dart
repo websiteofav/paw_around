@@ -42,7 +42,8 @@ class ProfilePetsSection extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
             child: Text(
               AppStrings.myPets,
-              style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
+              style: AppTextStyles.semiBoldStyle600(
+                  fontSize: 16, fontColor: AppColors.textPrimary),
             ),
           ),
 
@@ -254,7 +255,8 @@ class ProfilePetsSection extends StatelessWidget {
               padding: const EdgeInsets.all(16),
               child: Text(
                 '${AppStrings.myPets} (${pets.length})',
-                style: AppTextStyles.semiBoldStyle600(fontSize: 18, fontColor: AppColors.textPrimary),
+                style: AppTextStyles.semiBoldStyle600(
+                    fontSize: 18, fontColor: AppColors.textPrimary),
               ),
             ),
             const Divider(height: 1, color: AppColors.border),
@@ -326,7 +328,8 @@ class ProfilePetsSection extends StatelessWidget {
                           width: 60,
                           height: 60,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => _buildDefaultPetIcon(pet.species),
+                          errorBuilder: (_, __, ___) =>
+                              _buildDefaultPetIcon(pet.species),
                         )
                       : _buildDefaultPetIcon(pet.species),
                 ),
@@ -352,7 +355,8 @@ class ProfilePetsSection extends StatelessWidget {
                     children: [
                       // Species badge
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: AppColors.profileHeaderBg,
                           borderRadius: BorderRadius.circular(10),
@@ -389,7 +393,8 @@ class ProfilePetsSection extends StatelessWidget {
                         _formatAge(pet.dateOfBirth),
                         style: AppTextStyles.regularStyle400(
                           fontSize: 13,
-                          fontColor: AppColors.textSecondary.withValues(alpha: 0.8),
+                          fontColor:
+                              AppColors.textSecondary.withValues(alpha: 0.8),
                         ),
                       ),
                     ],
@@ -515,7 +520,8 @@ class ProfilePetsSection extends StatelessWidget {
 
   String _formatAge(DateTime dateOfBirth) {
     final now = DateTime.now();
-    final months = (now.year - dateOfBirth.year) * 12 + (now.month - dateOfBirth.month);
+    final months =
+        (now.year - dateOfBirth.year) * 12 + (now.month - dateOfBirth.month);
 
     if (months == 0) {
       final days = now.difference(dateOfBirth).inDays;

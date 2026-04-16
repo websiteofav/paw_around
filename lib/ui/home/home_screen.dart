@@ -20,6 +20,7 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
+import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/home/widgets/home_header.dart';
 import 'package:paw_around/ui/home/widgets/home_hero_banner.dart';
@@ -28,6 +29,7 @@ import 'package:paw_around/ui/home/widgets/home_my_babies_section.dart';
 import 'package:paw_around/ui/home/widgets/home_quick_actions_grid.dart';
 import 'package:paw_around/ui/home/widgets/lost_pets_section.dart';
 import 'package:paw_around/ui/home/widgets/place_card.dart';
+import 'package:paw_around/ui/home/widgets/home_shimmer.dart';
 import 'package:paw_around/ui/home/widgets/welcome_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -75,13 +77,19 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: BlocBuilder<PetListBloc, PetListState>(
           builder: (context, petState) {
+            if (petState is PetListInitial || petState is PetListLoading) {
+              return const HomeShimmer();
+            }
             final hasPets =
                 petState is PetListLoaded && petState.pets.isNotEmpty;
+            final firstPet = hasPets ? petState.pets.first : null;
             return RefreshIndicator(
               onRefresh: _onRefresh,
               color: AppColors.primary,
               backgroundColor: AppColors.white,
-              child: hasPets ? _buildDashboard(context) : _buildWelcomeState(),
+              child: hasPets
+                  ? _buildDashboard(context, firstPet: firstPet)
+                  : _buildWelcomeState(),
             );
           },
         ),
@@ -100,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDashboard(BuildContext context) {
+  Widget _buildDashboard(BuildContext context, {PetModel? firstPet}) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: Padding(
@@ -117,8 +125,10 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 24),
             HomeQuickActionsGrid(
               onVaccines: () => context.pushNamed(AppRoutes.addVaccine),
-              onTickFlea: () => context.pushNamed(AppRoutes.tickFleaSettings),
-              onGrooming: () => context.pushNamed(AppRoutes.groomingSettings),
+              onTickFlea: () => context.pushNamed(AppRoutes.tickFleaSettings,
+                  extra: firstPet),
+              onGrooming: () => context.pushNamed(AppRoutes.groomingSettings,
+                  extra: firstPet),
               onReportLost: () => context.pushNamed(AppRoutes.createPost),
             ),
             const SizedBox(height: 24),

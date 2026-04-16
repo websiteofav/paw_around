@@ -65,21 +65,10 @@ class _AddPetViewState extends State<_AddPetView> {
             listener: (context, state) {
               if (state.status == PetFormStatus.success) {
                 HapticFeedback.mediumImpact();
-                if (widget.petToEdit != null) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Pet updated successfully!'),
-                      backgroundColor: AppColors.success,
-                    ),
-                  );
-                  context.read<PetListBloc>().add(const LoadPetList());
-                  context.pushNamed(AppRoutes.home);
-                } else {
-                  context.read<PetListBloc>().add(const LoadPetList());
-                  if (state.savedPet != null) {
-                    context.pushNamed(AppRoutes.addPetDetails,
-                        extra: state.savedPet);
-                  }
+                context.read<PetListBloc>().add(const LoadPetList());
+                if (state.savedPet != null) {
+                  context.pushNamed(AppRoutes.addPetDetails,
+                      extra: state.savedPet);
                 }
               } else if (state.status == PetFormStatus.error &&
                   state.errorMessage != null) {
