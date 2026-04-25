@@ -43,19 +43,19 @@ class HomeShimmer extends StatelessWidget {
               // Pet avatars row
               SizedBox(
                 height: 130,
-                child: Row(
-                  children: List.generate(
-                    4,
-                    (_) => Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _rounded(width: 86, height: 86, radius: 24),
-                          const SizedBox(height: 12),
-                          _box(width: 60, height: 14),
-                        ],
-                      ),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 4,
+                  itemBuilder: (_, __) => Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _rounded(width: 86, height: 86, radius: 24),
+                        const SizedBox(height: 12),
+                        _box(width: 60, height: 14),
+                      ],
                     ),
                   ),
                 ),
@@ -93,13 +93,13 @@ class HomeShimmer extends StatelessWidget {
               // Moments row
               SizedBox(
                 height: 312,
-                child: Row(
-                  children: List.generate(
-                    2,
-                    (_) => Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: _rounded(width: 260, height: 312, radius: 16),
-                    ),
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: 2,
+                  itemBuilder: (_, __) => Padding(
+                    padding: const EdgeInsets.only(right: 8),
+                    child: _rounded(width: 260, height: 312, radius: 16),
                   ),
                 ),
               ),

@@ -68,6 +68,7 @@ class CareSettingsModel extends Equatable {
   final DateTime? snoozedUntil;
   final List<DateTime> completionHistory;
   final DateTime updatedAt;
+  final List<String> groomingTypes;
 
   const CareSettingsModel({
     required this.frequency,
@@ -75,6 +76,7 @@ class CareSettingsModel extends Equatable {
     this.snoozedUntil,
     this.completionHistory = const [],
     required this.updatedAt,
+    this.groomingTypes = const [],
   });
 
   factory CareSettingsModel.empty() {
@@ -95,6 +97,7 @@ class CareSettingsModel extends Equatable {
     List<DateTime>? completionHistory,
     bool clearCompletionHistory = false,
     DateTime? updatedAt,
+    List<String>? groomingTypes,
   }) {
     return CareSettingsModel(
       frequency: frequency ?? this.frequency,
@@ -105,8 +108,21 @@ class CareSettingsModel extends Equatable {
           ? []
           : (completionHistory ?? this.completionHistory),
       updatedAt: updatedAt ?? this.updatedAt,
+      groomingTypes: groomingTypes ?? this.groomingTypes,
     );
   }
+
+  static const List<String> allGroomingTypes = [
+    'Brushing / Combing',
+    'Bathing',
+    'Haircut / Trimming',
+    'Nail Trimming',
+    'Ear Cleaning',
+    'Teeth Cleaning',
+    'De-shedding',
+    'Paw Cleaning',
+    'Tick & Flea Grooming',
+  ];
 
   /// Calculate next due date based on frequency and latest completion history
   DateTime? get nextDueDate {
@@ -171,6 +187,7 @@ class CareSettingsModel extends Equatable {
       'completionHistory':
           completionHistory.map((date) => Timestamp.fromDate(date)).toList(),
       'updatedAt': Timestamp.fromDate(updatedAt),
+      'groomingTypes': groomingTypes,
     };
   }
 
@@ -198,6 +215,7 @@ class CareSettingsModel extends Equatable {
       snoozedUntil: (data['snoozedUntil'] as Timestamp?)?.toDate(),
       completionHistory: history,
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      groomingTypes: List<String>.from(data['groomingTypes'] ?? []),
     );
   }
 
@@ -210,6 +228,7 @@ class CareSettingsModel extends Equatable {
       'completionHistory':
           completionHistory.map((date) => date.toIso8601String()).toList(),
       'updatedAt': updatedAt.toIso8601String(),
+      'groomingTypes': groomingTypes,
     };
   }
 
@@ -259,10 +278,11 @@ class CareSettingsModel extends Equatable {
               ? (json['updatedAt'] as Timestamp).toDate()
               : DateTime.parse(json['updatedAt'] as String))
           : DateTime.now(),
+      groomingTypes: List<String>.from(json['groomingTypes'] ?? []),
     );
   }
 
   @override
   List<Object?> get props =>
-      [frequency, lastDate, snoozedUntil, completionHistory, updatedAt];
+      [frequency, lastDate, snoozedUntil, completionHistory, updatedAt, groomingTypes];
 }

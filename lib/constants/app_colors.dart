@@ -6,6 +6,7 @@ class AppColors {
   static const Color secondaryCTA = Color(0xFF27725D);
   static const Color navColor = Color(0xFF1A4C3E);
   static const Color primaryLight = Color(0xFF8DD4A0);
+  static const Color background3 = Color(0xFFECF8F5);
   static const Color primaryDark = Color(0xFF3E8F5A);
 
   // Secondary Colors (Gold for premium)
@@ -29,6 +30,7 @@ class AppColors {
 
   // Status Colors
   static const Color error = Color(0xFFEF4444);
+  static const Color requiredIndicator = Color(0xFFFF2720);
   static const Color success = Color(0xFF22C55E);
   static const Color warning = Color(0xFFF59E0B);
 
@@ -139,8 +141,10 @@ class AppColors {
 
   static const Color grey1000 = Color(0xFF181818);
 
+  static const Color neutral100 = Color(0xFFD9D9D9);
   static const Color neutral200 = Color(0XFFCACCCE);
   static const Color neutral300 = Color(0xFFAFB2B6);
+  static const Color neutral700 = Color(0xFF4B5057);
   static const Color neutral900 = Color(0xFF18191B);
 
   static const disabledGreenColor = Color(0xFFC2F3E5);

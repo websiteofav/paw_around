@@ -124,7 +124,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const HomeMyBabiesSection(),
             const SizedBox(height: 24),
             HomeQuickActionsGrid(
-              onVaccines: () => context.pushNamed(AppRoutes.addVaccine),
+              onVaccines: () =>
+                  context.pushNamed(AppRoutes.addVaccine, extra: firstPet),
               onTickFlea: () => context.pushNamed(AppRoutes.tickFleaSettings,
                   extra: firstPet),
               onGrooming: () => context.pushNamed(AppRoutes.groomingSettings,

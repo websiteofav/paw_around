@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
@@ -22,42 +23,31 @@ class FrequencySelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowOverlay.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppTextStyles.interRegularStyle400(
+              fontSize: 14, fontColor: AppColors.grey1000),
+        ),
+        const SizedBox(height: 8),
+        ...options.map((frequency) => _buildOption(frequency)),
+        if (subtitle != null) ...[
+          const SizedBox(height: 4),
+          Row(
+            spacing: 2,
+            children: [
+              Image.asset(AppIcons.informationIcon, height: 20, width: 20),
+              Text(
+                subtitle!,
+                style: AppTextStyles.interMediumStyle500(
+                    fontSize: 14, fontColor: AppColors.grey700),
+              ),
+            ],
           ),
         ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: AppTextStyles.mediumStyle500(
-                fontSize: 16, fontColor: AppColors.textPrimary),
-          ),
-          const SizedBox(height: 16),
-          ...options.map((frequency) => _buildOption(frequency)),
-          if (subtitle != null) ...[
-            const SizedBox(height: 4),
-            Text(
-              subtitle!,
-              style: AppTextStyles.regularStyle400(
-                  fontSize: 12, fontColor: AppColors.textSecondary),
-            ),
-          ],
-
-          //     Text()
-        ],
-      ),
+      ],
     );
   }
 
@@ -71,11 +61,13 @@ class FrequencySelector extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.iconBgLight : AppColors.surface,
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.08)
+              : AppColors.surface,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: 1,
+            color: isSelected ? AppColors.primary : AppColors.neutral300,
+            width: isSelected ? 1.5 : 1,
           ),
         ),
         child: Row(
@@ -85,9 +77,9 @@ class FrequencySelector extends StatelessWidget {
               _getDisplayName(frequency),
               style: isSelected
                   ? AppTextStyles.mediumStyle500(
-                      fontSize: 16, fontColor: AppColors.textPrimary)
+                      fontSize: 16, fontColor: AppColors.neutral700)
                   : AppTextStyles.regularStyle400(
-                      fontSize: 16, fontColor: AppColors.textPrimary),
+                      fontSize: 16, fontColor: AppColors.neutral300),
             ),
             if (isSelected)
               const Icon(

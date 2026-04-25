@@ -340,6 +340,17 @@ class AppStrings {
       'Add breed to get better care suggestions';
 
   // Care Settings Screens
+  static const String groomingType = 'Grooming type';
+  static const String groomingTypeBrushing = 'Brushing / Combing';
+  static const String groomingTypeBathing = 'Bathing';
+  static const String groomingTypeHaircut = 'Haircut / Trimming';
+  static const String groomingTypeNailTrimming = 'Nail Trimming';
+  static const String groomingTypeEarCleaning = 'Ear Cleaning';
+  static const String groomingTypeTeethCleaning = 'Teeth Cleaning';
+  static const String groomingTypeDeshedding = 'De-shedding';
+  static const String groomingTypePawCleaning = 'Paw Cleaning';
+  static const String groomingTypeTickFlea = 'Tick & Flea Grooming';
+  static const String selectGroomingType = 'Select at least one grooming type';
   static const String grooming = 'Grooming';
   static const String frequency = 'Frequency';
   static const String noReminder = 'No reminder';
@@ -351,6 +362,8 @@ class AppStrings {
   static const String save = 'Save';
   static const String today = 'Today';
   static const String settingsSaved = 'Settings saved successfully';
+  static const String addGrooming = 'Add Grooming';
+  static const String addTickFleaProtection = 'Add Tick & Flea Protection';
   static const String addGroomingDetails = 'Add grooming schedule';
   static const String addTickFleaDetails = 'Add treatment schedule';
 
@@ -855,6 +868,9 @@ class AppStrings {
   static const String missing = 'Missing';
   static const String reportLost = 'Report Lost';
   static const String tickAndFlea = 'Tick & Flea';
+
+  static const String on = 'ON';
+  static const String off = 'OFF';
 
   static String getRecommedationText(String petName) {
     return 'Recommended for $petName';
