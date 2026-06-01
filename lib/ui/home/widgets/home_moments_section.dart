@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/bloc/moments/pet_moments_state.dart';
@@ -76,11 +78,11 @@ class _MomentThumbnail extends StatelessWidget {
     return Container(
       width: 260,
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 16,
         color: AppColors.white,
-        border: Border.all(color: AppColors.grey100),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.grey100),
+        shadows: [
           BoxShadow(
               color: AppColors.shadowOverlay.withValues(alpha: 0.06),
               blurRadius: 8,
@@ -92,8 +94,8 @@ class _MomentThumbnail extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // Image
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
+          ClipSmoothRect(
+            radius: AppSmoothRadius.custom(12),
             child: moment.imageUrl.isNotEmpty
                 ? CachedNetworkImage(
                     imageUrl: moment.imageUrl,

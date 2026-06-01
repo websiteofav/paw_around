@@ -1,9 +1,11 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
@@ -227,10 +229,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildPetsSectionSkeleton() {
     return Container(
       margin: AppEdgeInsets.horizontalMedium,
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: AppConstants.radiusXL,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,9 +243,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
               height: 16,
               width: 80,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 4,
                 color: AppColors.progressBarBg,
-                borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),

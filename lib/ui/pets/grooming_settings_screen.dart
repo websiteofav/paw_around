@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -6,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -193,12 +195,10 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 12,
         color: AppColors.warning.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.warning.withValues(alpha: 0.3),
-        ),
+        side: BorderSide(color: AppColors.warning.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

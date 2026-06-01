@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ruler_picker/flutter_ruler_picker.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
@@ -60,10 +62,10 @@ class _GenderButton extends StatelessWidget {
         height: 104,
         width: 168,
         duration: const Duration(milliseconds: 200),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 24,
           color: isSelected ? AppColors.secondaryCTA : AppColors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
+          side: BorderSide(
               color: isSelected ? AppColors.primary : AppColors.neutral300),
         ),
         child: Column(
@@ -172,9 +174,9 @@ class _PetRulerFieldState extends State<PetRulerField> {
           marker: Container(
             width: 2,
             height: 68,
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 1,
               color: AppColors.secondaryCTA,
-              borderRadius: BorderRadius.circular(1),
             ),
           ),
         ),
@@ -201,9 +203,9 @@ class PetStepIndicator extends StatelessWidget {
           margin: const EdgeInsets.only(right: 6),
           width: isActive ? 32 : 24,
           height: 8,
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 4,
             color: isActive ? AppColors.primary : AppColors.border,
-            borderRadius: BorderRadius.circular(4),
           ),
         );
       }),

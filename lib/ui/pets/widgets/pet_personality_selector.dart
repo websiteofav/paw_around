@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -51,10 +53,10 @@ class PetPersonalitySelector extends StatelessWidget {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 20,
                 color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: isSelected ? AppColors.primary : AppColors.neutral300),
+                side: BorderSide(color: isSelected ? AppColors.primary : AppColors.neutral300),
               ),
               child: Text(
                 tag,
@@ -68,10 +70,10 @@ class PetPersonalitySelector extends StatelessWidget {
         }),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 20,
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: AppColors.neutral300),
+            side: const BorderSide(color: AppColors.neutral300),
           ),
           child: Text(
             AppStrings.addYourOwn,

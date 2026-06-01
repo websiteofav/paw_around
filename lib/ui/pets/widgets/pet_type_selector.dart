@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -5,6 +6,7 @@ import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -75,9 +77,9 @@ class PetTypeSelector extends StatelessWidget {
               const SizedBox(height: 8),
               Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: 8,
                   color: AppColors.background,
-                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   AppStrings.petTypeOtherHelper,
@@ -128,10 +130,10 @@ class _PetTypeOption extends StatelessWidget {
         curve: Curves.easeInOut,
         alignment: Alignment.center,
         //  padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 24,
           color: isSelected ? AppColors.secondaryCTA : AppColors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
+          side: BorderSide(
               color: isSelected ? AppColors.secondaryCTA : AppColors.neutral300,
               width: 1),
         ),

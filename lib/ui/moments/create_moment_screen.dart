@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -57,9 +59,9 @@ class _CreateMomentScreenState extends State<CreateMomentScreen> {
       backgroundColor: Colors.transparent,
       builder: (sheetContext) => Container(
         padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
+        decoration: smoothDecoration(
+          borderRadius: AppSmoothRadius.topOnly(24),
           color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SafeArea(
           child: Column(
@@ -70,9 +72,9 @@ class _CreateMomentScreenState extends State<CreateMomentScreen> {
                 width: 40,
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 24),
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: 2,
                   color: AppColors.border,
-                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
               ListTile(
@@ -311,10 +313,10 @@ class _CreateMomentScreenState extends State<CreateMomentScreen> {
       onTap: _showImagePickerOptions,
       child: Container(
         height: 300,
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 16,
           color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.border),
+          side: const BorderSide(color: AppColors.border),
         ),
         child: _imagePath == null
             ? Column(
@@ -335,8 +337,8 @@ class _CreateMomentScreenState extends State<CreateMomentScreen> {
                   ),
                 ],
               )
-            : ClipRRect(
-                borderRadius: BorderRadius.circular(16),
+            : ClipSmoothRect(
+                radius: AppSmoothRadius.custom(16),
                 child: Image.file(
                   File(_imagePath!),
                   width: double.infinity,
@@ -361,10 +363,10 @@ class _CreateMomentScreenState extends State<CreateMomentScreen> {
         ),
         const SizedBox(height: 8),
         Container(
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 12,
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border),
+            side: const BorderSide(color: AppColors.border),
           ),
           child: DropdownButtonFormField<PetModel>(
             initialValue: _selectedPet,

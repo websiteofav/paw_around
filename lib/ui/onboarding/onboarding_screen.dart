@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -8,6 +9,7 @@ import 'package:paw_around/bloc/onboarding/onboarding_bloc.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_event.dart';
 import 'package:paw_around/bloc/onboarding/onboarding_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -107,8 +109,8 @@ class _OnboardingViewState extends State<_OnboardingView> {
                           margin: const EdgeInsets.symmetric(horizontal: 4),
                           width: i == state.currentPage ? 24.0 : 8.0,
                           height: 8.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
+                          decoration: smoothDecoration(
+                            cornerRadius: 4,
                             color: i == state.currentPage
                                 ? AppColors.primary
                                 : AppColors.grey100,

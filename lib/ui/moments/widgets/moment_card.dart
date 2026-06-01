@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -32,11 +34,11 @@ class MomentCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 16,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.05),
             blurRadius: 8,
@@ -79,8 +81,8 @@ class MomentCard extends StatelessWidget {
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        child: ClipSmoothRect(
+          radius: AppSmoothRadius.topOnly(16),
           child: SizedBox(
             height: 300,
             width: double.infinity,

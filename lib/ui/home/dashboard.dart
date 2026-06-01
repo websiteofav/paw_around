@@ -14,6 +14,8 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/deep_link_service.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/paw_circle_screen.dart';
@@ -90,11 +92,11 @@ class _DashboardState extends State<Dashboard> {
                 FloatingActionButtonLocation.centerDocked,
             floatingActionButton: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 24,
                 color: AppColors.grey1000,
-                border: Border.all(width: 0.6, color: AppColors.grey600),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
+                side: const BorderSide(width: 0.6, color: AppColors.grey600),
+                shadows: [
                   BoxShadow(
                     color: AppColors.navBarShadow.withValues(alpha: 0.98),
                     offset: const Offset(0, 3),

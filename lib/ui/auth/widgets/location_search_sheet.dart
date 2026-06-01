@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -73,9 +75,9 @@ class _LocationSearchSheetState extends State<LocationSearchSheet> {
       maxChildSize: 0.92,
       expand: false,
       builder: (_, scrollController) => Container(
-        decoration: const BoxDecoration(
+        decoration: smoothDecoration(
+          borderRadius: AppSmoothRadius.topOnly(24),
           color: AppColors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           children: [
@@ -83,9 +85,9 @@ class _LocationSearchSheetState extends State<LocationSearchSheet> {
             Container(
               width: 40,
               height: 4,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 2,
                 color: AppColors.border,
-                borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 16),

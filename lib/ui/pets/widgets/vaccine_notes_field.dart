@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -19,10 +21,10 @@ class VaccineNotesField extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Container(
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 14,
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: AppColors.neutral300),
+            side: const BorderSide(color: AppColors.neutral300),
           ),
           child: TextField(
             controller: controller,

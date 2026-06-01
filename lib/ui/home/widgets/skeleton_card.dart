@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_constants.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 
 /// Skeleton loader for cards with shimmer effect
@@ -102,9 +104,9 @@ class HomeSkeletonLoader extends StatelessWidget {
           Container(
             height: 20,
             width: 150,
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 4,
               color: AppColors.progressBarBg,
-              borderRadius: BorderRadius.circular(4),
             ),
           ),
           const SizedBox(height: 12),
@@ -149,9 +151,9 @@ class AppBarSkeleton extends StatelessWidget {
             Container(
               width: 48,
               height: 48,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 14,
                 color: AppColors.progressBarBg,
-                borderRadius: BorderRadius.circular(14),
               ),
             ),
             const SizedBox(width: 12),
@@ -163,18 +165,18 @@ class AppBarSkeleton extends StatelessWidget {
                   Container(
                     height: 20,
                     width: 100,
-                    decoration: BoxDecoration(
+                    decoration: smoothDecoration(
+                      cornerRadius: 4,
                       color: AppColors.progressBarBg,
-                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                   const SizedBox(height: 6),
                   Container(
                     height: 14,
                     width: 70,
-                    decoration: BoxDecoration(
+                    decoration: smoothDecoration(
+                      cornerRadius: 4,
                       color: AppColors.progressBarBg,
-                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ],
@@ -184,9 +186,9 @@ class AppBarSkeleton extends StatelessWidget {
             Container(
               width: 44,
               height: 44,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 14,
                 color: AppColors.progressBarBg,
-                borderRadius: BorderRadius.circular(14),
               ),
             ),
           ],
@@ -207,10 +209,10 @@ class PostCardSkeleton extends StatelessWidget {
         horizontal: AppConstants.space16,
         vertical: AppConstants.space8,
       ),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: AppConstants.radiusMD,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppConstants.radiusMD),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,9 +271,9 @@ class PostCardSkeleton extends StatelessWidget {
     return Container(
       height: height,
       width: width,
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: circular ? height / 2 : 4,
         color: AppColors.progressBarBg,
-        borderRadius: BorderRadius.circular(circular ? height / 2 : 4),
       ),
     );
   }
@@ -325,7 +327,7 @@ class ListItemSkeleton extends StatelessWidget {
           Container(
             width: avatarSize,
             height: avatarSize,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.progressBarBg,
               shape: BoxShape.circle,
             ),
@@ -339,9 +341,9 @@ class ListItemSkeleton extends StatelessWidget {
                 Container(
                   height: 16,
                   width: 120,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 4,
                     color: AppColors.progressBarBg,
-                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
                 if (showSubtitle) ...[
@@ -349,9 +351,9 @@ class ListItemSkeleton extends StatelessWidget {
                   Container(
                     height: 12,
                     width: 80,
-                    decoration: BoxDecoration(
+                    decoration: smoothDecoration(
+                      cornerRadius: 4,
                       color: AppColors.progressBarBg,
-                      borderRadius: BorderRadius.circular(4),
                     ),
                   ),
                 ],
@@ -362,7 +364,7 @@ class ListItemSkeleton extends StatelessWidget {
           Container(
             width: 24,
             height: 24,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.progressBarBg,
               shape: BoxShape.circle,
             ),
@@ -400,10 +402,10 @@ class ProfileSkeleton extends StatelessWidget {
   Widget _buildProfileHeaderSkeleton() {
     return Container(
       padding: AppEdgeInsets.cardPadding,
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: AppConstants.radiusXL,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Row(
         children: [
@@ -411,7 +413,7 @@ class ProfileSkeleton extends StatelessWidget {
           Container(
             width: 72,
             height: 72,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.progressBarBg,
               shape: BoxShape.circle,
             ),
@@ -425,18 +427,18 @@ class ProfileSkeleton extends StatelessWidget {
                 Container(
                   height: 20,
                   width: 140,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 4,
                     color: AppColors.progressBarBg,
-                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
                 AppSpacing.vertical8,
                 Container(
                   height: 14,
                   width: 100,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 4,
                     color: AppColors.progressBarBg,
-                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ],
@@ -446,7 +448,7 @@ class ProfileSkeleton extends StatelessWidget {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.progressBarBg,
               shape: BoxShape.circle,
             ),
@@ -458,10 +460,10 @@ class ProfileSkeleton extends StatelessWidget {
 
   Widget _buildPetsSectionSkeleton() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: AppConstants.radiusXL,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -472,9 +474,9 @@ class ProfileSkeleton extends StatelessWidget {
             child: Container(
               height: 16,
               width: 80,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 4,
                 color: AppColors.progressBarBg,
-                borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),
@@ -489,10 +491,10 @@ class ProfileSkeleton extends StatelessWidget {
 
   Widget _buildAccountSectionSkeleton() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: AppConstants.radiusXL,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Column(
         children: List.generate(

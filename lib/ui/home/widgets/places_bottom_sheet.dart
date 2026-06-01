@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/places/places_model.dart';
@@ -23,10 +25,10 @@ class PlacesBottomSheet extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        borderRadius: AppSmoothRadius.topOnly(24),
         color: AppColors.white,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.08),
             blurRadius: 16,
@@ -52,9 +54,9 @@ class PlacesBottomSheet extends StatelessWidget {
   Widget _buildPlacesSummary() {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 12,
         color: AppColors.primary.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,

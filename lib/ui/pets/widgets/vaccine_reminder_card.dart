@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -17,12 +19,10 @@ class VaccineReminderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 20,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppColors.neutral300,
-        ),
+        side: const BorderSide(color: AppColors.neutral300),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

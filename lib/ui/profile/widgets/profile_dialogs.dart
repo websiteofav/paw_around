@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_spacing.dart';
@@ -149,9 +151,9 @@ void showDeleteAccountDialog(
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 8,
               color: AppColors.error.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
             ),
             child: Row(
               children: [

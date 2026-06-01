@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -162,12 +164,12 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
             color: AppColors.surface,
             child: Container(
               constraints: BoxConstraints(maxHeight: overlayMaxHeight),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.border),
+              decoration: smoothDecoration(
+                cornerRadius: 12,
+                side: const BorderSide(color: AppColors.border),
               ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
+              child: ClipSmoothRect(
+                radius: AppSmoothRadius.custom(12),
                 child: ListView.separated(
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
@@ -199,9 +201,9 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
             Container(
               width: 36,
               height: 36,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 8,
                 color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(8),
               ),
               child: const Icon(
                 Icons.location_on_outlined,

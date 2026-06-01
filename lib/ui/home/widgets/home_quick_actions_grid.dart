@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -87,8 +89,8 @@ class _ActionCard extends StatelessWidget {
         height: 160,
         width: 170,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20), color: bgColor),
+        decoration: smoothDecoration(
+            cornerRadius: 20, color: bgColor),
         child: Stack(
           children: [
             Positioned(
@@ -129,9 +131,9 @@ class _ActionCard extends StatelessWidget {
               right: 0,
               child: Container(
                 height: 36,
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: 18,
                   color: AppColors.grey1000,
-                  borderRadius: BorderRadius.circular(18),
                 ),
                 alignment: Alignment.center,
                 padding: const EdgeInsets.all(8),

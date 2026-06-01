@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
@@ -26,10 +28,10 @@ class VaccineSnoozeBanner extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 24),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 12,
         color: AppColors.warning.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+        side: BorderSide(color: AppColors.warning.withValues(alpha: 0.3)),
       ),
       child: Row(children: [
         const Icon(Icons.snooze, color: AppColors.warning, size: 24),

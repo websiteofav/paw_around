@@ -14,6 +14,8 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/storage_service.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/common_text_field.dart';
 import 'package:paw_around/ui/widgets/location_autocomplete_field.dart';
@@ -347,10 +349,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Widget _buildTypeToggle() {
     return Container(
       padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 16,
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Row(
         children: [
@@ -375,10 +377,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 12,
           color: isSelected ? color : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: isSelected
+          shadows: isSelected
               ? [
                   BoxShadow(
                       color: color.withValues(alpha: 0.3),
@@ -520,11 +522,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 8,
               color: AppColors.success.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border:
-                  Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+              side: BorderSide(color: AppColors.success.withValues(alpha: 0.3)),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,

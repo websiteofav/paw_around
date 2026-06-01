@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
@@ -88,9 +90,9 @@ class _GroomingChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 999,
           color: isSelected ? AppColors.secondaryCTA : AppColors.background3,
-          borderRadius: BorderRadius.circular(999),
         ),
         child: Text(
           label,

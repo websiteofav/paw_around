@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/services/notification_service.dart';
@@ -94,9 +96,9 @@ Future<bool> showNotificationPermissionDialog({
           // Benefits list
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 12,
               color: AppColors.primary.withValues(alpha: 0.05),
-              borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
               children: [

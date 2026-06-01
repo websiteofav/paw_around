@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
@@ -31,11 +33,11 @@ class PetOverviewInfoCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 24,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
@@ -113,10 +115,10 @@ class PetOverviewInfoCard extends StatelessWidget {
                       horizontal: 10,
                       vertical: 6,
                     ),
-                    decoration: BoxDecoration(
+                    decoration: smoothDecoration(
+                      cornerRadius: 20,
                       color: AppColors.warning.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
+                      side: BorderSide(
                         color: AppColors.warning.withValues(alpha: 0.3),
                       ),
                     ),

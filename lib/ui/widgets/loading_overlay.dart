@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
 class LoadingOverlay extends StatelessWidget {
@@ -17,9 +19,9 @@ class LoadingOverlay extends StatelessWidget {
       child: Center(
         child: Container(
           padding: const EdgeInsets.all(32),
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 16,
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(16),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

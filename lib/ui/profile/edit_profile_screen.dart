@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -308,11 +310,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
+                        decoration: smoothDecoration(
+                          cornerRadius: 8,
                           color: AppColors.warning.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                              color: AppColors.warning.withValues(alpha: 0.3)),
+                          side: BorderSide(color: AppColors.warning.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           children: [
@@ -426,13 +427,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   child: Container(
                     width: 40,
                     height: 40,
-                    decoration: BoxDecoration(
+                    decoration: smoothDecoration(
+                      cornerRadius: 20,
                       color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                        color: AppColors.surface,
-                        width: 2,
-                      ),
+                      side: const BorderSide(color: AppColors.surface, width: 2),
                     ),
                     child: const Icon(
                       Icons.camera_alt,
@@ -456,10 +454,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 12,
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Row(
         children: [

@@ -52,6 +52,7 @@ dependencies:
   firebase_messaging: 16.1.0
   shimmer: 3.0.0
   flutter_ruler_picker: 1.0.6
+  figma_squircle: 0.6.3
 
 dev_dependencies:
   flutter_test:

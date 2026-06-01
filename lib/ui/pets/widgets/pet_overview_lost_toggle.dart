@@ -1,8 +1,10 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -19,11 +21,11 @@ class PetOverviewLostToggle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 24,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,

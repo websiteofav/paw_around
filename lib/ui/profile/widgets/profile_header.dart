@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
@@ -28,11 +30,11 @@ class ProfileHeader extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 24,
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.border),
-            boxShadow: [
+            side: const BorderSide(color: AppColors.border),
+            shadows: [
               BoxShadow(
                 color: AppColors.shadowOverlay.withValues(alpha: 0.06),
                 blurRadius: 12,
@@ -46,12 +48,12 @@ class ProfileHeader extends StatelessWidget {
               Container(
                 width: 72,
                 height: 72,
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: 18,
                   color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(18),
                 ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(18),
+                child: ClipSmoothRect(
+                  radius: AppSmoothRadius.custom(18),
                   child: photoUrl != null
                       ? Image.network(photoUrl, fit: BoxFit.cover)
                       : const Icon(
@@ -92,12 +94,11 @@ class ProfileHeader extends StatelessWidget {
                 child: Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 20,
                     color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.3)),
-                    boxShadow: [
+                    side: BorderSide(color: AppColors.primary.withValues(alpha: 0.3)),
+                    shadows: [
                       BoxShadow(
                         color: AppColors.primary.withValues(alpha: 0.1),
                         blurRadius: 4,

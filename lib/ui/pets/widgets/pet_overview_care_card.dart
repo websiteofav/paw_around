@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
 
@@ -25,11 +27,11 @@ class PetOverviewCareCard extends StatelessWidget {
       onPressed: onTap,
       child: Container(
         padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 24,
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.border),
-          boxShadow: [
+          side: const BorderSide(color: AppColors.border),
+          shadows: [
             BoxShadow(
               color: AppColors.shadowOverlay.withValues(alpha: 0.06),
               blurRadius: 12,
@@ -42,9 +44,9 @@ class PetOverviewCareCard extends StatelessWidget {
             Container(
               width: 30,
               height: 30,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 12,
                 color: AppColors.primary.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
@@ -131,9 +133,9 @@ class _CareStatusBadge extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 12,
         color: bgColor,
-        borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

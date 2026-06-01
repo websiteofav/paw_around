@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -28,9 +30,9 @@ class SnoozeBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
+      decoration: smoothDecoration(
+        borderRadius: AppSmoothRadius.topOnly(24),
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -40,18 +42,18 @@ class SnoozeBottomSheet extends StatelessWidget {
             width: 40,
             height: 4,
             margin: const EdgeInsets.only(bottom: 24),
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 2,
               color: AppColors.border,
-              borderRadius: BorderRadius.circular(2),
             ),
           ),
           // Icon
           Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 32,
               color: AppColors.iconBgLight,
-              borderRadius: BorderRadius.circular(32),
             ),
             child: const Icon(
               Icons.access_time,
@@ -103,10 +105,10 @@ class SnoozeBottomSheet extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 14,
           color: AppColors.background,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.border),
+          side: const BorderSide(color: AppColors.border),
         ),
         child: Row(
           children: [

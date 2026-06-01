@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -30,11 +32,11 @@ class PostCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 16,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.05),
             blurRadius: 8,
@@ -84,8 +86,8 @@ class PostCard extends StatelessWidget {
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        child: ClipSmoothRect(
+          radius: AppSmoothRadius.topOnly(16),
           child: Stack(
             children: [
               SizedBox(
@@ -146,10 +148,10 @@ class PostCard extends StatelessWidget {
     final badgeColor = isLost ? AppColors.error : AppColors.success;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 16,
         color: badgeColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: badgeColor.withValues(alpha: 0.3),
             blurRadius: 6,
@@ -176,9 +178,9 @@ class PostCard extends StatelessWidget {
   Widget _buildYourPostBadge() {
     return Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 16,
           color: AppColors.secondary,
-          borderRadius: BorderRadius.circular(16),
         ),
         child: Text(AppStrings.yourPost,
             style: AppTextStyles.boldStyle700(

@@ -17,6 +17,8 @@ import 'package:paw_around/repositories/user_repository.dart';
 import 'package:paw_around/router/app_router.dart';
 import 'package:paw_around/ui/auth/widgets/location_search_sheet.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 
 class UserProfileSetupScreen extends StatefulWidget {
   const UserProfileSetupScreen({super.key});
@@ -340,8 +342,8 @@ class _PhotoPickerBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomPaint(
       painter: _DashedBorderPainter(),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+      child: ClipSmoothRect(
+        radius: AppSmoothRadius.custom(20),
         child: Container(
           width: double.infinity,
           decoration: const BoxDecoration(color: AppColors.white),
@@ -481,10 +483,10 @@ class _LocationButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 12,
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
+          side: BorderSide(
             color: isDisabled
                 ? AppColors.border.withValues(alpha: 0.5)
                 : AppColors.neutral300,
@@ -530,9 +532,9 @@ class _StepIndicator extends StatelessWidget {
           margin: const EdgeInsets.only(right: 6),
           width: isActive ? 32 : 24,
           height: 8,
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 4,
             color: isActive ? AppColors.primary : AppColors.border,
-            borderRadius: BorderRadius.circular(4),
           ),
         );
       }),

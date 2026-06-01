@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_constants.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_spacing.dart';
@@ -161,14 +163,11 @@ class EmptyStateWidget extends StatelessWidget {
           horizontal: AppConstants.space28,
           vertical: AppConstants.space40,
         ),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: AppConstants.radiusLG,
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(AppConstants.radiusLG),
-          border: Border.all(
-            color: AppColors.primary.withValues(alpha: 0.1),
-            width: 1,
-          ),
-          boxShadow: [
+          side: BorderSide(color: AppColors.primary.withValues(alpha: 0.1)),
+          shadows: [
             BoxShadow(
               color: AppColors.shadowOverlay.withValues(alpha: 0.06),
               blurRadius: 12,

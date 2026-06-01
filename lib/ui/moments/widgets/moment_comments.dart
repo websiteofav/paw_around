@@ -1,9 +1,11 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/moments/pet_moments_bloc.dart';
 import 'package:paw_around/bloc/moments/pet_moments_event.dart';
 import 'package:paw_around/bloc/moments/pet_moments_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -62,9 +64,9 @@ class _MomentCommentsState extends State<MomentComments> {
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         padding: const EdgeInsets.all(24),
-        decoration: const BoxDecoration(
+        decoration: smoothDecoration(
+          borderRadius: AppSmoothRadius.topOnly(24),
           color: AppColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -76,9 +78,9 @@ class _MomentCommentsState extends State<MomentComments> {
                 width: 40,
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 24),
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: 2,
                   color: AppColors.border,
-                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
@@ -209,10 +211,10 @@ class _MomentCommentsState extends State<MomentComments> {
 
   Widget _buildCommentInput() {
     return Container(
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 12,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Row(
         children: [

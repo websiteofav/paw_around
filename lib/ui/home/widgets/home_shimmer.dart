@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 
 class HomeShimmer extends StatelessWidget {
   const HomeShimmer({super.key});
@@ -127,9 +129,9 @@ class HomeShimmer extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 6,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(6),
       ),
     );
   }
@@ -149,9 +151,9 @@ class HomeShimmer extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: radius,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(radius),
       ),
     );
   }

@@ -25,6 +25,8 @@ import 'package:paw_around/ui/home/widgets/action_cta_card.dart';
 import 'package:paw_around/ui/home/widgets/action_card_timeline.dart';
 import 'package:paw_around/ui/home/widgets/mark_done_bottom_sheet.dart';
 import 'package:paw_around/ui/home/widgets/snooze_bottom_sheet.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/ui/widgets/animated_card.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
@@ -543,9 +545,9 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
               Container(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: 20,
                   color: AppColors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   isOverdue ? AppStrings.overdue : AppStrings.dueSoon,

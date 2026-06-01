@@ -15,6 +15,8 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/repositories/community_repository.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/utils/date_utils.dart';
 import 'package:paw_around/utils/share_utils.dart';
@@ -294,10 +296,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     final isLost = _post!.type == PostType.lost;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 20,
         color: isLost ? AppColors.error : AppColors.success,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: (isLost ? AppColors.error : AppColors.success).withValues(alpha: 0.3),
             blurRadius: 8,
@@ -351,10 +353,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           _buildSectionHeader(AppStrings.details, icon: Icons.info_outline),
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 16,
               color: AppColors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
+              side: const BorderSide(color: AppColors.border),
             ),
             child: Column(
               children: [
@@ -457,9 +459,9 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
       children: [
         Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 8,
             color: AppColors.primary.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(icon, size: 18, color: AppColors.primary),
         ),
@@ -488,10 +490,10 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
   Widget _buildMap() {
     return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+      decoration: smoothDecoration(
+        cornerRadius: 16,
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.05),
             blurRadius: 8,
@@ -499,8 +501,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
+      child: ClipSmoothRect(
+        radius: AppSmoothRadius.custom(15),
         child: SizedBox(
           height: 180,
           child: GoogleMap(

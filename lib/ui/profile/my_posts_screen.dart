@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
 import 'package:paw_around/bloc/community/community_event.dart';
 import 'package:paw_around/bloc/community/community_state.dart';
@@ -271,9 +273,9 @@ class _MyPostsScreenState extends State<MyPostsScreen>
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
+                    decoration: smoothDecoration(
+                      cornerRadius: 16,
                       color: AppColors.textSecondary,
-                      borderRadius: AppBorderRadius.md,
                     ),
                     child: Text(
                       AppStrings.resolved,

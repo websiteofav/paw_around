@@ -1,7 +1,9 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
@@ -72,13 +74,13 @@ class _PetAvatar extends StatelessWidget {
                   duration: const Duration(milliseconds: 200),
                   width: 86,
                   height: 86,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 24,
                     color: AppColors.iconBgLight,
-                    borderRadius: BorderRadius.circular(24),
-                    border: isSelected
-                        ? Border.all(color: AppColors.primary, width: 2.5)
-                        : Border.all(color: Colors.transparent, width: 2.5),
-                    boxShadow: [
+                    side: isSelected
+                        ? const BorderSide(color: AppColors.primary, width: 2.5)
+                        : const BorderSide(color: Colors.transparent, width: 2.5),
+                    shadows: [
                       BoxShadow(
                           color: AppColors.shadowOverlay.withValues(alpha: 0.08),
                           blurRadius: 8,
@@ -89,8 +91,8 @@ class _PetAvatar extends StatelessWidget {
                           offset: const Offset(0, 8)),
                     ],
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(22),
+                  child: ClipSmoothRect(
+                    radius: AppSmoothRadius.custom(22),
                     child: pet.imagePath != null && pet.imagePath!.isNotEmpty
                         ? Image.network(pet.imagePath!,
                             fit: BoxFit.cover,
@@ -156,13 +158,13 @@ class _AddPetButton extends StatelessWidget {
             Container(
               width: 86,
               height: 86,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 24,
                 color: AppColors.primary.withValues(alpha: 0.06),
-                borderRadius: BorderRadius.circular(24),
-                border: Border.all(
+                side: BorderSide(
                     color: AppColors.primary.withValues(alpha: 0.3),
                     width: 1.5),
-                boxShadow: [
+                shadows: [
                   BoxShadow(
                       color: AppColors.shadowOverlay.withValues(alpha: 0.05),
                       blurRadius: 8,

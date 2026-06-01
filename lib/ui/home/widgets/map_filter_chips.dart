@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/bloc/bloc/places_event.dart';
 import 'package:paw_around/bloc/bloc/places_state.dart';
@@ -87,14 +89,14 @@ class _FilterChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 20,
           color: isSelected ? type.color : AppColors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
+          side: BorderSide(
             color: isSelected ? type.color : AppColors.border,
             width: 1.5,
           ),
-          boxShadow: isSelected
+          shadows: isSelected
               ? [
                   BoxShadow(
                     color: type.color.withValues(alpha: 0.3),
@@ -123,9 +125,9 @@ class _FilterChip extends StatelessWidget {
             const SizedBox(width: 6),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 10,
                 color: isSelected ? AppColors.white.withValues(alpha: 0.2) : AppColors.background,
-                borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
                 '$count',

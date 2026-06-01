@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/vaccines/vaccine_master_data.dart';
@@ -148,10 +150,10 @@ class _VaccineSelectorFieldState extends State<VaccineSelectorField> {
             onTap: _toggle,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 14,
                 color: AppColors.surface,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
+                side: BorderSide(
                   color: _hasError
                       ? AppColors.error
                       : _isOpen
@@ -244,12 +246,12 @@ class _DropdownSheet extends StatelessWidget {
       color: AppColors.white,
       child: Container(
         constraints: const BoxConstraints(maxHeight: 320),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.border),
+        decoration: smoothDecoration(
+          cornerRadius: 14,
+          side: const BorderSide(color: AppColors.border),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(14),
+        child: ClipSmoothRect(
+          radius: AppSmoothRadius.custom(14),
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: Column(
@@ -341,9 +343,9 @@ class _VaccineItem extends StatelessWidget {
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 4,
                     color: AppColors.error.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
                     AppStrings.requiredBadge,

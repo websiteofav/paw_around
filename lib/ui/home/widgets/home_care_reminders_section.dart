@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
@@ -200,9 +202,9 @@ class _CareReminderCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 20,
         color: bgColor,
-        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -231,10 +233,10 @@ class _CareReminderCard extends StatelessWidget {
           const SizedBox(height: 12),
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 14,
               color: AppColors.white,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: [
+              shadows: [
                 BoxShadow(
                     color: AppColors.shadowOverlay.withValues(alpha: 0.10),
                     blurRadius: 6,
@@ -287,8 +289,8 @@ class _CareReminderCard extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(4),
+                ClipSmoothRect(
+                  radius: AppSmoothRadius.custom(4),
                   child: LinearProgressIndicator(
                     value: progress,
                     minHeight: 6,
@@ -308,11 +310,11 @@ class _CareReminderCard extends StatelessWidget {
                   onTap: onMarkDone,
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
+                    decoration: smoothDecoration(
+                      cornerRadius: 20,
                       color: AppColors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.neutral300),
-                      boxShadow: [
+                      side: const BorderSide(color: AppColors.neutral300),
+                      shadows: [
                         BoxShadow(
                             color:
                                 AppColors.shadowOverlay.withValues(alpha: 0.10),
@@ -338,10 +340,10 @@ class _CareReminderCard extends StatelessWidget {
                   onTap: onActionTap,
                   child: Container(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    decoration: BoxDecoration(
+                    decoration: smoothDecoration(
+                      cornerRadius: 20,
                       color: AppColors.grey1000,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
+                      shadows: [
                         BoxShadow(
                             color:
                                 AppColors.shadowOverlay.withValues(alpha: 0.10),

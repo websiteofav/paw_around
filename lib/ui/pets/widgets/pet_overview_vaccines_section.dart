@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -21,11 +23,11 @@ class PetOverviewVaccinesSection extends StatelessWidget {
         : AppStrings.vaccines;
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 24,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
@@ -204,9 +206,9 @@ class _VaccineRow extends StatelessWidget {
                             horizontal: 6,
                             vertical: 2,
                           ),
-                          decoration: BoxDecoration(
+                          decoration: smoothDecoration(
+                            cornerRadius: 4,
                             color: AppColors.warning.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,

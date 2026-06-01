@@ -1,3 +1,4 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -203,9 +205,9 @@ class _AddPetViewState extends State<_AddPetView> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) => Container(
-        decoration: const BoxDecoration(
+        decoration: smoothDecoration(
+          borderRadius: AppSmoothRadius.topOnly(24),
           color: AppColors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SafeArea(
           child: Padding(
@@ -217,9 +219,9 @@ class _AddPetViewState extends State<_AddPetView> {
                     width: 40,
                     height: 4,
                     margin: const EdgeInsets.only(bottom: 20),
-                    decoration: BoxDecoration(
-                        color: AppColors.border,
-                        borderRadius: BorderRadius.circular(2))),
+                    decoration: smoothDecoration(
+                        cornerRadius: 2,
+                        color: AppColors.border)),
                 ListTile(
                   leading: const Icon(Icons.camera_alt_outlined,
                       color: AppColors.primary),
@@ -326,9 +328,9 @@ class _StepIndicator extends StatelessWidget {
           margin: const EdgeInsets.only(right: 6),
           width: isActive ? 32 : 24,
           height: 8,
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 4,
             color: isActive ? AppColors.primary : AppColors.border,
-            borderRadius: BorderRadius.circular(4),
           ),
         );
       }),

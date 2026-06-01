@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -15,9 +17,9 @@ class PetImagePickerSheet {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) => Container(
-        decoration: const BoxDecoration(
+        decoration: smoothDecoration(
+          borderRadius: AppSmoothRadius.topOnly(24),
           color: AppColors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SafeArea(
           child: Padding(
@@ -29,9 +31,9 @@ class PetImagePickerSheet {
                   width: 40,
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 2,
                     color: AppColors.border,
-                    borderRadius: BorderRadius.circular(2),
                   ),
                 ),
                 ListTile(

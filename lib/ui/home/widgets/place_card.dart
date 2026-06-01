@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/places/places_model.dart';
@@ -25,11 +27,11 @@ class PlaceCard extends StatelessWidget {
       child: Container(
         height: 140,
         padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 24,
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColors.border),
-          boxShadow: [
+          side: const BorderSide(color: AppColors.border),
+          shadows: [
             BoxShadow(
               color: AppColors.shadowOverlay.withValues(alpha: 0.06),
               blurRadius: 12,
@@ -41,11 +43,11 @@ class PlaceCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Image
-            ClipRRect(
-              borderRadius: BorderRadius.circular(14),
+            ClipSmoothRect(
+              radius: AppSmoothRadius.custom(14),
               child: place.photoUrl != null
-                  ? ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
+                  ? ClipSmoothRect(
+                      radius: AppSmoothRadius.custom(14),
                       child: CachedNetworkImage(
                         imageUrl: place.photoUrl!,
                         placeholder: (context, url) => _buildPlaceholder(),
@@ -88,9 +90,9 @@ class PlaceCard extends StatelessWidget {
                     child: Container(
                       height: 36,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
+                      decoration: smoothDecoration(
+                        cornerRadius: 999,
                         color: AppColors.grey1000,
-                        borderRadius: BorderRadius.circular(999),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -153,11 +155,11 @@ class PlaceCard extends StatelessWidget {
     final bool isOpen = place.isOpen!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 8,
         color: isOpen
             ? AppColors.success.withValues(alpha: 0.15)
             : AppColors.error.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
         isOpen ? AppStrings.open : AppStrings.closed,
@@ -191,9 +193,9 @@ class PlaceCard extends StatelessWidget {
     return Container(
       width: 116,
       height: 116,
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 14,
         color: _getTypeColor(place.types),
-        borderRadius: BorderRadius.circular(14),
       ),
       child: Icon(
         _getTypeIcon(place.types),

@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -88,16 +90,16 @@ class _LostPetCard extends StatelessWidget {
       child: Container(
         height: 264,
         width: 165,
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 24,
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
+          shadows: [
             BoxShadow(
                 color: AppColors.shadowOverlay.withValues(alpha: 0.06),
                 blurRadius: 10,
                 offset: const Offset(0, 3))
           ],
-          border: Border.all(color: AppColors.grey100),
+          side: const BorderSide(color: AppColors.grey100),
         ),
         padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
         child: Column(
@@ -108,8 +110,8 @@ class _LostPetCard extends StatelessWidget {
               children: [
                 Hero(
                   tag: 'post-image-${pet.id}',
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(18),
+                  child: ClipSmoothRect(
+                    radius: AppSmoothRadius.custom(18),
                     child: SizedBox(
                       height: 160,
                       width: double.infinity,

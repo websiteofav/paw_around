@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 
 /// Skeleton card for place list items in map screen
 class PlaceSkeletonCard extends StatelessWidget {
@@ -9,11 +11,11 @@ class PlaceSkeletonCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 16,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
@@ -27,9 +29,9 @@ class PlaceSkeletonCard extends StatelessWidget {
           Container(
             width: 56,
             height: 56,
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 14,
               color: AppColors.border,
-              borderRadius: BorderRadius.circular(14),
             ),
           ),
           const SizedBox(width: 14),
@@ -41,9 +43,9 @@ class PlaceSkeletonCard extends StatelessWidget {
                 Container(
                   height: 16,
                   width: double.infinity,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 4,
                     color: AppColors.border,
-                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -51,9 +53,9 @@ class PlaceSkeletonCard extends StatelessWidget {
                 Container(
                   height: 12,
                   width: 150,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 4,
                     color: AppColors.border,
-                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -61,9 +63,9 @@ class PlaceSkeletonCard extends StatelessWidget {
                 Container(
                   height: 12,
                   width: 80,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 4,
                     color: AppColors.border,
-                    borderRadius: BorderRadius.circular(4),
                   ),
                 ),
               ],
@@ -74,9 +76,9 @@ class PlaceSkeletonCard extends StatelessWidget {
           Container(
             width: 40,
             height: 40,
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 12,
               color: AppColors.border,
-              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ],

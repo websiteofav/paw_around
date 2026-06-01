@@ -1,7 +1,9 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/auth/auth_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_icons.dart';
@@ -267,11 +269,11 @@ class DashboardAppBar extends StatelessWidget {
       child: Container(
         width: 44,
         height: 44,
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 14,
           color: action.isActive
               ? AppColors.primary.withValues(alpha: 0.1)
               : AppColors.progressBarBg,
-          borderRadius: BorderRadius.circular(14),
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -302,9 +304,9 @@ class DashboardAppBar extends StatelessWidget {
       child: Container(
         width: 44,
         height: 44,
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 14,
           color: AppColors.progressBarBg,
-          borderRadius: BorderRadius.circular(14),
         ),
         child: Stack(
           alignment: Alignment.center,
@@ -329,9 +331,9 @@ class DashboardAppBar extends StatelessWidget {
   Widget _buildBadge(int count) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 10,
         color: AppColors.error,
-        borderRadius: BorderRadius.circular(10),
       ),
       constraints: const BoxConstraints(
         minWidth: 18,

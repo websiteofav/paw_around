@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -60,12 +62,12 @@ class FrequencySelector extends StatelessWidget {
         width: double.infinity,
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: 14,
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.08)
               : AppColors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
+          side: BorderSide(
             color: isSelected ? AppColors.primary : AppColors.neutral300,
             width: isSelected ? 1.5 : 1,
           ),

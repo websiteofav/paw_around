@@ -1,9 +1,11 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -30,10 +32,10 @@ class BirthdateAgeSelector extends StatelessWidget {
                 width: double.infinity,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: 12,
                   color: AppColors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.neutral300),
+                  side: const BorderSide(color: AppColors.neutral300),
                 ),
                 child: Row(
                   children: [
