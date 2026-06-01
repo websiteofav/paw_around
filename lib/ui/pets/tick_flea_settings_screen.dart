@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
@@ -177,7 +178,7 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
 
   Widget _buildHero() {
     return Image.asset(
-      AppIcons.scissorIcon,
+      AppIcons.bugIcon,
       height: 64,
       width: 64,
       color: AppColors.grey150,
@@ -293,6 +294,7 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
                 fontSize: 16,
                 fontColor: AppColors.grey1000,
               ),
+              borderRadius: 44,
             ),
             const SizedBox(height: 24),
           ],

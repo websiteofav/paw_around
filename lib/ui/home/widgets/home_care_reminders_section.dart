@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
+import 'package:paw_around/repositories/pet_repository.dart';
 
 class HomeCareRemindersSection extends StatefulWidget {
   final PetModel pet;
@@ -27,6 +32,43 @@ class HomeCareRemindersSection extends StatefulWidget {
 
 class _HomeCareRemindersSectionState extends State<HomeCareRemindersSection> {
   final _dismissed = <String>{};
+  bool _markingDone = false;
+
+  Future<void> _markVaccineDone(String vaccineId) async {
+    if (_markingDone) return;
+    setState(() => _markingDone = true);
+    try {
+      await sl<PetRepository>().markVaccineAsDone(widget.pet.id, vaccineId);
+      if (!mounted) return;
+      context.read<PetListBloc>().add(const LoadPetList());
+    } finally {
+      if (mounted) setState(() => _markingDone = false);
+    }
+  }
+
+  Future<void> _markGroomingDone() async {
+    if (_markingDone) return;
+    setState(() => _markingDone = true);
+    try {
+      await sl<PetRepository>().markGroomingAsDone(widget.pet.id);
+      if (!mounted) return;
+      context.read<PetListBloc>().add(const LoadPetList());
+    } finally {
+      if (mounted) setState(() => _markingDone = false);
+    }
+  }
+
+  Future<void> _markTickFleaDone() async {
+    if (_markingDone) return;
+    setState(() => _markingDone = true);
+    try {
+      await sl<PetRepository>().markTickFleaAsDone(widget.pet.id);
+      if (!mounted) return;
+      context.read<PetListBloc>().add(const LoadPetList());
+    } finally {
+      if (mounted) setState(() => _markingDone = false);
+    }
+  }
 
   VaccineModel? _mostUrgentVaccine() {
     final upcoming = widget.pet.vaccines
@@ -58,7 +100,7 @@ class _HomeCareRemindersSectionState extends State<HomeCareRemindersSection> {
         progress: total > 0 ? (elapsed / total).clamp(0.0, 1.0) : 1.0,
         isOverdue: days < 0,
         onActionTap: widget.onVaccinesTap,
-        onMarkDone: widget.onVaccinesTap,
+        onMarkDone: () => _markVaccineDone(urgentVaccine.id),
         onDismiss: () => setState(() => _dismissed.add('vaccines')),
       ));
     }
@@ -80,7 +122,7 @@ class _HomeCareRemindersSectionState extends State<HomeCareRemindersSection> {
         progress: _careProgress(tickFlea),
         isOverdue: days < 0,
         onActionTap: widget.onTickFleaTap,
-        onMarkDone: widget.onTickFleaTap,
+        onMarkDone: _markTickFleaDone,
         onDismiss: () => setState(() => _dismissed.add('tickFlea')),
       ));
     }
@@ -105,7 +147,7 @@ class _HomeCareRemindersSectionState extends State<HomeCareRemindersSection> {
         progress: _careProgress(grooming),
         isOverdue: days < 0,
         onActionTap: widget.onGroomingTap,
-        onMarkDone: widget.onGroomingTap,
+        onMarkDone: _markGroomingDone,
         onDismiss: () => setState(() => _dismissed.add('grooming')),
       ));
     }
@@ -192,6 +234,16 @@ class _CareReminderCard extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.white,
               borderRadius: BorderRadius.circular(14),
+              boxShadow: [
+                BoxShadow(
+                    color: AppColors.shadowOverlay.withValues(alpha: 0.10),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3)),
+                BoxShadow(
+                    color: AppColors.shadowOverlay.withValues(alpha: 0.09),
+                    blurRadius: 10,
+                    offset: const Offset(0, 10)),
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -260,6 +312,18 @@ class _CareReminderCard extends StatelessWidget {
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: AppColors.neutral300),
+                      boxShadow: [
+                        BoxShadow(
+                            color:
+                                AppColors.shadowOverlay.withValues(alpha: 0.10),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3)),
+                        BoxShadow(
+                            color:
+                                AppColors.shadowOverlay.withValues(alpha: 0.09),
+                            blurRadius: 10,
+                            offset: const Offset(0, 10)),
+                      ],
                     ),
                     child: Text(AppStrings.markAsDone,
                         textAlign: TextAlign.center,
@@ -277,9 +341,21 @@ class _CareReminderCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.grey1000,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                            color:
+                                AppColors.shadowOverlay.withValues(alpha: 0.10),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3)),
+                        BoxShadow(
+                            color:
+                                AppColors.shadowOverlay.withValues(alpha: 0.09),
+                            blurRadius: 10,
+                            offset: const Offset(0, 10)),
+                      ],
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(actionLabel,
                             style: AppTextStyles.mediumStyle500(

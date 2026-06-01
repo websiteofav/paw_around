@@ -32,6 +32,7 @@ class CommonButton extends StatelessWidget {
   final double? buttonHeight;
   final double? buttonWidth;
   final TextStyle? textStyle;
+  final double? borderRadius;
 
   const CommonButton({
     super.key,
@@ -49,6 +50,7 @@ class CommonButton extends StatelessWidget {
     this.buttonHeight,
     this.buttonWidth,
     this.textStyle,
+    this.borderRadius,
   });
 
   @override
@@ -122,7 +124,8 @@ class CommonButton extends StatelessWidget {
             shadowColor:
                 (customColor ?? AppColors.primary).withValues(alpha: 0.3),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(_getBorderRadius()),
+              borderRadius:
+                  BorderRadius.circular(borderRadius ?? _getBorderRadius()),
             ),
             disabledBackgroundColor: AppColors.disabledGreenColor);
       case ButtonVariant.secondary:
@@ -133,7 +136,8 @@ class CommonButton extends StatelessWidget {
           shadowColor:
               (customColor ?? AppColors.secondary).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? _getBorderRadius()),
           ),
         );
       case ButtonVariant.outline:
@@ -146,7 +150,8 @@ class CommonButton extends StatelessWidget {
             width: 2,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? _getBorderRadius()),
           ),
         );
       case ButtonVariant.text:
@@ -156,7 +161,8 @@ class CommonButton extends StatelessWidget {
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? _getBorderRadius()),
           ),
         );
       case ButtonVariant.danger:
@@ -166,7 +172,8 @@ class CommonButton extends StatelessWidget {
           elevation: 4,
           shadowColor: (customColor ?? Colors.red).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? _getBorderRadius()),
           ),
         );
     }
