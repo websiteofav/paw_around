@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:paw_around/bloc/auth/auth_bloc.dart';
+import 'package:paw_around/bloc/auth/auth_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/utils/utils.dart';
 
 /// Action item for the dashboard app bar
 class DashboardAppBarAction {
@@ -41,6 +45,12 @@ class DashboardAppBar extends StatelessWidget {
   /// List of action buttons on the right
   final List<DashboardAppBarAction>? actions;
 
+  /// Whether to show the profile avatar on the right
+  final bool showProfileAvatar;
+
+  /// Callback when profile avatar is tapped
+  final VoidCallback? onProfileTap;
+
   /// Whether to show the notification bell
   final bool showNotificationBell;
 
@@ -67,6 +77,8 @@ class DashboardAppBar extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.actions,
+    this.showProfileAvatar = false,
+    this.onProfileTap,
     this.showNotificationBell = false,
     this.notificationCount,
     this.onNotificationTap,
@@ -125,6 +137,12 @@ class DashboardAppBar extends StatelessWidget {
 
               // Right: Actions
               ..._buildActions(),
+
+              // Profile avatar
+              if (showProfileAvatar) ...[
+                const SizedBox(width: 10),
+                _ProfileAvatar(onTap: onProfileTap),
+              ],
             ],
           ),
         ),
@@ -324,6 +342,29 @@ class DashboardAppBar extends StatelessWidget {
         style: AppTextStyles.boldStyle700(
             fontSize: 10, fontColor: AppColors.white),
         textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
+class _ProfileAvatar extends StatelessWidget {
+  final VoidCallback? onTap;
+  const _ProfileAvatar({this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = context.watch<AuthBloc>().state;
+    final photoUrl =
+        authState is Authenticated ? authState.profile?.photoUrl ?? '' : '';
+    return GestureDetector(
+      onTap: onTap,
+      child: CircleAvatar(
+        radius: 20,
+        backgroundColor: AppColors.primary,
+        backgroundImage: photoUrl.isValidString ? NetworkImage(photoUrl) : null,
+        child: !photoUrl.isValidString
+            ? const Icon(Icons.person, color: AppColors.white, size: 20)
+            : null,
       ),
     );
   }

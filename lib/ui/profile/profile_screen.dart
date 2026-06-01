@@ -130,8 +130,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           backgroundColor: AppColors.white,
           body: Column(
             children: [
-              const DashboardAppBar(
+              DashboardAppBar(
                 title: AppStrings.profileTab,
+                showProfileAvatar: true,
+                onProfileTap: () =>
+                    context.pushNamed(AppRoutes.editProfile),
               ),
               Expanded(
                 child: RefreshIndicator(
