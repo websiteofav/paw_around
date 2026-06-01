@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
@@ -30,7 +31,11 @@ class HomeMyBabiesSection extends StatelessWidget {
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
-                  ...pets.map((pet) => _PetAvatar(pet: pet)),
+                  ...pets.map((pet) => _PetAvatar(
+                  pet: pet,
+                  isSelected: state is PetListLoaded &&
+                      state.selectedPet?.id == pet.id,
+                )),
                   _AddPetButton(
                       onTap: () => context.pushNamed(AppRoutes.addPet)),
                 ],
@@ -45,14 +50,16 @@ class HomeMyBabiesSection extends StatelessWidget {
 
 class _PetAvatar extends StatelessWidget {
   final PetModel pet;
-  const _PetAvatar({required this.pet});
+  final bool isSelected;
+  const _PetAvatar({required this.pet, required this.isSelected});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(right: 12),
       child: ScaleButton(
-        onPressed: () => context.pushNamed(AppRoutes.petOverview, extra: pet),
+        onPressed: () =>
+            context.read<PetListBloc>().add(SelectPet(petId: pet.id)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           spacing: 12,
@@ -61,10 +68,14 @@ class _PetAvatar extends StatelessWidget {
               width: 86,
               height: 86,
               decoration: BoxDecoration(
-                  color: AppColors.iconBgLight,
-                  borderRadius: BorderRadius.circular(24)),
-              child: ClipRRect(
+                color: AppColors.iconBgLight,
                 borderRadius: BorderRadius.circular(24),
+                border: isSelected
+                    ? Border.all(color: AppColors.primary, width: 2.5)
+                    : null,
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(22),
                 child: pet.imagePath != null && pet.imagePath!.isNotEmpty
                     ? Image.network(pet.imagePath!,
                         fit: BoxFit.cover,
@@ -76,7 +87,10 @@ class _PetAvatar extends StatelessWidget {
             ),
             Text(pet.name,
                 style: AppTextStyles.interMediumStyle500(
-                    fontSize: 16, fontColor: AppColors.grey1000),
+                    fontSize: 16,
+                    fontColor: isSelected
+                        ? AppColors.primary
+                        : AppColors.grey1000),
                 overflow: TextOverflow.ellipsis),
           ],
         ),

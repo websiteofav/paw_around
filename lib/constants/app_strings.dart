@@ -363,7 +363,12 @@ class AppStrings {
   static const String today = 'Today';
   static const String settingsSaved = 'Settings saved successfully';
   static const String addGrooming = 'Add Grooming';
+  static const String addProtection = 'Add Protection';
   static const String addTickFleaProtection = 'Add Tick & Flea Protection';
+  static const String vaccinationDue = 'Vaccination Due';
+  static const String groomingDue = 'Grooming Due';
+  static const String tickFleaDue = 'Tick & Flea Due';
+  static const String spotOnTreatment = 'Spot-on Treatment';
   static const String addGroomingDetails = 'Add grooming schedule';
   static const String addTickFleaDetails = 'Add treatment schedule';
 

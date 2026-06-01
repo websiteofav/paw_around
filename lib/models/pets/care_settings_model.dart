@@ -283,6 +283,12 @@ class CareSettingsModel extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [frequency, lastDate, snoozedUntil, completionHistory, updatedAt, groomingTypes];
+  List<Object?> get props => [
+        frequency,
+        lastDate,
+        snoozedUntil,
+        completionHistory,
+        updatedAt,
+        groomingTypes
+      ];
 }

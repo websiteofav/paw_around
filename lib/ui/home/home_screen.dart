@@ -27,6 +27,7 @@ import 'package:paw_around/ui/home/widgets/home_hero_banner.dart';
 import 'package:paw_around/ui/home/widgets/home_moments_section.dart';
 import 'package:paw_around/ui/home/widgets/home_my_babies_section.dart';
 import 'package:paw_around/ui/home/widgets/home_quick_actions_grid.dart';
+import 'package:paw_around/ui/home/widgets/home_care_reminders_section.dart';
 import 'package:paw_around/ui/home/widgets/lost_pets_section.dart';
 import 'package:paw_around/ui/home/widgets/place_card.dart';
 import 'package:paw_around/ui/home/widgets/home_shimmer.dart';
@@ -82,13 +83,14 @@ class _HomeScreenState extends State<HomeScreen> {
             }
             final hasPets =
                 petState is PetListLoaded && petState.pets.isNotEmpty;
-            final firstPet = hasPets ? petState.pets.first : null;
+            final selectedPet =
+                petState is PetListLoaded ? petState.selectedPet : null;
             return RefreshIndicator(
               onRefresh: _onRefresh,
               color: AppColors.primary,
               backgroundColor: AppColors.white,
               child: hasPets
-                  ? _buildDashboard(context, firstPet: firstPet)
+                  ? _buildDashboard(context, selectedPet: selectedPet)
                   : _buildWelcomeState(),
             );
           },
@@ -108,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildDashboard(BuildContext context, {PetModel? firstPet}) {
+  Widget _buildDashboard(BuildContext context, {PetModel? selectedPet}) {
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       child: Padding(
@@ -123,13 +125,24 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 24),
             const HomeMyBabiesSection(),
             const SizedBox(height: 24),
+            if (selectedPet != null)
+              HomeCareRemindersSection(
+                pet: selectedPet,
+                onVaccinesTap: () =>
+                    context.pushNamed(AppRoutes.addVaccine, extra: selectedPet),
+                onTickFleaTap: () => context
+                    .pushNamed(AppRoutes.tickFleaSettings, extra: selectedPet),
+                onGroomingTap: () => context
+                    .pushNamed(AppRoutes.groomingSettings, extra: selectedPet),
+              ),
+            if (selectedPet != null) const SizedBox(height: 24),
             HomeQuickActionsGrid(
               onVaccines: () =>
-                  context.pushNamed(AppRoutes.addVaccine, extra: firstPet),
+                  context.pushNamed(AppRoutes.addVaccine, extra: selectedPet),
               onTickFlea: () => context.pushNamed(AppRoutes.tickFleaSettings,
-                  extra: firstPet),
+                  extra: selectedPet),
               onGrooming: () => context.pushNamed(AppRoutes.groomingSettings,
-                  extra: firstPet),
+                  extra: selectedPet),
               onReportLost: () => context.pushNamed(AppRoutes.createPost),
             ),
             const SizedBox(height: 24),
