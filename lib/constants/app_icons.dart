@@ -49,6 +49,19 @@ class AppIcons {
   static const String scissorIcon = "assets/actions/syringe_icon.svg";
   static const String bugIcon = "assets/actions/bug_icon.png";
   static const String informationIcon = "assets/actions/information_icon.png";
+  static const String editIcon = "assets/profile/edit_icon.svg";
+
+  // Profile Icons
+  static const String myPostsIcon = "assets/profile/my_posts_icon.svg";
+  static const String settingsIcon = "assets/profile/settings_icon.svg";
+  static const String notificationIcon = "assets/profile/notification_icon.png";
+  static const String privacyIcon = "assets/profile/privacy_icon.svg";
+  static const String termsServiceIcon =
+      "assets/profile/terms_service_icon.svg";
+  static const String helpSupportIcon = "assets/profile/help_support_icon.svg";
+  static const String deleteAccountIcon =
+      "assets/profile/delete_account_icon.svg";
+  static const String pawProfileIcon = "assets/profile/paw_profile_icon.svg";
 
   AppIcons._();
 }

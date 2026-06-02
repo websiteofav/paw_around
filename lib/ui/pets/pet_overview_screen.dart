@@ -19,132 +19,175 @@ import 'package:paw_around/ui/widgets/animated_card.dart';
 class PetOverviewScreen extends StatelessWidget {
   final PetModel pet;
 
-  const PetOverviewScreen({
-    super.key,
-    required this.pet,
-  });
+  const PetOverviewScreen({super.key, required this.pet});
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PetListBloc, PetListState>(
       builder: (context, state) {
         final currentPet = state is PetListLoaded
-            ? state.pets.firstWhere(
-                (p) => p.id == pet.id,
-                orElse: () => pet,
-              )
+            ? state.pets.firstWhere((p) => p.id == pet.id, orElse: () => pet)
             : pet;
-
         return _buildContent(context, currentPet);
       },
     );
   }
 
   Widget _buildContent(BuildContext context, PetModel pet) {
+    final hasImage = pet.imagePath != null && pet.imagePath!.startsWith('http');
+    final topPad = MediaQuery.of(context).padding.top;
+
     return Scaffold(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-          onPressed: () => context.pop(),
-        ),
-        title: Text(
-          pet.name,
-          style: AppTextStyles.semiBoldStyle600(
-            fontSize: 20,
-            fontColor: AppColors.textPrimary,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AnimatedCard(index: 0, child: PetOverviewInfoCard(pet: pet)),
-              const SizedBox(height: 16),
-              AnimatedCard(index: 1, child: PetOverviewQrCard(pet: pet)),
-              const SizedBox(height: 16),
-              AnimatedCard(index: 2, child: PetOverviewLostToggle(pet: pet)),
-              const SizedBox(height: 16),
-              if (pet.supportsMedicalCare) ...[
-                AnimatedCard(
-                  index: 3,
-                  child: PetOverviewVaccinesSection(pet: pet),
+        child: Column(
+          children: [
+            // ─── Hero photo ──────────────────────────────────────────
+            Stack(
+              children: [
+                SizedBox(
+                  height: 300,
+                  width: double.infinity,
+                  child: hasImage
+                      ? Image.network(
+                          pet.imagePath!,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => const _PhotoPlaceholder(),
+                        )
+                      : const _PhotoPlaceholder(),
                 ),
-                const SizedBox(height: 16),
-              ],
-              AnimatedCard(
-                index: 4,
-                child: PetOverviewCareCard(
-                  icon: Icons.content_cut,
-                  title: AppStrings.grooming,
-                  subtitle: _getGroomingStatusText(pet),
-                  status: pet.groomingStatusType,
-                  onTap: () {
-                    context.pushNamed(
-                      AppRoutes.groomingSettings,
-                      extra: pet,
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 16),
-              if (pet.supportsMedicalCare) ...[
-                AnimatedCard(
-                  index: 5,
-                  child: PetOverviewCareCard(
-                    icon: Icons.shield_outlined,
-                    title: AppStrings.tickFleaPrevention,
-                    subtitle: _getTickFleaStatusText(pet),
-                    status: pet.tickFleaStatusType,
-                    onTap: () {
-                      context.pushNamed(
-                        AppRoutes.tickFleaSettings,
-                        extra: pet,
-                      );
-                    },
+                // Gradient so back button is always visible
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: const Alignment(0, -0.3),
+                        colors: [
+                          AppColors.shadowOverlay.withValues(alpha: 0.45),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                // Back button
+                Positioned(
+                  top: topPad + 8,
+                  left: 16,
+                  child: GestureDetector(
+                    onTap: () => context.pop(),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: AppColors.white,
+                      size: 22,
+                    ),
+                  ),
+                ),
+                // Pet name over photo
+                Positioned(
+                  bottom: 16,
+                  left: 20,
+                  child: Text(
+                    pet.name,
+                    style: AppTextStyles.boldStyle700(
+                        fontSize: 28, fontColor: AppColors.white),
+                  ),
+                ),
               ],
-              if (!pet.supportsMedicalCare) const SizedBox(height: 16),
-              AnimatedCard(
-                index: 6,
-                child: PetOverviewEditButton(pet: pet),
+            ),
+            // ─── Body cards ──────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  AnimatedCard(index: 0, child: PetOverviewInfoCard(pet: pet)),
+                  const SizedBox(height: 16),
+                  AnimatedCard(index: 1, child: PetOverviewQrCard(pet: pet)),
+                  const SizedBox(height: 16),
+                  AnimatedCard(index: 2, child: PetOverviewLostToggle(pet: pet)),
+                  const SizedBox(height: 16),
+                  if (pet.supportsMedicalCare) ...[
+                    AnimatedCard(
+                        index: 3,
+                        child: PetOverviewVaccinesSection(pet: pet)),
+                    const SizedBox(height: 16),
+                  ],
+                  AnimatedCard(
+                    index: 4,
+                    child: PetOverviewCareCard(
+                      icon: Icons.content_cut,
+                      title: AppStrings.grooming,
+                      subtitle: _groomingStatus(pet),
+                      status: pet.groomingStatusType,
+                      onTap: () => context.pushNamed(
+                          AppRoutes.groomingSettings,
+                          extra: pet),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  if (pet.supportsMedicalCare) ...[
+                    AnimatedCard(
+                      index: 5,
+                      child: PetOverviewCareCard(
+                        icon: Icons.shield_outlined,
+                        title: AppStrings.tickFleaPrevention,
+                        subtitle: _tickFleaStatus(pet),
+                        status: pet.tickFleaStatusType,
+                        onTap: () => context.pushNamed(
+                            AppRoutes.tickFleaSettings,
+                            extra: pet),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                  if (!pet.supportsMedicalCare) const SizedBox(height: 0),
+                  AnimatedCard(
+                      index: 6, child: PetOverviewEditButton(pet: pet)),
+                  const SizedBox(height: 16),
+                  AnimatedCard(
+                      index: 7, child: PetOverviewDeleteButton(pet: pet)),
+                  const SizedBox(height: 32),
+                ],
               ),
-              const SizedBox(height: 12),
-              AnimatedCard(
-                index: 7,
-                child: PetOverviewDeleteButton(pet: pet),
-              ),
-              const SizedBox(height: 20),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  static String _getGroomingStatusText(PetModel pet) {
-    final statusType = pet.groomingStatusType;
-    if (statusType == null) return AppStrings.notSet;
-    if (statusType == 'overdue' || statusType == 'soon') {
-      return AppStrings.upcomingSoon;
-    }
-    return AppStrings.allGood;
+  static String _groomingStatus(PetModel pet) {
+    final s = pet.groomingStatusType;
+    if (s == null) return AppStrings.notSet;
+    return (s == 'overdue' || s == 'soon')
+        ? AppStrings.upcomingSoon
+        : AppStrings.allGood;
   }
 
-  static String _getTickFleaStatusText(PetModel pet) {
-    final statusType = pet.tickFleaStatusType;
-    if (statusType == null) return AppStrings.notSet;
-    if (statusType == 'overdue' || statusType == 'soon') {
-      return AppStrings.nextDoseSoon;
-    }
-    return AppStrings.allGood;
+  static String _tickFleaStatus(PetModel pet) {
+    final s = pet.tickFleaStatusType;
+    if (s == null) return AppStrings.notSet;
+    return (s == 'overdue' || s == 'soon')
+        ? AppStrings.nextDoseSoon
+        : AppStrings.allGood;
+  }
+}
+
+class _PhotoPlaceholder extends StatelessWidget {
+  const _PhotoPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: AppColors.iconBgLight,
+      child: Center(
+        child: Icon(
+          Icons.pets,
+          size: 64,
+          color: AppColors.primary.withValues(alpha: 0.3),
+        ),
+      ),
+    );
   }
 }

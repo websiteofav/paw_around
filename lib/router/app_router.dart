@@ -38,6 +38,7 @@ import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/pets/pet_qr_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
+import 'package:paw_around/ui/profile/profile_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
 import 'package:paw_around/ui/profile/my_posts_screen.dart';
 import 'package:paw_around/ui/profile/help_support_screen.dart';
@@ -306,6 +307,13 @@ class AppRouter {
                 final data = state.extra as ActionCardData;
                 return ActionCardDetailScreen(data: data);
               },
+            ),
+
+            // Profile Route
+            GoRoute(
+              path: AppRoutes.profileTab,
+              name: AppRoutes.profileTab,
+              builder: (context, state) => const ProfileScreen(),
             ),
 
             // Edit Profile Route

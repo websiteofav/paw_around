@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:paw_around/bloc/home/home_bloc.dart';
-import 'package:paw_around/bloc/home/home_event.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/community/widgets/community_action_bottom_sheet.dart';
@@ -45,8 +44,7 @@ class _PawCircleScreenState extends State<PawCircleScreen>
           DashboardAppBar(
             title: AppStrings.communityTitle,
             showProfileAvatar: true,
-            onProfileTap: () =>
-                context.read<HomeBloc>().add(HomeTabChanged(3)),
+            onProfileTap: () => context.pushNamed(AppRoutes.profileTab),
             actions: [
               DashboardAppBarAction(
                 icon: Icons.add_circle_outline,

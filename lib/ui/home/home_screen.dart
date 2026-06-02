@@ -120,8 +120,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             const SizedBox(height: 24),
             HomeHeader(
-                onProfileTap: () =>
-                    context.read<HomeBloc>().add(HomeTabChanged(3))),
+              onProfileTap: () => context.pushNamed(AppRoutes.profileTab),
+            ),
             const SizedBox(height: 24),
             const HomeMyBabiesSection(),
             const SizedBox(height: 24),
