@@ -108,7 +108,7 @@ class ProfileAccountSection extends StatelessWidget {
     return ScaleButton(
       onPressed: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Row(
           children: [
             Center(

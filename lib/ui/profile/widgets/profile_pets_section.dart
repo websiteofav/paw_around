@@ -51,7 +51,7 @@ class _PetsList extends StatelessWidget {
       children: [
         Container(
           decoration: smoothDecoration(
-            cornerRadius: 20,
+            cornerRadius: 36,
             color: AppColors.white,
             shadows: [
               BoxShadow(
@@ -105,44 +105,38 @@ class _PetRow extends StatelessWidget {
           children: [
             // Pet photo
             ClipSmoothRect(
-              radius: AppSmoothRadius.custom(14),
-              child: Container(
-                width: 68,
-                height: 68,
-                color: AppColors.iconBgLight,
-                child: hasImage
-                    ? Image.network(pet.imagePath!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(Icons.pets,
-                            color: AppColors.primary, size: 28))
-                    : const Icon(Icons.pets,
-                        color: AppColors.primary, size: 28),
-              ),
+              radius: AppSmoothRadius.custom(24),
+              child: hasImage
+                  ? Image.network(pet.imagePath!,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const Icon(Icons.pets,
+                          color: AppColors.primary, size: 86))
+                  : const Icon(Icons.pets, color: AppColors.primary, size: 86),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
             // Name + breed/age
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(pet.name,
-                      style: AppTextStyles.boldStyle700(
+                      style: AppTextStyles.interBoldStyle700(
                           fontSize: 16, fontColor: AppColors.grey1000)),
                   const SizedBox(height: 4),
                   Text(
                     pet.breed.isNotEmpty
                         ? '${pet.breed} · ${_age(pet.dateOfBirth)}'
                         : _age(pet.dateOfBirth),
-                    style: AppTextStyles.regularStyle400(
-                        fontSize: 13, fontColor: AppColors.textSecondary),
+                    style: AppTextStyles.interRegularStyle400(
+                        fontSize: 12, fontColor: AppColors.grey600),
                   ),
                 ],
               ),
             ),
             // Arrow button
             Container(
-              width: 34,
-              height: 34,
+              width: 20,
+              height: 20,
               decoration: const BoxDecoration(
                 color: AppColors.grey1000,
                 shape: BoxShape.circle,
@@ -165,35 +159,75 @@ class _AddAnotherPetButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScaleButton(
       onPressed: onTap,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: ShapeDecoration(
-          shape: SmoothRectangleBorder(
-            borderRadius: AppSmoothRadius.lg,
-            side: BorderSide(
-              color: AppColors.textSecondary.withValues(alpha: 0.35),
-              width: 1.5,
-              style: BorderStyle.solid,
-            ),
-          ),
+      child: CustomPaint(
+        painter: _DashedBorderPainter(
+          color: AppColors.textSecondary.withValues(alpha: 0.35),
+          borderRadius: 20,
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.add,
-                size: 18,
-                color: AppColors.textSecondary.withValues(alpha: 0.7)),
-            const SizedBox(width: 8),
-            Text(AppStrings.addAnotherPet,
-                style: AppTextStyles.mediumStyle500(
-                    fontSize: 15,
-                    fontColor: AppColors.textSecondary.withValues(alpha: 0.7))),
-          ],
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.add,
+                  size: 18,
+                  color: AppColors.textSecondary.withValues(alpha: 0.7)),
+              const SizedBox(width: 8),
+              Text(AppStrings.addAnotherPet,
+                  style: AppTextStyles.mediumStyle500(
+                      fontSize: 15,
+                      fontColor:
+                          AppColors.textSecondary.withValues(alpha: 0.7))),
+            ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _DashedBorderPainter extends CustomPainter {
+  final Color color;
+  final double borderRadius;
+
+  const _DashedBorderPainter({required this.color, this.borderRadius = 20});
+
+  static const double _stroke = 1.5;
+  static const double _dash = 7;
+  static const double _gap = 5;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = _stroke
+      ..style = PaintingStyle.stroke;
+
+    final path = Path()
+      ..addRRect(RRect.fromRectAndRadius(
+        Rect.fromLTWH(_stroke / 2, _stroke / 2,
+            size.width - _stroke, size.height - _stroke),
+        Radius.circular(borderRadius),
+      ));
+
+    for (final metric in path.computeMetrics()) {
+      double distance = 0;
+      bool draw = true;
+      while (distance < metric.length) {
+        final len = draw ? _dash : _gap;
+        if (draw) {
+          canvas.drawPath(metric.extractPath(distance, distance + len), paint);
+        }
+        distance += len;
+        draw = !draw;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedBorderPainter old) =>
+      old.color != color || old.borderRadius != borderRadius;
 }
 
 // ─── No-pets state ────────────────────────────────────────────────

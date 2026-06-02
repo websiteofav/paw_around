@@ -103,7 +103,7 @@ class _HeroPhotoArea extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          height: 220,
+          height: 360,
           width: double.infinity,
           child: hasPhoto
               ? Image.network(
