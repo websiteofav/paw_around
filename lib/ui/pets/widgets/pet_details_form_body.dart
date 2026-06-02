@@ -126,6 +126,7 @@ class PetDetailsFormBody extends StatelessWidget {
         CommonButton(
           text: AppStrings.skipForNow,
           onPressed: onSkip,
+          customColor: AppColors.secondaryCTA,
           variant: ButtonVariant.outline,
           textStyle: AppTextStyles.interBoldStyle700(
               fontSize: 16, fontColor: AppColors.secondaryCTA),

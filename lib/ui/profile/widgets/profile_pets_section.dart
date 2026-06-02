@@ -109,6 +109,8 @@ class _PetRow extends StatelessWidget {
               child: hasImage
                   ? Image.network(pet.imagePath!,
                       fit: BoxFit.cover,
+                      height: 86,
+                      width: 86,
                       errorBuilder: (_, __, ___) => const Icon(Icons.pets,
                           color: AppColors.primary, size: 86))
                   : const Icon(Icons.pets, color: AppColors.primary, size: 86),
@@ -206,8 +208,8 @@ class _DashedBorderPainter extends CustomPainter {
 
     final path = Path()
       ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromLTWH(_stroke / 2, _stroke / 2,
-            size.width - _stroke, size.height - _stroke),
+        Rect.fromLTWH(_stroke / 2, _stroke / 2, size.width - _stroke,
+            size.height - _stroke),
         Radius.circular(borderRadius),
       ));
 

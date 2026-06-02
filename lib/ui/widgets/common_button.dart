@@ -33,6 +33,7 @@ class CommonButton extends StatelessWidget {
   final double? buttonWidth;
   final TextStyle? textStyle;
   final double? borderRadius;
+  final Color? borderColor;
 
   const CommonButton({
     super.key,
@@ -51,6 +52,7 @@ class CommonButton extends StatelessWidget {
     this.buttonWidth,
     this.textStyle,
     this.borderRadius,
+    this.borderColor,
   });
 
   @override
