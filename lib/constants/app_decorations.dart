@@ -8,24 +8,23 @@ class AppSmoothRadius {
 
   static const double _s = 1.0;
 
-  static SmoothBorderRadius get xs =>
-      SmoothBorderRadius(cornerRadius: AppConstants.radiusXS, cornerSmoothing: _s);
-  static SmoothBorderRadius get sm =>
-      SmoothBorderRadius(cornerRadius: AppConstants.radiusSM, cornerSmoothing: _s);
-  static SmoothBorderRadius get md =>
-      SmoothBorderRadius(cornerRadius: AppConstants.radiusMD, cornerSmoothing: _s);
-  static SmoothBorderRadius get lg =>
-      SmoothBorderRadius(cornerRadius: AppConstants.radiusLG, cornerSmoothing: _s);
-  static SmoothBorderRadius get xl =>
-      SmoothBorderRadius(cornerRadius: AppConstants.radiusXL, cornerSmoothing: _s);
-  static SmoothBorderRadius get input =>
-      SmoothBorderRadius(cornerRadius: AppConstants.inputBorderRadius, cornerSmoothing: _s);
+  static SmoothBorderRadius get xs => SmoothBorderRadius(
+      cornerRadius: AppConstants.radiusXS, cornerSmoothing: _s);
+  static SmoothBorderRadius get sm => SmoothBorderRadius(
+      cornerRadius: AppConstants.radiusSM, cornerSmoothing: _s);
+  static SmoothBorderRadius get md => SmoothBorderRadius(
+      cornerRadius: AppConstants.radiusMD, cornerSmoothing: _s);
+  static SmoothBorderRadius get lg => SmoothBorderRadius(
+      cornerRadius: AppConstants.radiusLG, cornerSmoothing: _s);
+  static SmoothBorderRadius get xl => SmoothBorderRadius(
+      cornerRadius: AppConstants.radiusXL, cornerSmoothing: _s);
+  static SmoothBorderRadius get input => SmoothBorderRadius(
+      cornerRadius: AppConstants.inputBorderRadius, cornerSmoothing: _s);
 
   static SmoothBorderRadius custom(double r) =>
       SmoothBorderRadius(cornerRadius: r, cornerSmoothing: _s);
 
-  static SmoothBorderRadius topOnly(double r) =>
-      SmoothBorderRadius.only(
+  static SmoothBorderRadius topOnly(double r) => SmoothBorderRadius.only(
         topLeft: SmoothRadius(cornerRadius: r, cornerSmoothing: _s),
         topRight: SmoothRadius(cornerRadius: r, cornerSmoothing: _s),
       );
@@ -46,8 +45,8 @@ ShapeDecoration smoothDecoration({
     shadows: shadows,
     image: image,
     shape: SmoothRectangleBorder(
-      borderRadius:
-          borderRadius ?? SmoothBorderRadius(cornerRadius: cornerRadius, cornerSmoothing: 1.0),
+      borderRadius: borderRadius ??
+          SmoothBorderRadius(cornerRadius: cornerRadius, cornerSmoothing: 1.0),
       side: side,
     ),
   );

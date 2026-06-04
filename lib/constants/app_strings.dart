@@ -881,5 +881,33 @@ class AppStrings {
     return 'Recommended for $petName';
   }
 
+  // Pet Overview - New Design
+  static String aboutPet(String name) => 'About $name';
+  static const String weightLabel = 'Weight';
+  static const String heightLabel = 'Height';
+  static const String sexLabel = 'Sex';
+  static const String kgUnit = 'kg';
+  static const String cmUnit = 'cm';
+  static const String addBio = 'Add Bio';
+  static String whatsPetLikeDay(String name) => "What's $name like day to day?";
+  static const String addPersonality = 'Add Personality';
+  static const String careSection = 'Care';
+  static const String startVaccination = 'Start Vaccination';
+  static const String startVaccinationJourney =
+      "Start your pet's vaccination journey";
+  static const String preventTicksFleasEarly = 'Prevent ticks and fleas early';
+  static const String keepPetCleanHappy = 'Keep your pet clean and happy';
+  static const String protectFromSeriousDiseases =
+      'Protect your pet from serious diseases';
+  static const String keepPetSafeItchFree = 'Keep your pet safe and itch-free';
+  static const String bookFirstGroomingSession =
+      'Book their first grooming session';
+  static const String viewVaccines = 'View Vaccines';
+  static const String viewSchedule = 'View Schedule';
+  static const String activityHistory = 'Activity History';
+  static const String noActivityYet = 'No activity yet';
+  static const String startLoggingCare =
+      'Your pet’s updates will show up here as you add Vaccine, grooming, and more.';
+
   AppStrings._();
 }

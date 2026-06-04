@@ -63,5 +63,8 @@ class AppIcons {
       "assets/profile/delete_account_icon.svg";
   static const String pawProfileIcon = "assets/profile/paw_profile_icon.svg";
 
+  static const String petNoActivityIcon =
+      "assets/profile/pet_no_activity_icon.png";
+
   AppIcons._();
 }
