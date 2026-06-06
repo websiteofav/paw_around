@@ -21,6 +21,7 @@ class PetOverviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PetListBloc, PetListState>(
+      buildWhen: (_, current) => current is PetListLoaded,
       builder: (context, state) {
         final currentPet = state is PetListLoaded
             ? state.pets.firstWhere((p) => p.id == pet.id, orElse: () => pet)
