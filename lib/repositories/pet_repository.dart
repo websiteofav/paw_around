@@ -65,13 +65,11 @@ class PetRepository {
         }
       }
 
-      // Check grooming with expired snooze
-      if (pet.groomingSettings != null) {
-        final settings = pet.groomingSettings!;
+      // Check grooming with expired snooze — reschedule any item whose snooze ended
+      for (final settings in pet.groomingSettings) {
         if (settings.hasReminder &&
             settings.snoozedUntil != null &&
             settings.snoozedUntil!.isBefore(now)) {
-          // Snooze expired - reschedule notifications
           try {
             await notificationService.scheduleCareReminder(
               petId: pet.id,
@@ -142,27 +140,35 @@ class PetRepository {
     if (nameChanged) {
       final updatedPet = await getPetById(pet.id);
       if (updatedPet != null) {
-        // Reschedule all care reminders
-        for (final type in [ReminderType.grooming, ReminderType.tickFlea]) {
-          final settings = type == ReminderType.grooming
-              ? updatedPet.groomingSettings
-              : updatedPet.tickFleaSettings;
-
-          if (settings != null && settings.hasReminder) {
-            // Cancel old notifications
-            await NotificationService().cancelCareReminder(
-              petId: updatedPet.id,
-              type: type,
-            );
-
-            // Reschedule with new name
+        // Reschedule grooming reminders (one per grooming type item)
+        await NotificationService().cancelCareReminder(
+          petId: updatedPet.id,
+          type: ReminderType.grooming,
+        );
+        for (final s in updatedPet.groomingSettings) {
+          if (s.hasReminder) {
             await NotificationService().scheduleCareReminder(
               petId: updatedPet.id,
               petName: updatedPet.name,
-              type: type,
-              settings: settings,
+              type: ReminderType.grooming,
+              settings: s,
             );
           }
+        }
+
+        // Reschedule tick & flea reminder
+        final tickFlea = updatedPet.tickFleaSettings;
+        if (tickFlea != null && tickFlea.hasReminder) {
+          await NotificationService().cancelCareReminder(
+            petId: updatedPet.id,
+            type: ReminderType.tickFlea,
+          );
+          await NotificationService().scheduleCareReminder(
+            petId: updatedPet.id,
+            petName: updatedPet.name,
+            type: ReminderType.tickFlea,
+            settings: tickFlea,
+          );
         }
 
         // Reschedule all vaccine reminders
@@ -252,11 +258,23 @@ class PetRepository {
     await batch.commit();
   }
 
-  // Update grooming settings for a pet
+  // Update (upsert) a single grooming settings entry into the pet's list.
+  // Matches by groomingType; if not found, appends.
   Future<void> updateGroomingSettings(
       String petId, CareSettingsModel settings) async {
+    final pet = await getPetById(petId);
+    if (pet == null) return;
+
+    final updated = List<CareSettingsModel>.from(pet.groomingSettings);
+    final idx = updated.indexWhere((s) => s.groomingType == settings.groomingType);
+    if (idx >= 0) {
+      updated[idx] = settings;
+    } else {
+      updated.add(settings);
+    }
+
     await _petsRef.doc(petId).update({
-      'groomingSettings': settings.toFirestore(),
+      'groomingSettings': updated.map((s) => s.toFirestore()).toList(),
       'updatedAt': Timestamp.now(),
     });
   }
@@ -355,8 +373,7 @@ class PetRepository {
   Future<List<PetModel>> getPetsWithUpcomingGrooming() async {
     final pets = await getAllPets();
     return pets.where((pet) {
-      return pet.groomingSettings?.isDueSoon == true ||
-          pet.groomingSettings?.isOverdue == true;
+      return pet.groomingSettings.any((s) => s.isDueSoon || s.isOverdue);
     }).toList();
   }
 
@@ -549,107 +566,109 @@ class PetRepository {
     });
   }
 
-  // Mark grooming as done
+  // Mark grooming as done.
+  // If groomingType is provided, only updates that specific item.
+  // If null, updates all items in the list.
   Future<void> markGroomingAsDone(String petId,
-      {DateTime? completionDate}) async {
+      {DateTime? completionDate, String? groomingType}) async {
     final pet = await getPetById(petId);
-    if (pet == null || pet.groomingSettings == null) {
-      return;
-    }
+    if (pet == null || pet.groomingSettings.isEmpty) return;
 
     final completion = completionDate ?? DateTime.now();
 
-    // Get existing history and deduplicate same-day entries
-    final updatedHistory =
-        List<DateTime>.from(pet.groomingSettings!.completionHistory);
+    final updatedList = pet.groomingSettings.map((s) {
+      if (groomingType != null && s.groomingType != groomingType) return s;
 
-    // Remove any entry on the same day (deduplication)
-    updatedHistory.removeWhere((d) =>
-        d.year == completion.year &&
-        d.month == completion.month &&
-        d.day == completion.day);
+      final history = List<DateTime>.from(s.completionHistory);
+      history.removeWhere((d) =>
+          d.year == completion.year &&
+          d.month == completion.month &&
+          d.day == completion.day);
+      history.add(completion);
+      history.sort((a, b) => b.compareTo(a));
+      final latest = history.isNotEmpty ? history[0] : completion;
 
-    // Add new completion date
-    updatedHistory.add(completion);
+      return s.copyWith(
+        lastDate: latest,
+        completionHistory: history,
+        clearSnoozedUntil: true,
+        updatedAt: DateTime.now(),
+      );
+    }).toList();
 
-    // Sort descending (most recent first)
-    updatedHistory.sort((a, b) => b.compareTo(a));
-
-    // Get the latest completion date (first item after sorting)
-    final latestCompletion =
-        updatedHistory.isNotEmpty ? updatedHistory[0] : completion;
-
-    final updatedSettings = pet.groomingSettings!.copyWith(
-      lastDate: latestCompletion, // Use latest from history
-      completionHistory: updatedHistory,
-      clearSnoozedUntil: true,
-      updatedAt: DateTime.now(),
-    );
-
-    await updateGroomingSettings(petId, updatedSettings);
+    await _petsRef.doc(petId).update({
+      'groomingSettings': updatedList.map((s) => s.toFirestore()).toList(),
+      'updatedAt': Timestamp.now(),
+    });
   }
 
-  // Unsnooze grooming reminder
-  Future<void> unsnoozeGrooming(String petId) async {
+  // Unsnooze grooming reminder (all items).
+  Future<void> unsnoozeGrooming(String petId, {String? groomingType}) async {
     final pet = await getPetById(petId);
-    if (pet == null || pet.groomingSettings == null) {
-      return;
-    }
+    if (pet == null || pet.groomingSettings.isEmpty) return;
 
-    final updatedSettings = pet.groomingSettings!.copyWith(
-      clearSnoozedUntil: true,
-      updatedAt: DateTime.now(),
-    );
+    final updatedList = pet.groomingSettings.map((s) {
+      if (groomingType != null && s.groomingType != groomingType) return s;
+      return s.copyWith(clearSnoozedUntil: true, updatedAt: DateTime.now());
+    }).toList();
 
-    await updateGroomingSettings(petId, updatedSettings);
+    await _petsRef.doc(petId).update({
+      'groomingSettings': updatedList.map((s) => s.toFirestore()).toList(),
+      'updatedAt': Timestamp.now(),
+    });
 
     // Reschedule notifications after unsnoozing
     final updatedPet = await getPetById(petId);
-    if (updatedPet != null && updatedPet.groomingSettings != null) {
-      final settings = updatedPet.groomingSettings!;
-      if (settings.hasReminder) {
-        await NotificationService().scheduleCareReminder(
-          petId: updatedPet.id,
-          petName: updatedPet.name,
-          type: ReminderType.grooming,
-          settings: settings,
-        );
+    if (updatedPet != null) {
+      for (final s in updatedPet.groomingSettings) {
+        if (s.hasReminder) {
+          await NotificationService().scheduleCareReminder(
+            petId: updatedPet.id,
+            petName: updatedPet.name,
+            type: ReminderType.grooming,
+            settings: s,
+          );
+        }
       }
     }
   }
 
-  // Snooze grooming for specified days
-  Future<void> snoozeGrooming(String petId, int days) async {
+  // Snooze grooming for specified days.
+  // If groomingType is provided, only snoozes that specific item.
+  Future<void> snoozeGrooming(String petId, int days,
+      {String? groomingType}) async {
     final pet = await getPetById(petId);
-    if (pet == null || pet.groomingSettings == null) {
-      return;
-    }
+    if (pet == null || pet.groomingSettings.isEmpty) return;
 
-    // Cancel existing notifications
+    // Cancel existing grooming notifications
     await NotificationService().cancelCareReminder(
       petId: petId,
       type: ReminderType.grooming,
     );
 
     final snoozedUntil = DateTime.now().add(Duration(days: days));
-    final updatedSettings = pet.groomingSettings!.copyWith(
-      snoozedUntil: snoozedUntil,
-      updatedAt: DateTime.now(),
-    );
+    final updatedList = pet.groomingSettings.map((s) {
+      if (groomingType != null && s.groomingType != groomingType) return s;
+      return s.copyWith(snoozedUntil: snoozedUntil, updatedAt: DateTime.now());
+    }).toList();
 
-    await updateGroomingSettings(petId, updatedSettings);
+    await _petsRef.doc(petId).update({
+      'groomingSettings': updatedList.map((s) => s.toFirestore()).toList(),
+      'updatedAt': Timestamp.now(),
+    });
 
-    // Reschedule notifications if reminder is enabled
-    // The scheduling logic will automatically skip past dates
-    if (updatedSettings.hasReminder && updatedSettings.nextDueDate != null) {
-      final updatedPet = await getPetById(petId);
-      if (updatedPet != null && updatedPet.groomingSettings != null) {
-        await NotificationService().scheduleCareReminder(
-          petId: updatedPet.id,
-          petName: updatedPet.name,
-          type: ReminderType.grooming,
-          settings: updatedPet.groomingSettings!,
-        );
+    // Reschedule notifications for items that have a reminder and due date
+    final updatedPet = await getPetById(petId);
+    if (updatedPet != null) {
+      for (final s in updatedPet.groomingSettings) {
+        if (s.hasReminder && s.nextDueDate != null) {
+          await NotificationService().scheduleCareReminder(
+            petId: updatedPet.id,
+            petName: updatedPet.name,
+            type: ReminderType.grooming,
+            settings: s,
+          );
+        }
       }
     }
   }

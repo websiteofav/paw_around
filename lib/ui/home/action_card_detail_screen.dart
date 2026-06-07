@@ -83,7 +83,7 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
       case ActionType.vaccine:
         return vaccine?.isOverdue ?? false;
       case ActionType.grooming:
-        return pet.groomingSettings?.isOverdue ?? false;
+        return pet.groomingSettings.any((s) => s.isOverdue);
       case ActionType.tickFlea:
         return pet.tickFleaSettings?.isOverdue ?? false;
     }
@@ -94,7 +94,12 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
       case ActionType.vaccine:
         return vaccine?.daysUntilDue ?? 0;
       case ActionType.grooming:
-        return pet.groomingSettings?.daysUntilDue ?? 0;
+        // Return the smallest daysUntilDue across all active grooming items.
+        final activeGrooming = pet.groomingSettings.where((s) => s.hasReminder).toList();
+        if (activeGrooming.isEmpty) return 0;
+        return activeGrooming
+            .map((s) => s.daysUntilDue ?? 0)
+            .reduce((a, b) => a < b ? a : b);
       case ActionType.tickFlea:
         return pet.tickFleaSettings?.daysUntilDue ?? 0;
     }
@@ -198,27 +203,27 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
 
           // Fetch updated pet to get new settings
           final updatedPet = await repo.getPetById(pet.id);
-          if (updatedPet != null &&
-              updatedPet.groomingSettings != null &&
-              mounted) {
-            final settings = updatedPet.groomingSettings!;
-
-            // Reschedule notifications for the new nextDueDate
-            if (settings.hasReminder) {
+          if (updatedPet != null && mounted) {
+            // Reschedule notifications for each active grooming item.
+            final activeItems = updatedPet.groomingSettings
+                .where((s) => s.hasReminder)
+                .toList();
+            if (activeItems.isNotEmpty) {
               final hasPermission =
                   await notificationService.requestPermissionIfNeeded(
                 context,
                 updatedPet.name,
                 ReminderType.grooming,
               );
-
               if (hasPermission) {
-                await notificationService.scheduleCareReminder(
-                  petId: updatedPet.id,
-                  petName: updatedPet.name,
-                  type: ReminderType.grooming,
-                  settings: settings,
-                );
+                for (final s in activeItems) {
+                  await notificationService.scheduleCareReminder(
+                    petId: updatedPet.id,
+                    petName: updatedPet.name,
+                    type: ReminderType.grooming,
+                    settings: s,
+                  );
+                }
               }
             }
           }

@@ -1,4 +1,3 @@
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,9 +23,14 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 class GroomingSettingsScreen extends StatefulWidget {
   final PetModel pet;
 
+  /// When non-null the screen edits that specific type; the type-selector chip
+  /// UI is hidden and replaced with a read-only label.
+  final String? groomingType;
+
   const GroomingSettingsScreen({
     super.key,
     required this.pet,
+    this.groomingType,
   });
 
   @override
@@ -45,12 +49,18 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
   @override
   void initState() {
     super.initState();
-    _selectedFrequency =
-        widget.pet.groomingSettings?.frequency ?? CareFrequency.none;
-    _lastDate = widget.pet.groomingSettings?.lastDate ?? DateTime.now();
-    _isSnoozed = widget.pet.groomingSettings?.isSnoozed ?? false;
-    _selectedGroomingTypes =
-        List<String>.from(widget.pet.groomingSettings?.groomingTypes ?? []);
+    // Find the matching settings entry for this groomingType (if any).
+    final existing = widget.groomingType != null
+        ? widget.pet.groomingSettings
+            .where((s) => s.groomingType == widget.groomingType)
+            .firstOrNull
+        : null;
+    _selectedFrequency = existing?.frequency ?? CareFrequency.none;
+    _lastDate = existing?.lastDate ?? DateTime.now();
+    _isSnoozed = existing?.isSnoozed ?? false;
+    _selectedGroomingTypes = existing != null
+        ? List<String>.from(existing.groomingTypes)
+        : (widget.groomingType != null ? [widget.groomingType!] : []);
   }
 
   void _onFrequencyChanged(CareFrequency frequency) {
@@ -109,7 +119,8 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
 
   Future<void> _save() async {
     if (_isSaving) return;
-    if (_selectedGroomingTypes.isEmpty) {
+    // When groomingType is already fixed, no need to validate the chip selector.
+    if (widget.groomingType == null && _selectedGroomingTypes.isEmpty) {
       setState(() => _groomingTypeError = AppStrings.selectGroomingType);
       return;
     }
@@ -124,6 +135,7 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
         lastDate: _lastDate,
         updatedAt: DateTime.now(),
         groomingTypes: _selectedGroomingTypes,
+        groomingType: widget.groomingType,
       );
 
       await sl<PetRepository>().updateGroomingSettings(widget.pet.id, settings);
@@ -187,7 +199,12 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
   }
 
   Widget _buildSnoozeBanner() {
-    final snoozedUntil = widget.pet.groomingSettings?.snoozedUntil;
+    final existing = widget.groomingType != null
+        ? widget.pet.groomingSettings
+            .where((s) => s.groomingType == widget.groomingType)
+            .firstOrNull
+        : null;
+    final snoozedUntil = existing?.snoozedUntil;
     final daysLeft = snoozedUntil != null
         ? snoozedUntil.difference(DateTime.now()).inDays
         : 0;
@@ -202,7 +219,7 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.snooze,
             color: AppColors.warning,
             size: 24,
@@ -274,14 +291,29 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
             if (_isSnoozed) _buildSnoozeBanner(),
             _buildHero(),
             const SizedBox(height: 36),
-            GroomingTypeSelector(
-              selectedTypes: _selectedGroomingTypes,
-              error: _groomingTypeError,
-              onChanged: (types) => setState(() {
-                _selectedGroomingTypes = types;
-                if (types.isNotEmpty) _groomingTypeError = null;
-              }),
-            ),
+            if (widget.groomingType != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: const BoxDecoration(
+                  color: AppColors.background3,
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+                child: Text(
+                  widget.groomingType!,
+                  style: AppTextStyles.semiBoldStyle600(
+                      fontColor: AppColors.textPrimary),
+                ),
+              )
+            else
+              GroomingTypeSelector(
+                selectedTypes: _selectedGroomingTypes,
+                error: _groomingTypeError,
+                onChanged: (types) => setState(() {
+                  _selectedGroomingTypes = types;
+                  if (types.isNotEmpty) _groomingTypeError = null;
+                }),
+              ),
             const SizedBox(height: 24),
             FrequencySelector(
               title: AppStrings.frequency,

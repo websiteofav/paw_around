@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+const _undefinedCare = Object();
+
 enum CareFrequency {
   none,
   weekly,
@@ -70,6 +72,11 @@ class CareSettingsModel extends Equatable {
   final DateTime updatedAt;
   final List<String> groomingTypes;
 
+  /// For the new per-type grooming model: the specific grooming type this
+  /// settings entry represents (e.g. 'Bathing', 'Nail Trimming').
+  /// Null for tick & flea settings.
+  final String? groomingType;
+
   const CareSettingsModel({
     required this.frequency,
     this.lastDate,
@@ -77,6 +84,7 @@ class CareSettingsModel extends Equatable {
     this.completionHistory = const [],
     required this.updatedAt,
     this.groomingTypes = const [],
+    this.groomingType,
   });
 
   factory CareSettingsModel.empty() {
@@ -98,6 +106,7 @@ class CareSettingsModel extends Equatable {
     bool clearCompletionHistory = false,
     DateTime? updatedAt,
     List<String>? groomingTypes,
+    Object? groomingType = _undefinedCare,
   }) {
     return CareSettingsModel(
       frequency: frequency ?? this.frequency,
@@ -109,6 +118,9 @@ class CareSettingsModel extends Equatable {
           : (completionHistory ?? this.completionHistory),
       updatedAt: updatedAt ?? this.updatedAt,
       groomingTypes: groomingTypes ?? this.groomingTypes,
+      groomingType: groomingType == _undefinedCare
+          ? this.groomingType
+          : groomingType as String?,
     );
   }
 
@@ -188,6 +200,7 @@ class CareSettingsModel extends Equatable {
           completionHistory.map((date) => Timestamp.fromDate(date)).toList(),
       'updatedAt': Timestamp.fromDate(updatedAt),
       'groomingTypes': groomingTypes,
+      'groomingType': groomingType,
     };
   }
 
@@ -216,6 +229,7 @@ class CareSettingsModel extends Equatable {
       completionHistory: history,
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
       groomingTypes: List<String>.from(data['groomingTypes'] ?? []),
+      groomingType: data['groomingType'] as String?,
     );
   }
 
@@ -229,6 +243,7 @@ class CareSettingsModel extends Equatable {
           completionHistory.map((date) => date.toIso8601String()).toList(),
       'updatedAt': updatedAt.toIso8601String(),
       'groomingTypes': groomingTypes,
+      'groomingType': groomingType,
     };
   }
 
@@ -279,6 +294,7 @@ class CareSettingsModel extends Equatable {
               : DateTime.parse(json['updatedAt'] as String))
           : DateTime.now(),
       groomingTypes: List<String>.from(json['groomingTypes'] ?? []),
+      groomingType: json['groomingType'] as String?,
     );
   }
 
@@ -289,6 +305,7 @@ class CareSettingsModel extends Equatable {
         snoozedUntil,
         completionHistory,
         updatedAt,
-        groomingTypes
+        groomingTypes,
+        groomingType,
       ];
 }

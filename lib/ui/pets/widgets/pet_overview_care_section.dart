@@ -50,6 +50,7 @@ class PetOverviewCareSection extends StatelessWidget {
                 extra: {'pet': pet, 'vaccine': vaccine}),
           ),
           const SizedBox(height: 12),
+          // Issue 2: hide CTA in filled state for tick & flea
           _CareCard(
             bgColor: AppColors.quickActionTickFlea,
             iconPath: AppIcons.tickAndFleaIcon,
@@ -61,23 +62,28 @@ class PetOverviewCareSection extends StatelessWidget {
             ctaText: pet.tickFleaSettings == null
                 ? AppStrings.addProtection
                 : AppStrings.viewSchedule,
+            showCtaInFilledState: false,
             onTap: () =>
                 context.pushNamed(AppRoutes.tickFleaSettings, extra: pet),
           ),
           const SizedBox(height: 12),
+          // Grooming: list-based, always show CTA in filled state
           _CareCard(
             bgColor: AppColors.quickActionGrooming,
             iconPath: AppIcons.groomingIcon,
             categoryLabel: AppStrings.grooming,
             categoryIconPath: AppIcons.scissorIcon,
-            careSettings: pet.groomingSettings,
+            groomingItems: pet.groomingSettings,
             title: AppStrings.keepPetCleanHappy,
             subtitle: AppStrings.bookFirstGroomingSession,
-            ctaText: pet.groomingSettings == null
-                ? AppStrings.addGrooming
-                : AppStrings.viewSchedule,
-            onTap: () =>
-                context.pushNamed(AppRoutes.groomingSettings, extra: pet),
+            ctaText: AppStrings.addGrooming,
+            showCtaInFilledState: true,
+            onTap: () => context.pushNamed(AppRoutes.groomingSettings,
+                extra: {'pet': pet}),
+            onGroomingTap: (item) => context.pushNamed(
+              AppRoutes.groomingSettings,
+              extra: {'pet': pet, 'groomingType': item.groomingType},
+            ),
           ),
         ],
       ),
@@ -92,12 +98,24 @@ class _CareCard extends StatelessWidget {
   final String categoryIconPath;
   final List<VaccineModel>? vaccines;
   final CareSettingsModel? careSettings;
+
+  /// New: list of per-type grooming settings (replaces careSettings for grooming).
+  final List<CareSettingsModel>? groomingItems;
+
   final String? recommendLabel;
   final String title;
   final String subtitle;
   final String ctaText;
+
+  /// Issue 2: when false the CTA button is hidden in the filled state.
+  /// Defaults to true (vaccines keep the button visible).
+  final bool showCtaInFilledState;
+
   final VoidCallback onTap;
   final void Function(VaccineModel)? onVaccineTap;
+
+  /// Called when a specific grooming item row is tapped.
+  final void Function(CareSettingsModel)? onGroomingTap;
 
   const _CareCard({
     required this.bgColor,
@@ -106,16 +124,20 @@ class _CareCard extends StatelessWidget {
     required this.categoryIconPath,
     this.vaccines,
     this.careSettings,
+    this.groomingItems,
     this.recommendLabel,
     required this.title,
     required this.subtitle,
     required this.ctaText,
+    this.showCtaInFilledState = true,
     required this.onTap,
     this.onVaccineTap,
+    this.onGroomingTap,
   });
 
   bool get _hasItems {
     if (vaccines != null) return vaccines!.isNotEmpty;
+    if (groomingItems != null) return groomingItems!.isNotEmpty;
     return careSettings != null && careSettings!.hasReminder;
   }
 
@@ -125,8 +147,9 @@ class _CareCard extends StatelessWidget {
       decoration: smoothDecoration(cornerRadius: 20, color: bgColor),
       child: _hasItems ? _filledView() : _emptyView(),
     );
-    if (_hasItems) return card;
-    return ScaleButton(onPressed: onTap, child: card);
+    if (!_hasItems) return ScaleButton(onPressed: onTap, child: card);
+    if (!showCtaInFilledState) return GestureDetector(onTap: onTap, child: card);
+    return card;
   }
 
   Widget _categoryChip() {
@@ -262,8 +285,12 @@ class _CareCard extends StatelessWidget {
             rows[i],
             if (i < rows.length - 1) const SizedBox(height: 8),
           ],
-          const SizedBox(height: 12),
-          _ctaButton(),
+          // Issue 1 & 2: CTA button wrapped in GestureDetector; hidden when
+          // showCtaInFilledState is false.
+          if (showCtaInFilledState) ...[
+            const SizedBox(height: 12),
+            GestureDetector(onTap: onTap, child: _ctaButton()),
+          ],
         ],
       ),
     );
@@ -274,6 +301,9 @@ class _CareCard extends StatelessWidget {
       final sorted = [...vaccines!.where((v) => v.nextDueDate != null)]
         ..sort((a, b) => a.daysUntilDue.compareTo(b.daysUntilDue));
       return sorted.map(_vaccineRow).toList();
+    }
+    if (groomingItems != null && groomingItems!.isNotEmpty) {
+      return groomingItems!.map(_groomingItemRow).toList();
     }
     if (careSettings != null) {
       return _careSettingsRows(careSettings!);
@@ -294,6 +324,26 @@ class _CareCard extends StatelessWidget {
       child: _itemRow(
         name: v.vaccineName,
         daysText: freq.isNotEmpty ? '$daysText ($freq)' : daysText,
+        progress: progress,
+        isOverdue: isOverdue,
+      ),
+    );
+  }
+
+  Widget _groomingItemRow(CareSettingsModel item) {
+    final days = item.daysUntilDue ?? 0;
+    final daysText = _daysText(days);
+    final freq = _shortFrequency(item.frequency);
+    final label = freq.isNotEmpty ? '$daysText ($freq)' : daysText;
+    final progress = _careProgress(item);
+    final isOverdue = item.isOverdue;
+    final name = item.groomingType ?? AppStrings.groomingSession;
+
+    return GestureDetector(
+      onTap: onGroomingTap != null ? () => onGroomingTap!(item) : null,
+      child: _itemRow(
+        name: name,
+        daysText: label,
         progress: progress,
         isOverdue: isOverdue,
       ),

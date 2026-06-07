@@ -286,8 +286,14 @@ class AppRouter {
               path: AppRoutes.groomingSettings,
               name: AppRoutes.groomingSettings,
               builder: (context, state) {
-                final pet = state.extra as PetModel;
-                return GroomingSettingsScreen(pet: pet);
+                final extra = state.extra;
+                if (extra is Map) {
+                  final pet = extra['pet'] as PetModel;
+                  final groomingType = extra['groomingType'] as String?;
+                  return GroomingSettingsScreen(
+                      pet: pet, groomingType: groomingType);
+                }
+                return GroomingSettingsScreen(pet: extra as PetModel);
               },
             ),
             GoRoute(

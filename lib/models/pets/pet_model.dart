@@ -21,7 +21,7 @@ class PetModel extends Equatable {
   final List<String> personality;
   final String? imagePath;
   final List<VaccineModel> vaccines;
-  final CareSettingsModel? groomingSettings;
+  final List<CareSettingsModel> groomingSettings;
   final CareSettingsModel? tickFleaSettings;
   final DateTime createdAt;
   final DateTime updatedAt;
@@ -44,7 +44,7 @@ class PetModel extends Equatable {
     this.personality = const [],
     this.imagePath,
     this.vaccines = const [],
-    this.groomingSettings,
+    this.groomingSettings = const [],
     this.tickFleaSettings,
     required this.createdAt,
     required this.updatedAt,
@@ -82,7 +82,7 @@ class PetModel extends Equatable {
     List<String> personality = const [],
     String? imagePath,
     List<VaccineModel> vaccines = const [],
-    CareSettingsModel? groomingSettings,
+    List<CareSettingsModel> groomingSettings = const [],
     CareSettingsModel? tickFleaSettings,
   }) {
     final now = DateTime.now();
@@ -124,7 +124,7 @@ class PetModel extends Equatable {
     List<String>? personality,
     String? imagePath,
     List<VaccineModel>? vaccines,
-    CareSettingsModel? groomingSettings,
+    List<CareSettingsModel>? groomingSettings,
     CareSettingsModel? tickFleaSettings,
     DateTime? createdAt,
     DateTime? updatedAt,
@@ -177,7 +177,7 @@ class PetModel extends Equatable {
       'personality': personality,
       'imagePath': imagePath,
       'vaccines': vaccines.map((v) => v.toFirestore()).toList(),
-      'groomingSettings': groomingSettings?.toFirestore(),
+      'groomingSettings': groomingSettings.map((s) => s.toFirestore()).toList(),
       'tickFleaSettings': tickFleaSettings?.toFirestore(),
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
@@ -212,10 +212,8 @@ class PetModel extends Equatable {
                   (v) => VaccineModel.fromFirestore(v as Map<String, dynamic>))
               .toList() ??
           [],
-      groomingSettings: data['groomingSettings'] != null
-          ? CareSettingsModel.fromFirestore(
-              data['groomingSettings'] as Map<String, dynamic>)
-          : null,
+      groomingSettings:
+          _parseGroomingSettingsFromFirestore(data['groomingSettings']),
       tickFleaSettings: data['tickFleaSettings'] != null
           ? CareSettingsModel.fromFirestore(
               data['tickFleaSettings'] as Map<String, dynamic>)
@@ -245,7 +243,7 @@ class PetModel extends Equatable {
       'personality': personality,
       'imagePath': imagePath,
       'vaccines': vaccines.map((v) => v.toJson()).toList(),
-      'groomingSettings': groomingSettings?.toJson(),
+      'groomingSettings': groomingSettings.map((s) => s.toJson()).toList(),
       'tickFleaSettings': tickFleaSettings?.toJson(),
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt.toIso8601String(),
@@ -278,10 +276,8 @@ class PetModel extends Equatable {
               ?.map((v) => VaccineModel.fromJson(v as Map<String, dynamic>))
               .toList() ??
           [],
-      groomingSettings: json['groomingSettings'] != null
-          ? CareSettingsModel.fromJson(
-              json['groomingSettings'] as Map<String, dynamic>)
-          : null,
+      groomingSettings:
+          _parseGroomingSettingsFromJson(json['groomingSettings']),
       tickFleaSettings: json['tickFleaSettings'] != null
           ? CareSettingsModel.fromJson(
               json['tickFleaSettings'] as Map<String, dynamic>)
@@ -295,6 +291,55 @@ class PetModel extends Equatable {
           : null,
       lastSeenLocation: json['lastSeenLocation'] as String?,
     );
+  }
+
+  // ── Static helpers for backward-compat grooming list parsing ──────────────
+
+  /// Parses Firestore value into `List<CareSettingsModel>`.
+  /// Handles three cases:
+  ///   • null   → empty list
+  ///   • List   → new format, parse each element
+  ///   • Map    → old format (single model with groomingTypes list), migrate
+  static List<CareSettingsModel> _parseGroomingSettingsFromFirestore(
+      dynamic raw) {
+    if (raw == null) return const [];
+    if (raw is List) {
+      return raw
+          .map(
+              (e) => CareSettingsModel.fromFirestore(e as Map<String, dynamic>))
+          .toList();
+    }
+    if (raw is Map<String, dynamic>) {
+      final old = CareSettingsModel.fromFirestore(raw);
+      if (old.groomingTypes.isEmpty) {
+        return [old.copyWith(groomingType: null)];
+      }
+      return old.groomingTypes
+          .map((t) => old.copyWith(groomingType: t))
+          .toList();
+    }
+    return const [];
+  }
+
+  /// Parses JSON value into `List<CareSettingsModel>`.
+  /// Same three-case backward-compat logic as the Firestore variant.
+  static List<CareSettingsModel> _parseGroomingSettingsFromJson(dynamic raw) {
+    if (raw == null) return const [];
+    if (raw is List) {
+      return raw
+          .map((e) => CareSettingsModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    }
+    if (raw is Map<String, dynamic>) {
+      final old = CareSettingsModel.fromJson(raw);
+      if (old.groomingTypes.isEmpty) {
+        return [old.copyWith(groomingType: null)];
+      }
+      return old.groomingTypes
+          .map((t) => old.copyWith(groomingType: t))
+          .toList();
+    }
+    return const [];
   }
 
   // Helper methods
@@ -357,9 +402,8 @@ class PetModel extends Equatable {
       }
     }
 
-    // Check grooming
-    if (groomingSettings != null &&
-        (groomingSettings!.isDueSoon || groomingSettings!.isOverdue)) {
+    // Check grooming — any item due soon or overdue triggers the flag
+    if (groomingSettings.any((s) => s.isDueSoon || s.isOverdue)) {
       return true;
     }
 
@@ -383,17 +427,13 @@ class PetModel extends Equatable {
     }).length;
   }
 
-  /// Get grooming status type: 'overdue', 'soon', 'good', or null if not set
+  /// Get grooming status type: 'overdue', 'soon', 'good', or null if not set.
+  /// Checks across all grooming items — worst status wins.
   String? get groomingStatusType {
-    if (groomingSettings == null || !groomingSettings!.hasReminder) {
-      return null;
-    }
-    if (groomingSettings!.isOverdue) {
-      return 'overdue';
-    }
-    if (groomingSettings!.isDueSoon) {
-      return 'soon';
-    }
+    final active = groomingSettings.where((s) => s.hasReminder).toList();
+    if (active.isEmpty) return null;
+    if (active.any((s) => s.isOverdue)) return 'overdue';
+    if (active.any((s) => s.isDueSoon)) return 'soon';
     return 'good';
   }
 
