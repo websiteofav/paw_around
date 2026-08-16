@@ -151,7 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
             HomeMomentsSection(
                 onSeeAll: () => context
                     .read<HomeBloc>()
-                    .add(HomeTabChanged(2, pawCircleInitialTab: 1))),
+                    .add(HomeTabChanged(2, pawCircleInitialTab: 0))),
             const SizedBox(height: 24),
             _buildNearbyServicesSection(),
             const SizedBox(height: 24),

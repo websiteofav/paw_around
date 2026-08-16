@@ -43,6 +43,8 @@ class AppIcons {
 
   static const String heartIcon = "assets/home/heart_icon.svg";
   static const String commentIcon = "assets/home/comment_icon.svg";
+  static const String bookmarkIcon = "assets/home/bookmark_icon.png";
+  static const String shareIcon = "assets/home/share_icon.png";
   static const String dogAlarmIcon = "assets/actions/dog_alarm_icon.png";
   static const String syringIcon = "assets/actions/syringe_icon.svg";
 

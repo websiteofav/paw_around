@@ -12,6 +12,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
+import 'package:paw_around/ui/pets/widgets/mark_lost_bottom_sheet.dart';
 
 class PetOverviewEditButton extends StatelessWidget {
   final PetModel pet;
@@ -33,6 +34,22 @@ class PetOverviewEditButton extends StatelessWidget {
 
 class PetOverviewActions {
   PetOverviewActions._();
+
+  static Future<void> showMarkLostSheet(
+    BuildContext context,
+    PetModel pet,
+  ) {
+    return MarkLostBottomSheet.show(
+      context: context,
+      pet: pet,
+      onSave: (lastSeenAt, lastSeenLocation) => _markPetAsLost(
+        context,
+        pet,
+        lastSeenAt: lastSeenAt,
+        lastSeenLocation: lastSeenLocation,
+      ),
+    );
+  }
 
   static void showDeleteConfirmation(BuildContext context, PetModel pet) {
     bool isDeleting = false;
@@ -149,6 +166,43 @@ class PetOverviewActions {
       if (dialogContext.mounted) {
         Navigator.of(dialogContext).pop();
       }
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
+  }
+
+  static Future<void> _markPetAsLost(
+    BuildContext context,
+    PetModel pet, {
+    required DateTime lastSeenAt,
+    required String lastSeenLocation,
+  }) async {
+    try {
+      await sl<PetRepository>().updatePet(
+        pet.copyWith(
+          isLost: true,
+          lastSeenAt: lastSeenAt,
+          lastSeenLocation: lastSeenLocation.isEmpty ? null : lastSeenLocation,
+          updatedAt: DateTime.now(),
+        ),
+      );
+      if (context.mounted) {
+        context.read<PetListBloc>().add(const LoadPetList());
+        HapticFeedback.mediumImpact();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(AppStrings.petMarkedAsLost),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      }
+    } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

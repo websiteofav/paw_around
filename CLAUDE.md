@@ -43,6 +43,17 @@ lib/
 - Screens must stay under **200 lines**
 - Extract into `widgets/` subdirectory when exceeded
 
+### Decorations — ALWAYS use `smoothDecoration`, never `BoxDecoration`
+- Use `smoothDecoration(cornerRadius:, color:, shadows:, side:)` from `app_decorations.dart`
+- Never use `BoxDecoration(borderRadius: BorderRadius.circular(...))` — use `smoothDecoration` instead
+- For clipping children to smooth corners, use `ClipSmoothRect(radius: SmoothBorderRadius(cornerRadius:, cornerSmoothing: 1.0))`
+```dart
+// CORRECT
+smoothDecoration(cornerRadius: 16, color: AppColors.white, shadows: [...])
+// WRONG
+BoxDecoration(borderRadius: BorderRadius.circular(16), color: AppColors.white)
+```
+
 ### Shadows — use `AppColors.shadowOverlay`, never `Colors.black`
 ```dart
 // CORRECT

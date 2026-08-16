@@ -30,6 +30,7 @@ class AppColors {
 
   // Status Colors
   static const Color error = Color(0xFFEF4444);
+  static const Color deepRed = Color(0xFFAD0500);
   static const Color requiredIndicator = Color(0xFFFF2720);
   static const Color success = Color(0xFF22C55E);
   static const Color warning = Color(0xFFF59E0B);

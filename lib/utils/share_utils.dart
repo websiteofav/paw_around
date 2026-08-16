@@ -6,11 +6,35 @@ import 'package:paw_around/constants/api_constants.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
+import 'package:paw_around/models/moments/pet_moment_model.dart';
 
 class ShareUtils {
   /// Get the deep link URL for a post
   static String getPostUrl(LostFoundPost post) {
     return '${ApiConstants.pawAroundBaseUrl}/${AppStrings.community}/${post.id}';
+  }
+
+  /// Get the deep link URL for a moment
+  static String getMomentUrl(PetMoment moment) {
+    return '${ApiConstants.pawAroundBaseUrl}/moments/${moment.id}';
+  }
+
+  /// Share a moment with optional image
+  static Future<void> shareMoment(PetMoment moment) async {
+    final url = getMomentUrl(moment);
+    final text = '''
+${moment.petName}'s moment on Paw Around
+
+${moment.caption}
+
+$url
+''';
+
+    if (moment.imageUrl.startsWith('http')) {
+      await _shareWithImage(text, moment.imageUrl);
+    } else {
+      await SharePlus.instance.share(ShareParams(text: text));
+    }
   }
 
   /// Share a post with optional image

@@ -10,6 +10,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_about_section.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_activity_section.dart';
+import 'package:paw_around/ui/pets/widgets/pet_overview_actions.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_care_section.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_personality_section.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
@@ -41,33 +42,62 @@ class _PetOverviewContent extends StatelessWidget {
     final topPad = MediaQuery.of(context).padding.top;
     return Scaffold(
       backgroundColor: AppColors.white,
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _HeroSection(pet: pet, topPad: topPad),
-            const SizedBox(height: 24),
-            _IdentityRow(pet: pet),
-            const SizedBox(height: 24),
-            PetOverviewAboutSection(pet: pet),
-            const SizedBox(height: 24),
-            PetOverviewPersonalitySection(pet: pet),
-            const SizedBox(height: 24),
-            PetOverviewCareSection(pet: pet),
-            const SizedBox(height: 32),
-            const PetOverviewActivitySection(),
-            const SizedBox(height: 48),
-          ],
-        ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _HeroSection(pet: pet),
+                const SizedBox(height: 24),
+                _IdentityRow(pet: pet),
+                const SizedBox(height: 24),
+                PetOverviewAboutSection(pet: pet),
+                const SizedBox(height: 24),
+                PetOverviewPersonalitySection(pet: pet),
+                const SizedBox(height: 24),
+                PetOverviewCareSection(pet: pet),
+                const SizedBox(height: 32),
+                PetOverviewActivitySection(pet: pet),
+                const SizedBox(height: 48),
+              ],
+            ),
+          ),
+          Positioned(
+            top: topPad + 2,
+            left: 14,
+            right: 14,
+            child: _PetOverviewTopControls(pet: pet),
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _PetOverviewTopControls extends StatelessWidget {
+  final PetModel pet;
+
+  const _PetOverviewTopControls({required this.pet});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _HeroIconButton(
+          icon: Icons.arrow_back_ios_new,
+          onTap: () => context.pop(),
+        ),
+        const Spacer(),
+        _HeroActionsMenu(pet: pet),
+      ],
     );
   }
 }
 
 class _HeroSection extends StatelessWidget {
   final PetModel pet;
-  final double topPad;
-  const _HeroSection({required this.pet, required this.topPad});
+  const _HeroSection({required this.pet});
 
   @override
   Widget build(BuildContext context) {
@@ -97,13 +127,102 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
-          top: topPad + 8,
-          left: 16,
-          child: GestureDetector(
-            onTap: () => context.pop(),
-            child: const Icon(Icons.arrow_back_ios_new,
-                color: AppColors.white, size: 22),
+      ],
+    );
+  }
+}
+
+class _HeroIconButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onTap;
+
+  const _HeroIconButton({
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 44,
+        height: 44,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.shadowOverlay.withValues(alpha: 0.18),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(
+          icon,
+          color: AppColors.white,
+          size: 22,
+        ),
+      ),
+    );
+  }
+}
+
+class _HeroActionsMenu extends StatelessWidget {
+  final PetModel pet;
+
+  const _HeroActionsMenu({required this.pet});
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<String>(
+      color: AppColors.white,
+      elevation: 8,
+      offset: const Offset(-8, 38),
+      padding: EdgeInsets.zero,
+      constraints: const BoxConstraints(minWidth: 132),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      icon: Container(
+        width: 44,
+        height: 44,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: AppColors.shadowOverlay.withValues(alpha: 0.18),
+          shape: BoxShape.circle,
+        ),
+        child: const Icon(
+          Icons.menu,
+          color: AppColors.white,
+          size: 24,
+        ),
+      ),
+      onSelected: (value) {
+        if (value == 'report_lost') {
+          PetOverviewActions.showMarkLostSheet(context, pet);
+          return;
+        }
+        if (value == 'delete') {
+          PetOverviewActions.showDeleteConfirmation(context, pet);
+        }
+      },
+      itemBuilder: (context) => [
+        PopupMenuItem<String>(
+          value: 'report_lost',
+          height: 46,
+          child: Text(
+            'Report lost',
+            style: AppTextStyles.interRegularStyle400(
+              fontSize: 12,
+              fontColor: AppColors.grey1100,
+            ),
+          ),
+        ),
+        PopupMenuItem<String>(
+          value: 'delete',
+          height: 46,
+          child: Text(
+            'Delete Profile',
+            style: AppTextStyles.interRegularStyle400(
+              fontSize: 12,
+              fontColor: AppColors.grey1100,
+            ),
           ),
         ),
       ],

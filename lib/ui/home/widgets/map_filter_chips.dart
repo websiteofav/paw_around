@@ -1,4 +1,3 @@
-import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/constants/app_decorations.dart';
@@ -35,9 +34,9 @@ class _FilterChipsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
         color: AppColors.white,
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.04),
             blurRadius: 8,
@@ -52,7 +51,9 @@ class _FilterChipsView extends StatelessWidget {
             final isSelected = state.selectedServiceType == type;
             final count = type == ServiceType.all
                 ? state.places.length
-                : state.places.where((p) => type.matchesTypes(p.types, placeName: p.name)).length;
+                : state.places
+                    .where((p) => type.matchesTypes(p.types, placeName: p.name))
+                    .length;
 
             return Padding(
               padding: const EdgeInsets.only(right: 8),
@@ -91,11 +92,7 @@ class _FilterChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: smoothDecoration(
           cornerRadius: 20,
-          color: isSelected ? type.color : AppColors.white,
-          side: BorderSide(
-            color: isSelected ? type.color : AppColors.border,
-            width: 1.5,
-          ),
+          color: isSelected ? AppColors.secondaryCTA : AppColors.white,
           shadows: isSelected
               ? [
                   BoxShadow(
@@ -123,18 +120,12 @@ class _FilterChip extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: smoothDecoration(
-                cornerRadius: 10,
-                color: isSelected ? AppColors.white.withValues(alpha: 0.2) : AppColors.background,
-              ),
-              child: Text(
-                '$count',
-                style: AppTextStyles.semiBoldStyle600(
-                  fontSize: 12,
-                  fontColor: isSelected ? AppColors.white : AppColors.textSecondary,
-                ),
+            Text(
+              '($count)',
+              style: AppTextStyles.semiBoldStyle600(
+                fontSize: 12,
+                fontColor:
+                    isSelected ? AppColors.white : AppColors.textSecondary,
               ),
             ),
           ],

@@ -11,9 +11,11 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
+import 'package:paw_around/models/pets/action_type.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/ui/home/action_card_detail_screen.dart';
 
 class HomeCareRemindersSection extends StatefulWidget {
   final PetModel pet;
@@ -84,6 +86,22 @@ class _HomeCareRemindersSectionState extends State<HomeCareRemindersSection> {
     return upcoming.first;
   }
 
+  void _openActionDetail({
+    required ActionType actionType,
+    VaccineModel? vaccine,
+    String? customTitle,
+  }) {
+    context.pushNamed(
+      AppRoutes.actionDetail,
+      extra: ActionCardData(
+        actionType: actionType,
+        pet: widget.pet,
+        vaccine: vaccine,
+        customTitle: customTitle,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final cards = <Widget>[];
@@ -104,6 +122,11 @@ class _HomeCareRemindersSectionState extends State<HomeCareRemindersSection> {
         actionLabel: AppStrings.addVaccine,
         progress: total > 0 ? (elapsed / total).clamp(0.0, 1.0) : 1.0,
         isOverdue: days < 0,
+        onCardTap: () => _openActionDetail(
+          actionType: ActionType.vaccine,
+          vaccine: urgentVaccine,
+          customTitle: urgentVaccine.vaccineName,
+        ),
         onActionTap: widget.onVaccinesTap,
         onMarkDone: () => _markVaccineDone(urgentVaccine.id),
         onDismiss: () => setState(() => _dismissed.add('vaccines')),
@@ -126,6 +149,7 @@ class _HomeCareRemindersSectionState extends State<HomeCareRemindersSection> {
         actionLabel: AppStrings.addProtection,
         progress: _careProgress(tickFlea),
         isOverdue: days < 0,
+        onCardTap: () => _openActionDetail(actionType: ActionType.tickFlea),
         onActionTap: widget.onTickFleaTap,
         onMarkDone: _markTickFleaDone,
         onDismiss: () => setState(() => _dismissed.add('tickFlea')),
@@ -141,9 +165,9 @@ class _HomeCareRemindersSectionState extends State<HomeCareRemindersSection> {
       cards.add(_GroomingReminderCard(
         items: groomingActive,
         careProgress: _careProgress,
-        onItemTap: (item) => context.pushNamed(
-          AppRoutes.groomingSettings,
-          extra: {'pet': widget.pet, 'groomingType': item.groomingType},
+        onItemTap: (item) => _openActionDetail(
+          actionType: ActionType.grooming,
+          customTitle: item.groomingType ?? AppStrings.grooming,
         ),
         onMarkDone: () => _markGroomingDone(null),
         onActionTap: widget.onGroomingTap,
@@ -176,6 +200,7 @@ class _CareReminderCard extends StatelessWidget {
   final String actionLabel;
   final double progress;
   final bool isOverdue;
+  final VoidCallback onCardTap;
   final VoidCallback onActionTap;
   final VoidCallback onMarkDone;
   final VoidCallback onDismiss;
@@ -189,6 +214,7 @@ class _CareReminderCard extends StatelessWidget {
     required this.actionLabel,
     required this.progress,
     required this.isOverdue,
+    required this.onCardTap,
     required this.onActionTap,
     required this.onMarkDone,
     required this.onDismiss,
@@ -228,75 +254,80 @@ class _CareReminderCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: smoothDecoration(
-              cornerRadius: 14,
-              color: AppColors.white,
-              shadows: [
-                BoxShadow(
-                    color: AppColors.shadowOverlay.withValues(alpha: 0.10),
-                    blurRadius: 6,
-                    offset: const Offset(0, 3)),
-                BoxShadow(
-                    color: AppColors.shadowOverlay.withValues(alpha: 0.09),
-                    blurRadius: 10,
-                    offset: const Offset(0, 10)),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      width: 28,
-                      height: 28,
-                      decoration: BoxDecoration(
-                        color:
-                            AppColors.requiredIndicator.withValues(alpha: 0.12),
-                        shape: BoxShape.circle,
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onCardTap,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: smoothDecoration(
+                cornerRadius: 14,
+                color: AppColors.white,
+                shadows: [
+                  BoxShadow(
+                      color: AppColors.shadowOverlay.withValues(alpha: 0.10),
+                      blurRadius: 6,
+                      offset: const Offset(0, 3)),
+                  BoxShadow(
+                      color: AppColors.shadowOverlay.withValues(alpha: 0.09),
+                      blurRadius: 10,
+                      offset: const Offset(0, 10)),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 28,
+                        height: 28,
+                        decoration: BoxDecoration(
+                          color: AppColors.requiredIndicator
+                              .withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.error_outline,
+                            size: 16, color: AppColors.requiredIndicator),
                       ),
-                      child: const Icon(Icons.error_outline,
-                          size: 16, color: AppColors.requiredIndicator),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(itemName,
-                              style: AppTextStyles.semiBoldStyle600(
-                                  fontSize: 14, fontColor: AppColors.grey1000)),
-                          Text(
-                            frequencyLabel != null
-                                ? '$daysText ($frequencyLabel)'
-                                : daysText,
-                            style: AppTextStyles.regularStyle400(
-                                fontSize: 12,
-                                fontColor: isOverdue
-                                    ? AppColors.requiredIndicator
-                                    : AppColors.textSecondary),
-                          ),
-                        ],
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(itemName,
+                                style: AppTextStyles.semiBoldStyle600(
+                                    fontSize: 14,
+                                    fontColor: AppColors.grey1000)),
+                            Text(
+                              frequencyLabel != null
+                                  ? '$daysText ($frequencyLabel)'
+                                  : daysText,
+                              style: AppTextStyles.regularStyle400(
+                                  fontSize: 12,
+                                  fontColor: isOverdue
+                                      ? AppColors.requiredIndicator
+                                      : AppColors.textSecondary),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const Icon(Icons.chevron_right,
-                        size: 20, color: AppColors.neutral300),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                ClipSmoothRect(
-                  radius: AppSmoothRadius.custom(4),
-                  child: LinearProgressIndicator(
-                    value: progress,
-                    minHeight: 6,
-                    backgroundColor: AppColors.neutral100,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                        AppColors.requiredIndicator),
+                      const Icon(Icons.chevron_right,
+                          size: 20, color: AppColors.neutral300),
+                    ],
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  ClipSmoothRect(
+                    radius: AppSmoothRadius.custom(4),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      minHeight: 6,
+                      backgroundColor: AppColors.neutral100,
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.requiredIndicator),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -499,8 +530,8 @@ class _GroomingReminderCard extends StatelessWidget {
                   height: 24,
                   decoration: const BoxDecoration(
                       color: AppColors.grey1000, shape: BoxShape.circle),
-                  child: const Icon(Icons.close,
-                      size: 14, color: AppColors.white),
+                  child:
+                      const Icon(Icons.close, size: 14, color: AppColors.white),
                 ),
               ),
             ],
@@ -524,13 +555,13 @@ class _GroomingReminderCard extends StatelessWidget {
                       side: const BorderSide(color: AppColors.neutral300),
                       shadows: [
                         BoxShadow(
-                            color: AppColors.shadowOverlay
-                                .withValues(alpha: 0.10),
+                            color:
+                                AppColors.shadowOverlay.withValues(alpha: 0.10),
                             blurRadius: 6,
                             offset: const Offset(0, 3)),
                         BoxShadow(
-                            color: AppColors.shadowOverlay
-                                .withValues(alpha: 0.09),
+                            color:
+                                AppColors.shadowOverlay.withValues(alpha: 0.09),
                             blurRadius: 10,
                             offset: const Offset(0, 10)),
                       ],
@@ -553,13 +584,13 @@ class _GroomingReminderCard extends StatelessWidget {
                       color: AppColors.grey1000,
                       shadows: [
                         BoxShadow(
-                            color: AppColors.shadowOverlay
-                                .withValues(alpha: 0.10),
+                            color:
+                                AppColors.shadowOverlay.withValues(alpha: 0.10),
                             blurRadius: 6,
                             offset: const Offset(0, 3)),
                         BoxShadow(
-                            color: AppColors.shadowOverlay
-                                .withValues(alpha: 0.09),
+                            color:
+                                AppColors.shadowOverlay.withValues(alpha: 0.09),
                             blurRadius: 10,
                             offset: const Offset(0, 10)),
                       ],

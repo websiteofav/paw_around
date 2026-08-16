@@ -92,12 +92,11 @@ class _MapScreenState extends State<MapScreen> {
               return DashboardAppBar(
                 title: AppStrings.petServices,
                 showProfileAvatar: true,
-                onProfileTap: () =>
-                    context.pushNamed(AppRoutes.profileTab),
+                onProfileTap: () => context.pushNamed(AppRoutes.profileTab),
               );
             },
           ),
-
+          const SizedBox(height: 8),
           // Filter Chips
           const MapFilterChips(),
 
