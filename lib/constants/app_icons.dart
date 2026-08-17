@@ -15,6 +15,11 @@ class AppIcons {
   static const String otherPetIcon = 'assets/pets/other_pet_icon.svg';
   static const String pawPrintIcon = 'assets/pets/paw_print_icon.svg';
   static const String noPostsIcon = 'assets/posts/no_posts_icon.svg';
+  static const String emptyStateDogIcon = 'assets/posts/empty_state_dog.png';
+  static const String addPhotoIcon = 'assets/posts/add_photo_icon.png';
+  static const String reportPetIcon = 'assets/posts/report_pet_icon.png';
+  static const String petDetectiveIllustration =
+      'assets/posts/pet_detective_illustration.png';
   static const String addPetIcon = 'assets/home/app_pet_icon.svg';
   static const String heroPetIcon = 'assets/web/hero_pet_icon.png';
   static const String petWithQrIcon = 'assets/web/pet_with_qr_icon.png';

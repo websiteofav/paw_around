@@ -275,6 +275,40 @@ class AppStrings {
   static const String enableLocationToSeeNearbyPosts =
       'Enable location to see lost and found posts near you';
   static const String noPostsInYourArea = 'No posts found in your area';
+  static const String noLostPetsNearby = 'No lost pets reported nearby';
+  static const String reportLostOrFoundPet = 'Report a lost or found pet';
+  static const String stayAlertInYourArea = 'Stay alert in your area';
+
+  // Report Lost/Found Post screen
+  static const String isThisYourPet = 'Is this your pet?';
+  static const String yesILostMyPet = 'Yes, I lost my pet';
+  static const String noIFoundAPet = 'No, I found a pet';
+  static const String reportALostPet = 'Report a lost pet';
+  static const String actQuicklyPetsAreOftenFound =
+      'Act quickly. Pets are often found within 24–48 hours';
+  static const String reportAFoundPet = 'Report a found pet';
+  static const String helpReuniteThisPetWithTheirFamily =
+      'Help reunite this pet with their family';
+  static const String selectYourPet = 'Select your pet';
+  static const String addAClearPhoto = 'Add a clear photo';
+  static const String thisHelpsPetParentsIdentifyPetQuickly =
+      'This helps pet parents identify their pet quickly';
+  static const String about = 'About';
+  static const String aboutThePet = 'About the Pet';
+  static const String anythingNoticeable = 'Anything noticeable?';
+  static const String whereDidYouSeeThisPet = 'Where did you see this pet?';
+  static const String accurateLocationHelpsPeopleRespondFaster =
+      'Accurate location helps people nearby respond faster';
+  static const String whenDidYouSeeThePet = 'When did you see the pet?';
+  static const String whenDidYouLastSee = 'When did you last see';
+  static const String whereDidYouSee = 'Where did you see';
+  static const String pickTime = 'Pick time';
+  static const String justNow = 'Just now';
+  static const String howCanTheOwnerReachYou = 'How can the owner reach you?';
+  static const String contactOnlySharedWithRelevantUsers =
+      'Your contact is only shared with relevant users';
+  static const String reportLostPetNow = 'Report lost pet now';
+  static const String reportFoundPetNow = 'Report found pet now';
   static const String markAsResolved = 'Mark as Resolved';
   static const String reopenPost = 'Reopen Post';
   static const String postReopenedSuccessfully = 'Post reopened successfully';
@@ -656,6 +690,10 @@ class AppStrings {
   static const String noMomentsYet = 'No moments yet';
   static const String noMomentsDescription =
       'Share your pet\'s special moments with the community';
+  static const String discoverMomentsNearby =
+      'Discover moments from pets nearby';
+  static const String shareMomentsTip =
+      'Sharing moments helps other pet parents connect with you';
   static const String likeMoment = 'Like';
   static const String unlikeMoment = 'Unlike';
   static const String addComment = 'Add Comment';

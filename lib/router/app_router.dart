@@ -160,6 +160,7 @@ class AppRouter {
                 BlocProvider<CommunityBloc>(
                   create: (_) => CommunityBloc(
                     repository: sl<CommunityRepository>(),
+                    petRepository: sl<PetRepository>(),
                   ),
                 ),
                 BlocProvider<PetListBloc>(

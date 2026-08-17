@@ -140,8 +140,13 @@ class _Placeholder extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.add_a_photo_rounded,
-            size: 48, color: AppColors.white.withValues(alpha: 0.6)),
+        Image.asset(
+          AppIcons.addPhotoIcon,
+          width: 48,
+          height: 48,
+          color: AppColors.white.withValues(alpha: 0.6),
+          colorBlendMode: BlendMode.srcIn,
+        ),
         const SizedBox(height: 10),
         Text(
           AppStrings.addPhoto,

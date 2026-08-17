@@ -53,6 +53,7 @@ dependencies:
   shimmer: 3.0.0
   flutter_ruler_picker: 1.0.6
   figma_squircle: 0.6.3
+  dotted_border: 2.1.0
 
 dev_dependencies:
   flutter_test:

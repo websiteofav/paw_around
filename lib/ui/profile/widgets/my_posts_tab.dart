@@ -13,9 +13,9 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/ui/community/widgets/community_empty_state.dart';
 import 'package:paw_around/ui/home/widgets/post_card.dart';
 import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
-import 'package:paw_around/ui/widgets/empty_state_widget.dart';
 
 class MyPostsTab extends StatefulWidget {
   const MyPostsTab({super.key});
@@ -62,15 +62,25 @@ class _MyPostsTabState extends State<MyPostsTab>
   }
 
   Widget _buildEmptyState() {
-    return EmptyStateWidget(
-      icon: Icons.article_outlined,
-      title: AppStrings.noMyPostsYet,
-      subtitle: AppStrings.noMyPostsSubtitle,
-      actionText: AppStrings.createLostFoundPost,
-      onAction: () async {
-        await context.push(AppRoutes.createPost);
-        if (mounted) _loadMyPosts();
-      },
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async => _loadMyPosts(),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: CommunityEmptyState(
+          title: AppStrings.noMyPostsYet,
+          checklistItems: const [
+            AppStrings.noMyPostsSubtitle,
+            AppStrings.stayAlertInYourArea,
+          ],
+          ctaText: AppStrings.createLostFoundPost,
+          onCta: () async {
+            await context.push(AppRoutes.createPost);
+            if (mounted) _loadMyPosts();
+          },
+          tipText: AppStrings.lostPetsAreOftenFoundWithinTheFirst2448Hours,
+        ),
+      ),
     );
   }
 

@@ -11,10 +11,10 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/moments/pet_moment_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/ui/community/widgets/community_empty_state.dart';
 import 'package:paw_around/ui/moments/widgets/moment_card.dart';
 import 'package:paw_around/ui/moments/widgets/moment_comments.dart';
 import 'package:paw_around/ui/profile/widgets/profile_dialogs.dart';
-import 'package:paw_around/ui/widgets/empty_state_widget.dart';
 import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
 
 class MomentsTab extends StatefulWidget {
@@ -176,31 +176,26 @@ class _MomentsTabState extends State<MomentsTab>
   }
 
   Widget _buildEmptyState() {
-    const title = AppStrings.noMomentsYet;
-    const subtitle = AppStrings.noMomentsDescription;
-
     return RefreshIndicator(
       color: AppColors.primary,
       onRefresh: _refreshMoments,
-      child: ListView(
+      child: SingleChildScrollView(
         physics: const AlwaysScrollableScrollPhysics(),
-        children: [
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
-            child: EmptyStateWidget(
-              icon: Icons.pets,
-              title: title,
-              subtitle: subtitle,
-              actionText: AppStrings.createMoment,
-              onAction: () async {
-                await context.push(AppRoutes.createMoment);
-                if (mounted) {
-                  context.read<PetMomentsBloc>().add(const LoadMoments());
-                }
-              },
-            ),
-          ),
-        ],
+        child: CommunityEmptyState(
+          title: AppStrings.noMomentsYet,
+          checklistItems: const [
+            AppStrings.noMomentsDescription,
+            AppStrings.discoverMomentsNearby,
+          ],
+          ctaText: AppStrings.createMoment,
+          onCta: () async {
+            await context.push(AppRoutes.createMoment);
+            if (mounted) {
+              context.read<PetMomentsBloc>().add(const LoadMoments());
+            }
+          },
+          tipText: AppStrings.shareMomentsTip,
+        ),
       ),
     );
   }

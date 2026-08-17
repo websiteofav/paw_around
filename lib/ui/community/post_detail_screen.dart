@@ -59,11 +59,18 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
   }
 
   void _markAsResolved() {
-    context.read<CommunityBloc>().add(MarkPostResolved(widget.postId));
+    context
+        .read<CommunityBloc>()
+        .add(MarkPostResolved(widget.postId, petId: _post?.petId));
   }
 
   void _unresolvePost() {
-    context.read<CommunityBloc>().add(UnresolvePost(widget.postId));
+    context.read<CommunityBloc>().add(UnresolvePost(
+          widget.postId,
+          petId: _post?.petId,
+          lastSeenAt: _post?.lastSeenAt,
+          lastSeenLocation: _post?.locationName,
+        ));
   }
 
   void _deletePost() {

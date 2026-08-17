@@ -5,6 +5,7 @@ import 'package:paw_around/bloc/auth/auth_bloc.dart';
 import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -16,8 +17,8 @@ void showLogoutDialog(BuildContext context) {
     context: context,
     builder: (dialogContext) => AlertDialog(
       backgroundColor: AppColors.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
+      shape: SmoothRectangleBorder(
+        borderRadius: AppSmoothRadius.custom(24),
       ),
       contentPadding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
       content: Column(
@@ -157,10 +158,12 @@ void showDeleteAccountDialog(
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.info_outline,
-                  size: 16,
+                Image.asset(
+                  AppIcons.informationIcon,
+                  width: 16,
+                  height: 16,
                   color: AppColors.error,
+                  colorBlendMode: BlendMode.srcIn,
                 ),
                 const SizedBox(width: 8),
                 Expanded(

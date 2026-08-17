@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/india_locations.dart';
@@ -349,13 +350,12 @@ class _PhotoPickerBox extends StatelessWidget {
           decoration: const BoxDecoration(color: AppColors.white),
           child: imageFile != null
               ? Image.file(imageFile!, fit: BoxFit.cover)
-              : const Column(
+              : Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.add_a_photo_outlined,
-                        size: 52, color: AppColors.neutral300),
-                    SizedBox(height: 12),
-                    Text(
+                    Image.asset(AppIcons.addPhotoIcon, width: 52, height: 52),
+                    const SizedBox(height: 12),
+                    const Text(
                       AppStrings.addPhoto,
                       style: TextStyle(
                         fontSize: 15,

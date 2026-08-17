@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -65,8 +66,7 @@ class CircularPhotoPicker extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Icon(Icons.add_a_photo_outlined,
-            size: 50, color: AppColors.grey100),
+        Image.asset(AppIcons.addPhotoIcon, width: 44, height: 44),
         const SizedBox(height: 6),
         Text(
           AppStrings.addPhoto,

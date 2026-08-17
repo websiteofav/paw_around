@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -317,8 +318,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         ),
                         child: Row(
                           children: [
-                            const Icon(Icons.info_outline,
-                                size: 16, color: AppColors.warning),
+                            Image.asset(
+                              AppIcons.informationIcon,
+                              width: 16,
+                              height: 16,
+                              color: AppColors.warning,
+                              colorBlendMode: BlendMode.srcIn,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
