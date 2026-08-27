@@ -66,8 +66,9 @@ class PetSelectorRow extends StatelessWidget {
                     cornerRadius: 16,
                     color: AppColors.iconBgLight,
                     side: BorderSide(
-                      color:
-                          isSelected ? AppColors.primary : Colors.transparent,
+                      color: isSelected
+                          ? AppColors.secondaryCTA
+                          : Colors.transparent,
                       width: 2,
                     ),
                     image: hasImage
@@ -80,20 +81,22 @@ class PetSelectorRow extends StatelessWidget {
                   child: hasImage
                       ? null
                       : const Icon(Icons.pets,
-                          color: AppColors.primary, size: 24),
+                          color: AppColors.secondaryCTA, size: 24),
                 ),
                 if (isSelected)
                   Positioned(
-                    right: -6,
-                    top: -6,
+                    right: 0,
+                    top: -2,
                     child: Container(
                       padding: const EdgeInsets.all(2),
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: AppColors.white,
                         shape: BoxShape.circle,
+                        border:
+                            Border.all(color: AppColors.secondaryCTA, width: 1),
                       ),
-                      child: const Icon(Icons.check_circle,
-                          size: 16, color: AppColors.primary),
+                      child: const Icon(Icons.check,
+                          size: 12, color: AppColors.secondaryCTA),
                     ),
                   ),
               ],
@@ -121,7 +124,7 @@ class PetSelectorRow extends StatelessWidget {
           DottedBorder(
             borderType: BorderType.RRect,
             radius: const Radius.circular(16),
-            color: AppColors.border,
+            color: AppColors.neutral300,
             strokeWidth: 1.5,
             dashPattern: const [5, 4],
             padding: EdgeInsets.zero,

@@ -135,8 +135,8 @@ class _MomentThumbnail extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           // Title
-          if (moment.petName.isNotEmpty)
-            Text(moment.petName,
+          if (moment.title.isNotEmpty || moment.petName.isNotEmpty)
+            Text(moment.title.isNotEmpty ? moment.title : moment.petName,
                 style: AppTextStyles.interBoldStyle700(
                     fontSize: 14, fontColor: AppColors.grey1000),
                 overflow: TextOverflow.ellipsis),

@@ -4,8 +4,13 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
-class CreatePostAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CreatePostAppBar({super.key});
+/// Title switches from "Create moment" to "New moment" once a photo has
+/// been picked, matching the two-stage create-moment flow.
+class CreateMomentAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
+  final bool hasPhoto;
+
+  const CreateMomentAppBar({super.key, required this.hasPhoto});
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +23,10 @@ class CreatePostAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary),
         onPressed: () => context.pop(),
       ),
-      title: Text(AppStrings.reportLostOrFoundPet,
-          style: AppTextStyles.semiBoldStyle600(fontSize: 17)),
+      title: Text(
+        hasPhoto ? AppStrings.newMoment : AppStrings.createMomentTitle,
+        style: AppTextStyles.semiBoldStyle600(fontSize: 17),
+      ),
       centerTitle: true,
     );
   }

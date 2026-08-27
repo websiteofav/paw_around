@@ -25,6 +25,8 @@ import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/ui/community/create_post_screen.dart';
 import 'package:paw_around/ui/community/post_detail_screen.dart';
 import 'package:paw_around/ui/moments/create_moment_screen.dart';
+import 'package:paw_around/ui/moments/moment_preview_screen.dart';
+import 'package:paw_around/ui/moments/widgets/create_moment/moment_draft.dart';
 import 'package:paw_around/ui/home/dashboard.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
@@ -270,6 +272,14 @@ class AppRouter {
               path: AppRoutes.createMoment,
               name: AppRoutes.createMoment,
               builder: (context, state) => const CreateMomentScreen(),
+            ),
+
+            // Pet Moments - Preview Route
+            GoRoute(
+              path: AppRoutes.momentPreview,
+              name: AppRoutes.momentPreview,
+              builder: (context, state) =>
+                  MomentPreviewScreen(draft: state.extra as MomentDraft),
             ),
 
             // Community - Post Detail Route

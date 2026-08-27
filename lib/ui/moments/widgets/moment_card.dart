@@ -93,11 +93,23 @@ class MomentCard extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: Text(
-            moment.userName,
-            style: AppTextStyles.interBoldStyle700(
-                fontSize: 14, fontColor: AppColors.grey1100),
-            overflow: TextOverflow.ellipsis,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                moment.userName,
+                style: AppTextStyles.interBoldStyle700(
+                    fontSize: 14, fontColor: AppColors.grey1100),
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (moment.locationName.isNotEmpty)
+                Text(
+                  moment.locationName,
+                  style: AppTextStyles.interRegularStyle400(
+                      fontSize: 12, fontColor: AppColors.grey600),
+                  overflow: TextOverflow.ellipsis,
+                ),
+            ],
           ),
         ),
         const SizedBox(width: 8),
@@ -242,11 +254,12 @@ class MomentCard extends StatelessWidget {
   }
 
   Widget _buildTitle() {
-    if (moment.petName.isEmpty) return const SizedBox.shrink();
+    final title = moment.title.isNotEmpty ? moment.title : moment.petName;
+    if (title.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: 2),
       child: Text(
-        moment.petName,
+        title,
         style: AppTextStyles.semiBoldStyle600(fontSize: 15),
       ),
     );

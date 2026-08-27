@@ -159,7 +159,7 @@ class _LostToggleRowState extends State<_LostToggleRow> {
         Switch(
           value: widget.pet.isLost,
           onChanged: _isUpdating ? null : (value) => _onToggle(value),
-          activeColor: AppColors.primary,
+          activeThumbColor: AppColors.secondaryCTA,
         ),
       ],
     );

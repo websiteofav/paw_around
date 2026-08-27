@@ -92,7 +92,7 @@ class PetTypeSelector extends StatelessWidget {
             ],
           ),
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 36),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

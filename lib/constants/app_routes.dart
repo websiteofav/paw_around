@@ -46,6 +46,7 @@ class AppRoutes {
   // Pet Moments Routes
   static const String petMomentsTab = '/home/moments';
   static const String createMoment = '/moments/create';
+  static const String momentPreview = '/moments/preview';
   static const String momentDetail = '/moments/:id';
 
   // Deep Link Routes

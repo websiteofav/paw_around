@@ -291,6 +291,7 @@ class AppStrings {
       'Help reunite this pet with their family';
   static const String selectYourPet = 'Select your pet';
   static const String addAClearPhoto = 'Add a clear photo';
+  static const String editPhoto = 'Edit photo';
   static const String thisHelpsPetParentsIdentifyPetQuickly =
       'This helps pet parents identify their pet quickly';
   static const String about = 'About';
@@ -311,7 +312,9 @@ class AppStrings {
   static const String reportFoundPetNow = 'Report found pet now';
   static const String markAsResolved = 'Mark as Resolved';
   static const String reopenPost = 'Reopen Post';
+  static const String postMarkedAsResolved = 'Post marked as resolved';
   static const String postReopenedSuccessfully = 'Post reopened successfully';
+  static const String postNotFound = 'Post not found';
   static const String getDirections = 'Get Directions';
   static const String callOwner = 'Call Owner';
   static const String kmAway = 'km away';
@@ -722,6 +725,17 @@ class AppStrings {
   static const String comments = 'Comments';
   static const String noCommentsYet = 'No comments yet';
   static const String beFirstToComment = 'Be the first to comment!';
+  static const String newMoment = 'New moment';
+  static const String createMomentTitle = 'Create moment';
+  static const String addAPhotoOrVideo = 'Add a Photo';
+  static const String momentPhotoBanner =
+      'This helps your pet\'s moment stand out in the feed';
+  static const String momentTitleLabel = 'Title';
+  static const String momentTitleHint = 'Give this moment a title';
+  static String whatsPetUpTo(String name) => "What's $name up to?";
+  static const String addLocationLabel = 'Add location';
+  static const String preview = 'Preview';
+  static const String pleaseEnterTitle = 'Please enter a title';
 
   // Community Action Bottom Sheet
   static const String whatWouldYouLikeToShare = 'What would you like to share?';

@@ -39,16 +39,16 @@ class PillToggleNavRow extends StatelessWidget {
   Widget _buildPillToggle() {
     return IntrinsicWidth(
       child: Container(
-        padding: const EdgeInsets.all(6),
+        padding: const EdgeInsets.symmetric(vertical: 6),
         decoration: smoothDecoration(
           color: AppColors.grey1100,
           cornerRadius: 54,
         ),
         child: Row(
           children: [
-            Expanded(child: _pillTab(0, firstTabLabel)),
+            _pillTab(0, firstTabLabel),
             Container(width: 1, height: 20, color: AppColors.white),
-            Expanded(child: _pillTab(1, secondTabLabel)),
+            _pillTab(1, secondTabLabel),
           ],
         ),
       ),
@@ -60,7 +60,7 @@ class PillToggleNavRow extends StatelessWidget {
     return GestureDetector(
       onTap: () => tabController.animateTo(index),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         child: Text(
           label,
           textAlign: TextAlign.center,

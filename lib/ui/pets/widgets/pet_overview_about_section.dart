@@ -72,16 +72,31 @@ class _MetricsRow extends StatelessWidget {
         pet.colour.isNotEmpty ? pet.colour : AppStrings.valueNotSet;
     final sexVal = pet.gender.isNotEmpty ? pet.gender : AppStrings.valueNotSet;
 
-    return Row(
-      children: [
-        _MetricBox(label: AppStrings.weightLabel, value: weightVal),
-        const SizedBox(width: 8),
-        _MetricBox(label: AppStrings.heightLabel, value: heightVal),
-        const SizedBox(width: 8),
-        _MetricBox(label: AppStrings.colour, value: colourVal),
-        const SizedBox(width: 8),
-        _MetricBox(label: AppStrings.sexLabel, value: sexVal),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final boxWidth = (constraints.maxWidth - 8) / 2;
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            SizedBox(
+                width: boxWidth,
+                child: _MetricBox(
+                    label: AppStrings.weightLabel, value: weightVal)),
+            SizedBox(
+                width: boxWidth,
+                child: _MetricBox(
+                    label: AppStrings.heightLabel, value: heightVal)),
+            SizedBox(
+                width: boxWidth,
+                child:
+                    _MetricBox(label: AppStrings.colour, value: colourVal)),
+            SizedBox(
+                width: boxWidth,
+                child: _MetricBox(label: AppStrings.sexLabel, value: sexVal)),
+          ],
+        );
+      },
     );
   }
 }
@@ -93,30 +108,32 @@ class _MetricBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        height: 82,
-        decoration: smoothDecoration(
-          cornerRadius: 14,
-          color: AppColors.background3,
-        ),
-        alignment: Alignment.center,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(label,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTextStyles.interRegularStyle400(
-                    fontSize: 16, fontColor: AppColors.grey800)),
-            const SizedBox(height: 2),
-            Text(value,
-                textAlign: TextAlign.center,
-                style: AppTextStyles.interSemiBoldStyle600(
-                    fontSize: 16, fontColor: AppColors.secondaryCTA)),
-          ],
-        ),
+    return Container(
+      constraints: const BoxConstraints(minHeight: 82),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      decoration: smoothDecoration(
+        cornerRadius: 14,
+        color: AppColors.background3,
+      ),
+      alignment: Alignment.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(label,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.interRegularStyle400(
+                  fontSize: 16, fontColor: AppColors.grey800)),
+          const SizedBox(height: 2),
+          Text(value,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: AppTextStyles.interSemiBoldStyle600(
+                  fontSize: 16, fontColor: AppColors.secondaryCTA)),
+        ],
       ),
     );
   }

@@ -123,7 +123,9 @@ class _PetRow extends StatelessWidget {
                 children: [
                   Text(pet.name,
                       style: AppTextStyles.interBoldStyle700(
-                          fontSize: 16, fontColor: AppColors.grey1000)),
+                          fontSize: 16,
+                          fontColor:
+                              pet.isLost ? AppColors.error : AppColors.grey1000)),
                   const SizedBox(height: 4),
                   Text(
                     pet.breed.isNotEmpty
@@ -132,6 +134,22 @@ class _PetRow extends StatelessWidget {
                     style: AppTextStyles.interRegularStyle400(
                         fontSize: 12, fontColor: AppColors.grey600),
                   ),
+                  if (pet.isLost) ...[
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 3),
+                      decoration: const BoxDecoration(
+                        color: AppColors.error,
+                        borderRadius: BorderRadius.all(Radius.circular(999)),
+                      ),
+                      child: Text(
+                        AppStrings.missing,
+                        style: AppTextStyles.interBoldStyle700(
+                            fontSize: 11, fontColor: AppColors.white),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),

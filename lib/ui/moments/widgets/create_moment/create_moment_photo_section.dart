@@ -1,6 +1,9 @@
 import 'dart:io';
 
+import 'package:dotted_border/dotted_border.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_decorations.dart';
@@ -9,22 +12,17 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/info_banner.dart';
 
-/// Photo picker: a full-width rounded photo area. Shows [localImagePath] if
-/// picked, else [existingImageUrl] (e.g. the selected pet's saved photo),
-/// else an empty dashed "Add Photo" placeholder.
-class CreatePostPhotoSection extends StatelessWidget {
-  final String? localImagePath;
-  final String? existingImageUrl;
+/// Dashed "Add a Photo" picker; once a photo is picked, shows the preview
+/// with an "Edit photo" pill to swap or remove it.
+class CreateMomentPhotoSection extends StatelessWidget {
+  final String? imagePath;
   final ValueChanged<String?> onImagePicked;
 
-  const CreatePostPhotoSection({
+  const CreateMomentPhotoSection({
     super.key,
-    required this.localImagePath,
-    required this.existingImageUrl,
+    required this.imagePath,
     required this.onImagePicked,
   });
-
-  bool get _hasPhoto => localImagePath != null || existingImageUrl != null;
 
   Future<void> _pickImage(BuildContext context, ImageSource source) async {
     final picker = ImagePicker();
@@ -51,7 +49,13 @@ class CreatePostPhotoSection extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.primary),
+                leading: Image.asset(
+                  AppIcons.addPhotoIcon,
+                  width: 24,
+                  height: 24,
+                  color: AppColors.primary,
+                  colorBlendMode: BlendMode.srcIn,
+                ),
                 title: const Text(AppStrings.takePhoto),
                 onTap: () {
                   Navigator.pop(sheetContext);
@@ -67,7 +71,7 @@ class CreatePostPhotoSection extends StatelessWidget {
                   _pickImage(context, ImageSource.gallery);
                 },
               ),
-              if (_hasPhoto) ...[
+              if (imagePath != null) ...[
                 const Divider(),
                 ListTile(
                   leading:
@@ -92,81 +96,85 @@ class CreatePostPhotoSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasPhoto = imagePath != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Text(
-                AppStrings.addAClearPhoto,
-                style: AppTextStyles.semiBoldStyle600(
-                    fontSize: 13, fontColor: AppColors.textSecondary),
-              ),
-            ),
-            if (_hasPhoto)
-              PopupMenuButton<String>(
-                icon: const Icon(Icons.menu,
-                    size: 20, color: AppColors.secondaryCTA),
-                padding: EdgeInsets.zero,
-                onSelected: (value) {
-                  if (value == 'edit') _showPhotoOptions(context);
-                },
-                borderRadius: BorderRadius.circular(16),
-                offset: const Offset(-20, 40),
-                itemBuilder: (context) => [
-                  const PopupMenuItem<String>(
-                    value: 'edit',
-                    child: Text(AppStrings.editPhoto),
-                  ),
-                ],
-              ),
-          ],
-        ),
-        const SizedBox(height: 12),
         GestureDetector(
           onTap: () => _showPhotoOptions(context),
-          child: _hasPhoto ? _buildPhoto() : _buildEmptyState(),
+          child: hasPhoto ? _buildPhoto() : _buildEmptyState(),
         ),
+        if (hasPhoto) ...[
+          const SizedBox(height: 24),
+          _buildEditButton(context),
+        ],
         const SizedBox(height: 12),
-        const InfoBanner(
-            text: AppStrings.thisHelpsPetParentsIdentifyPetQuickly),
+        const InfoBanner(text: AppStrings.momentPhotoBanner),
       ],
     );
   }
 
   Widget _buildPhoto() {
-    return Container(
-      height: 220,
-      width: double.infinity,
-      clipBehavior: Clip.antiAlias,
-      decoration: smoothDecoration(cornerRadius: 20),
-      child: localImagePath != null
-          ? Image.file(File(localImagePath!), fit: BoxFit.cover)
-          : Image.network(existingImageUrl!, fit: BoxFit.cover),
+    return ClipSmoothRect(
+      radius: AppSmoothRadius.custom(24),
+      child: Image.file(
+        File(imagePath!),
+        height: 320,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      ),
     );
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      height: 160,
-      width: double.infinity,
-      decoration: smoothDecoration(
-        cornerRadius: 20,
-        color: AppColors.surface,
-        side: const BorderSide(color: AppColors.border),
+    return DottedBorder(
+      borderType: BorderType.RRect,
+      radius: const Radius.circular(24),
+      color: AppColors.border,
+      strokeWidth: 1.5,
+      dashPattern: const [6, 5],
+      padding: EdgeInsets.zero,
+      child: Container(
+        height: 420,
+        width: double.infinity,
+        decoration:
+            smoothDecoration(cornerRadius: 24, color: AppColors.surface),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(AppIcons.addPhotoIcon, width: 48, height: 48),
+            const SizedBox(height: 12),
+            Text(
+              AppStrings.addAPhotoOrVideo,
+              style: AppTextStyles.interRegularStyle400(
+                  fontSize: 14, fontColor: AppColors.grey1000),
+            ),
+          ],
+        ),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(AppIcons.addPhotoIcon, width: 36, height: 36),
-          const SizedBox(height: 8),
-          Text(
-            AppStrings.addPhoto,
-            style: AppTextStyles.regularStyle400(
-                fontSize: 14, fontColor: AppColors.textSecondary),
-          ),
-        ],
+    );
+  }
+
+  Widget _buildEditButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _showPhotoOptions(context),
+      child: Container(
+        height: 36,
+        padding: const EdgeInsets.fromLTRB(12, 8, 16, 8),
+        decoration:
+            smoothDecoration(cornerRadius: 999, color: AppColors.background3),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 4,
+          children: [
+            SvgPicture.asset(AppIcons.editIcon,
+                colorFilter: const ColorFilter.mode(
+                    AppColors.secondaryCTA, BlendMode.srcIn)),
+            Text(AppStrings.editPhoto,
+                style: AppTextStyles.mediumStyle500(
+                    fontSize: 13, fontColor: AppColors.secondaryCTA)),
+          ],
+        ),
       ),
     );
   }

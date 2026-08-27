@@ -169,10 +169,10 @@ class CommonButton extends StatelessWidget {
         );
       case ButtonVariant.danger:
         return ElevatedButton.styleFrom(
-          backgroundColor: customColor ?? Colors.red,
-          foregroundColor: customTextColor ?? Colors.white,
+          backgroundColor: customColor ?? AppColors.error,
+          foregroundColor: customTextColor ?? AppColors.white,
           elevation: 4,
-          shadowColor: (customColor ?? Colors.red).withValues(alpha: 0.3),
+          shadowColor: (customColor ?? AppColors.error).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
             borderRadius:
                 BorderRadius.circular(borderRadius ?? _getBorderRadius()),
@@ -220,16 +220,7 @@ class CommonButton extends StatelessWidget {
     }
   }
 
-  double _getBorderRadius() {
-    switch (size) {
-      case ButtonSize.small:
-        return 20;
-      case ButtonSize.medium:
-        return AppConstants.buttonBorderRadius;
-      case ButtonSize.large:
-        return 32;
-    }
-  }
+  double _getBorderRadius() => (buttonHeight ?? _getButtonHeight()) / 2;
 
   double _getIconSize() {
     switch (size) {

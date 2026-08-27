@@ -60,7 +60,7 @@ class Validators {
     if (value == null || value.trim().isEmpty) {
       return 'Phone number is required';
     }
-    final phoneRegex = RegExp(r'^[0-9]{10,}$');
+    final phoneRegex = RegExp(r'^\+?[0-9]{10,}$');
     if (!phoneRegex.hasMatch(value.replaceAll(RegExp(r'[\s\-\(\)]'), ''))) {
       return 'Enter a valid phone number';
     }

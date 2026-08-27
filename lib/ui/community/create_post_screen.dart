@@ -136,6 +136,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     if (type == PostType.found) _selectedPet = null;
                   }),
                 ),
+                const SizedBox(height: 8),
                 const CreatePostSectionDivider(),
                 const SizedBox(height: 32),
                 if (_postType == PostType.lost) ...[

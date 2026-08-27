@@ -6,12 +6,14 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_routes.dart';
+import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_about_section.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_activity_section.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_actions.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_care_section.dart';
+import 'package:paw_around/ui/pets/widgets/pet_overview_lost_toggle.dart';
 import 'package:paw_around/ui/pets/widgets/pet_overview_personality_section.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
 
@@ -51,6 +53,11 @@ class _PetOverviewContent extends StatelessWidget {
                 _HeroSection(pet: pet),
                 const SizedBox(height: 24),
                 _IdentityRow(pet: pet),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: PetOverviewLostToggle(pet: pet),
+                ),
                 const SizedBox(height: 24),
                 PetOverviewAboutSection(pet: pet),
                 const SizedBox(height: 24),
@@ -127,6 +134,23 @@ class _HeroSection extends StatelessWidget {
             ),
           ),
         ),
+        if (pet.isLost)
+          Positioned(
+            bottom: 16,
+            left: 16,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: smoothDecoration(
+                cornerRadius: 999,
+                color: AppColors.error,
+              ),
+              child: Text(
+                AppStrings.missing,
+                style: AppTextStyles.interBoldStyle700(
+                    fontSize: 12, fontColor: AppColors.white),
+              ),
+            ),
+          ),
       ],
     );
   }

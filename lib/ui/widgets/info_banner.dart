@@ -17,7 +17,7 @@ class InfoBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: smoothDecoration(
-        cornerRadius: AppConstants.radiusMD,
+        cornerRadius: AppConstants.radiusXS,
         color: AppColors.background3,
       ),
       child: Row(
@@ -27,15 +27,15 @@ class InfoBanner extends StatelessWidget {
             AppIcons.informationIcon,
             width: 20,
             height: 20,
-            color: AppColors.navColor,
+            color: AppColors.secondaryCTA,
             colorBlendMode: BlendMode.srcIn,
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               text,
-              style: AppTextStyles.interMediumStyle500(
-                  fontSize: 14, fontColor: AppColors.navColor),
+              style: AppTextStyles.interSemiBoldStyle600(
+                  fontSize: 14, fontColor: AppColors.secondaryCTA),
             ),
           ),
         ],

@@ -118,6 +118,23 @@ class _PetAvatar extends StatelessWidget {
                       ),
                     ),
                   ),
+                if (pet.isLost)
+                  Positioned(
+                    top: -4,
+                    right: -4,
+                    child: Container(
+                      width: 20,
+                      height: 20,
+                      decoration: const BoxDecoration(
+                        color: AppColors.error,
+                        shape: BoxShape.circle,
+                        border: Border.fromBorderSide(
+                            BorderSide(color: AppColors.white, width: 2)),
+                      ),
+                      child: const Icon(Icons.priority_high,
+                          size: 12, color: AppColors.white),
+                    ),
+                  ),
               ],
             ),
             const SizedBox(height: 14),
@@ -130,9 +147,11 @@ class _PetAvatar extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.interMediumStyle500(
                     fontSize: 13,
-                    fontColor: isSelected
-                        ? AppColors.primary
-                        : AppColors.grey1000),
+                    fontColor: pet.isLost
+                        ? AppColors.error
+                        : isSelected
+                            ? AppColors.primary
+                            : AppColors.grey1000),
               ),
             ),
           ],
