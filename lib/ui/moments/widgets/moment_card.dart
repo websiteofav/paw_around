@@ -1,12 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/moments/pet_moment_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/utils/date_utils.dart';
+import 'package:paw_around/utils/share_utils.dart';
 
 class MomentCard extends StatelessWidget {
   final PetMoment moment;
@@ -30,63 +34,127 @@ class MomentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowOverlay.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildImage(),
-          Padding(
-            padding: const EdgeInsets.all(14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(),
-                const SizedBox(height: 8),
-                _buildCaption(),
-                const SizedBox(height: 12),
-                _buildActions(),
-              ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        decoration: smoothDecoration(
+          cornerRadius: 24,
+          color: AppColors.white,
+          side: const BorderSide(color: AppColors.border),
+          shadows: [
+            BoxShadow(
+                color: AppColors.shadowOverlay.withValues(alpha: 0.051),
+                blurRadius: 7,
+                offset: const Offset(0, 3)),
+            BoxShadow(
+                color: AppColors.shadowOverlay.withValues(alpha: 0.039),
+                blurRadius: 13,
+                offset: const Offset(0, 13)),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
+              child: _buildHeader(),
             ),
-          ),
-        ],
+            _buildImage(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 10, 12, 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildActions(),
+                  const SizedBox(height: 12),
+                  _buildTitle(),
+                  _buildCaption(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      children: [
+        Container(
+          width: 36,
+          height: 36,
+          decoration: const BoxDecoration(
+            color: AppColors.iconBgLight,
+            shape: BoxShape.circle,
+          ),
+          child: const Icon(Icons.pets, size: 18, color: AppColors.primary),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                moment.userName,
+                style: AppTextStyles.interBoldStyle700(
+                    fontSize: 14, fontColor: AppColors.grey1100),
+                overflow: TextOverflow.ellipsis,
+              ),
+              if (moment.locationName.isNotEmpty)
+                Text(
+                  moment.locationName,
+                  style: AppTextStyles.interRegularStyle400(
+                      fontSize: 12, fontColor: AppColors.grey600),
+                  overflow: TextOverflow.ellipsis,
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          AppDateUtils.getRelativeTimeShort(moment.createdAt),
+          style: AppTextStyles.interRegularStyle400(
+              fontSize: 12, fontColor: AppColors.grey600),
+        ),
+        if (onDelete != null)
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.more_vert,
+                color: AppColors.textSecondary, size: 20),
+            padding: EdgeInsets.zero,
+            onSelected: (value) {
+              if (value == 'delete') onDelete!();
+            },
+            itemBuilder: (context) => [
+              PopupMenuItem<String>(
+                value: 'delete',
+                child: Row(
+                  children: [
+                    const Icon(Icons.delete_forever_rounded,
+                        color: AppColors.error, size: 20),
+                    const SizedBox(width: 8),
+                    Text(
+                      AppStrings.deleteMoment,
+                      style: AppTextStyles.mediumStyle500(
+                          fontSize: 14, fontColor: AppColors.error),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+      ],
     );
   }
 
   Widget _buildImage() {
     return Hero(
       tag: 'moment-image-${moment.id}',
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowOverlay.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-          child: SizedBox(
-            height: 300,
-            width: double.infinity,
-            child: _buildMomentImage(),
-          ),
-        ),
+      child: SizedBox(
+        height: 300,
+        width: double.infinity,
+        child: _buildMomentImage(),
       ),
     );
   }
@@ -112,93 +180,7 @@ class MomentCard extends StatelessWidget {
   Widget _buildPlaceholder() {
     return Container(
       color: AppColors.surface,
-      child: const Icon(
-        Icons.pets,
-        size: 48,
-        color: AppColors.textLight,
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Expanded(
-          child: Row(
-            children: [
-              if (moment.petName.isNotEmpty) ...[
-                Text(
-                  moment.petName,
-                  style: AppTextStyles.semiBoldStyle600(fontSize: 16),
-                ),
-                const SizedBox(width: 8),
-              ],
-              Text(
-                moment.userName,
-                style: AppTextStyles.regularStyle400(
-                  fontSize: 14,
-                  fontColor: AppColors.textSecondary,
-                ),
-              ),
-            ],
-          ),
-        ),
-        Text(
-          AppDateUtils.getRelativeTimeShort(moment.createdAt),
-          style: AppTextStyles.regularStyle400(
-            fontSize: 12,
-            fontColor: AppColors.textSecondary,
-          ),
-        ),
-        if (onDelete != null)
-          PopupMenuButton<String>(
-            icon: Icon(
-              Icons.more_vert,
-              color: AppColors.textSecondary,
-              size: 20,
-            ),
-            padding: EdgeInsets.zero,
-            onSelected: (value) {
-              if (value == 'delete') onDelete!();
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem<String>(
-                value: 'delete',
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.delete_forever_rounded,
-                      color: AppColors.error,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      AppStrings.deleteMoment,
-                      style: AppTextStyles.mediumStyle500(
-                        fontSize: 14,
-                        fontColor: AppColors.error,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-      ],
-    );
-  }
-
-  Widget _buildCaption() {
-    if (moment.caption.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    return Text(
-      moment.caption,
-      style: AppTextStyles.regularStyle400(fontSize: 14),
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
+      child: const Icon(Icons.pets, size: 48, color: AppColors.textLight),
     );
   }
 
@@ -209,6 +191,16 @@ class MomentCard extends StatelessWidget {
         const SizedBox(width: 16),
         _buildCommentButton(),
         const Spacer(),
+        GestureDetector(
+          onTap: () => ShareUtils.shareMoment(moment),
+          child: Image.asset(
+            AppIcons.shareIcon,
+            width: 20,
+            height: 20,
+            color: AppColors.textSecondary,
+            colorBlendMode: BlendMode.srcIn,
+          ),
+        ),
       ],
     );
   }
@@ -218,18 +210,20 @@ class MomentCard extends StatelessWidget {
       onTap: onLike,
       child: Row(
         children: [
-          Icon(
-            _isLiked ? Icons.favorite : Icons.favorite_border,
-            color: _isLiked ? AppColors.error : AppColors.textSecondary,
-            size: 20,
+          SvgPicture.asset(
+            AppIcons.heartIcon,
+            width: 20,
+            height: 20,
+            colorFilter: ColorFilter.mode(
+              _isLiked ? AppColors.error : AppColors.textSecondary,
+              BlendMode.srcIn,
+            ),
           ),
           const SizedBox(width: 6),
           Text(
             moment.likeCount.toString(),
             style: AppTextStyles.mediumStyle500(
-              fontSize: 14,
-              fontColor: AppColors.textSecondary,
-            ),
+                fontSize: 14, fontColor: AppColors.textSecondary),
           ),
         ],
       ),
@@ -241,21 +235,44 @@ class MomentCard extends StatelessWidget {
       onTap: onComment,
       child: Row(
         children: [
-          const Icon(
-            Icons.chat_bubble_outline,
-            color: AppColors.textSecondary,
-            size: 20,
+          SvgPicture.asset(
+            AppIcons.commentIcon,
+            width: 20,
+            height: 20,
+            colorFilter: const ColorFilter.mode(
+                AppColors.textSecondary, BlendMode.srcIn),
           ),
           const SizedBox(width: 6),
           Text(
             moment.commentCount.toString(),
             style: AppTextStyles.mediumStyle500(
-              fontSize: 14,
-              fontColor: AppColors.textSecondary,
-            ),
+                fontSize: 14, fontColor: AppColors.textSecondary),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildTitle() {
+    final title = moment.title.isNotEmpty ? moment.title : moment.petName;
+    if (title.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Text(
+        title,
+        style: AppTextStyles.semiBoldStyle600(fontSize: 15),
+      ),
+    );
+  }
+
+  Widget _buildCaption() {
+    if (moment.caption.isEmpty) return const SizedBox.shrink();
+    return Text(
+      moment.caption,
+      style: AppTextStyles.regularStyle400(
+          fontSize: 14, fontColor: AppColors.textSecondary),
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }

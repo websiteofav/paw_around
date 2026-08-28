@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary Colors (Green theme)
-  static const Color primary = Color(0xFF00C8A6);
+  static const Color primary = Color(0xFF00F3AE);
+  static const Color secondaryCTA = Color(0xFF27725D);
+  static const Color navColor = Color(0xFF1A4C3E);
   static const Color primaryLight = Color(0xFF8DD4A0);
+  static const Color background3 = Color(0xFFECF8F5);
   static const Color primaryDark = Color(0xFF3E8F5A);
 
   // Secondary Colors (Gold for premium)
@@ -27,6 +30,8 @@ class AppColors {
 
   // Status Colors
   static const Color error = Color(0xFFEF4444);
+  static const Color deepRed = Color(0xFFAD0500);
+  static const Color requiredIndicator = Color(0xFFFF2720);
   static const Color success = Color(0xFF22C55E);
   static const Color warning = Color(0xFFF59E0B);
 
@@ -83,17 +88,20 @@ class AppColors {
   static const Color urgentBadgeText = Color(0xFF7F1D1D);
 
   // Gradient Colors - Grooming (Emerald - lighter shades)
-  static const Color groomingGradientStart = Color(0xFF34D399); // Lighter emerald-400
+  static const Color groomingGradientStart =
+      Color(0xFF34D399); // Lighter emerald-400
   static const Color groomingGradientEnd = Color(0xFF00C8A6); // Emerald-500
   static const Color groomingBadge = Color(0xFFD1FAE5); // Lighter emerald-100
-  static const Color groomingBadgeText = Color(0xFF065F46); // Lighter emerald-800
+  static const Color groomingBadgeText =
+      Color(0xFF065F46); // Lighter emerald-800
 
   // Gradient Colors - Care Summary (Purple/Pink)
   static const Color summaryGradientStart = Color(0xFFF3E8FF);
   static const Color summaryGradientEnd = Color(0xFFFCE7F3);
 
   // Gradient Colors - Tick & Flea (Blue - lighter shades)
-  static const Color tickFleaGradientStart = Color(0xFF60A5FA); // Lighter blue-400
+  static const Color tickFleaGradientStart =
+      Color(0xFF60A5FA); // Lighter blue-400
   static const Color tickFleaGradientEnd = Color(0xFF3B82F6); // Blue-500
   static const Color tickFleaBadge = Color(0xFFDBEAFE); // Lighter blue-100
   static const Color tickFleaBadgeText = Color(0xFF2563EB); // Lighter blue-600
@@ -124,6 +132,33 @@ class AppColors {
   static const Color mapBackground = Color(0xFFF5F5F5);
 
   static const Color profileHeaderBg = Color(0XFFE8F6E9);
+
+  static const Color navBarShadow = Color(0xFFB0B0B0);
+  static const Color grey100 = Color(0xFFE4E5E7);
+  static const Color grey150 = Color(0xFFCCCCCC);
+  static const Color grey200 = Color(0xFFAEAEB2);
+  static const Color grey600 = Color(0xFF747474);
+  static const Color grey700 = Color(0xFF62666A);
+  static const Color grey800 = Color(0xFF5F5F63);
+  static const Color grey900 = Color(0xFF3F3F3F);
+
+  static const Color grey1000 = Color(0xFF181818);
+  static const Color grey1100 = Color(0xFF141415);
+
+  static const Color neutral100 = Color(0xFFD9D9D9);
+  static const Color neutral200 = Color(0XFFCACCCE);
+  static const Color neutral300 = Color(0xFFAFB2B6);
+  static const Color neutral700 = Color(0xFF4B5057);
+  static const Color neutral900 = Color(0xFF18191B);
+
+  static const disabledGreenColor = Color(0xFFC2F3E5);
+  static const Color black = Color(0xFF000000);
+
+  // Quick Action Card Colors
+  static const Color quickActionVaccines = Color(0xFFCCFFCE);
+  static const Color quickActionTickFlea = Color(0xFFFFE1CC);
+  static const Color quickActionGrooming = Color(0xFFD1CCFF);
+  static const Color quickActionLost = Color(0xFFFFCCCC);
 
   // Private constructor to prevent instantiation
   AppColors._();

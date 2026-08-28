@@ -5,6 +5,8 @@ import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/bloc/auth/auth_state.dart';
 import 'package:paw_around/constants/analytics_constants.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/core/di/service_locator.dart';
+import 'package:paw_around/repositories/user_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -15,6 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       : _authRepository = authRepository,
         super(const AuthInitial()) {
     on<CheckAuthStatus>(_onCheckAuthStatus);
+    on<RefreshUserProfile>(_onRefreshUserProfile);
     on<TogglePasswordVisibility>(_onTogglePasswordVisibility);
     on<LoginWithEmail>(_onLoginWithEmail);
     on<SignupWithEmail>(_onSignupWithEmail);
@@ -28,20 +31,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     });
   }
 
-  void _onCheckAuthStatus(CheckAuthStatus event, Emitter<AuthState> emit) {
+  Future<void> _onCheckAuthStatus(
+      CheckAuthStatus event, Emitter<AuthState> emit) async {
     final user = _authRepository.currentUser;
     if (user != null) {
-      emit(Authenticated(user: user, isPasswordVisible: state.isPasswordVisible));
+      final profile = await sl<UserRepository>().getProfile(user.uid);
+      emit(Authenticated(
+        user: user,
+        profile: profile,
+        isPasswordVisible: state.isPasswordVisible,
+      ));
     } else {
       emit(Unauthenticated(isPasswordVisible: state.isPasswordVisible));
     }
   }
 
-  void _onTogglePasswordVisibility(TogglePasswordVisibility event, Emitter<AuthState> emit) {
-    emit(AuthPasswordVisibilityToggled(isPasswordVisible: !state.isPasswordVisible));
+  Future<void> _onRefreshUserProfile(
+      RefreshUserProfile event, Emitter<AuthState> emit) async {
+    final user = _authRepository.currentUser;
+    if (user == null) return;
+    final profile = await sl<UserRepository>().getProfile(user.uid);
+    emit(Authenticated(
+      user: user,
+      profile: profile,
+      isPasswordVisible: state.isPasswordVisible,
+    ));
   }
 
-  Future<void> _onLoginWithEmail(LoginWithEmail event, Emitter<AuthState> emit) async {
+  void _onTogglePasswordVisibility(
+      TogglePasswordVisibility event, Emitter<AuthState> emit) {
+    emit(AuthPasswordVisibilityToggled(
+        isPasswordVisible: !state.isPasswordVisible));
+  }
+
+  Future<void> _onLoginWithEmail(
+      LoginWithEmail event, Emitter<AuthState> emit) async {
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
 
     try {
@@ -63,7 +87,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onSignupWithEmail(SignupWithEmail event, Emitter<AuthState> emit) async {
+  Future<void> _onSignupWithEmail(
+      SignupWithEmail event, Emitter<AuthState> emit) async {
     // Validate passwords match
 
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
@@ -92,7 +117,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     }
   }
 
-  Future<void> _onForgotPassword(ForgotPassword event, Emitter<AuthState> emit) async {
+  Future<void> _onForgotPassword(
+      ForgotPassword event, Emitter<AuthState> emit) async {
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
 
     try {
@@ -120,7 +146,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     // Auth state listener will emit Unauthenticated
   }
 
-  Future<void> _onLoginWithGoogle(LoginWithGoogle event, Emitter<AuthState> emit) async {
+  Future<void> _onLoginWithGoogle(
+      LoginWithGoogle event, Emitter<AuthState> emit) async {
     emit(AuthLoading(isPasswordVisible: state.isPasswordVisible));
     try {
       await _authRepository.signInWithGoogle();

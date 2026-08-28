@@ -18,7 +18,10 @@ class PetFormState extends Equatable {
   final DateTime? dateOfBirth;
   final bool isExactDateOfBirth;
   final String weight;
+  final String height;
+  final String colour;
   final String notes;
+  final List<String> personality;
   final String? imagePath;
   final bool isImageLoading;
   final List<VaccineModel> vaccines;
@@ -36,7 +39,10 @@ class PetFormState extends Equatable {
     this.dateOfBirth,
     this.isExactDateOfBirth = false,
     this.weight = '',
+    this.height = '',
+    this.colour = '',
     this.notes = '',
+    this.personality = const [],
     this.imagePath,
     this.isImageLoading = false,
     this.vaccines = const [],
@@ -55,7 +61,10 @@ class PetFormState extends Equatable {
     DateTime? dateOfBirth,
     bool? isExactDateOfBirth,
     String? weight,
+    String? height,
+    String? colour,
     String? notes,
+    List<String>? personality,
     String? imagePath,
     bool clearImagePath = false,
     bool? isImageLoading,
@@ -74,7 +83,10 @@ class PetFormState extends Equatable {
       dateOfBirth: dateOfBirth ?? this.dateOfBirth,
       isExactDateOfBirth: isExactDateOfBirth ?? this.isExactDateOfBirth,
       weight: weight ?? this.weight,
+      height: height ?? this.height,
+      colour: colour ?? this.colour,
       notes: notes ?? this.notes,
+      personality: personality ?? this.personality,
       imagePath: clearImagePath ? null : (imagePath ?? this.imagePath),
       isImageLoading: isImageLoading ?? this.isImageLoading,
       vaccines: vaccines ?? this.vaccines,
@@ -95,7 +107,10 @@ class PetFormState extends Equatable {
         dateOfBirth,
         isExactDateOfBirth,
         weight,
+        height,
+        colour,
         notes,
+        personality,
         imagePath,
         isImageLoading,
         vaccines,

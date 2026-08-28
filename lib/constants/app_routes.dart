@@ -1,10 +1,10 @@
 class AppRoutes {
   // Main Routes
-  static const String splash = '/';
   static const String intro = '/intro';
   static const String onboarding = '/onboarding';
   static const String phoneLogin = '/phone-login';
   static const String otpVerification = '/otp-verification';
+  static const String profileSetup = '/profile-setup';
   static const String home = '/home';
 
   // Home Tab Routes
@@ -46,6 +46,7 @@ class AppRoutes {
   // Pet Moments Routes
   static const String petMomentsTab = '/home/moments';
   static const String createMoment = '/moments/create';
+  static const String momentPreview = '/moments/preview';
   static const String momentDetail = '/moments/:id';
 
   // Deep Link Routes

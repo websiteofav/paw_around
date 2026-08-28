@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -18,17 +20,19 @@ class ProfileFooter extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.pets,
-              size: 16,
-              color: AppColors.textSecondary.withValues(alpha: 0.5),
+            SvgPicture.asset(
+              AppIcons.pawProfileIcon,
+              height: 28,
+              width: 34,
+              colorFilter:
+                  const ColorFilter.mode(AppColors.grey150, BlendMode.srcIn),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 12),
             Text(
               AppStrings.appName,
               style: AppTextStyles.regularStyle400(
-                fontSize: 13,
-                fontColor: AppColors.textSecondary.withValues(alpha: 0.7),
+                fontSize: 24,
+                fontColor: AppColors.grey150,
               ),
             ),
           ],
@@ -36,9 +40,9 @@ class ProfileFooter extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           appVersion,
-          style: AppTextStyles.regularStyle400(
-            fontSize: 12,
-            fontColor: AppColors.textSecondary.withValues(alpha: 0.5),
+          style: AppTextStyles.interMediumStyle500(
+            fontSize: 16,
+            fontColor: AppColors.grey150,
           ),
         ),
       ],

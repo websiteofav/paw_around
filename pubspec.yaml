@@ -1,7 +1,7 @@
 name: paw_around
 description: "A new Flutter project."
 publish_to: "none"
-version: 1.0.5+11
+version: 1.0.6+12
 
 environment:
   sdk: ">=3.1.0 <4.0.0"
@@ -32,7 +32,7 @@ dependencies:
   cloud_firestore: 6.1.0
   firebase_auth: 6.1.2
   firebase_storage: 13.0.4
-  firebase_app_check: ^0.4.1+3
+  firebase_app_check: 0.4.1+3
   cached_network_image: 3.4.1
   intl_phone_field: 3.2.0
   pin_code_fields: 8.0.1
@@ -49,7 +49,11 @@ dependencies:
   share_plus: 12.0.1
   qr_flutter: 4.1.0
   font_awesome_flutter: 10.7.0
-  firebase_messaging: ^16.1.0
+  firebase_messaging: 16.1.0
+  shimmer: 3.0.0
+  flutter_ruler_picker: 1.0.6
+  figma_squircle: 0.6.3
+  dotted_border: 2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -94,5 +98,7 @@ flutter:
     - assets/home/
     - assets/pets/
     - assets/posts/
+    - assets/actions/
+    - assets/profile/
     - assets/web/
     - .env

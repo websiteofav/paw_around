@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -134,9 +136,9 @@ class _MarkLostBottomSheetState extends State<MarkLostBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        borderRadius: AppSmoothRadius.topOnly(24),
         color: AppColors.surface,
-        borderRadius: AppBorderRadius.topXl,
       ),
       padding: EdgeInsets.only(
         left: 24,
@@ -153,9 +155,9 @@ class _MarkLostBottomSheetState extends State<MarkLostBottomSheet> {
               width: 40,
               height: 4,
               margin: const EdgeInsets.only(bottom: 24),
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 2,
                 color: AppColors.border,
-                borderRadius: BorderRadius.circular(2),
               ),
             ),
           ),
@@ -188,10 +190,10 @@ class _MarkLostBottomSheetState extends State<MarkLostBottomSheet> {
             child: Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 12,
                 color: AppColors.surface,
-                borderRadius: AppBorderRadius.sm,
-                border: Border.all(color: AppColors.border),
+                side: const BorderSide(color: AppColors.border),
               ),
               child: Row(
                 children: [

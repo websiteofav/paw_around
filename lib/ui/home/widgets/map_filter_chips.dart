@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/bloc/bloc/places_event.dart';
 import 'package:paw_around/bloc/bloc/places_state.dart';
@@ -33,9 +34,9 @@ class _FilterChipsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
         color: AppColors.white,
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.04),
             blurRadius: 8,
@@ -50,7 +51,9 @@ class _FilterChipsView extends StatelessWidget {
             final isSelected = state.selectedServiceType == type;
             final count = type == ServiceType.all
                 ? state.places.length
-                : state.places.where((p) => type.matchesTypes(p.types, placeName: p.name)).length;
+                : state.places
+                    .where((p) => type.matchesTypes(p.types, placeName: p.name))
+                    .length;
 
             return Padding(
               padding: const EdgeInsets.only(right: 8),
@@ -87,14 +90,10 @@ class _FilterChip extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        decoration: BoxDecoration(
-          color: isSelected ? type.color : AppColors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? type.color : AppColors.border,
-            width: 1.5,
-          ),
-          boxShadow: isSelected
+        decoration: smoothDecoration(
+          cornerRadius: 20,
+          color: isSelected ? AppColors.secondaryCTA : AppColors.white,
+          shadows: isSelected
               ? [
                   BoxShadow(
                     color: type.color.withValues(alpha: 0.3),
@@ -121,18 +120,12 @@ class _FilterChip extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 6),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.white.withValues(alpha: 0.2) : AppColors.background,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Text(
-                '$count',
-                style: AppTextStyles.semiBoldStyle600(
-                  fontSize: 12,
-                  fontColor: isSelected ? AppColors.white : AppColors.textSecondary,
-                ),
+            Text(
+              '($count)',
+              style: AppTextStyles.semiBoldStyle600(
+                fontSize: 12,
+                fontColor:
+                    isSelected ? AppColors.white : AppColors.textSecondary,
               ),
             ),
           ],

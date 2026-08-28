@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -78,11 +80,11 @@ class PetQrScreen extends StatelessWidget {
   Widget _buildQrCard(BuildContext context, String qrData) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 24,
         color: AppColors.white,
-        borderRadius: AppBorderRadius.xl,
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
@@ -109,11 +111,11 @@ class PetQrScreen extends StatelessWidget {
   Widget _buildUnavailableMessage(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 24,
         color: AppColors.white,
-        borderRadius: AppBorderRadius.xl,
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,

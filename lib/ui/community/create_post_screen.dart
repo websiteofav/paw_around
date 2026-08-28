@@ -1,23 +1,27 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
 import 'package:paw_around/bloc/community/community_event.dart';
-import 'package:paw_around/bloc/community/community_state.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
-import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
+import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
-import 'package:paw_around/services/storage_service.dart';
-import 'package:paw_around/ui/widgets/common_button.dart';
-import 'package:paw_around/ui/widgets/common_text_field.dart';
-import 'package:paw_around/ui/widgets/location_autocomplete_field.dart';
-import 'package:paw_around/utils/validators.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_about_section.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_app_bar.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_contact_section.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_location_section.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_pet_selector.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_photo_section.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_result_listener.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_section_divider.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_submit_button.dart';
+import 'package:paw_around/ui/community/widgets/create_post/create_post_submit_service.dart';
+import 'package:paw_around/ui/community/widgets/create_post/last_seen_picker.dart';
+import 'package:paw_around/ui/community/widgets/create_post/pet_type_selector.dart';
 
 class CreatePostScreen extends StatefulWidget {
   final PostType? initialType;
@@ -30,7 +34,6 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _petNameController = TextEditingController();
   final _breedController = TextEditingController();
   final _colorController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -38,20 +41,25 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   final _locationController = TextEditingController();
 
   late PostType _postType;
-  String? _imagePath;
+  PetModel? _selectedPet;
+  String? _localImagePath;
   double? _latitude;
   double? _longitude;
+  DateTime _lastSeenDateTime = DateTime.now();
+  bool _isJustNow = false;
   bool _isSubmitting = false;
 
   @override
   void initState() {
     super.initState();
     _postType = widget.initialType ?? PostType.lost;
+    context.read<PetListBloc>().add(const LoadPetList());
+    final phone = sl<AuthRepository>().currentUser?.phoneNumber;
+    if (phone != null) _phoneController.text = phone;
   }
 
   @override
   void dispose() {
-    _petNameController.dispose();
     _breedController.dispose();
     _colorController.dispose();
     _descriptionController.dispose();
@@ -60,72 +68,15 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     super.dispose();
   }
 
-  void _showImagePickerOptions() {
-    final hasImage = _imagePath != null;
-
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (sheetContext) => SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppColors.primary),
-                title: const Text('Take a photo'),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _pickImage(ImageSource.camera);
-                },
-              ),
-              ListTile(
-                leading:
-                    const Icon(Icons.photo_library, color: AppColors.primary),
-                title: const Text('Choose from gallery'),
-                onTap: () {
-                  Navigator.pop(sheetContext);
-                  _pickImage(ImageSource.gallery);
-                },
-              ),
-              if (hasImage) ...[
-                const Divider(),
-                ListTile(
-                  leading:
-                      const Icon(Icons.delete_outline, color: AppColors.error),
-                  title: Text(
-                    'Remove photo',
-                    style: AppTextStyles.regularStyle400(
-                        fontColor: AppColors.error),
-                  ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    setState(() => _imagePath = null);
-                  },
-                ),
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _pickImage(ImageSource source) async {
-    final picker = ImagePicker();
-    final image = await picker.pickImage(
-      source: source,
-      maxWidth: 800,
-      maxHeight: 800,
-      imageQuality: 85,
-    );
-    if (image != null) {
-      setState(() => _imagePath = image.path);
-    }
+  void _onPetSelected(PetModel pet) {
+    setState(() {
+      _selectedPet = pet;
+      _breedController.text = pet.breed;
+      _colorController.text = pet.colour;
+      _descriptionController.text =
+          pet.personality.isNotEmpty ? pet.personality.join(', ') : pet.notes;
+      _localImagePath = null;
+    });
   }
 
   Future<void> _submitPost() async {
@@ -138,426 +89,108 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     }
 
     setState(() => _isSubmitting = true);
-
-    final currentUser = sl<AuthRepository>().currentUser;
-    String? imageUrl;
-
-    // Upload image to Firebase Storage if selected
-    if (_imagePath != null) {
-      final storageService = sl<StorageService>();
-      imageUrl = await storageService.uploadPostImage(
-        localPath: _imagePath!,
-        userId: currentUser?.uid ?? 'anonymous',
-      );
-
-      if (imageUrl == null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text('Failed to upload image. Please try again.')),
-        );
-        setState(() => _isSubmitting = false);
-        return;
-      }
-    }
-
-    final post = LostFoundPost(
-      id: '',
-      type: _postType,
-      petName: _petNameController.text.trim(),
-      breed: _breedController.text.trim(),
-      color: _colorController.text.trim(),
-      petDescription: _descriptionController.text.trim(),
-      imagePath: imageUrl,
+    final post = await CreatePostSubmitService.buildPost(
+      postType: _postType,
+      selectedPet: _selectedPet,
+      localImagePath: _localImagePath,
+      breedController: _breedController,
+      colorController: _colorController,
+      descriptionController: _descriptionController,
+      locationController: _locationController,
+      phoneController: _phoneController,
       latitude: _latitude!,
       longitude: _longitude!,
-      locationName: _locationController.text.trim(),
-      contactPhone: _phoneController.text.trim(),
-      userId: currentUser?.uid ?? '',
-      userName: currentUser?.displayName ?? 'Anonymous',
-      createdAt: DateTime.now(),
+      lastSeenAt: _isJustNow ? DateTime.now() : _lastSeenDateTime,
     );
 
-    if (mounted) {
-      context.read<CommunityBloc>().add(CreatePost(post));
+    if (post == null) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(AppStrings.failedToUploadImage)),
+        );
+        setState(() => _isSubmitting = false);
+      }
+      return;
     }
+    if (mounted) context.read<CommunityBloc>().add(CreatePost(post));
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<CommunityBloc, CommunityState>(
-      listener: (context, state) {
-        if (state is PostCreated) {
-          setState(() => _isSubmitting = false);
-          HapticFeedback.mediumImpact();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(AppStrings.postCreatedSuccessfully),
-                backgroundColor: AppColors.success),
-          );
-          context.pop();
-        } else if (state is CommunityError) {
-          setState(() => _isSubmitting = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(state.message), backgroundColor: AppColors.error),
-          );
-        }
-      },
+    return CreatePostResultListener(
+      onSubmittingDone: () => setState(() => _isSubmitting = false),
       child: Scaffold(
-        backgroundColor: AppColors.background,
-        appBar: AppBar(
-          title: Text(
-            AppStrings.createLostFoundPost,
-            style:
-                AppTextStyles.boldStyle700(fontColor: AppColors.navigationText),
-          ),
-          backgroundColor: AppColors.navigationBackground,
-          elevation: 0,
-          centerTitle: true,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
-            onPressed: () => context.pop(),
-          ),
-        ),
+        backgroundColor: AppColors.white,
+        appBar: const CreatePostAppBar(),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
           child: Form(
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Post Type Toggle
-                _buildTypeToggle(),
-                const SizedBox(height: 4),
-                Center(
-                  child: RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      style: AppTextStyles.regularStyle400(
-                        fontSize: 14,
-                        fontColor: AppColors.textSecondary,
-                      ),
-                      children: const [
-                        TextSpan(
-                          text: AppStrings.shareDetailsToHelpIdentifyPet,
-                        ),
-                        WidgetSpan(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 2),
-                            child: Icon(
-                              Icons.favorite,
-                              color: AppColors.primary,
-                              size: 14,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                PetTypeSelector(
+                  postType: _postType,
+                  onChanged: (type) => setState(() {
+                    _postType = type;
+                    if (type == PostType.found) _selectedPet = null;
+                  }),
                 ),
-                const SizedBox(height: 24),
-
-                // Pet Photo
-                _buildImagePicker(),
-                const SizedBox(height: 28),
-
-                // Pet Details Section
-                _buildSectionHeader('PET DETAILS', icon: Icons.pets),
-                CommonTextField(
-                  controller: _petNameController,
-                  hintText: AppStrings.petName,
-                  labelText: AppStrings.petName,
-                  validator: (value) =>
-                      Validators.required(value, AppStrings.petName),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: CommonTextField(
-                        controller: _breedController,
-                        hintText: AppStrings.breed,
-                        labelText: AppStrings.breed,
-                        validator: (value) =>
-                            Validators.required(value, AppStrings.breed),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: CommonTextField(
-                        controller: _colorController,
-                        hintText: AppStrings.color,
-                        labelText: AppStrings.color,
-                        validator: (value) =>
-                            Validators.required(value, AppStrings.color),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                CommonTextField(
-                  controller: _descriptionController,
-                  hintText: AppStrings.describeThePet,
-                  labelText: AppStrings.petDescription,
-                  maxLines: 3,
-                  validator: (value) =>
-                      Validators.required(value, AppStrings.petDescription),
-                ),
-                const SizedBox(height: 24),
-
-                // Location Section
-                _buildSectionHeader(AppStrings.lastSeenLocation,
-                    icon: Icons.location_on_outlined),
-                _buildLocationField(),
-                const SizedBox(height: 24),
-
-                // Contact Section
-                _buildSectionHeader('CONTACT', icon: Icons.phone_outlined),
-                CommonTextField(
-                  controller: _phoneController,
-                  hintText: AppStrings.enterContactPhone,
-                  labelText: AppStrings.contactPhone,
-                  keyboardType: TextInputType.phone,
-                  validator: Validators.phone,
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  AppStrings
-                      .yourContactWillOnlyBeVisibleToPeopleViewingThisPost,
-                  style: AppTextStyles.regularStyle400(
-                    fontSize: 12,
-                    fontColor: AppColors.textSecondary,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-
+                const SizedBox(height: 8),
+                const CreatePostSectionDivider(),
                 const SizedBox(height: 32),
-
-                // Submit Button
-                _buildSubmitButton(),
+                if (_postType == PostType.lost) ...[
+                  CreatePostPetSelector(
+                    selectedPetId: _selectedPet?.id,
+                    onSelect: _onPetSelected,
+                  ),
+                  const SizedBox(height: 24),
+                ],
+                CreatePostPhotoSection(
+                  localImagePath: _localImagePath,
+                  existingImageUrl: _selectedPet?.imagePath,
+                  onImagePicked: (path) =>
+                      setState(() => _localImagePath = path),
+                ),
                 const SizedBox(height: 24),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTypeToggle() {
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildTypeButton(
-                PostType.lost, AppStrings.lost, Icons.search, AppColors.error),
-          ),
-          Expanded(
-            child: _buildTypeButton(PostType.found, AppStrings.found,
-                Icons.favorite, AppColors.success),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTypeButton(
-      PostType type, String label, IconData icon, Color color) {
-    final isSelected = _postType == type;
-    return GestureDetector(
-      onTap: () => setState(() => _postType = type),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 14),
-        decoration: BoxDecoration(
-          color: isSelected ? color : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                      color: color.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2))
-                ]
-              : null,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 20, color: isSelected ? Colors.white : color),
-            const SizedBox(width: 8),
-            Text(
-              label,
-              style: AppTextStyles.semiBoldStyle600(
-                fontSize: 15,
-                fontColor: isSelected ? Colors.white : color,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildImagePicker() {
-    return Center(
-      child: GestureDetector(
-        onTap: _showImagePickerOptions,
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.iconBgLight,
-                    border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      width: 2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                    image: _imagePath != null
-                        ? DecorationImage(
-                            image: FileImage(File(_imagePath!)),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  child: _imagePath == null
-                      ? Icon(
-                          Icons.pets,
-                          size: 48,
-                          color: AppColors.primary.withValues(alpha: 0.6),
-                        )
-                      : null,
+                CreatePostAboutSection(
+                  petName: _selectedPet?.name,
+                  breedController: _breedController,
+                  colorController: _colorController,
+                  descriptionController: _descriptionController,
                 ),
-                Positioned(
-                  right: 0,
-                  bottom: 0,
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                    ),
-                    child: const Icon(Icons.camera_alt,
-                        size: 18, color: Colors.white),
-                  ),
+                const SizedBox(height: 24),
+                CreatePostLocationSection(
+                  petName: _selectedPet?.name,
+                  controller: _locationController,
+                  onPlaceSelected: (address, latitude, longitude) {
+                    setState(() {
+                      _latitude = latitude;
+                      _longitude = longitude;
+                    });
+                  },
                 ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            Text(
-              _imagePath != null ? 'Tap to change photo' : AppStrings.addPhoto,
-              style: AppTextStyles.regularStyle400(
-                fontSize: 13,
-                fontColor: AppColors.textSecondary,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionHeader(String title, {IconData? icon}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12, top: 8),
-      child: Row(
-        children: [
-          if (icon != null) ...[
-            Icon(icon, size: 18, color: AppColors.textSecondary),
-            const SizedBox(width: 8),
-          ],
-          Text(
-            title,
-            style: AppTextStyles.semiBoldStyle600(
-              fontSize: 13,
-              fontColor: AppColors.textSecondary,
-              letterSpacing: 0.5,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildLocationField() {
-    final hasLocation = _latitude != null && _longitude != null;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        LocationAutocompleteField(
-          controller: _locationController,
-          labelText: AppStrings.location,
-          hintText: AppStrings.searchForLocation,
-          validator: (value) => Validators.required(value, AppStrings.location),
-          showCurrentLocationButton: true,
-          onPlaceSelected: (address, latitude, longitude) {
-            setState(() {
-              _latitude = latitude;
-              _longitude = longitude;
-            });
-          },
-        ),
-        if (hasLocation) ...[
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            decoration: BoxDecoration(
-              color: AppColors.success.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-              border:
-                  Border.all(color: AppColors.success.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(Icons.check_circle,
-                    size: 16, color: AppColors.success),
-                const SizedBox(width: 6),
-                Text(
-                  'Location set',
-                  style: AppTextStyles.semiBoldStyle600(
-                      fontSize: 12, fontColor: AppColors.success),
+                const SizedBox(height: 24),
+                LastSeenPicker(
+                  petName: _selectedPet?.name,
+                  value: _lastSeenDateTime,
+                  isJustNow: _isJustNow,
+                  onJustNowChanged: (v) => setState(() => _isJustNow = v),
+                  onChanged: (dt) => setState(() => _lastSeenDateTime = dt),
+                ),
+                const SizedBox(height: 24),
+                CreatePostContactSection(controller: _phoneController),
+                const SizedBox(height: 32),
+                CreatePostSubmitButton(
+                  postType: _postType,
+                  isSubmitting: _isSubmitting,
+                  onPressed: _submitPost,
                 ),
               ],
             ),
           ),
-        ],
-      ],
-    );
-  }
-
-  Widget _buildSubmitButton() {
-    return BlocBuilder<CommunityBloc, CommunityState>(
-      builder: (context, state) {
-        final isLoading = _isSubmitting || state is PostCreating;
-        return CommonButton(
-          text: _postType == PostType.lost
-              ? AppStrings.postLostPet
-              : AppStrings.postFoundPet,
-          onPressed: isLoading ? null : _submitPost,
-          isLoading: isLoading,
-          variant: ButtonVariant.primary,
-        );
-      },
+        ),
+      ),
     );
   }
 }

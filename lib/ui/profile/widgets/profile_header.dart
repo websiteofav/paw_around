@@ -1,132 +1,159 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
-import 'package:paw_around/ui/widgets/scale_button.dart';
 import 'package:paw_around/utils/utils.dart';
 
+/// Hero photo area only (back button overlaid).
 class ProfileHeader extends StatelessWidget {
-  final VoidCallback? onEditTap;
-
-  const ProfileHeader({
-    super.key,
-    this.onEditTap,
-  });
+  const ProfileHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Use StreamBuilder to listen to user changes (including profile updates)
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.userChanges(),
       builder: (context, snapshot) {
         final user = snapshot.data ?? FirebaseAuth.instance.currentUser;
-        final String displayName =
-            (user?.displayName).orDefault(AppStrings.petParent);
-        final String? photoUrl = user?.photoURL;
+        return _HeroPhotoArea(photoUrl: user?.photoURL);
+      },
+    );
+  }
+}
+
+/// Name + contact row rendered flat inside the white content sheet.
+class ProfileNameCard extends StatelessWidget {
+  final VoidCallback? onEditTap;
+  const ProfileNameCard({super.key, this.onEditTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.userChanges(),
+      builder: (context, snapshot) {
+        final user = snapshot.data ?? FirebaseAuth.instance.currentUser;
+        final displayName = (user?.displayName).orDefault(AppStrings.petParent);
+        final contact = user?.phoneNumber ?? user?.email ?? '';
 
         return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 16),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+          decoration: smoothDecoration(
+            cornerRadius: 24,
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.border),
-            boxShadow: [
+            shadows: [
               BoxShadow(
-                color: AppColors.shadowOverlay.withValues(alpha: 0.06),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
+                color: AppColors.shadowOverlay.withValues(alpha: 0.05),
+                blurRadius: 43.78,
+                offset: const Offset(0, 5.47),
               ),
             ],
           ),
           child: Row(
             children: [
-              // Circular avatar with gradient
-              Container(
-                width: 72,
-                height: 72,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(18),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(18),
-                  child: photoUrl != null
-                      ? Image.network(photoUrl, fit: BoxFit.cover)
-                      : const Icon(
-                          Icons.person,
-                          color: AppColors.profileHeaderBg,
-                          size: 40,
-                        ),
-                ),
-              ),
-              const SizedBox(width: 16),
-
-              // User name and email
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       displayName,
-                      style: AppTextStyles.semiBoldStyle600(
-                          fontSize: 18, fontColor: AppColors.textPrimary),
+                      style: AppTextStyles.boldStyle700(
+                          fontSize: 24, fontColor: AppColors.grey1000),
                     ),
-                    if (user?.email != null || user?.phoneNumber != null) ...[
+                    if (contact.isNotEmpty) ...[
                       const SizedBox(height: 4),
                       Text(
-                        user?.email ?? user?.phoneNumber ?? '',
+                        contact,
                         style: AppTextStyles.regularStyle400(
-                            fontSize: 13, fontColor: AppColors.textSecondary),
-                        overflow: TextOverflow.ellipsis,
+                            fontSize: 14, fontColor: AppColors.grey600),
                       ),
                     ],
                   ],
                 ),
               ),
-
-              // Edit button
-              ScaleButton(
-                onPressed: onEditTap,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                        color: AppColors.primary.withValues(alpha: 0.3)),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.edit_outlined,
-                        size: 16,
-                        color: AppColors.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        AppStrings.edit,
-                        style: AppTextStyles.mediumStyle500(
-                            fontSize: 14, fontColor: AppColors.primary),
-                      ),
-                    ],
-                  ),
-                ),
+              GestureDetector(
+                onTap: onEditTap,
+                child: SvgPicture.asset(AppIcons.editIcon,
+                    height: 22,
+                    colorFilter: const ColorFilter.mode(
+                        AppColors.secondaryCTA, BlendMode.srcIn)),
               ),
             ],
           ),
         );
       },
+    );
+  }
+}
+
+// ─── Private helpers ──────────────────────────────────────────────
+
+class _HeroPhotoArea extends StatelessWidget {
+  final String? photoUrl;
+  const _HeroPhotoArea({this.photoUrl});
+
+  @override
+  Widget build(BuildContext context) {
+    final hasPhoto = photoUrl != null && photoUrl!.isNotEmpty;
+    final topPad = MediaQuery.of(context).padding.top;
+
+    return Stack(
+      children: [
+        SizedBox(
+          height: 360,
+          width: double.infinity,
+          child: hasPhoto
+              ? Image.network(
+                  photoUrl!,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const _Placeholder(),
+                )
+              : const _Placeholder(),
+        ),
+        Positioned(
+          top: topPad + 8,
+          left: 16,
+          child: GestureDetector(
+            onTap: () {
+              if (Navigator.canPop(context)) Navigator.of(context).pop();
+            },
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: AppColors.white,
+              size: 22,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _Placeholder extends StatelessWidget {
+  const _Placeholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(
+          AppIcons.addPhotoIcon,
+          width: 48,
+          height: 48,
+          color: AppColors.white.withValues(alpha: 0.6),
+          colorBlendMode: BlendMode.srcIn,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          AppStrings.addPhoto,
+          style: AppTextStyles.regularStyle400(
+              fontSize: 14, fontColor: AppColors.white.withValues(alpha: 0.7)),
+        ),
+      ],
     );
   }
 }

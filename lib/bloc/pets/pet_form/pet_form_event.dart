@@ -34,6 +34,30 @@ class UpdateWeight extends PetFormEvent {
   List<Object?> get props => [weight];
 }
 
+class UpdateHeight extends PetFormEvent {
+  final String height;
+  const UpdateHeight(this.height);
+
+  @override
+  List<Object?> get props => [height];
+}
+
+class UpdateColour extends PetFormEvent {
+  final String colour;
+  const UpdateColour(this.colour);
+
+  @override
+  List<Object?> get props => [colour];
+}
+
+class UpdatePersonality extends PetFormEvent {
+  final List<String> personality;
+  const UpdatePersonality(this.personality);
+
+  @override
+  List<Object?> get props => [personality];
+}
+
 class UpdateNotes extends PetFormEvent {
   final String notes;
   const UpdateNotes(this.notes);

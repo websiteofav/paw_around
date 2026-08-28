@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/bloc/bloc/places_event.dart';
 import 'package:paw_around/bloc/bloc/places_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -87,22 +89,14 @@ class _MapScreenState extends State<MapScreen> {
           BlocBuilder<PlacesBloc, PlacesState>(
             builder: (context, state) {
               //   final isMapView = state is PlacesLoaded && state.isMapView;
-              return const DashboardAppBar(
+              return DashboardAppBar(
                 title: AppStrings.petServices,
-                // actions: [
-                //   if (state is PlacesLoaded)
-                //     DashboardAppBarAction(
-                //       // Show opposite icon: map icon when in list view, list icon when in map view
-                //       icon: isMapView ? Icons.view_list_rounded : Icons.map_rounded,
-                //       onTap: () {
-                //         context.read<PlacesBloc>().add(const ToggleMapView());
-                //       },
-                //     ),
-                // ],
+                showProfileAvatar: true,
+                onProfileTap: () => context.pushNamed(AppRoutes.profileTab),
               );
             },
           ),
-
+          const SizedBox(height: 8),
           // Filter Chips
           const MapFilterChips(),
 

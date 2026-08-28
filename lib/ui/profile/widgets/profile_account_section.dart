@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
@@ -28,58 +31,64 @@ class ProfileAccountSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 36,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
+        side: const BorderSide(color: AppColors.border),
+        shadows: [
           BoxShadow(
-            color: AppColors.shadowOverlay.withValues(alpha: 0.06),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            color: AppColors.shadowOverlay.withValues(alpha: 0.05),
+            blurRadius: 7,
+            offset: const Offset(0, 3),
+          ),
+          BoxShadow(
+            color: AppColors.shadowOverlay.withValues(alpha: 0.04),
+            blurRadius: 13,
+            offset: const Offset(0, 13),
           ),
         ],
       ),
       child: Column(
         children: [
           _buildItem(
-            icon: Icons.article_outlined,
+            assetPath: AppIcons.myPostsIcon,
             title: AppStrings.myPosts,
             onTap: onMyPostsTap,
           ),
           const Divider(height: 1, color: AppColors.border),
           _buildItem(
-            icon: Icons.settings_outlined,
+            assetPath: AppIcons.settingsIcon,
             title: AppStrings.accountSettings,
             onTap: onAccountSettingsTap,
           ),
           const Divider(height: 1, color: AppColors.border),
           _buildItem(
-            icon: Icons.notifications_outlined,
+            assetPath: AppIcons.notificationIcon,
             title: AppStrings.notifications,
             onTap: onNotificationsTap,
+            isPng: true,
           ),
           const Divider(height: 1, color: AppColors.border),
           _buildItem(
-            icon: Icons.shield_outlined,
+            assetPath: AppIcons.privacyIcon,
             title: AppStrings.privacyPolicy,
             onTap: onPrivacyTap,
           ),
           const Divider(height: 1, color: AppColors.border),
           _buildItem(
-            icon: Icons.description_outlined,
+            assetPath: AppIcons.termsServiceIcon,
             title: AppStrings.termsOfService,
             onTap: onTermsTap,
           ),
           const Divider(height: 1, color: AppColors.border),
           _buildItem(
-            icon: Icons.help_outline,
+            assetPath: AppIcons.helpSupportIcon,
             title: AppStrings.helpAndSupport,
             onTap: onHelpTap,
           ),
           const Divider(height: 1, color: AppColors.border),
           _buildItem(
-            icon: Icons.delete_outline,
+            assetPath: AppIcons.deleteAccountIcon,
             title: AppStrings.deleteAccount,
             onTap: onDeleteAccountTap,
             isDanger: true,
@@ -90,29 +99,33 @@ class ProfileAccountSection extends StatelessWidget {
   }
 
   Widget _buildItem({
-    required IconData icon,
+    required String assetPath,
     required String title,
     required VoidCallback onTap,
     bool isDanger = false,
+    bool isPng = false,
   }) {
-    final color = isDanger ? AppColors.error : AppColors.primary;
-
     return ScaleButton(
       onPressed: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         child: Row(
           children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: color, size: 20),
+            Center(
+              child: isPng
+                  ? Image.asset(assetPath,
+                      width: 20,
+                      height: 20,
+                      color:
+                          isDanger ? AppColors.error : AppColors.secondaryCTA)
+                  : SvgPicture.asset(assetPath,
+                      width: 20,
+                      height: 20,
+                      colorFilter: ColorFilter.mode(
+                          isDanger ? AppColors.error : AppColors.secondaryCTA,
+                          BlendMode.srcIn)),
             ),
-            const SizedBox(width: 14),
+            const SizedBox(width: 12),
             Expanded(
               child: Text(
                 title,
@@ -124,8 +137,8 @@ class ProfileAccountSection extends StatelessWidget {
             ),
             Icon(
               Icons.chevron_right,
-              color: isDanger ? AppColors.error.withValues(alpha: 0.5) : AppColors.textSecondary,
-              size: 24,
+              color: isDanger ? AppColors.error : AppColors.textSecondary,
+              size: 22,
             ),
           ],
         ),

@@ -29,6 +29,11 @@ class CommonButton extends StatelessWidget {
   final Color? customTextColor;
   final double? textSize;
   final String? imagePath;
+  final double? buttonHeight;
+  final double? buttonWidth;
+  final TextStyle? textStyle;
+  final double? borderRadius;
+  final Color? borderColor;
 
   const CommonButton({
     super.key,
@@ -43,13 +48,18 @@ class CommonButton extends StatelessWidget {
     this.customTextColor,
     this.textSize,
     this.imagePath,
+    this.buttonHeight,
+    this.buttonWidth,
+    this.textStyle,
+    this.borderRadius,
+    this.borderColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: isFullWidth ? double.infinity : null,
-      height: _getButtonHeight(),
+      width: isFullWidth ? double.infinity : buttonWidth,
+      height: buttonHeight ?? _getButtonHeight(),
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         style: _getButtonStyle(),
@@ -84,7 +94,7 @@ class CommonButton extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             text,
-            style: _getTextStyle(),
+            style: textStyle ?? _getTextStyle(),
           ),
         ],
       );
@@ -95,14 +105,14 @@ class CommonButton extends StatelessWidget {
         children: [
           Image.asset(imagePath!),
           const SizedBox(width: 8),
-          Text(text, style: _getTextStyle()),
+          Text(text, style: textStyle ?? _getTextStyle()),
         ],
       );
     }
 
     return Text(
       text,
-      style: _getTextStyle(),
+      style: textStyle ?? _getTextStyle(),
     );
   }
 
@@ -110,15 +120,16 @@ class CommonButton extends StatelessWidget {
     switch (variant) {
       case ButtonVariant.primary:
         return ElevatedButton.styleFrom(
-          backgroundColor: customColor ?? AppColors.primary,
-          foregroundColor: customTextColor ?? AppColors.background,
-          elevation: 8,
-          shadowColor:
-              (customColor ?? AppColors.primary).withValues(alpha: 0.3),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
-          ),
-        );
+            backgroundColor: customColor ?? AppColors.primary,
+            foregroundColor: customTextColor ?? AppColors.background,
+            elevation: 8,
+            shadowColor:
+                (customColor ?? AppColors.primary).withValues(alpha: 0.3),
+            shape: RoundedRectangleBorder(
+              borderRadius:
+                  BorderRadius.circular(borderRadius ?? _getBorderRadius()),
+            ),
+            disabledBackgroundColor: AppColors.disabledGreenColor);
       case ButtonVariant.secondary:
         return ElevatedButton.styleFrom(
           backgroundColor: customColor ?? AppColors.secondary,
@@ -127,7 +138,8 @@ class CommonButton extends StatelessWidget {
           shadowColor:
               (customColor ?? AppColors.secondary).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? _getBorderRadius()),
           ),
         );
       case ButtonVariant.outline:
@@ -140,7 +152,8 @@ class CommonButton extends StatelessWidget {
             width: 2,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? _getBorderRadius()),
           ),
         );
       case ButtonVariant.text:
@@ -150,17 +163,19 @@ class CommonButton extends StatelessWidget {
           elevation: 0,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? _getBorderRadius()),
           ),
         );
       case ButtonVariant.danger:
         return ElevatedButton.styleFrom(
-          backgroundColor: customColor ?? Colors.red,
-          foregroundColor: customTextColor ?? Colors.white,
+          backgroundColor: customColor ?? AppColors.error,
+          foregroundColor: customTextColor ?? AppColors.white,
           elevation: 4,
-          shadowColor: (customColor ?? Colors.red).withValues(alpha: 0.3),
+          shadowColor: (customColor ?? AppColors.error).withValues(alpha: 0.3),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(_getBorderRadius()),
+            borderRadius:
+                BorderRadius.circular(borderRadius ?? _getBorderRadius()),
           ),
         );
     }
@@ -205,16 +220,7 @@ class CommonButton extends StatelessWidget {
     }
   }
 
-  double _getBorderRadius() {
-    switch (size) {
-      case ButtonSize.small:
-        return 20;
-      case ButtonSize.medium:
-        return AppConstants.buttonBorderRadius;
-      case ButtonSize.large:
-        return 32;
-    }
-  }
+  double _getBorderRadius() => (buttonHeight ?? _getButtonHeight()) / 2;
 
   double _getIconSize() {
     switch (size) {

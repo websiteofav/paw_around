@@ -20,7 +20,10 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
 
   Future<void> _onLoadPetList(
       LoadPetList event, Emitter<PetListState> emit) async {
-    emit(const PetListLoading());
+    // Only show loading shimmer on initial load, not on silent refreshes
+    if (state is! PetListLoaded) {
+      emit(const PetListLoading());
+    }
 
     try {
       final pets = await _petRepository.getAllPets();

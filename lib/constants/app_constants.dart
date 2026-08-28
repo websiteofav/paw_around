@@ -25,6 +25,7 @@ class AppConstants {
   static const double space24 = 24.0;
   static const double space28 = 28.0;
   static const double space32 = 32.0;
+  static const double space36 = 36.0;
   static const double space40 = 40.0;
   static const double space48 = 48.0;
   static const double space60 = 60.0;
@@ -88,5 +89,4 @@ class AppConstants {
   static const double elevationMedium = 4.0;
   static const double elevationHigh = 8.0;
   static const double elevationXHigh = 12.0;
-  
 }

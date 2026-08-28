@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/constants/app_spacing.dart';
@@ -38,10 +40,10 @@ class ActionCardTimeline extends StatelessWidget {
       return Container(
         width: double.infinity,
         padding: AppEdgeInsets.cardPadding,
-        decoration: BoxDecoration(
+        decoration: smoothDecoration(
+          cornerRadius: AppConstants.radiusLG,
           color: AppColors.surface,
-          borderRadius: AppBorderRadius.lg,
-          boxShadow: [
+          shadows: [
             BoxShadow(
               color: AppColors.shadowOverlay.withValues(alpha: 0.06),
               blurRadius: 12,
@@ -57,9 +59,9 @@ class ActionCardTimeline extends StatelessWidget {
                 Container(
                   width: 48,
                   height: 48,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 16,
                     color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: AppBorderRadius.md,
                   ),
                   child: const Icon(
                     Icons.timeline,
@@ -97,10 +99,10 @@ class ActionCardTimeline extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: AppEdgeInsets.cardPadding,
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 20,
         color: AppColors.surface,
-        borderRadius: AppBorderRadius.lg,
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
@@ -117,9 +119,9 @@ class ActionCardTimeline extends StatelessWidget {
               Container(
                 width: 48,
                 height: 48,
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: AppConstants.radiusMD,
                   color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: AppBorderRadius.md,
                 ),
                 child: const Icon(
                   Icons.timeline,

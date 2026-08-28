@@ -92,20 +92,22 @@ class PetTimelineUtils {
             filterByActionType == ActionType.grooming) &&
         filterByVaccineName == null) {
       final groomingEntries = <ActionTimelineEntry>[];
-      if (pet.groomingSettings != null) {
-        for (final completionDate in pet.groomingSettings!.completionHistory) {
+      for (final groomingSetting in pet.groomingSettings) {
+        for (final completionDate in groomingSetting.completionHistory) {
+          final typeSuffix = groomingSetting.groomingType ?? 'all';
           groomingEntries.add(ActionTimelineEntry(
-            id: 'grooming_${pet.id}_${completionDate.millisecondsSinceEpoch}',
-            actionName: AppStrings.grooming,
+            id: 'grooming_${pet.id}_${typeSuffix}_${completionDate.millisecondsSinceEpoch}',
+            actionName: groomingSetting.groomingType ?? AppStrings.grooming,
             date: completionDate,
             status: TimelineEntryStatus.completed,
             actionType: ActionType.grooming,
           ));
         }
-        if (pet.groomingSettings!.isSnoozed) {
+        if (groomingSetting.isSnoozed) {
+          final typeSuffix = groomingSetting.groomingType ?? 'all';
           groomingEntries.add(ActionTimelineEntry(
-            id: 'grooming_skipped_${pet.id}',
-            actionName: AppStrings.grooming,
+            id: 'grooming_skipped_${pet.id}_$typeSuffix',
+            actionName: groomingSetting.groomingType ?? AppStrings.grooming,
             status: TimelineEntryStatus.skipped,
             actionType: ActionType.grooming,
           ));

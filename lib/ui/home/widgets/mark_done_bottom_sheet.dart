@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
@@ -89,9 +91,9 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
 
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
+      decoration: smoothDecoration(
+        borderRadius: AppSmoothRadius.topOnly(24),
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -101,18 +103,18 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
             width: 40,
             height: 4,
             margin: const EdgeInsets.only(bottom: 24),
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 2,
               color: AppColors.border,
-              borderRadius: BorderRadius.circular(2),
             ),
           ),
           // Icon
           Container(
             width: 64,
             height: 64,
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 32,
               color: AppColors.primary.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(32),
             ),
             child: const Icon(
               Icons.check_circle_outline,
@@ -142,10 +144,10 @@ class _MarkDoneBottomSheetState extends State<MarkDoneBottomSheet> {
           // Date Selection
           Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
+            decoration: smoothDecoration(
+              cornerRadius: 16,
               color: AppColors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: AppColors.border),
+              side: const BorderSide(color: AppColors.border),
             ),
             child: Row(
               children: [

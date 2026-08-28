@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -8,12 +10,18 @@ class LostPetItem {
   final String name;
   final String distance;
   final String? imageUrl;
+  final String? breed;
+  final String? color;
+  final int? missingDays;
 
   const LostPetItem({
     required this.id,
     required this.name,
     required this.distance,
     this.imageUrl,
+    this.missingDays,
+    this.breed,
+    this.color,
   });
 }
 
@@ -31,51 +39,36 @@ class LostPetsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (pets.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
+    if (pets.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section header
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              AppStrings.lostPetsNearYou,
-              style: AppTextStyles.semiBoldStyle600(fontSize: 18, fontColor: AppColors.textPrimary),
-            ),
+            Text(AppStrings.lostPetsNearYou,
+                style: AppTextStyles.boldStyle700(
+                    fontSize: 18, fontColor: AppColors.grey1000)),
             GestureDetector(
               onTap: onSeeAllTap,
-              child: Row(
-                children: [
-                  Text(
-                    AppStrings.seeAll,
-                    style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary),
-                  ),
-                  const SizedBox(width: 4),
-                  Icon(
-                    Icons.chevron_right,
-                    color: AppColors.primary,
-                    size: 18,
-                  ),
-                ],
-              ),
+              child: Row(children: [
+                Text(AppStrings.seeAll,
+                    style: AppTextStyles.interBoldStyle700(
+                        fontSize: 16, fontColor: AppColors.secondaryCTA)),
+                const Icon(Icons.chevron_right,
+                    color: AppColors.secondaryCTA, size: 18),
+              ]),
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        // Pet cards row
+        const SizedBox(height: 12),
         Row(
           children: [
-            for (int i = 0; i < pets.length && i < 2; i++) ...[
+            for (int i = 0; i < pets.length && i < 3; i++) ...[
               if (i > 0) const SizedBox(width: 12),
               Expanded(
                 child: _LostPetCard(
-                  pet: pets[i],
-                  onTap: () => onPetTap?.call(pets[i]),
-                ),
+                    pet: pets[i], onTap: () => onPetTap?.call(pets[i])),
               ),
             ],
           ],
@@ -88,91 +81,146 @@ class LostPetsSection extends StatelessWidget {
 class _LostPetCard extends StatelessWidget {
   final LostPetItem pet;
   final VoidCallback? onTap;
-
-  const _LostPetCard({
-    required this.pet,
-    this.onTap,
-  });
+  const _LostPetCard({required this.pet, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
+        height: 264,
+        width: 165,
+        decoration: smoothDecoration(
+          cornerRadius: 24,
+          color: AppColors.white,
+          shadows: [
             BoxShadow(
-              color: AppColors.shadowOverlay.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
+                color: AppColors.shadowOverlay.withValues(alpha: 0.06),
+                blurRadius: 10,
+                offset: const Offset(0, 3))
           ],
+          side: const BorderSide(color: AppColors.grey100),
         ),
-        child: Row(
+        padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Pet avatar - wrapped in Hero for smooth transition
-            Hero(
-              tag: 'post-image-${pet.id}',
-              child: Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: AppColors.iconBgLight,
-                  borderRadius: BorderRadius.circular(24),
+            // Image with Missing badge
+            Stack(
+              children: [
+                Hero(
+                  tag: 'post-image-${pet.id}',
+                  child: ClipSmoothRect(
+                    radius: AppSmoothRadius.custom(18),
+                    child: SizedBox(
+                      height: 160,
+                      width: double.infinity,
+                      child: pet.imageUrl != null
+                          ? Image.network(pet.imageUrl!,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => _Placeholder())
+                          : _Placeholder(),
+                    ),
+                  ),
                 ),
-                child: pet.imageUrl != null
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(24),
-                        child: Image.network(
-                          pet.imageUrl!,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
-                              Icons.pets,
-                              color: AppColors.primary,
-                              size: 24,
-                            );
-                          },
+                if (pet.missingDays != null)
+                  Positioned(
+                    top: 0,
+                    left: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
+                      decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                              colors: [AppColors.white, AppColors.grey100],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight),
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(12),
+                              bottomRight: Radius.circular(12))),
+                      child: RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                                text: "${AppStrings.missing}:",
+                                style: AppTextStyles.interRegularStyle400(
+                                    fontSize: 10,
+                                    fontColor: AppColors.grey1000),
+                                children: [
+                                  TextSpan(
+                                    text: ' ${pet.missingDays} Days',
+                                    style: AppTextStyles.interSemiBoldStyle600(
+                                        fontSize: 10,
+                                        fontColor: AppColors.grey1000),
+                                  ),
+                                ]),
+                          ],
                         ),
-                      )
-                    : const Icon(
-                        Icons.pets,
-                        color: AppColors.primary,
-                        size: 24,
                       ),
-              ),
+                    ),
+                  ),
+              ],
             ),
-            const SizedBox(width: 12),
-            // Name and distance
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    pet.name,
-                    style: AppTextStyles.semiBoldStyle600(fontSize: 16, fontColor: AppColors.textPrimary),
+            const SizedBox(height: 12),
+            // Info
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(pet.name,
+                    style: AppTextStyles.interBoldStyle700(
+                        fontSize: 14, fontColor: AppColors.grey1000),
+                    overflow: TextOverflow.ellipsis),
+                const SizedBox(height: 4),
+                Row(
+                  spacing: 4,
+                  children: [
+                    Text(pet.breed ?? '',
+                        style: AppTextStyles.interRegularStyle400(
+                            fontSize: 12, fontColor: AppColors.grey600)),
+                    Text(".",
+                        style: AppTextStyles.interRegularStyle400(
+                            fontSize: 12, fontColor: AppColors.grey600)),
+                    Flexible(
+                      child: Text(
+                        pet.color ?? '',
+                        style: AppTextStyles.interRegularStyle400(
+                            fontSize: 12, fontColor: AppColors.grey600),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              spacing: 2,
+              children: [
+                const Icon(Icons.gps_fixed, color: AppColors.grey600, size: 12),
+                Flexible(
+                  child: Text(
+                    pet.distance,
+                    style: AppTextStyles.interRegularStyle400(
+                        fontSize: 12, fontColor: AppColors.grey600),
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 2),
-                  Text(
-                    pet.distance,
-                    style: AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.primary),
-                  ),
-                ],
-              ),
-            ),
-            // Chevron
-            const Icon(
-              Icons.chevron_right,
-              color: AppColors.textSecondary,
-              size: 20,
-            ),
+                ),
+              ],
+            )
           ],
         ),
       ),
     );
+  }
+}
+
+class _Placeholder extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        color: AppColors.surface,
+        child: const Icon(Icons.pets, color: AppColors.textLight, size: 36));
   }
 }

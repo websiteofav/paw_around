@@ -1,5 +1,7 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -26,10 +28,10 @@ class ActionInfoCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 20,
         color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
+        shadows: [
           BoxShadow(
             color: AppColors.shadowOverlay.withValues(alpha: 0.06),
             blurRadius: 12,
@@ -47,9 +49,9 @@ class ActionInfoCard extends StatelessWidget {
                 Container(
                   width: 48,
                   height: 48,
-                  decoration: BoxDecoration(
+                  decoration: smoothDecoration(
+                    cornerRadius: 14,
                     color: effectiveIconColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
                     icon,

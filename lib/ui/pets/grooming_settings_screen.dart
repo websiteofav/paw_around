@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -12,17 +15,22 @@ import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/notification_service.dart';
-import 'package:paw_around/ui/pets/widgets/care_app_bar.dart';
-import 'package:paw_around/ui/pets/widgets/frequency_selector.dart';
 import 'package:paw_around/ui/pets/widgets/date_picker_field.dart';
+import 'package:paw_around/ui/pets/widgets/frequency_selector.dart';
+import 'package:paw_around/ui/pets/widgets/grooming_type_selector.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
 class GroomingSettingsScreen extends StatefulWidget {
   final PetModel pet;
 
+  /// When non-null the screen edits that specific type; the type-selector chip
+  /// UI is hidden and replaced with a read-only label.
+  final String? groomingType;
+
   const GroomingSettingsScreen({
     super.key,
     required this.pet,
+    this.groomingType,
   });
 
   @override
@@ -33,16 +41,26 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
   late CareFrequency _selectedFrequency;
   late DateTime? _lastDate;
   late bool _isSnoozed;
+  late List<String> _selectedGroomingTypes;
   bool _isSaving = false;
   bool _isUnsnoozeing = false;
+  String? _groomingTypeError;
 
   @override
   void initState() {
     super.initState();
-    _selectedFrequency =
-        widget.pet.groomingSettings?.frequency ?? CareFrequency.none;
-    _lastDate = widget.pet.groomingSettings?.lastDate ?? DateTime.now();
-    _isSnoozed = widget.pet.groomingSettings?.isSnoozed ?? false;
+    // Find the matching settings entry for this groomingType (if any).
+    final existing = widget.groomingType != null
+        ? widget.pet.groomingSettings
+            .where((s) => s.groomingType == widget.groomingType)
+            .firstOrNull
+        : null;
+    _selectedFrequency = existing?.frequency ?? CareFrequency.none;
+    _lastDate = existing?.lastDate ?? DateTime.now();
+    _isSnoozed = existing?.isSnoozed ?? false;
+    _selectedGroomingTypes = existing != null
+        ? List<String>.from(existing.groomingTypes)
+        : (widget.groomingType != null ? [widget.groomingType!] : []);
   }
 
   void _onFrequencyChanged(CareFrequency frequency) {
@@ -100,12 +118,15 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
   }
 
   Future<void> _save() async {
-    if (_isSaving) {
+    if (_isSaving) return;
+    // When groomingType is already fixed, no need to validate the chip selector.
+    if (widget.groomingType == null && _selectedGroomingTypes.isEmpty) {
+      setState(() => _groomingTypeError = AppStrings.selectGroomingType);
       return;
     }
-
     setState(() {
       _isSaving = true;
+      _groomingTypeError = null;
     });
 
     try {
@@ -113,6 +134,8 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
         frequency: _selectedFrequency,
         lastDate: _lastDate,
         updatedAt: DateTime.now(),
+        groomingTypes: _selectedGroomingTypes,
+        groomingType: widget.groomingType,
       );
 
       await sl<PetRepository>().updateGroomingSettings(widget.pet.id, settings);
@@ -176,7 +199,12 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
   }
 
   Widget _buildSnoozeBanner() {
-    final snoozedUntil = widget.pet.groomingSettings?.snoozedUntil;
+    final existing = widget.groomingType != null
+        ? widget.pet.groomingSettings
+            .where((s) => s.groomingType == widget.groomingType)
+            .firstOrNull
+        : null;
+    final snoozedUntil = existing?.snoozedUntil;
     final daysLeft = snoozedUntil != null
         ? snoozedUntil.difference(DateTime.now()).inDays
         : 0;
@@ -184,16 +212,14 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 12,
         color: AppColors.warning.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.warning.withValues(alpha: 0.3),
-        ),
+        side: BorderSide(color: AppColors.warning.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.snooze,
             color: AppColors.warning,
             size: 24,
@@ -235,68 +261,92 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
     );
   }
 
+  Widget _buildHero() {
+    return SvgPicture.asset(
+      AppIcons.scissorIcon,
+      fit: BoxFit.contain,
+      colorFilter: const ColorFilter.mode(AppColors.grey150, BlendMode.srcIn),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
-      body: Column(
-        children: [
-          // Custom App Bar
-          CareAppBar(
-            pet: widget.pet,
-            screenTitle: AppStrings.grooming,
-            enableNotification: _selectedFrequency != CareFrequency.none,
-          ),
-
-          // Scrollable content
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  // Snooze banner
-                  if (_isSnoozed) _buildSnoozeBanner(),
-
-                  // Frequency selector
-                  FrequencySelector(
-                    title: AppStrings.frequency,
-                    selectedFrequency: _selectedFrequency,
-                    subtitle: AppStrings.chooseHowOftenYouGroomYourPet,
-                    options: const [
-                      CareFrequency.none,
-                      CareFrequency.weekly,
-                      CareFrequency.monthly,
-                      CareFrequency.quarterly,
-                    ],
-                    onChanged: _onFrequencyChanged,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Date picker
-                  DatePickerField(
-                    label: AppStrings.lastGrooming,
-                    selectedDate: _lastDate,
-                    onDateSelected: _onDateChanged,
-                  ),
-
-                  const SizedBox(height: 32),
-                ],
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(AppStrings.addGrooming,
+            style: AppTextStyles.boldStyle700(fontColor: AppColors.grey1000)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.grey1000),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          children: [
+            if (_isSnoozed) _buildSnoozeBanner(),
+            _buildHero(),
+            const SizedBox(height: 36),
+            if (widget.groomingType != null)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: const BoxDecoration(
+                  color: AppColors.background3,
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                ),
+                child: Text(
+                  widget.groomingType!,
+                  style: AppTextStyles.semiBoldStyle600(
+                      fontColor: AppColors.textPrimary),
+                ),
+              )
+            else
+              GroomingTypeSelector(
+                selectedTypes: _selectedGroomingTypes,
+                error: _groomingTypeError,
+                onChanged: (types) => setState(() {
+                  _selectedGroomingTypes = types;
+                  if (types.isNotEmpty) _groomingTypeError = null;
+                }),
               ),
+            const SizedBox(height: 24),
+            FrequencySelector(
+              title: AppStrings.frequency,
+              selectedFrequency: _selectedFrequency,
+              subtitle: AppStrings.chooseHowOftenYouGroomYourPet,
+              options: const [
+                CareFrequency.none,
+                CareFrequency.weekly,
+                CareFrequency.monthly,
+                CareFrequency.quarterly,
+              ],
+              onChanged: _onFrequencyChanged,
             ),
-          ),
-
-          // Save button
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: CommonButton(
+            const SizedBox(height: 24),
+            DatePickerField(
+              label: AppStrings.lastGrooming,
+              selectedDate: _lastDate,
+              onDateSelected: _onDateChanged,
+            ),
+            const SizedBox(height: 32),
+            CommonButton(
               text: AppStrings.save,
               onPressed: _isSaving ? null : _save,
               isLoading: _isSaving,
-              size: ButtonSize.medium,
+              variant: ButtonVariant.primary,
+              textStyle: AppTextStyles.interBoldStyle700(
+                fontSize: 16,
+                fontColor: AppColors.grey1000,
+              ),
             ),
-          ),
-        ],
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }

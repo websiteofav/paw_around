@@ -38,18 +38,27 @@ class ClearSelectedPost extends CommunityEvent {}
 
 class MarkPostResolved extends CommunityEvent {
   final String postId;
-  const MarkPostResolved(this.postId);
+  final String? petId;
+  const MarkPostResolved(this.postId, {this.petId});
 
   @override
-  List<Object?> get props => [postId];
+  List<Object?> get props => [postId, petId];
 }
 
 class UnresolvePost extends CommunityEvent {
   final String postId;
-  const UnresolvePost(this.postId);
+  final String? petId;
+  final DateTime? lastSeenAt;
+  final String? lastSeenLocation;
+  const UnresolvePost(
+    this.postId, {
+    this.petId,
+    this.lastSeenAt,
+    this.lastSeenLocation,
+  });
 
   @override
-  List<Object?> get props => [postId];
+  List<Object?> get props => [postId, petId, lastSeenAt, lastSeenLocation];
 }
 
 class DeletePost extends CommunityEvent {

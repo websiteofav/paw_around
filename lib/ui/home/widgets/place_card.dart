@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/places/places_model.dart';
@@ -23,12 +25,13 @@ class PlaceCard extends StatelessWidget {
     return ScaleButton(
       onPressed: onTap,
       child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
+        height: 140,
+        padding: const EdgeInsets.all(12),
+        decoration: smoothDecoration(
+          cornerRadius: 24,
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.border),
-          boxShadow: [
+          side: const BorderSide(color: AppColors.border),
+          shadows: [
             BoxShadow(
               color: AppColors.shadowOverlay.withValues(alpha: 0.06),
               blurRadius: 12,
@@ -37,65 +40,80 @@ class PlaceCard extends StatelessWidget {
           ],
         ),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 56,
-              height: 56,
-              decoration: BoxDecoration(
-                color: _getTypeColor(place.types),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
-                child: place.photoUrl != null
-                    ? CachedNetworkImage(
+            // Image
+            ClipSmoothRect(
+              radius: AppSmoothRadius.custom(14),
+              child: place.photoUrl != null
+                  ? ClipSmoothRect(
+                      radius: AppSmoothRadius.custom(14),
+                      child: CachedNetworkImage(
                         imageUrl: place.photoUrl!,
                         placeholder: (context, url) => _buildPlaceholder(),
-                        errorWidget: (context, url, error) => _buildFallbackIcon(),
+                        errorWidget: (context, url, error) =>
+                            _buildFallbackIcon(),
                         fit: BoxFit.cover,
-                        width: 56,
-                        height: 56,
-                      )
-                    : _buildFallbackIcon(),
-              ),
+                        width: 116,
+                        height: 116,
+                      ),
+                    )
+                  : _buildFallbackIcon(),
             ),
             const SizedBox(width: 14),
+            // Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     place.name,
-                    style: AppTextStyles.semiBoldStyle600(fontSize: 16),
+                    style: AppTextStyles.interBoldStyle700(
+                        fontSize: 16, fontColor: AppColors.grey1000),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    place.address,
+                    style: AppTextStyles.interRegularStyle400(
+                        fontSize: 12, fontColor: AppColors.grey600),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    place.address,
-                    style: AppTextStyles.regularStyle400(fontSize: 13, fontColor: AppColors.textSecondary),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 6),
                   _buildRatingRow(),
+                  const SizedBox(height: 10),
+                  // Location button
+                  ScaleButton(
+                    onPressed: onDirectionsTap,
+                    child: Container(
+                      height: 36,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      decoration: smoothDecoration(
+                        cornerRadius: 999,
+                        color: AppColors.grey1000,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(AppStrings.location,
+                              style: AppTextStyles.interMediumStyle500(
+                                  fontSize: 14, fontColor: AppColors.white)),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: const BoxDecoration(
+                                color: AppColors.white, shape: BoxShape.circle),
+                            child: const Icon(Icons.chevron_right,
+                                size: 14, color: AppColors.grey1000),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
-              ),
-            ),
-            ScaleButton(
-              onPressed: onDirectionsTap,
-              child: Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.directions,
-                  color: AppColors.primary,
-                  size: 22,
-                ),
               ),
             ),
           ],
@@ -106,22 +124,29 @@ class PlaceCard extends StatelessWidget {
 
   Widget _buildRatingRow() {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         if (place.rating != null) ...[
-          const Icon(Icons.star_rounded, color: AppColors.ratingColor, size: 16),
+          const Icon(Icons.star_rounded,
+              color: AppColors.ratingColor, size: 16),
           const SizedBox(width: 4),
-          Text(
-            '${place.rating}',
-            style: AppTextStyles.mediumStyle500(fontSize: 13, fontColor: AppColors.textPrimary),
+          Padding(
+            padding: const EdgeInsets.only(top: 2),
+            child: Text(
+              '${place.rating}',
+              style: AppTextStyles.mediumStyle500(
+                  fontSize: 13, fontColor: AppColors.grey1000),
+            ),
           ),
           if (place.userRatingsTotal != null)
             Text(
               ' (${place.userRatingsTotal})',
-              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.textSecondary),
+              style: AppTextStyles.interRegularStyle400(
+                  fontSize: 12, fontColor: AppColors.grey600),
             ),
           const SizedBox(width: 10),
         ],
-        if (place.isOpen != null) _buildOpenStatusBadge(),
+        //   if (place.isOpen != null) _buildOpenStatusBadge(),
       ],
     );
   }
@@ -130,9 +155,11 @@ class PlaceCard extends StatelessWidget {
     final bool isOpen = place.isOpen!;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: isOpen ? AppColors.success.withValues(alpha: 0.15) : AppColors.error.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
+      decoration: smoothDecoration(
+        cornerRadius: 8,
+        color: isOpen
+            ? AppColors.success.withValues(alpha: 0.15)
+            : AppColors.error.withValues(alpha: 0.15),
       ),
       child: Text(
         isOpen ? AppStrings.open : AppStrings.closed,
@@ -146,8 +173,8 @@ class PlaceCard extends StatelessWidget {
 
   Widget _buildPlaceholder() {
     return Container(
-      width: 56,
-      height: 56,
+      width: 88,
+      height: 88,
       color: _getTypeColor(place.types),
       child: const Center(
         child: SizedBox(
@@ -164,13 +191,16 @@ class PlaceCard extends StatelessWidget {
 
   Widget _buildFallbackIcon() {
     return Container(
-      width: 56,
-      height: 56,
-      color: _getTypeColor(place.types),
+      width: 116,
+      height: 116,
+      decoration: smoothDecoration(
+        cornerRadius: 14,
+        color: _getTypeColor(place.types),
+      ),
       child: Icon(
         _getTypeIcon(place.types),
         color: AppColors.serviceIconColor,
-        size: 28,
+        size: 32,
       ),
     );
   }

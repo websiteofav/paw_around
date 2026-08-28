@@ -50,3 +50,5 @@ class SignupWithEmail extends AuthEvent {
 }
 
 class SignOut extends AuthEvent {}
+
+class RefreshUserProfile extends AuthEvent {}

@@ -208,8 +208,7 @@ class PendingIntentService {
   }
 
   bool _routeRequiresAuth(String path) {
-    if (path == AppRoutes.splash ||
-        path == AppRoutes.intro ||
+    if (path == AppRoutes.intro ||
         path == AppRoutes.onboarding ||
         path == AppRoutes.phoneLogin ||
         path == AppRoutes.otpVerification) {

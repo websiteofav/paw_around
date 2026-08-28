@@ -1,14 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/ui/widgets/scale_button.dart';
 import 'package:paw_around/utils/date_utils.dart';
-import 'package:paw_around/utils/share_utils.dart';
-import 'package:paw_around/utils/utils.dart';
 
 class PostCard extends StatelessWidget {
   final LostFoundPost post;
@@ -28,38 +29,52 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.shadowOverlay.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: ScaleButton(
+        onPressed: onTap,
+        child: Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: smoothDecoration(
+            cornerRadius: 24,
+            color: AppColors.white,
+            side: const BorderSide(color: AppColors.border),
+            shadows: [
+              BoxShadow(
+                  color: AppColors.shadowOverlay.withValues(alpha: 0.051),
+                  blurRadius: 7,
+                  offset: const Offset(0, 3)),
+              BoxShadow(
+                  color: AppColors.shadowOverlay.withValues(alpha: 0.039),
+                  blurRadius: 13,
+                  offset: const Offset(0, 13)),
+              BoxShadow(
+                  color: AppColors.shadowOverlay.withValues(alpha: 0.031),
+                  blurRadius: 18,
+                  offset: const Offset(0, 30)),
+              BoxShadow(
+                  color: AppColors.shadowOverlay.withValues(alpha: 0.012),
+                  blurRadius: 21,
+                  offset: const Offset(0, 54)),
+            ],
           ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildImage(),
               Padding(
-                padding: const EdgeInsets.all(14),
+                padding: const EdgeInsets.fromLTRB(12, 10, 12, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildHeader(),
-                    const SizedBox(height: 8),
-                    _buildDescription(),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 4),
+                    _buildSubtitle(),
+                    if (post.petDescription.isNotEmpty) ...[
+                      const SizedBox(height: 12),
+                      _buildDescription(),
+                    ],
+                    const SizedBox(height: 14),
                     _buildFooter(),
                   ],
                 ),
@@ -74,40 +89,30 @@ class PostCard extends StatelessWidget {
   Widget _buildImage() {
     return Hero(
       tag: 'post-image-${post.id}',
-      child: Container(
-        decoration: BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.shadowOverlay.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-          child: Stack(
-            children: [
-              SizedBox(
-                height: 150,
-                width: double.infinity,
-                child: _buildPostImage(),
-              ),
-              Positioned(
-                top: 8,
-                left: 8,
-                child: _buildTypeBadge(),
-              ),
-              if (_isOwner && !isFromYourPosts) ...[
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: _buildYourPostBadge(),
-                ),
-              ]
-            ],
+      child: Stack(
+        children: [
+          Container(
+            height: 182,
+            clipBehavior: Clip.antiAlias,
+            decoration: smoothDecoration(cornerRadius: 20),
+            padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+            width: double.infinity,
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: _buildPostImage()),
           ),
-        ),
+          Positioned(
+            top: 12,
+            left: 12,
+            child: _buildStatusBadge(),
+          ),
+          if (_isOwner && !isFromYourPosts)
+            Positioned(
+              top: 12,
+              right: 12,
+              child: _buildYourPostBadge(),
+            ),
+        ],
       ),
     );
   }
@@ -116,171 +121,144 @@ class PostCard extends StatelessWidget {
     if (post.imagePath == null || post.imagePath!.isEmpty) {
       return _buildPlaceholder();
     }
-
-    // Check if it's a network URL
     if (post.imagePath!.startsWith('http')) {
       return CachedNetworkImage(
         imageUrl: post.imagePath!,
         fit: BoxFit.cover,
         placeholder: (context, url) => Container(
-          color: AppColors.surface,
+          color: AppColors.iconBgLight,
           child: const Center(
-              child: CircularProgressIndicator(color: AppColors.primary)),
+              child: CircularProgressIndicator(
+                  color: AppColors.primary, strokeWidth: 2)),
         ),
         errorWidget: (context, url, error) => _buildPlaceholder(),
       );
     }
-
     return _buildPlaceholder();
   }
 
   Widget _buildPlaceholder() {
     return Container(
-      color: AppColors.surface,
-      child: const Icon(Icons.pets, size: 48, color: AppColors.textLight),
+      color: AppColors.iconBgLight,
+      child: const Center(
+          child: Icon(Icons.pets, size: 56, color: AppColors.primary)),
     );
   }
 
-  Widget _buildTypeBadge() {
+  Widget _buildStatusBadge() {
     final isLost = post.type == PostType.lost;
-    final badgeColor = isLost ? AppColors.error : AppColors.success;
+    final color = isLost ? AppColors.error : AppColors.success;
+    final typeLabel = isLost ? AppStrings.missing : AppStrings.found;
+    final timeLabel = AppDateUtils.getRelativeTimeShort(post.createdAt);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-        color: badgeColor,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: badgeColor.withValues(alpha: 0.3),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: smoothDecoration(
+        color: color,
+        borderRadius: const SmoothBorderRadius.only(
+          topLeft: SmoothRadius(cornerRadius: 16, cornerSmoothing: 1),
+          bottomRight: SmoothRadius(cornerRadius: 12, cornerSmoothing: 1),
+        ),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(isLost ? Icons.search : Icons.favorite,
-              size: 12, color: AppColors.white),
-          const SizedBox(width: 4),
-          Text(
-            isLost ? AppStrings.lost : AppStrings.found,
-            style: AppTextStyles.boldStyle700(
-                fontSize: 12, fontColor: AppColors.white),
-          ),
-        ],
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: '$typeLabel: ',
+              style: AppTextStyles.interMediumStyle500(
+                  fontSize: 12, fontColor: AppColors.white),
+            ),
+            TextSpan(
+              text: timeLabel,
+              style: AppTextStyles.interBoldStyle700(
+                  fontSize: 12, fontColor: AppColors.white),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildYourPostBadge() {
     return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: AppColors.secondary,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Text(AppStrings.yourPost,
-            style: AppTextStyles.boldStyle700(
-                fontSize: 12, fontColor: AppColors.textPrimary)));
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: AppColors.secondary,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(AppStrings.yourPost,
+          style: AppTextStyles.interBoldStyle700(
+              fontSize: 12, fontColor: AppColors.textPrimary)),
+    );
   }
 
   Widget _buildHeader() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Expanded(
           child: Text(
             post.petName,
-            style: AppTextStyles.semiBoldStyle600(fontSize: 18),
+            style: AppTextStyles.interBoldStyle700(
+                fontSize: 16, fontColor: AppColors.grey1100),
             overflow: TextOverflow.ellipsis,
           ),
         ),
-        Text(
-          AppDateUtils.getRelativeTimeShort(post.createdAt),
-          style: AppTextStyles.regularStyle400(
-              fontSize: 14, fontColor: AppColors.textSecondary),
-        ),
-        if (distanceKm != null)
-          Text(
-            ' • ${distanceKm!.toStringAsFixed(1)} ${AppStrings.kmAway}',
-            style: AppTextStyles.regularStyle400(
-                fontSize: 14, fontColor: AppColors.textSecondary),
-          ),
+        const SizedBox(width: 8),
+        const Icon(Icons.near_me_outlined, size: 24, color: AppColors.grey1100),
       ],
     );
   }
 
+  Widget _buildSubtitle() {
+    final parts = <String>[];
+    if (post.breed.isNotEmpty) parts.add(post.breed);
+    if (post.color.isNotEmpty) parts.add(post.color);
+    if (parts.isEmpty) return const SizedBox.shrink();
+    return Text(
+      parts.join(' · '),
+      style: AppTextStyles.interMediumStyle500(
+          fontSize: 14, fontColor: AppColors.grey600),
+    );
+  }
+
   Widget _buildDescription() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (post.breed.isNotEmpty)
-          Text(
-            '${post.breed} • ${post.color}',
-            style: AppTextStyles.regularStyle400(
-                fontSize: 14, fontColor: AppColors.textSecondary),
-          ),
-        const SizedBox(height: 4),
-        Text(
-          post.petDescription,
-          style: AppTextStyles.regularStyle400(fontSize: 14),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ],
+    return Text(
+      post.petDescription,
+      style: AppTextStyles.interMediumStyle500(
+          fontSize: 16, fontColor: AppColors.grey1100),
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
     );
   }
 
   Widget _buildFooter() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
+        const Icon(Icons.my_location, size: 20, color: AppColors.grey600),
+        const SizedBox(width: 6),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  const Icon(Icons.person_outline,
-                      size: 14, color: AppColors.textSecondary),
-                  const SizedBox(width: 4),
-                  Text(
-                    _isOwner
-                        ? AppStrings.yourPost
-                        : post.userName.orDefault(AppStrings.anonymous),
-                    style: AppTextStyles.regularStyle400(
-                        fontSize: 14, fontColor: AppColors.textSecondary),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(Icons.location_on,
-                      size: 14, color: AppColors.textSecondary),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Text(
-                      post.locationName,
-                      style: AppTextStyles.regularStyle400(
-                          fontSize: 14, fontColor: AppColors.textSecondary),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+          child: Text(
+            post.locationName,
+            style: AppTextStyles.interRegularStyle400(
+                fontSize: 14, fontColor: AppColors.grey600),
+            overflow: TextOverflow.ellipsis,
           ),
         ),
-        IconButton(
-          icon: const Icon(Icons.share_outlined,
-              size: 20, color: AppColors.textSecondary),
-          onPressed: () => ShareUtils.sharePost(post),
-          padding: EdgeInsets.zero,
-          constraints: const BoxConstraints(),
-          tooltip: AppStrings.sharePost,
-        ),
+        if (distanceKm != null) ...[
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+            decoration: BoxDecoration(
+              color: AppColors.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '${distanceKm!.toStringAsFixed(1)} ${AppStrings.kmAway}',
+              style: AppTextStyles.interMediumStyle500(
+                  fontSize: 11, fontColor: AppColors.primary),
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
@@ -85,13 +87,13 @@ class HelpSupportScreen extends StatelessWidget {
         const SizedBox(height: 12),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 16),
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 16,
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.border),
+            side: const BorderSide(color: AppColors.border),
           ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+          child: ClipSmoothRect(
+            radius: AppSmoothRadius.custom(16),
             child: Column(
               children: _faqItems.asMap().entries.map((entry) {
                 final index = entry.key;
@@ -142,10 +144,10 @@ class HelpSupportScreen extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 16,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Column(
         children: [

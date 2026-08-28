@@ -4,14 +4,19 @@ import 'package:paw_around/bloc/community/community_state.dart';
 import 'package:paw_around/constants/api_constants.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/repositories/community_repository.dart';
+import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/auth_error_interceptor.dart';
 
 class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
   final CommunityRepository _repository;
+  final PetRepository _petRepository;
   final AuthErrorInterceptor _authInterceptor = AuthErrorInterceptor();
 
-  CommunityBloc({required CommunityRepository repository})
-      : _repository = repository,
+  CommunityBloc({
+    required CommunityRepository repository,
+    required PetRepository petRepository,
+  })  : _repository = repository,
+        _petRepository = petRepository,
         super(CommunityInitial()) {
     on<LoadPosts>(_onLoadPosts);
     on<LoadMyPosts>(_onLoadMyPosts);
@@ -65,6 +70,7 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
     emit(PostCreating());
     try {
       final createdPost = await _repository.createPost(event.post);
+      await _syncPetLostState(createdPost);
       emit(PostCreated(createdPost));
       // Reload posts after creation (without location to show all posts)
       add(const LoadPosts());
@@ -72,6 +78,23 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       await _handleUnauthorizedError(e);
       emit(CommunityError(e.toString()));
     }
+  }
+
+  /// Keeps the linked pet's own lost/found state (surfaced on its public
+  /// QR page) consistent with a "lost" post created for it.
+  Future<void> _syncPetLostState(LostFoundPost post) async {
+    if (post.type != PostType.lost || post.petId == null) return;
+    final pet = await _petRepository.getPetById(post.petId!);
+    if (pet == null) return;
+    await _petRepository.updatePet(
+      pet.copyWith(
+        isLost: true,
+        lastSeenAt: post.lastSeenAt ?? post.createdAt,
+        lastSeenLocation:
+            post.locationName.isEmpty ? null : post.locationName,
+        updatedAt: DateTime.now(),
+      ),
+    );
   }
 
   void _onSelectPost(SelectPost event, Emitter<CommunityState> emit) {
@@ -93,6 +116,19 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       MarkPostResolved event, Emitter<CommunityState> emit) async {
     try {
       await _repository.markAsResolved(event.postId);
+      if (event.petId != null) {
+        final pet = await _petRepository.getPetById(event.petId!);
+        if (pet != null) {
+          await _petRepository.updatePet(
+            pet.copyWith(
+              isLost: false,
+              lastSeenAt: null,
+              lastSeenLocation: null,
+              updatedAt: DateTime.now(),
+            ),
+          );
+        }
+      }
       emit(PostResolved());
     } catch (e) {
       await _handleUnauthorizedError(e);
@@ -104,6 +140,19 @@ class CommunityBloc extends Bloc<CommunityEvent, CommunityState> {
       UnresolvePost event, Emitter<CommunityState> emit) async {
     try {
       await _repository.unresolvePost(event.postId);
+      if (event.petId != null) {
+        final pet = await _petRepository.getPetById(event.petId!);
+        if (pet != null) {
+          await _petRepository.updatePet(
+            pet.copyWith(
+              isLost: true,
+              lastSeenAt: event.lastSeenAt ?? DateTime.now(),
+              lastSeenLocation: event.lastSeenLocation,
+              updatedAt: DateTime.now(),
+            ),
+          );
+        }
+      }
       emit(PostUnresolved());
     } catch (e) {
       await _handleUnauthorizedError(e);

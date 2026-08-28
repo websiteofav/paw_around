@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:paw_around/models/user/user_profile_model.dart';
 
 abstract class AuthState extends Equatable {
   final bool isPasswordVisible;
@@ -24,14 +25,16 @@ class AuthPasswordVisibilityToggled extends AuthState {
 
 class Authenticated extends AuthState {
   final User user;
+  final UserProfileModel? profile;
 
   const Authenticated({
     required this.user,
+    this.profile,
     super.isPasswordVisible = false,
   });
 
   @override
-  List<Object?> get props => [user, isPasswordVisible];
+  List<Object?> get props => [user, profile, isPasswordVisible];
 }
 
 class Unauthenticated extends AuthState {

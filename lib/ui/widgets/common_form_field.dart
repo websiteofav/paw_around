@@ -43,13 +43,15 @@ class CommonFormField extends StatelessWidget {
           children: [
             Text(
               label,
-              style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.textPrimary),
+              style: AppTextStyles.interRegularStyle400(
+                  fontSize: 14, fontColor: AppColors.grey1000),
             ),
             if (isRequired) ...[
               const SizedBox(width: 4),
               Text(
                 '*',
-                style: AppTextStyles.mediumStyle500(fontSize: 16, fontColor: AppColors.error),
+                style: AppTextStyles.interRegularStyle400(
+                    fontSize: 14, fontColor: AppColors.grey1000),
               ),
             ],
           ],
@@ -66,19 +68,22 @@ class CommonFormField extends StatelessWidget {
           onChanged: onChanged,
           decoration: InputDecoration(
             hintText: hintText ?? label,
-            hintStyle: AppTextStyles.regularStyle400(fontSize: 16, fontColor: AppColors.textSecondary),
+            hintStyle: AppTextStyles.regularStyle400(
+                fontSize: 16, fontColor: AppColors.textSecondary),
             filled: true,
             fillColor: AppColors.surface,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: errorText != null ? AppColors.error : AppColors.patternColor,
+                color:
+                    errorText != null ? AppColors.error : AppColors.neutral300,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
               borderSide: BorderSide(
-                color: errorText != null ? AppColors.error : AppColors.patternColor,
+                color:
+                    errorText != null ? AppColors.error : AppColors.neutral300,
               ),
             ),
             focusedBorder: OutlineInputBorder(
@@ -96,7 +101,8 @@ class CommonFormField extends StatelessWidget {
               borderRadius: BorderRadius.circular(14),
               borderSide: const BorderSide(color: AppColors.error, width: 2),
             ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             suffixIcon: suffixIcon,
           ),
         ),
@@ -106,7 +112,8 @@ class CommonFormField extends StatelessWidget {
             padding: const EdgeInsets.only(top: 8),
             child: Text(
               errorText!,
-              style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
+              style: AppTextStyles.regularStyle400(
+                  fontSize: 12, fontColor: AppColors.error),
             ),
           ),
       ],

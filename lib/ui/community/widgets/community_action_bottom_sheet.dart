@@ -1,6 +1,8 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -22,9 +24,9 @@ class CommunityActionBottomSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
+      decoration: smoothDecoration(
+        borderRadius: AppSmoothRadius.topOnly(24),
         color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: SafeArea(
         child: Column(
@@ -35,9 +37,9 @@ class CommunityActionBottomSheet extends StatelessWidget {
               width: 40,
               height: 4,
               margin: const EdgeInsets.only(bottom: 24),
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 2,
                 color: AppColors.border,
-                borderRadius: BorderRadius.circular(2),
               ),
             ),
             // Title
@@ -113,19 +115,19 @@ class CommunityActionBottomSheet extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Container(
           padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
+          decoration: smoothDecoration(
+            cornerRadius: 12,
             color: AppColors.white,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border),
+            side: const BorderSide(color: AppColors.border),
           ),
           child: Row(
             children: [
               Container(
                 width: 48,
                 height: 48,
-                decoration: BoxDecoration(
+                decoration: smoothDecoration(
+                  cornerRadius: 12,
                   color: iconColor.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(
                   icon,

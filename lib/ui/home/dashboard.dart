@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
@@ -12,6 +14,8 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/deep_link_service.dart';
+import 'package:figma_squircle/figma_squircle.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/paw_circle_screen.dart';
@@ -78,66 +82,74 @@ class _DashboardState extends State<Dashboard> {
           final mapFilter =
               state is HomeTabSelected ? state.mapServiceFilter : null;
 
+          final pawCircleInitialTab =
+              state is HomeTabSelected ? state.pawCircleInitialTab : null;
           return Scaffold(
             backgroundColor: AppColors.white,
-            body: _getTabContent(currentIndex, mapFilter: mapFilter),
+            body: _getTabContent(currentIndex,
+                mapFilter: mapFilter, pawCircleInitialTab: pawCircleInitialTab),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             floatingActionButton: Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: AppColors.white,
-                border: const Border(
-                  top: BorderSide(color: AppColors.border, width: 1),
-                ),
-                borderRadius: BorderRadius.circular(24),
-                boxShadow: [
+              decoration: smoothDecoration(
+                cornerRadius: 24,
+                color: AppColors.grey1000,
+                side: const BorderSide(width: 0.6, color: AppColors.grey600),
+                shadows: [
                   BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    offset: const Offset(0, 1),
-                    blurRadius: 8,
+                    color: AppColors.navBarShadow.withValues(alpha: 0.98),
+                    offset: const Offset(0, 3),
+                    blurRadius: 7,
+                  ),
+                  BoxShadow(
+                    color: AppColors.navBarShadow.withValues(alpha: 0.85),
+                    offset: const Offset(0, 12),
+                    blurRadius: 12,
+                  ),
+                  BoxShadow(
+                    color: AppColors.navBarShadow.withValues(alpha: 0.50),
+                    offset: const Offset(0, 27),
+                    blurRadius: 16,
+                  ),
+                  BoxShadow(
+                    color: AppColors.navBarShadow.withValues(alpha: 0.15),
+                    offset: const Offset(0, 48),
+                    blurRadius: 19,
+                  ),
+                  BoxShadow(
+                    color: AppColors.navBarShadow.withValues(alpha: 0.02),
+                    offset: const Offset(0, 76),
+                    blurRadius: 21,
                   ),
                 ],
               ),
               child: SafeArea(
-                child: Container(
-                  height: 80,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+                child: SizedBox(
+                  height: 72,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       _buildNavItem(
                         context: context,
-                        icon: Icons.home_outlined,
-                        activeIcon: Icons.home,
+                        icon: AppIcons.dashboardHomeIcon,
                         label: AppStrings.homeTab,
                         index: 0,
                         isSelected: currentIndex == 0,
                       ),
                       _buildNavItem(
                         context: context,
-                        icon: Icons.location_on_outlined,
-                        activeIcon: Icons.location_on,
+                        icon: AppIcons.dashboardExploreIcon,
                         label: AppStrings.explore,
                         index: 1,
                         isSelected: currentIndex == 1,
                       ),
                       _buildNavItem(
                         context: context,
-                        icon: Icons.people_outline,
-                        activeIcon: Icons.people,
+                        icon: AppIcons.dashboardPawCircleIcon,
                         label: AppStrings.pawCircle,
                         index: 2,
                         isSelected: currentIndex == 2,
-                      ),
-                      _buildNavItem(
-                        context: context,
-                        icon: Icons.person_outline,
-                        activeIcon: Icons.person,
-                        label: AppStrings.profileTab,
-                        index: 3,
-                        isSelected: currentIndex == 3,
                       ),
                     ],
                   ),
@@ -150,14 +162,15 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _getTabContent(int currentIndex, {ServiceType? mapFilter}) {
+  Widget _getTabContent(int currentIndex,
+      {ServiceType? mapFilter, int? pawCircleInitialTab}) {
     switch (currentIndex) {
       case 0:
         return const HomeScreen();
       case 1:
         return MapScreen(initialFilter: mapFilter);
       case 2:
-        return const PawCircleScreen();
+        return PawCircleScreen(initialTab: pawCircleInitialTab);
       case 3:
         return const ProfileScreen();
       default:
@@ -167,8 +180,7 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _buildNavItem({
     required BuildContext context,
-    required IconData icon,
-    required IconData activeIcon,
+    required String icon,
     required String label,
     required int index,
     required bool isSelected,
@@ -184,12 +196,14 @@ class _DashboardState extends State<Dashboard> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(isSelected ? activeIcon : icon,
-                color: isSelected
-                    ? AppColors.navigationActive
-                    : AppColors.navigationInactive,
-                size: 24,
-                weight: 12),
+            SvgPicture.asset(
+              icon,
+              colorFilter: ColorFilter.mode(
+                  isSelected ? AppColors.primary : AppColors.navigationInactive,
+                  BlendMode.srcIn),
+              height: 24,
+              width: 24,
+            ),
             const SizedBox(height: 4),
             Text(
               label,

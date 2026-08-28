@@ -1,9 +1,11 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:paw_around/bloc/auth/auth_bloc.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/bloc/auth/auth_event.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
@@ -23,9 +25,7 @@ import 'package:paw_around/ui/profile/widgets/profile_dialogs.dart';
 import 'package:paw_around/ui/profile/widgets/profile_footer.dart';
 import 'package:paw_around/ui/profile/widgets/profile_header.dart';
 import 'package:paw_around/ui/profile/widgets/profile_pets_section.dart';
-import 'package:paw_around/ui/widgets/animated_card.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
-import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
 import 'package:paw_around/ui/widgets/loading_overlay.dart';
 import 'package:paw_around/utils/url_utils.dart';
 
@@ -126,82 +126,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Stack(
       children: [
+        Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [AppColors.neutral200, AppColors.white],
+            ),
+          ),
+        ),
         Scaffold(
-          backgroundColor: AppColors.white,
-          body: Column(
-            children: [
-              const DashboardAppBar(
-                title: AppStrings.profileTab,
-              ),
-              Expanded(
-                child: RefreshIndicator(
-                  color: AppColors.primary,
-                  onRefresh: _onRefresh,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    padding: const EdgeInsets.only(bottom: 120),
+          backgroundColor: Colors.transparent,
+          body: RefreshIndicator(
+            color: AppColors.primary,
+            onRefresh: _onRefresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Hero photo
+                  const ProfileHeader(),
+                  // Single white content sheet
+                  Container(
+                    decoration: smoothDecoration(
+                      cornerRadius: AppConstants.radiusXL,
+                      color: AppColors.white,
+                      side: const BorderSide(color: AppColors.border),
+                    ),
+                    //    margin: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        AppSpacing.vertical20,
-                        AnimatedCard(
-                          index: 0,
-                          child: ProfileHeader(
-                            onEditTap: () =>
-                                context.pushNamed(AppRoutes.editProfile),
-                          ),
+                        ProfileNameCard(
+                          onEditTap: () =>
+                              context.pushNamed(AppRoutes.editProfile),
                         ),
                         AppSpacing.vertical20,
-                        AnimatedCard(
-                          index: 1,
-                          child: BlocBuilder<PetListBloc, PetListState>(
-                            builder: (context, state) {
-                              if (state is PetListLoading) {
-                                return _buildPetsSectionSkeleton();
-                              }
-                              final List<PetModel> pets =
-                                  state is PetListLoaded ? state.pets : [];
-                              return ProfilePetsSection(pets: pets);
-                            },
-                          ),
+                        BlocBuilder<PetListBloc, PetListState>(
+                          builder: (context, state) {
+                            if (state is PetListLoading) {
+                              return _buildPetsSectionSkeleton();
+                            }
+                            final List<PetModel> pets =
+                                state is PetListLoaded ? state.pets : [];
+                            return ProfilePetsSection(pets: pets);
+                          },
                         ),
                         AppSpacing.vertical20,
-                        AnimatedCard(
-                          index: 2,
-                          child: ProfileAccountSection(
-                            onMyPostsTap: () =>
-                                context.pushNamed(AppRoutes.myPosts),
-                            onAccountSettingsTap: () =>
-                                _showComingSoon(AppStrings.accountSettings),
-                            onNotificationsTap: () =>
-                                _showComingSoon(AppStrings.notifications),
-                            onPrivacyTap: () => UrlUtils.openWebsite(
-                                AppStrings.privacyPolicyUrl),
-                            onTermsTap: () => UrlUtils.openWebsite(
-                                AppStrings.termsOfServiceUrl),
-                            onHelpTap: () =>
-                                context.pushNamed(AppRoutes.helpSupport),
-                            onDeleteAccountTap: () => showDeleteAccountDialog(
-                              context,
-                              onConfirm: _handleDeleteAccount,
-                            ),
+                        ProfileAccountSection(
+                          onMyPostsTap: () =>
+                              context.pushNamed(AppRoutes.myPosts),
+                          onAccountSettingsTap: () =>
+                              _showComingSoon(AppStrings.accountSettings),
+                          onNotificationsTap: () =>
+                              _showComingSoon(AppStrings.notifications),
+                          onPrivacyTap: () =>
+                              UrlUtils.openWebsite(AppStrings.privacyPolicyUrl),
+                          onTermsTap: () => UrlUtils.openWebsite(
+                              AppStrings.termsOfServiceUrl),
+                          onHelpTap: () =>
+                              context.pushNamed(AppRoutes.helpSupport),
+                          onDeleteAccountTap: () => showDeleteAccountDialog(
+                            context,
+                            onConfirm: _handleDeleteAccount,
                           ),
                         ),
-                        AppSpacing.vertical32,
-                        AnimatedCard(
-                          index: 3,
-                          child: _buildLogoutButton(),
-                        ),
-                        AppSpacing.vertical24,
-                        ProfileFooter(appVersion: _appVersion),
-                        AppSpacing.vertical40,
                       ],
                     ),
                   ),
-                ),
+                  AppSpacing.vertical60,
+
+                  _buildLogoutButton(),
+                  AppSpacing.vertical36,
+                  ProfileFooter(appVersion: _appVersion),
+                  const SizedBox(height: 120),
+                ],
               ),
-              // const SizedBox(height: 100),
-            ],
+            ),
           ),
         ),
         if (_isDeletingAccount)
@@ -218,16 +220,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
           size: ButtonSize.medium,
           icon: Icons.logout,
           onPressed: () => showLogoutDialog(context),
+          borderRadius: 44,
         ),
       );
 
   Widget _buildPetsSectionSkeleton() {
     return Container(
       margin: AppEdgeInsets.horizontalMedium,
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: AppConstants.radiusXL,
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppConstants.radiusXL),
-        border: Border.all(color: AppColors.border),
+        side: const BorderSide(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -238,9 +241,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Container(
               height: 16,
               width: 80,
-              decoration: BoxDecoration(
+              decoration: smoothDecoration(
+                cornerRadius: 4,
                 color: AppColors.progressBarBg,
-                borderRadius: BorderRadius.circular(4),
               ),
             ),
           ),

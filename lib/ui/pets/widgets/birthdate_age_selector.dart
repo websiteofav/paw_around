@@ -1,12 +1,13 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_event.dart';
 import 'package:paw_around/bloc/pets/pet_form/pet_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
-import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class BirthdateAgeSelector extends StatelessWidget {
   const BirthdateAgeSelector({super.key});
@@ -15,78 +16,53 @@ class BirthdateAgeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PetFormBloc, PetFormState>(
       builder: (context, state) {
+        final hasDate = state.dateOfBirth != null;
+        final label =
+            hasDate ? _formatDate(state.dateOfBirth!) : AppStrings.selectDate;
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Text(
-                  AppStrings.birthdateOrAge,
-                  style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.textPrimary),
+            GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+                _selectDateOfBirth(context, state);
+              },
+              child: Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                decoration: smoothDecoration(
+                  cornerRadius: 12,
+                  color: AppColors.white,
+                  side: const BorderSide(color: AppColors.neutral300),
                 ),
-                const SizedBox(width: 4),
-                Text(
-                  '*',
-                  style: AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.error),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        label,
+                        style: AppTextStyles.regularStyle400(
+                          fontSize: 16,
+                          fontColor: hasDate
+                              ? AppColors.neutral900
+                              : AppColors.neutral300,
+                        ),
+                      ),
+                    ),
+                    const Icon(Icons.calendar_month,
+                        size: 22, color: AppColors.secondaryCTA),
+                  ],
                 ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // First row: Date picker + Less than 1 year + 1-3 years
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  // Date picker option - shows selected date when picked
-                  _AgeOption(
-                    label: _getDatePickerLabel(state),
-                    icon: Icons.calendar_today_outlined,
-                    isSelected: _isExactDateSelected(state),
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
-                      _selectDateOfBirth(context, state);
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  // Less than 1 year
-                  _AgeOption(
-                    label: AppStrings.lessThan1Year,
-                    isSelected: _isAgeRangeSelected(state, 0, 1),
-                    onTap: () => _selectAgeRange(context, 0, 1),
-                  ),
-                  const SizedBox(width: 8),
-                  // 1-3 years
-                  _AgeOption(
-                    label: AppStrings.oneToThreeYears,
-                    isSelected: _isAgeRangeSelected(state, 1, 3),
-                    onTap: () => _selectAgeRange(context, 1, 3),
-                  ),
-                  const SizedBox(width: 8),
-                  // 3-7 years
-                  _AgeOption(
-                    label: AppStrings.threeToSevenYears,
-                    isSelected: _isAgeRangeSelected(state, 3, 7),
-                    onTap: () => _selectAgeRange(context, 3, 7),
-                  ),
-                  const SizedBox(width: 8),
-                  // 7+ years
-                  _AgeOption(
-                    label: AppStrings.moreThan7Years,
-                    isSelected: _isAgeRangeSelected(state, 7, 100),
-                    onTap: () => _selectAgeRange(context, 7, 15),
-                  ),
-                ],
               ),
             ),
-
-            // Error message
             if (state.errors['dateOfBirth'] != null)
               Padding(
-                padding: const EdgeInsets.only(top: 8),
+                padding: const EdgeInsets.only(top: 6),
                 child: Text(
                   state.errors['dateOfBirth']!,
-                  style: AppTextStyles.regularStyle400(fontSize: 12, fontColor: AppColors.error),
+                  style: AppTextStyles.regularStyle400(
+                      fontSize: 12, fontColor: AppColors.error),
                 ),
               ),
           ],
@@ -95,122 +71,46 @@ class BirthdateAgeSelector extends StatelessWidget {
     );
   }
 
-  bool _isAgeRangeSelected(PetFormState state, int minYears, int maxYears) {
-    if (state.dateOfBirth == null || state.isExactDateOfBirth) {
-      return false;
-    }
-    final now = DateTime.now();
-    final ageInYears = (now.difference(state.dateOfBirth!).inDays / 365).floor();
-    return ageInYears >= minYears && ageInYears < maxYears;
+  String _formatDate(DateTime date) {
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
   }
 
-  /// Date picker is selected when user explicitly picked an exact date
-  bool _isExactDateSelected(PetFormState state) {
-    return state.dateOfBirth != null && state.isExactDateOfBirth;
-  }
-
-  /// Returns the label for date picker - shows formatted date if selected
-  String _getDatePickerLabel(PetFormState state) {
-    if (state.dateOfBirth != null && state.isExactDateOfBirth) {
-      final date = state.dateOfBirth!;
-      final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      return '${months[date.month - 1]} ${date.day}, ${date.year}';
-    }
-    return AppStrings.selectDate;
-  }
-
-  void _selectAgeRange(BuildContext context, int minYears, int maxYears) {
-    final now = DateTime.now();
-    DateTime birthDate;
-
-    if (minYears == 0 && maxYears == 1) {
-      // Less than 1 year: set to 6 months ago
-      birthDate = DateTime(now.year, now.month - 6, now.day);
-    } else {
-      // Other ranges: use middle of range
-      final avgYears = (minYears + maxYears) ~/ 2;
-      birthDate = DateTime(now.year - avgYears, now.month, now.day);
-    }
-
-    context.read<PetFormBloc>().add(SelectDateOfBirth(birthDate));
-  }
-
-  void _selectDateOfBirth(BuildContext context, PetFormState state) async {
+  Future<void> _selectDateOfBirth(
+      BuildContext context, PetFormState state) async {
     final date = await showDatePicker(
       context: context,
       initialDate: state.dateOfBirth ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: AppColors.primary,
-              onPrimary: AppColors.white,
-              surface: AppColors.surface,
-              onSurface: AppColors.textPrimary,
-            ),
+      builder: (context, child) => Theme(
+        data: Theme.of(context).copyWith(
+          colorScheme: const ColorScheme.light(
+            primary: AppColors.primary,
+            onPrimary: AppColors.white,
+            surface: AppColors.surface,
+            onSurface: AppColors.textPrimary,
           ),
-          child: child!,
-        );
-      },
+        ),
+        child: child!,
+      ),
     );
 
     if (date != null && context.mounted) {
       context.read<PetFormBloc>().add(SelectDateOfBirth(date, isExact: true));
     }
-  }
-}
-
-class _AgeOption extends StatelessWidget {
-  final String label;
-  final IconData? icon;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _AgeOption({
-    required this.label,
-    this.icon,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ScaleButton(
-      onPressed: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected ? AppColors.primary.withValues(alpha: 0.1) : AppColors.surface,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.border,
-            width: isSelected ? 1.5 : 1,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (icon != null) ...[
-              Icon(
-                icon,
-                color: isSelected ? AppColors.primary : AppColors.textSecondary,
-                size: 18,
-              ),
-              const SizedBox(width: 6),
-            ],
-            Text(
-              label,
-              style: isSelected
-                  ? AppTextStyles.mediumStyle500(fontSize: 14, fontColor: AppColors.primary)
-                  : AppTextStyles.regularStyle400(fontSize: 14, fontColor: AppColors.textPrimary),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

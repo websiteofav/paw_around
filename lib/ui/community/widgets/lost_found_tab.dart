@@ -13,9 +13,9 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/services/location_service.dart';
+import 'package:paw_around/ui/community/widgets/community_empty_state.dart';
 import 'package:paw_around/ui/home/widgets/post_card.dart';
 import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
-import 'package:paw_around/ui/widgets/empty_state_widget.dart';
 
 class LostFoundTab extends StatefulWidget {
   const LostFoundTab({super.key});
@@ -126,40 +126,28 @@ class _LostFoundTabState extends State<LostFoundTab>
   Widget _buildEmptyState() {
     // Show different message if location is unavailable
     final hasLocation = _userPosition != null;
-    final title =
-        hasLocation ? AppStrings.noPostsInYourArea : AppStrings.noPostsYet;
-    final subtitle = hasLocation
-        ? AppStrings.lostPetsAreOftenFoundWithinTheFirst2448Hours
-        : AppStrings.enableLocationToSeeNearbyPosts;
-
-    return EmptyStateWidget(
-      icon: Icons.pets,
-      title: title,
-      subtitle: subtitle,
-      actionText: AppStrings.createLostFoundPost,
-      onAction: () async {
-        await context.push('/community/create');
-        if (mounted) {
-          _loadPosts();
-        }
-      },
-      hints: [
-        if (!hasLocation)
-          const EmptyStateHint(
-            icon: Icons.location_on_outlined,
-            text: AppStrings.enableLocationToSeeNearbyPosts,
-          )
-        else ...[
-          const EmptyStateHint(
-            icon: Icons.location_on_outlined,
-            text: AppStrings.helpReunitePets,
-          ),
-          const EmptyStateHint(
-            icon: Icons.people_outline,
-            text: AppStrings.alertNearbyParents,
-          ),
-        ],
-      ],
+    return RefreshIndicator(
+      color: AppColors.primary,
+      onRefresh: () async => _loadUserLocationAndPosts(),
+      child: SingleChildScrollView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        child: CommunityEmptyState(
+          title: hasLocation
+              ? AppStrings.noLostPetsNearby
+              : AppStrings.noPostsYet,
+          checklistItems: hasLocation
+              ? [AppStrings.reportLostOrFoundPet, AppStrings.stayAlertInYourArea]
+              : [AppStrings.enableLocationToSeeNearbyPosts],
+          ctaText: AppStrings.reportLostOrFoundPet,
+          onCta: () async {
+            await context.push(AppRoutes.createPost);
+            if (mounted) {
+              _loadPosts();
+            }
+          },
+          tipText: AppStrings.lostPetsAreOftenFoundWithinTheFirst2448Hours,
+        ),
+      ),
     );
   }
 

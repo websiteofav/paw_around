@@ -1,19 +1,21 @@
+import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
-
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/care_settings_model.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/notification_service.dart';
-import 'package:paw_around/ui/pets/widgets/care_app_bar.dart';
 import 'package:paw_around/ui/pets/widgets/frequency_selector.dart';
 import 'package:paw_around/ui/pets/widgets/date_picker_field.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
@@ -176,6 +178,15 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
     }
   }
 
+  Widget _buildHero() {
+    return Image.asset(
+      AppIcons.bugIcon,
+      height: 64,
+      width: 64,
+      color: AppColors.grey150,
+    );
+  }
+
   Widget _buildSnoozeBanner() {
     final snoozedUntil = widget.pet.tickFleaSettings?.snoozedUntil;
     final daysLeft = snoozedUntil != null
@@ -185,16 +196,14 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
+        cornerRadius: 12,
         color: AppColors.warning.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppColors.warning.withValues(alpha: 0.3),
-        ),
+        side: BorderSide(color: AppColors.warning.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.snooze,
             color: AppColors.warning,
             size: 24,
@@ -239,65 +248,55 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: Text(AppStrings.addTickFleaProtection,
+            style: AppTextStyles.boldStyle700(fontColor: AppColors.grey1000)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: AppColors.grey1000),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
         child: Column(
           children: [
-            // Custom App Bar
-            CareAppBar(
-              pet: widget.pet,
-              screenTitle: AppStrings.tickFleaPrevention,
-              titleIcon: Icons.bug_report_outlined,
-              enableNotification: _selectedFrequency != CareFrequency.none,
+            if (_isSnoozed) _buildSnoozeBanner(),
+            _buildHero(),
+            const SizedBox(height: 36),
+            FrequencySelector(
+              title: AppStrings.frequency,
+              selectedFrequency: _selectedFrequency,
+              subtitle: AppStrings.mostPetsNeedMonthlyPrevention,
+              options: const [
+                CareFrequency.none,
+                CareFrequency.monthly,
+                CareFrequency.quarterly,
+              ],
+              onChanged: _onFrequencyChanged,
             ),
-
-            // Scrollable content
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  children: [
-                    // Snooze banner
-                    if (_isSnoozed) _buildSnoozeBanner(),
-
-                    // Frequency selector (no weekly option for tick/flea)
-                    FrequencySelector(
-                      title: AppStrings.frequency,
-                      selectedFrequency: _selectedFrequency,
-                      subtitle: AppStrings.mostPetsNeedMonthlyPrevention,
-                      options: const [
-                        CareFrequency.none,
-                        CareFrequency.monthly,
-                        CareFrequency.quarterly,
-                      ],
-                      onChanged: _onFrequencyChanged,
-                    ),
-
-                    const SizedBox(height: 16),
-
-                    // Date picker
-                    DatePickerField(
-                      label: AppStrings.lastTreatment,
-                      selectedDate: _lastDate,
-                      onDateSelected: _onDateChanged,
-                    ),
-
-                    const SizedBox(height: 32),
-                  ],
-                ),
+            const SizedBox(height: 24),
+            DatePickerField(
+              label: AppStrings.lastTreatment,
+              selectedDate: _lastDate,
+              onDateSelected: _onDateChanged,
+            ),
+            const SizedBox(height: 32),
+            CommonButton(
+              text: AppStrings.save,
+              onPressed: _isSaving ? null : _save,
+              isLoading: _isSaving,
+              variant: ButtonVariant.primary,
+              textStyle: AppTextStyles.interBoldStyle700(
+                fontSize: 16,
+                fontColor: AppColors.grey1000,
               ),
+              borderRadius: 44,
             ),
-
-            // Save button
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: CommonButton(
-                text: AppStrings.save,
-                onPressed: _isSaving ? null : _save,
-                isLoading: _isSaving,
-                size: ButtonSize.medium,
-              ),
-            ),
+            const SizedBox(height: 24),
           ],
         ),
       ),

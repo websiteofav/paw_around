@@ -6,6 +6,7 @@ enum PostType { lost, found }
 class LostFoundPost extends Equatable {
   final String id;
   final PostType type;
+  final String? petId;
   final String petName;
   final String petDescription;
   final String breed;
@@ -14,6 +15,7 @@ class LostFoundPost extends Equatable {
   final double latitude;
   final double longitude;
   final String locationName;
+  final DateTime? lastSeenAt;
   final String contactPhone;
   final String userId;
   final String userName;
@@ -23,6 +25,7 @@ class LostFoundPost extends Equatable {
   const LostFoundPost({
     required this.id,
     required this.type,
+    this.petId,
     required this.petName,
     required this.petDescription,
     required this.breed,
@@ -31,6 +34,7 @@ class LostFoundPost extends Equatable {
     required this.latitude,
     required this.longitude,
     required this.locationName,
+    this.lastSeenAt,
     required this.contactPhone,
     required this.userId,
     this.userName = 'Anonymous',
@@ -45,6 +49,7 @@ class LostFoundPost extends Equatable {
     return LostFoundPost(
       id: doc.id,
       type: data['type'] == 'lost' ? PostType.lost : PostType.found,
+      petId: data['petId'],
       petName: data['petName'] ?? '',
       petDescription: data['petDescription'] ?? '',
       breed: data['breed'] ?? '',
@@ -53,6 +58,7 @@ class LostFoundPost extends Equatable {
       latitude: (data['latitude'] ?? 0.0).toDouble(),
       longitude: (data['longitude'] ?? 0.0).toDouble(),
       locationName: data['locationName'] ?? '',
+      lastSeenAt: (data['lastSeenAt'] as Timestamp?)?.toDate(),
       contactPhone: data['contactPhone'] ?? '',
       userId: data['userId'] ?? '',
       userName: data['userName'] ?? 'Anonymous',
@@ -65,6 +71,7 @@ class LostFoundPost extends Equatable {
   Map<String, dynamic> toFirestore() {
     return {
       'type': type == PostType.lost ? 'lost' : 'found',
+      'petId': petId,
       'petName': petName,
       'petDescription': petDescription,
       'breed': breed,
@@ -73,6 +80,7 @@ class LostFoundPost extends Equatable {
       'latitude': latitude,
       'longitude': longitude,
       'locationName': locationName,
+      'lastSeenAt': lastSeenAt != null ? Timestamp.fromDate(lastSeenAt!) : null,
       'contactPhone': contactPhone,
       'userId': userId,
       'userName': userName,
@@ -85,6 +93,7 @@ class LostFoundPost extends Equatable {
   LostFoundPost copyWith({
     String? id,
     PostType? type,
+    String? petId,
     String? petName,
     String? petDescription,
     String? breed,
@@ -93,6 +102,7 @@ class LostFoundPost extends Equatable {
     double? latitude,
     double? longitude,
     String? locationName,
+    DateTime? lastSeenAt,
     String? contactPhone,
     String? userId,
     String? userName,
@@ -102,6 +112,7 @@ class LostFoundPost extends Equatable {
     return LostFoundPost(
       id: id ?? this.id,
       type: type ?? this.type,
+      petId: petId ?? this.petId,
       petName: petName ?? this.petName,
       petDescription: petDescription ?? this.petDescription,
       breed: breed ?? this.breed,
@@ -110,6 +121,7 @@ class LostFoundPost extends Equatable {
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       locationName: locationName ?? this.locationName,
+      lastSeenAt: lastSeenAt ?? this.lastSeenAt,
       contactPhone: contactPhone ?? this.contactPhone,
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
@@ -130,5 +142,6 @@ class LostFoundPost extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, type, petName, userId, userName, latitude, longitude, createdAt];
+  List<Object?> get props =>
+      [id, type, petId, petName, userId, userName, latitude, longitude, createdAt];
 }

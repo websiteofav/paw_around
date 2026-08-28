@@ -16,6 +16,7 @@ import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/repositories/user_repository.dart';
 import 'package:paw_around/repositories/community_repository.dart';
 import 'package:paw_around/repositories/pet_moments_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
@@ -24,11 +25,13 @@ import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/ui/community/create_post_screen.dart';
 import 'package:paw_around/ui/community/post_detail_screen.dart';
 import 'package:paw_around/ui/moments/create_moment_screen.dart';
+import 'package:paw_around/ui/moments/moment_preview_screen.dart';
+import 'package:paw_around/ui/moments/widgets/create_moment/moment_draft.dart';
 import 'package:paw_around/ui/home/dashboard.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
+import 'package:paw_around/ui/auth/user_profile_setup_screen.dart';
 import 'package:paw_around/ui/onboarding/onboarding_screen.dart';
-import 'package:paw_around/ui/intro/intro_screen.dart';
 import 'package:paw_around/ui/pets/add_pet_screen.dart';
 import 'package:paw_around/ui/pets/add_pet_details_screen.dart';
 import 'package:paw_around/ui/pets/add_vaccine_screen.dart';
@@ -37,26 +40,45 @@ import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/pets/pet_qr_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
+import 'package:paw_around/ui/profile/profile_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
 import 'package:paw_around/ui/profile/my_posts_screen.dart';
 import 'package:paw_around/ui/profile/help_support_screen.dart';
 import 'package:paw_around/services/analytics_service.dart';
 
-/// Notifies GoRouter when auth state changes
+/// Notifies GoRouter after auth state changes AND profile completeness is known.
+/// Profile check is done asynchronously before notifying — ensuring the redirect
+/// always has the correct isProfileComplete value when it runs.
 class AuthNotifier extends ChangeNotifier {
+  bool _isProfileComplete = true;
+  bool get isProfileComplete => _isProfileComplete;
+
   AuthNotifier() {
-    sl<AuthRepository>().authStateChanges.listen((_) {
+    sl<AuthRepository>().authStateChanges.listen((user) async {
+      if (user != null) {
+        _isProfileComplete =
+            await sl<UserRepository>().isProfileComplete(user.uid);
+      } else {
+        _isProfileComplete = true; // logged out — reset; redirect won't apply
+      }
       notifyListeners();
     });
+  }
+
+  void setProfileComplete(bool value) {
+    _isProfileComplete = value;
+    notifyListeners();
   }
 }
 
 class AppRouter {
   static final _authNotifier = AuthNotifier();
 
-  // Router is initialized from main() so we can decide the initial location
-  // (e.g., show onboarding only on first app open).
   static late final GoRouter _router;
+
+  /// Call this from UserProfileSetupScreen after saving profile.
+  static void setProfileComplete(bool value) =>
+      _authNotifier.setProfileComplete(value);
 
   /// Initialize the router with the correct initial location.
   /// This MUST be called before [AppRouter.router] is accessed.
@@ -68,49 +90,48 @@ class AppRouter {
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],
       redirect: (context, state) {
-        final authRepository = sl<AuthRepository>();
-        final isLoggedIn = authRepository.isLoggedIn;
+        final isLoggedIn = sl<AuthRepository>().isLoggedIn;
         final path = state.matchedLocation;
         final isAuthRoute =
             path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
-        final isPublicRoute = path == AppRoutes.splash ||
-            path == AppRoutes.intro ||
-            path == AppRoutes.onboarding;
+        final isPublicRoute =
+            path == AppRoutes.intro || path == AppRoutes.onboarding;
+        final isProfileSetup = path == AppRoutes.profileSetup;
 
-        // If user is logged in and trying to access auth routes, redirect to home
+        // Logged in on an auth route → route based on profile completeness
         if (isLoggedIn && isAuthRoute) {
-          return AppRoutes.home;
+          return _authNotifier.isProfileComplete
+              ? AppRoutes.home
+              : AppRoutes.profileSetup;
         }
 
-        // If user is not logged in and trying to access protected routes
+        // Not logged in trying to access protected routes
         if (!isLoggedIn && !isAuthRoute && !isPublicRoute) {
           return AppRoutes.phoneLogin;
         }
 
-        // No redirect needed
+        // Logged in but profile incomplete → redirect to setup
+        if (isLoggedIn && !_authNotifier.isProfileComplete && !isProfileSetup) {
+          return AppRoutes.profileSetup;
+        }
+
         return null;
       },
       routes: [
         // ============ PUBLIC ROUTES ============
-        // Splash/Intro Route
-        GoRoute(
-          path: AppRoutes.splash,
-          name: AppRoutes.splash,
-          builder: (context, state) => const IntroScreen(),
-        ),
-
-        // Intro Route
-        GoRoute(
-          path: AppRoutes.intro,
-          name: AppRoutes.intro,
-          builder: (context, state) => const IntroScreen(),
-        ),
 
         // Onboarding Route
         GoRoute(
           path: AppRoutes.onboarding,
           name: AppRoutes.onboarding,
           builder: (context, state) => const OnboardingScreen(),
+        ),
+
+        // Profile Setup Route
+        GoRoute(
+          path: AppRoutes.profileSetup,
+          name: AppRoutes.profileSetup,
+          builder: (context, state) => const UserProfileSetupScreen(),
         ),
 
         // Authentication Routes - Phone Login (Primary)
@@ -141,6 +162,7 @@ class AppRouter {
                 BlocProvider<CommunityBloc>(
                   create: (_) => CommunityBloc(
                     repository: sl<CommunityRepository>(),
+                    petRepository: sl<PetRepository>(),
                   ),
                 ),
                 BlocProvider<PetListBloc>(
@@ -252,6 +274,14 @@ class AppRouter {
               builder: (context, state) => const CreateMomentScreen(),
             ),
 
+            // Pet Moments - Preview Route
+            GoRoute(
+              path: AppRoutes.momentPreview,
+              name: AppRoutes.momentPreview,
+              builder: (context, state) =>
+                  MomentPreviewScreen(draft: state.extra as MomentDraft),
+            ),
+
             // Community - Post Detail Route
             GoRoute(
               path: AppRoutes.postDetail,
@@ -267,8 +297,14 @@ class AppRouter {
               path: AppRoutes.groomingSettings,
               name: AppRoutes.groomingSettings,
               builder: (context, state) {
-                final pet = state.extra as PetModel;
-                return GroomingSettingsScreen(pet: pet);
+                final extra = state.extra;
+                if (extra is Map) {
+                  final pet = extra['pet'] as PetModel;
+                  final groomingType = extra['groomingType'] as String?;
+                  return GroomingSettingsScreen(
+                      pet: pet, groomingType: groomingType);
+                }
+                return GroomingSettingsScreen(pet: extra as PetModel);
               },
             ),
             GoRoute(
@@ -288,6 +324,13 @@ class AppRouter {
                 final data = state.extra as ActionCardData;
                 return ActionCardDetailScreen(data: data);
               },
+            ),
+
+            // Profile Route
+            GoRoute(
+              path: AppRoutes.profileTab,
+              name: AppRoutes.profileTab,
+              builder: (context, state) => const ProfileScreen(),
             ),
 
             // Edit Profile Route

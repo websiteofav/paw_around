@@ -20,6 +20,8 @@ class AppSpacing {
   static const SizedBox vertical24 = SizedBox(height: AppConstants.space24);
   static const SizedBox vertical28 = SizedBox(height: AppConstants.space28);
   static const SizedBox vertical32 = SizedBox(height: AppConstants.space32);
+  static const SizedBox vertical36 = SizedBox(height: AppConstants.space36);
+
   static const SizedBox vertical40 = SizedBox(height: AppConstants.space40);
   static const SizedBox vertical48 = SizedBox(height: AppConstants.space48);
   static const SizedBox vertical60 = SizedBox(height: AppConstants.space60);
@@ -38,6 +40,7 @@ class AppSpacing {
   static const SizedBox horizontal24 = SizedBox(width: AppConstants.space24);
   static const SizedBox horizontal28 = SizedBox(width: AppConstants.space28);
   static const SizedBox horizontal32 = SizedBox(width: AppConstants.space32);
+
   static const SizedBox horizontal40 = SizedBox(width: AppConstants.space40);
   static const SizedBox horizontal48 = SizedBox(width: AppConstants.space48);
 }
@@ -52,17 +55,24 @@ class AppEdgeInsets {
   static const EdgeInsets allLarge = EdgeInsets.all(AppConstants.space24);
 
   // Horizontal padding presets
-  static const EdgeInsets horizontalSmall = EdgeInsets.symmetric(horizontal: AppConstants.space8);
-  static const EdgeInsets horizontalMedium = EdgeInsets.symmetric(horizontal: AppConstants.space16);
-  static const EdgeInsets horizontalLarge = EdgeInsets.symmetric(horizontal: AppConstants.space24);
+  static const EdgeInsets horizontalSmall =
+      EdgeInsets.symmetric(horizontal: AppConstants.space8);
+  static const EdgeInsets horizontalMedium =
+      EdgeInsets.symmetric(horizontal: AppConstants.space16);
+  static const EdgeInsets horizontalLarge =
+      EdgeInsets.symmetric(horizontal: AppConstants.space24);
 
   // Vertical padding presets
-  static const EdgeInsets verticalSmall = EdgeInsets.symmetric(vertical: AppConstants.space8);
-  static const EdgeInsets verticalMedium = EdgeInsets.symmetric(vertical: AppConstants.space16);
-  static const EdgeInsets verticalLarge = EdgeInsets.symmetric(vertical: AppConstants.space24);
+  static const EdgeInsets verticalSmall =
+      EdgeInsets.symmetric(vertical: AppConstants.space8);
+  static const EdgeInsets verticalMedium =
+      EdgeInsets.symmetric(vertical: AppConstants.space16);
+  static const EdgeInsets verticalLarge =
+      EdgeInsets.symmetric(vertical: AppConstants.space24);
 
   // Common screen padding
-  static const EdgeInsets screenHorizontal = EdgeInsets.symmetric(horizontal: AppConstants.space16);
+  static const EdgeInsets screenHorizontal =
+      EdgeInsets.symmetric(horizontal: AppConstants.space16);
   static const EdgeInsets screenAll = EdgeInsets.all(AppConstants.space16);
   static const EdgeInsets screenWithBottom = EdgeInsets.fromLTRB(
     AppConstants.space16,
@@ -73,7 +83,8 @@ class AppEdgeInsets {
 
   // Card padding
   static const EdgeInsets cardPadding = EdgeInsets.all(AppConstants.space20);
-  static const EdgeInsets cardPaddingSmall = EdgeInsets.all(AppConstants.space12);
+  static const EdgeInsets cardPaddingSmall =
+      EdgeInsets.all(AppConstants.space12);
 }
 
 /// Convenience class for creating BorderRadius using AppConstants.
@@ -85,7 +96,8 @@ class AppBorderRadius {
   static BorderRadius get md => BorderRadius.circular(AppConstants.radiusMD);
   static BorderRadius get lg => BorderRadius.circular(AppConstants.radiusLG);
   static BorderRadius get xl => BorderRadius.circular(AppConstants.radiusXL);
-  static BorderRadius get full => BorderRadius.circular(AppConstants.radiusFull);
+  static BorderRadius get full =>
+      BorderRadius.circular(AppConstants.radiusFull);
 
   // Top only variants (for bottom sheets)
   static BorderRadius get topMd => const BorderRadius.vertical(

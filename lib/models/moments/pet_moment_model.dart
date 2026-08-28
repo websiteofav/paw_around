@@ -41,7 +41,11 @@ class PetMoment extends Equatable {
   final String petId;
   final String petName;
   final String imageUrl;
+  final String title;
   final String caption;
+  final String locationName;
+  final double? latitude;
+  final double? longitude;
   final String userId;
   final String userName;
   final DateTime createdAt;
@@ -53,7 +57,11 @@ class PetMoment extends Equatable {
     required this.petId,
     required this.petName,
     required this.imageUrl,
+    this.title = '',
     required this.caption,
+    this.locationName = '',
+    this.latitude,
+    this.longitude,
     required this.userId,
     required this.userName,
     required this.createdAt,
@@ -80,7 +88,11 @@ class PetMoment extends Equatable {
       petId: data['petId'] ?? '',
       petName: data['petName'] ?? '',
       imageUrl: data['imageUrl'] ?? '',
+      title: data['title'] ?? '',
       caption: data['caption'] ?? '',
+      locationName: data['locationName'] ?? '',
+      latitude: (data['latitude'] as num?)?.toDouble(),
+      longitude: (data['longitude'] as num?)?.toDouble(),
       userId: data['userId'] ?? '',
       userName: data['userName'] ?? 'Anonymous',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
@@ -95,7 +107,11 @@ class PetMoment extends Equatable {
       'petId': petId,
       'petName': petName,
       'imageUrl': imageUrl,
+      'title': title,
       'caption': caption,
+      'locationName': locationName,
+      'latitude': latitude,
+      'longitude': longitude,
       'userId': userId,
       'userName': userName,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -110,7 +126,11 @@ class PetMoment extends Equatable {
     String? petId,
     String? petName,
     String? imageUrl,
+    String? title,
     String? caption,
+    String? locationName,
+    double? latitude,
+    double? longitude,
     String? userId,
     String? userName,
     DateTime? createdAt,
@@ -122,7 +142,11 @@ class PetMoment extends Equatable {
       petId: petId ?? this.petId,
       petName: petName ?? this.petName,
       imageUrl: imageUrl ?? this.imageUrl,
+      title: title ?? this.title,
       caption: caption ?? this.caption,
+      locationName: locationName ?? this.locationName,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
       userId: userId ?? this.userId,
       userName: userName ?? this.userName,
       createdAt: createdAt ?? this.createdAt,
@@ -153,7 +177,11 @@ class PetMoment extends Equatable {
         petId,
         petName,
         imageUrl,
+        title,
         caption,
+        locationName,
+        latitude,
+        longitude,
         userId,
         userName,
         createdAt,

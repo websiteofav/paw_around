@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
-import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/community/widgets/community_action_bottom_sheet.dart';
 import 'package:paw_around/ui/community/widgets/lost_found_tab.dart';
 import 'package:paw_around/ui/community/widgets/moments_tab.dart';
-import 'package:paw_around/ui/widgets/dashboard_app_bar.dart';
+import 'package:paw_around/ui/widgets/pill_toggle_nav_row.dart';
 
 class PawCircleScreen extends StatefulWidget {
-  const PawCircleScreen({super.key});
+  final int? initialTab;
+  const PawCircleScreen({super.key, this.initialTab});
 
   @override
   State<PawCircleScreen> createState() => _PawCircleScreenState();
@@ -21,7 +21,12 @@ class _PawCircleScreenState extends State<PawCircleScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(
+      length: 2,
+      vsync: this,
+      initialIndex: widget.initialTab ?? 0,
+    );
+    _tabController.addListener(() => setState(() {}));
   }
 
   @override
@@ -32,52 +37,43 @@ class _PawCircleScreenState extends State<PawCircleScreen>
 
   @override
   Widget build(BuildContext context) {
+    final topPad = MediaQuery.of(context).padding.top;
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.white,
       body: Column(
         children: [
-          // Custom App Bar
-          DashboardAppBar(
-            title: AppStrings.communityTitle,
-            actions: [
-              DashboardAppBarAction(
-                icon: Icons.add_circle_outline,
-                onTap: () {
-                  CommunityActionBottomSheet.show(context);
-                },
-              ),
-            ],
-          ),
-
-          // Tab Bar
-          Container(
-            color: AppColors.white,
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: AppColors.primary,
-              indicatorSize: TabBarIndicatorSize.tab,
-              labelColor: AppColors.primary,
-              unselectedLabelColor: AppColors.textSecondary,
-              labelStyle: AppTextStyles.semiBoldStyle600(fontSize: 14),
-              unselectedLabelStyle: AppTextStyles.mediumStyle500(fontSize: 14),
-              tabs: const [
-                Tab(text: AppStrings.lostAndFoundTab),
-                Tab(text: AppStrings.momentsTab),
-              ],
-            ),
-          ),
-
-          // Tab Content
+          SizedBox(height: topPad + 8),
+          _buildNavRow(context),
+          const SizedBox(height: 24),
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: const [
-                LostFoundTab(),
                 MomentsTab(),
+                LostFoundTab(),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildNavRow(BuildContext context) {
+    return PillToggleNavRow(
+      tabController: _tabController,
+      firstTabLabel: AppStrings.momentsTab,
+      secondTabLabel: AppStrings.lostAndFoundTab,
+      leading: const SizedBox(width: 40),
+      trailing: GestureDetector(
+        onTap: () => CommunityActionBottomSheet.show(context),
+        child: Container(
+          width: 40,
+          height: 40,
+          decoration: const BoxDecoration(
+              color: AppColors.grey1100, shape: BoxShape.circle),
+          child: const Icon(Icons.add, size: 20, color: AppColors.white),
+        ),
       ),
     );
   }

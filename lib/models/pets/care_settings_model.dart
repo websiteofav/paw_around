@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+const _undefinedCare = Object();
+
 enum CareFrequency {
   none,
   weekly,
@@ -68,6 +70,12 @@ class CareSettingsModel extends Equatable {
   final DateTime? snoozedUntil;
   final List<DateTime> completionHistory;
   final DateTime updatedAt;
+  final List<String> groomingTypes;
+
+  /// For the new per-type grooming model: the specific grooming type this
+  /// settings entry represents (e.g. 'Bathing', 'Nail Trimming').
+  /// Null for tick & flea settings.
+  final String? groomingType;
 
   const CareSettingsModel({
     required this.frequency,
@@ -75,6 +83,8 @@ class CareSettingsModel extends Equatable {
     this.snoozedUntil,
     this.completionHistory = const [],
     required this.updatedAt,
+    this.groomingTypes = const [],
+    this.groomingType,
   });
 
   factory CareSettingsModel.empty() {
@@ -95,6 +105,8 @@ class CareSettingsModel extends Equatable {
     List<DateTime>? completionHistory,
     bool clearCompletionHistory = false,
     DateTime? updatedAt,
+    List<String>? groomingTypes,
+    Object? groomingType = _undefinedCare,
   }) {
     return CareSettingsModel(
       frequency: frequency ?? this.frequency,
@@ -105,8 +117,24 @@ class CareSettingsModel extends Equatable {
           ? []
           : (completionHistory ?? this.completionHistory),
       updatedAt: updatedAt ?? this.updatedAt,
+      groomingTypes: groomingTypes ?? this.groomingTypes,
+      groomingType: groomingType == _undefinedCare
+          ? this.groomingType
+          : groomingType as String?,
     );
   }
+
+  static const List<String> allGroomingTypes = [
+    'Brushing / Combing',
+    'Bathing',
+    'Haircut / Trimming',
+    'Nail Trimming',
+    'Ear Cleaning',
+    'Teeth Cleaning',
+    'De-shedding',
+    'Paw Cleaning',
+    'Tick & Flea Grooming',
+  ];
 
   /// Calculate next due date based on frequency and latest completion history
   DateTime? get nextDueDate {
@@ -171,6 +199,8 @@ class CareSettingsModel extends Equatable {
       'completionHistory':
           completionHistory.map((date) => Timestamp.fromDate(date)).toList(),
       'updatedAt': Timestamp.fromDate(updatedAt),
+      'groomingTypes': groomingTypes,
+      'groomingType': groomingType,
     };
   }
 
@@ -198,6 +228,8 @@ class CareSettingsModel extends Equatable {
       snoozedUntil: (data['snoozedUntil'] as Timestamp?)?.toDate(),
       completionHistory: history,
       updatedAt: (data['updatedAt'] as Timestamp?)?.toDate() ?? DateTime.now(),
+      groomingTypes: List<String>.from(data['groomingTypes'] ?? []),
+      groomingType: data['groomingType'] as String?,
     );
   }
 
@@ -210,6 +242,8 @@ class CareSettingsModel extends Equatable {
       'completionHistory':
           completionHistory.map((date) => date.toIso8601String()).toList(),
       'updatedAt': updatedAt.toIso8601String(),
+      'groomingTypes': groomingTypes,
+      'groomingType': groomingType,
     };
   }
 
@@ -259,10 +293,19 @@ class CareSettingsModel extends Equatable {
               ? (json['updatedAt'] as Timestamp).toDate()
               : DateTime.parse(json['updatedAt'] as String))
           : DateTime.now(),
+      groomingTypes: List<String>.from(json['groomingTypes'] ?? []),
+      groomingType: json['groomingType'] as String?,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [frequency, lastDate, snoozedUntil, completionHistory, updatedAt];
+  List<Object?> get props => [
+        frequency,
+        lastDate,
+        snoozedUntil,
+        completionHistory,
+        updatedAt,
+        groomingTypes,
+        groomingType,
+      ];
 }
