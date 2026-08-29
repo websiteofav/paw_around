@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_around/bloc/addresses/address/address_bloc.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
 import 'package:paw_around/bloc/moments/pet_moments_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
@@ -16,6 +17,7 @@ import 'package:paw_around/models/addresses/picked_location.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
+import 'package:paw_around/repositories/address_repository.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/repositories/user_repository.dart';
 import 'package:paw_around/repositories/community_repository.dart';
@@ -185,6 +187,11 @@ class AppRouter {
                 ),
                 BlocProvider<HomeBloc>(
                   create: (_) => HomeBloc(),
+                ),
+                BlocProvider<AddressBloc>(
+                  create: (_) => AddressBloc(
+                    addressRepository: sl<AddressRepository>(),
+                  ),
                 ),
               ],
               child: child,

@@ -81,7 +81,8 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
   Future<void> _reverseGeocodeTarget() async {
     if (!mounted) return;
     setState(() => _isResolvingAddress = true);
-    final geocoded = await _locationService.reverseGeocode(_target.latitude, _target.longitude);
+    final geocoded = await _locationService.reverseGeocode(
+        _target.latitude, _target.longitude);
     if (!mounted) return;
     setState(() {
       _resolvedAddress = geocoded?.formattedAddress;
@@ -90,7 +91,8 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
     });
   }
 
-  Future<void> _goToCurrentLocation({required bool animate, required bool showErrors}) async {
+  Future<void> _goToCurrentLocation(
+      {required bool animate, required bool showErrors}) async {
     if (animate) setState(() => _isFetchingCurrentLocation = true);
     final result = await _locationService.getCurrentLocation();
     if (!mounted) return;
@@ -111,7 +113,9 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
       await _reverseGeocodeTarget();
     } else if (showErrors) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result.errorMessage ?? AppStrings.somethingWentWrong)),
+        SnackBar(
+            content:
+                Text(result.errorMessage ?? AppStrings.somethingWentWrong)),
       );
     }
   }
@@ -153,7 +157,8 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
             child: Stack(
               children: [
                 GoogleMap(
-                  initialCameraPosition: const CameraPosition(target: _fallbackTarget, zoom: 5),
+                  initialCameraPosition:
+                      const CameraPosition(target: _fallbackTarget, zoom: 5),
                   onMapCreated: _onMapCreated,
                   onCameraMove: _onCameraMove,
                   onCameraIdle: _onCameraIdle,
@@ -189,22 +194,41 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                   bottom: 10,
                   left: 24,
                   right: 24,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CurrentLocationPill(
-                        isLoading: _isFetchingCurrentLocation,
-                        onTap: () => _goToCurrentLocation(animate: true, showErrors: true),
+                  child: ConstrainedBox(
+                    // Capped, not top:0 — an unbounded/full-height scroll
+                    // viewport here would sit on top of the search bar in
+                    // the Stack's hit-test order and swallow its taps, even
+                    // while empty. This shrink-wraps to content when short
+                    // and only grows (then scrolls) up to the cap.
+                    constraints: BoxConstraints(
+                      maxHeight: MediaQuery.sizeOf(context).height * 0.55,
+                    ),
+                    child: SingleChildScrollView(
+                      // Pins content to the bottom when it fits; scrolls up
+                      // to reveal it instead of pushing it off-screen when
+                      // it doesn't (long wrapped address, short device).
+                      reverse: true,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CurrentLocationPill(
+                            isLoading: _isFetchingCurrentLocation,
+                            onTap: () => _goToCurrentLocation(
+                                animate: true, showErrors: true),
+                          ),
+                          const SizedBox(height: 12),
+                          PickLocationBottomPanel(
+                            address: _resolvedAddress,
+                            area: _resolvedArea,
+                            isResolving: _isResolvingAddress,
+                            isConfirming: _isConfirming,
+                            onConfirm:
+                                _resolvedAddress != null ? _onConfirm : null,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 12),
-                      PickLocationBottomPanel(
-                        address: _resolvedAddress,
-                        area: _resolvedArea,
-                        isResolving: _isResolvingAddress,
-                        isConfirming: _isConfirming,
-                        onConfirm: _resolvedAddress != null ? _onConfirm : null,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -226,7 +250,8 @@ class _BackButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       customBorder: const CircleBorder(),
-      child: const Icon(Icons.arrow_back_ios_new, color: AppColors.grey1000, size: 18),
+      child: const Icon(Icons.arrow_back_ios_new,
+          color: AppColors.grey1000, size: 18),
     );
   }
 }
