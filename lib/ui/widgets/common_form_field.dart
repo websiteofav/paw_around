@@ -16,6 +16,8 @@ class CommonFormField extends StatelessWidget {
   final bool readOnly;
   final ValueChanged<String>? onChanged;
   final bool isRequired;
+  final Color? asteriskColor;
+  final Widget? trailing;
 
   const CommonFormField({
     super.key,
@@ -32,6 +34,8 @@ class CommonFormField extends StatelessWidget {
     this.readOnly = false,
     this.onChanged,
     this.isRequired = false,
+    this.asteriskColor,
+    this.trailing,
   });
 
   @override
@@ -51,61 +55,13 @@ class CommonFormField extends StatelessWidget {
               Text(
                 '*',
                 style: AppTextStyles.interRegularStyle400(
-                    fontSize: 14, fontColor: AppColors.grey1000),
+                    fontSize: 14, fontColor: asteriskColor ?? AppColors.grey1000),
               ),
             ],
           ],
         ),
         const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          validator: validator,
-          enabled: enabled,
-          maxLines: maxLines,
-          readOnly: readOnly,
-          onTap: onTap,
-          onChanged: onChanged,
-          decoration: InputDecoration(
-            hintText: hintText ?? label,
-            hintStyle: AppTextStyles.regularStyle400(
-                fontSize: 16, fontColor: AppColors.textSecondary),
-            filled: true,
-            fillColor: AppColors.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(
-                color:
-                    errorText != null ? AppColors.error : AppColors.neutral300,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(
-                color:
-                    errorText != null ? AppColors.error : AppColors.neutral300,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(
-                color: errorText != null ? AppColors.error : AppColors.primary,
-                width: 2,
-              ),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.error),
-            ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: AppColors.error, width: 2),
-            ),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            suffixIcon: suffixIcon,
-          ),
-        ),
+        _buildField(),
         // Inline error message
         if (errorText != null)
           Padding(
@@ -117,6 +73,68 @@ class CommonFormField extends StatelessWidget {
             ),
           ),
       ],
+    );
+  }
+
+  Widget _buildField() {
+    final field = _buildTextFormField();
+    if (trailing == null) return field;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: field),
+        const SizedBox(width: 12),
+        trailing!,
+      ],
+    );
+  }
+
+  Widget _buildTextFormField() {
+    return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+      validator: validator,
+      enabled: enabled,
+      maxLines: maxLines,
+      readOnly: readOnly,
+      onTap: onTap,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+        hintText: hintText ?? label,
+        hintStyle: AppTextStyles.regularStyle400(
+            fontSize: 16, fontColor: AppColors.textSecondary),
+        filled: true,
+        fillColor: AppColors.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: errorText != null ? AppColors.error : AppColors.neutral300,
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: errorText != null ? AppColors.error : AppColors.neutral300,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide(
+            color: errorText != null ? AppColors.error : AppColors.primary,
+            width: 2,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.error),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        suffixIcon: suffixIcon,
+      ),
     );
   }
 }

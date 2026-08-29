@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:paw_around/constants/app_decorations.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -205,10 +205,12 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
                 cornerRadius: 8,
                 color: AppColors.primary.withValues(alpha: 0.1),
               ),
-              child: const Icon(
-                Icons.location_on_outlined,
+              child: Image.asset(
+                AppIcons.locationPinIcon,
                 color: AppColors.primary,
-                size: 20,
+                colorBlendMode: BlendMode.srcIn,
+                height: 20,
+                width: 20,
               ),
             ),
             const SizedBox(width: 12),
@@ -286,14 +288,9 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
       // Reverse geocode to get address
       String locationName =
           '${lat.toStringAsFixed(4)}, ${lng.toStringAsFixed(4)}';
-      try {
-        // Use geocoding package
-        final placemarks = await _getAddressFromCoordinates(lat, lng);
-        if (placemarks != null) {
-          locationName = placemarks;
-        }
-      } catch (e) {
-        // Use coordinates as fallback
+      final geocoded = await _locationService.reverseGeocode(lat, lng);
+      if (geocoded != null) {
+        locationName = geocoded.formattedAddress;
       }
 
       if (mounted) {
@@ -310,31 +307,6 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
     }
 
     setState(() => _isLoadingCurrentLocation = false);
-  }
-
-  Future<String?> _getAddressFromCoordinates(double lat, double lng) async {
-    try {
-      final placemarks = await placemarkFromCoordinates(lat, lng);
-      if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        // Format: "Neighborhood, City" or "Street, City"
-        final parts = <String>[];
-        if (place.subLocality?.isNotEmpty == true) {
-          parts.add(place.subLocality!);
-        } else if (place.street?.isNotEmpty == true) {
-          parts.add(place.street!);
-        }
-        if (place.locality?.isNotEmpty == true) {
-          parts.add(place.locality!);
-        }
-        if (parts.isNotEmpty) {
-          return parts.join(', ');
-        }
-      }
-    } catch (e) {
-      // Return null on error - will fallback to coordinates
-    }
-    return null;
   }
 
   void _removeOverlay() {
@@ -366,7 +338,13 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
                         height: 24,
                         child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(Icons.my_location, color: AppColors.primary),
+                    : Image.asset(
+                        AppIcons.gpsIcon,
+                        width: 24,
+                        height: 24,
+                        color: AppColors.primary,
+                        colorBlendMode: BlendMode.srcIn,
+                      ),
               ),
           ],
         ),

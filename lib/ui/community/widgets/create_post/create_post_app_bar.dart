@@ -18,8 +18,7 @@ class CreatePostAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: const Icon(Icons.arrow_back_ios, color: AppColors.textPrimary),
         onPressed: () => context.pop(),
       ),
-      title: Text(AppStrings.reportLostOrFoundPet,
-          style: AppTextStyles.semiBoldStyle600(fontSize: 17)),
+      title: Text(AppStrings.reportLostOrFoundPet, style: AppTextStyles.semiBoldStyle600(fontSize: 17)),
       centerTitle: true,
     );
   }

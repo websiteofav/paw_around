@@ -12,6 +12,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
+import 'package:paw_around/models/addresses/picked_location.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
@@ -28,6 +29,8 @@ import 'package:paw_around/ui/moments/create_moment_screen.dart';
 import 'package:paw_around/ui/moments/moment_preview_screen.dart';
 import 'package:paw_around/ui/moments/widgets/create_moment/moment_draft.dart';
 import 'package:paw_around/ui/home/dashboard.dart';
+import 'package:paw_around/ui/location/location_details_screen.dart';
+import 'package:paw_around/ui/location/pick_location_screen.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
 import 'package:paw_around/ui/auth/user_profile_setup_screen.dart';
@@ -217,6 +220,29 @@ class AppRouter {
               builder: (context, state) {
                 final pet = state.extra as PetModel;
                 return AddPetDetailsScreen(pet: pet);
+              },
+            ),
+
+            // Pick Location Route (Step 1) - Accepts optional
+            // autoUseCurrentLocation flag as extra
+            GoRoute(
+              path: AppRoutes.pickLocation,
+              name: AppRoutes.pickLocation,
+              builder: (context, state) {
+                final autoUseCurrentLocation = state.extra as bool? ?? false;
+                return PickLocationScreen(
+                  autoUseCurrentLocation: autoUseCurrentLocation,
+                );
+              },
+            ),
+
+            // Location Details Route (Step 2)
+            GoRoute(
+              path: AppRoutes.locationDetails,
+              name: AppRoutes.locationDetails,
+              builder: (context, state) {
+                final pickedLocation = state.extra as PickedLocation;
+                return LocationDetailsScreen(pickedLocation: pickedLocation);
               },
             ),
 

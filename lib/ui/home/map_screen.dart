@@ -6,6 +6,7 @@ import 'package:paw_around/bloc/bloc/places_bloc.dart';
 import 'package:paw_around/bloc/bloc/places_event.dart';
 import 'package:paw_around/bloc/bloc/places_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -220,10 +221,12 @@ class _MapScreenState extends State<MapScreen> {
               color: AppColors.primary.withValues(alpha: 0.1),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.location_searching,
-              size: 40,
+            child: Image.asset(
+              AppIcons.gpsIcon,
+              width: 40,
+              height: 40,
               color: AppColors.primary,
+              colorBlendMode: BlendMode.srcIn,
             ),
           ),
           const SizedBox(height: 20),

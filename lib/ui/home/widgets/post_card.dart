@@ -3,6 +3,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -204,7 +205,13 @@ class PostCard extends StatelessWidget {
           ),
         ),
         const SizedBox(width: 8),
-        const Icon(Icons.near_me_outlined, size: 24, color: AppColors.grey1100),
+        Image.asset(
+          AppIcons.gpsIcon,
+          width: 24,
+          height: 24,
+          color: AppColors.grey1100,
+          colorBlendMode: BlendMode.srcIn,
+        ),
       ],
     );
   }
@@ -234,7 +241,13 @@ class PostCard extends StatelessWidget {
   Widget _buildFooter() {
     return Row(
       children: [
-        const Icon(Icons.my_location, size: 20, color: AppColors.grey600),
+        Image.asset(
+          AppIcons.gpsIcon,
+          width: 20,
+          height: 20,
+          color: AppColors.grey600,
+          colorBlendMode: BlendMode.srcIn,
+        ),
         const SizedBox(width: 6),
         Expanded(
           child: Text(

@@ -19,6 +19,7 @@ import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/paw_circle_screen.dart';
+import 'package:paw_around/ui/sitter/sitter_screen.dart';
 import 'package:paw_around/ui/profile/profile_screen.dart';
 
 class Dashboard extends StatefulWidget {
@@ -151,6 +152,14 @@ class _DashboardState extends State<Dashboard> {
                         index: 2,
                         isSelected: currentIndex == 2,
                       ),
+                      _buildNavItem(
+                        context: context,
+                        // TODO: swap for the Sitter SVG once designs land
+                        materialIcon: Icons.volunteer_activism_outlined,
+                        label: AppStrings.sitter,
+                        index: 3,
+                        isSelected: currentIndex == 3,
+                      ),
                     ],
                   ),
                 ),
@@ -172,6 +181,8 @@ class _DashboardState extends State<Dashboard> {
       case 2:
         return PawCircleScreen(initialTab: pawCircleInitialTab);
       case 3:
+        return const SitterScreen();
+      case 4:
         return const ProfileScreen();
       default:
         return const HomeScreen();
@@ -180,11 +191,16 @@ class _DashboardState extends State<Dashboard> {
 
   Widget _buildNavItem({
     required BuildContext context,
-    required String icon,
+    String? icon,
+    IconData? materialIcon,
     required String label,
     required int index,
     required bool isSelected,
   }) {
+    assert(icon != null || materialIcon != null,
+        'Provide either an SVG asset path or a materialIcon');
+    final color =
+        isSelected ? AppColors.primary : AppColors.navigationInactive;
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -196,17 +212,20 @@ class _DashboardState extends State<Dashboard> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset(
-              icon,
-              colorFilter: ColorFilter.mode(
-                  isSelected ? AppColors.primary : AppColors.navigationInactive,
-                  BlendMode.srcIn),
-              height: 24,
-              width: 24,
-            ),
+            if (icon != null)
+              SvgPicture.asset(
+                icon,
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+                height: 24,
+                width: 24,
+              )
+            else
+              Icon(materialIcon, color: color, size: 24),
             const SizedBox(height: 4),
             Text(
               label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: isSelected
                   ? AppTextStyles.semiBoldStyle600(
                       fontSize: 12, fontColor: AppColors.primary)

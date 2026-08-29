@@ -674,6 +674,36 @@ class AppStrings {
   static const String yourPost = 'Your post';
   static const String pawCircle = 'Paw Circle';
   static const String explore = 'Explore';
+  static const String sitter = 'Sitter';
+
+  // Sitter
+  static const String petSittersTitle = 'Pet Sitters';
+  static const String sitterLocationRequiredTitle =
+      'We need your location first to help you';
+  static const String sitterSearchLocationHint = 'Search for your location';
+  static const String addNewAddress = 'Add new Address';
+  static const String savedAddress = 'Saved Address';
+
+  // Location Picker
+  static const String currentLocationPillLabel = 'Current location';
+  static const String placePinBannerText =
+      'Place the pin at your exact location';
+  static const String confirmAndProceed = 'Confirm and Proceed';
+  static const String resolvingAddress = 'Locating address...';
+  static const String searchOrDragPinPrompt =
+      'Search or drag the map to set a location';
+  static const String locationDetailsTitle = 'Location Details';
+  static const String changeLabel = 'Change';
+  static const String buildingFloorLabel = 'Building';
+  static const String buildingFloorHint = 'Building / Floor';
+  static const String streetLabel = 'Street';
+  static const String streetHint = 'Street (Recommended)';
+  static const String areaLabel = 'Area';
+  static const String saveAddressAsLabel = 'Save address as';
+  static const String saveAddressAsHint = 'Ex: Second home';
+  static const String saveAddressButton = 'Save Address';
+  static const String failedToSaveAddress =
+      'Failed to save address. Please try again.';
 
   // Share
   static const String sharePost = 'Share Post';

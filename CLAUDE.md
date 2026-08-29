@@ -1,5 +1,16 @@
 # Paw Around — Claude Code Rules
 
+## ⚠️ Personal project — ignore the Asthatrade workflow
+
+This is a **personal project**. The global `~/.claude/CLAUDE.md` (Strapi tickets,
+`ADVA-N` branches, ACTIVITY_LOG, board auto-update, PR-review Strapi writes, feature
+context auto-load from the shared Drive) **does NOT apply here**.
+
+- **Never** read from or write to Strapi / `blog-admin.rupeezy.dev` for this repo.
+- **Never** create tickets, sprints, board events, or touch the shared Google Drive.
+- No ticket is required before editing. Branch only if the user asks.
+- Just do the work the user asks for.
+
 ## Project Overview
 Flutter pet management app (iOS + Android). Firebase backend. Version 1.0.5+8.
 Package: `com.pawaround.app` | Primary color: `#00C8A6` (teal)

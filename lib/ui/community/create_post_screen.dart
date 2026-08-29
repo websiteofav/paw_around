@@ -73,8 +73,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       _selectedPet = pet;
       _breedController.text = pet.breed;
       _colorController.text = pet.colour;
-      _descriptionController.text =
-          pet.personality.isNotEmpty ? pet.personality.join(', ') : pet.notes;
+      _descriptionController.text = pet.personality.isNotEmpty ? pet.personality.join(', ') : pet.notes;
       _localImagePath = null;
     });
   }
@@ -149,8 +148,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 CreatePostPhotoSection(
                   localImagePath: _localImagePath,
                   existingImageUrl: _selectedPet?.imagePath,
-                  onImagePicked: (path) =>
-                      setState(() => _localImagePath = path),
+                  onImagePicked: (path) => setState(() => _localImagePath = path),
                 ),
                 const SizedBox(height: 24),
                 CreatePostAboutSection(

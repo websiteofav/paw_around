@@ -2,6 +2,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
@@ -82,10 +83,12 @@ class ActionCtaCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 14,
+              Image.asset(
+                AppIcons.locationPinIcon,
+                height: 14,
+                width: 14,
                 color: AppColors.textSecondary,
+                colorBlendMode: BlendMode.srcIn,
               ),
               const SizedBox(width: 4),
               Text(

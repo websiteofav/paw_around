@@ -2,6 +2,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
@@ -198,7 +199,13 @@ class _LostPetCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               spacing: 2,
               children: [
-                const Icon(Icons.gps_fixed, color: AppColors.grey600, size: 12),
+                Image.asset(
+                  AppIcons.gpsIcon,
+                  width: 12,
+                  height: 12,
+                  color: AppColors.grey600,
+                  colorBlendMode: BlendMode.srcIn,
+                ),
                 Flexible(
                   child: Text(
                     pet.distance,
