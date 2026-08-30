@@ -35,7 +35,10 @@ class AppIcons {
   static const String gpsIcon = 'assets/home/gps_icon.png';
   static const String gpsOutlineIcon = 'assets/home/gps_outline_icon.png';
   static const String addSquareIcon = 'assets/home/add_square_icon.png';
+  static const String tagIcon = 'assets/home/tag_icon.png';
   static const String locationPinIcon = 'assets/home/location_pin_icon.png';
+  static const String locationPinBoldIcon =
+      'assets/home/location_pin_bold_icon.png';
   static const String mapPinConfirmIcon =
       'assets/home/map_pin_confirm_icon.png';
 

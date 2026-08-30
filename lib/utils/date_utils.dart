@@ -34,15 +34,7 @@ class AppDateUtils {
     'Dec'
   ];
 
-  static const List<String> _shortDayNames = [
-    'Mon',
-    'Tue',
-    'Wed',
-    'Thu',
-    'Fri',
-    'Sat',
-    'Sun'
-  ];
+  static const List<String> _shortDayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   /// Format date to readable string (e.g., "January 15, 2024")
   static String formatDateLong(DateTime date) {
@@ -64,6 +56,9 @@ class AppDateUtils {
     final dayName = _shortDayNames[date.weekday - 1];
     return '$dayName, ${formatDateShort(date)}';
   }
+
+  /// Short weekday abbreviation (e.g., "Mon", "Sun")
+  static String shortWeekdayName(DateTime date) => _shortDayNames[date.weekday - 1];
 
   /// Format date for display in cards (e.g., "Jan 15")
   static String formatDateCard(DateTime date) {
@@ -93,8 +88,7 @@ class AppDateUtils {
   static int calculateAge(DateTime dateOfBirth) {
     final now = DateTime.now();
     int age = now.year - dateOfBirth.year;
-    if (now.month < dateOfBirth.month ||
-        (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
+    if (now.month < dateOfBirth.month || (now.month == dateOfBirth.month && now.day < dateOfBirth.day)) {
       age--;
     }
     return age;
@@ -126,25 +120,19 @@ class AppDateUtils {
   /// Check if a date is today
   static bool isToday(DateTime date) {
     final now = DateTime.now();
-    return date.year == now.year &&
-        date.month == now.month &&
-        date.day == now.day;
+    return date.year == now.year && date.month == now.month && date.day == now.day;
   }
 
   /// Check if a date is yesterday
   static bool isYesterday(DateTime date) {
     final yesterday = DateTime.now().subtract(const Duration(days: 1));
-    return date.year == yesterday.year &&
-        date.month == yesterday.month &&
-        date.day == yesterday.day;
+    return date.year == yesterday.year && date.month == yesterday.month && date.day == yesterday.day;
   }
 
   /// Check if a date is tomorrow
   static bool isTomorrow(DateTime date) {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
-    return date.year == tomorrow.year &&
-        date.month == tomorrow.month &&
-        date.day == tomorrow.day;
+    return date.year == tomorrow.year && date.month == tomorrow.month && date.day == tomorrow.day;
   }
 
   /// Get relative time string (e.g., "2 days ago", "in 3 hours")
@@ -332,9 +320,7 @@ class AppDateUtils {
 
   /// Check if two dates are the same day
   static bool isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-        date1.month == date2.month &&
-        date1.day == date2.day;
+    return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
   }
 
   /// Get human readable date range (e.g., "Jan 15 - Jan 20, 2024")
@@ -370,6 +356,4 @@ class AppDateUtils {
     }
     return _shortMonthNames[month - 1];
   }
-
-
 }

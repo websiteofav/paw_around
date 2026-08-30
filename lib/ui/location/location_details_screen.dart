@@ -66,15 +66,17 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
       updatedAt: now,
     );
     // AddressBloc reloads the list itself after a successful add — see
-    // _onAddressBlocChange for the pop/error side effects.
+    // _onAddressBlocChange for the pop side effect.
     context.read<AddressBloc>().add(AddAddress(address: address));
   }
 
   void _onAddressBlocChange(BuildContext context, AddressState state) {
     if (state is AddressSaved) {
       HapticFeedback.mediumImpact();
-      // Pop back through Screen 1 to the Dashboard — the sitter tab has no
-      // registered route of its own to `go` to.
+      // Pop back through Screen 1 to the Dashboard — the sitter tab is now
+      // address-aware and shows BookSittersScreen itself once AddressBloc's
+      // reload (triggered by AddAddress) reflects the new address, so no
+      // explicit navigation there is needed from here.
       while (context.canPop()) {
         context.pop();
       }
@@ -95,6 +97,8 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
         appBar: AppBar(
           backgroundColor: AppColors.white,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          surfaceTintColor: Colors.transparent,
           leading: IconButton(
             icon: const Icon(Icons.arrow_back_ios_new,
                 color: AppColors.textPrimary, size: 20),

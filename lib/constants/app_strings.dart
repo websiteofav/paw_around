@@ -705,6 +705,23 @@ class AppStrings {
   static const String failedToSaveAddress =
       'Failed to save address. Please try again.';
 
+  // Book Sitters
+  static const String scheduleTab = 'Schedule';
+  static const String multiDayTab = 'Multi-day';
+  static const String locationLabel = 'Location';
+  static const String timeHoursLabel = 'Time (Hours)';
+  static const String discountOffLabel = '35% OFF';
+  static const String earliestAvailableSlot =
+      'Earliest available slot: Today, 7:00 AM';
+  static const String selectYourPreferredDay = 'Select your preferred day';
+  static const String selectStartTimeOfService =
+      'Select start time of service';
+  static const String selectProfessional = 'Select Professional';
+  static const String bestAvailableProfessional = 'Best available\nprofessional';
+  static const String unavailable = 'Unavailable';
+  static const String bookSittersButton = 'Book Sitters';
+  static const String selectASavedAddress = 'Select a saved address';
+
   // Share
   static const String sharePost = 'Share Post';
   static const String lostPetAlert = 'Lost Pet Alert!';

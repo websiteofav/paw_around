@@ -15,12 +15,39 @@ import 'package:paw_around/ui/location/widgets/map_center_pin.dart';
 import 'package:paw_around/ui/location/widgets/pick_location_bottom_panel.dart';
 import 'package:paw_around/ui/location/widgets/pick_location_search_bar.dart';
 
+/// Args passed via GoRouter's `extra:` to [PickLocationScreen].
+class PickLocationArgs {
+  final bool autoUseCurrentLocation;
+
+  /// Pre-fills the map on an existing location (e.g. editing a saved
+  /// address) instead of starting from the fallback/current-location flow.
+  final double? initialLatitude;
+  final double? initialLongitude;
+  final String? initialAddress;
+
+  const PickLocationArgs({
+    this.autoUseCurrentLocation = false,
+    this.initialLatitude,
+    this.initialLongitude,
+    this.initialAddress,
+  });
+}
+
 /// Screen 1 of the address-picking flow: a map with a fixed center pin the
 /// user pans to their exact location, then confirms.
 class PickLocationScreen extends StatefulWidget {
   final bool autoUseCurrentLocation;
+  final double? initialLatitude;
+  final double? initialLongitude;
+  final String? initialAddress;
 
-  const PickLocationScreen({super.key, this.autoUseCurrentLocation = false});
+  const PickLocationScreen({
+    super.key,
+    this.autoUseCurrentLocation = false,
+    this.initialLatitude,
+    this.initialLongitude,
+    this.initialAddress,
+  });
 
   @override
   State<PickLocationScreen> createState() => _PickLocationScreenState();
@@ -48,6 +75,22 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
   // user never asked for. Real drags (or a deliberate current-location tap,
   // which arms this directly) resolve normally after.
   bool _ignoredInitialIdle = false;
+
+  bool get _hasInitialLocation =>
+      widget.initialLatitude != null && widget.initialLongitude != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_hasInitialLocation) {
+      _target = LatLng(widget.initialLatitude!, widget.initialLongitude!);
+      // Trust the address we were handed (e.g. editing a saved address) —
+      // shows immediately, and the map's own settle-idle still refines
+      // _resolvedArea shortly after via the normal reverse-geocode path.
+      _resolvedAddress = widget.initialAddress;
+      _ignoredInitialIdle = true;
+    }
+  }
 
   @override
   void dispose() {
@@ -157,8 +200,10 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
             child: Stack(
               children: [
                 GoogleMap(
-                  initialCameraPosition:
-                      const CameraPosition(target: _fallbackTarget, zoom: 5),
+                  initialCameraPosition: CameraPosition(
+                    target: _target,
+                    zoom: _hasInitialLocation ? 16 : 5,
+                  ),
                   onMapCreated: _onMapCreated,
                   onCameraMove: _onCameraMove,
                   onCameraIdle: _onCameraIdle,

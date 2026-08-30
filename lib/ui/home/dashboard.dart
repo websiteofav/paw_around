@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
-import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
-import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/bloc/addresses/address/address_bloc.dart';
+import 'package:paw_around/bloc/addresses/address/address_event.dart';
+import 'package:paw_around/bloc/addresses/address/address_state.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/bloc/home/home_event.dart';
 import 'package:paw_around/bloc/home/home_state.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
+import 'package:paw_around/models/addresses/address_model.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/deep_link_service.dart';
-import 'package:figma_squircle/figma_squircle.dart';
-import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/paw_circle_screen.dart';
+import 'package:paw_around/ui/home/widgets/dashboard_bottom_nav.dart';
+import 'package:paw_around/ui/sitter/book_sitters_screen.dart';
 import 'package:paw_around/ui/sitter/sitter_screen.dart';
 import 'package:paw_around/ui/profile/profile_screen.dart';
 
@@ -37,6 +38,9 @@ class _DashboardState extends State<Dashboard> {
     super.initState();
     // Load pets when dashboard is shown
     context.read<PetListBloc>().add(const LoadPetList());
+    // Prefetch saved addresses too, so the Sitter tab doesn't have to wait
+    // on a fresh Firestore fetch the first time it's opened.
+    context.read<AddressBloc>().add(const LoadAddresses());
 
     // Set up deep link handling after dashboard is built
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -52,8 +56,7 @@ class _DashboardState extends State<Dashboard> {
       return false; // Don't handle - let GoRouter pop normally
     }
     final now = DateTime.now();
-    if (_lastBackPressTime == null ||
-        now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
+    if (_lastBackPressTime == null || now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
       _lastBackPressTime = now;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -62,8 +65,7 @@ class _DashboardState extends State<Dashboard> {
           behavior: SnackBarBehavior.floating,
           backgroundColor: AppColors.textPrimary,
           margin: const EdgeInsets.all(16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
       return true; // Handled - don't pop
@@ -78,92 +80,17 @@ class _DashboardState extends State<Dashboard> {
       onBackButtonPressed: _handleBackPress,
       child: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
-          final currentIndex =
-              state is HomeTabSelected ? state.currentTabIndex : 0;
-          final mapFilter =
-              state is HomeTabSelected ? state.mapServiceFilter : null;
+          final currentIndex = state is HomeTabSelected ? state.currentTabIndex : 0;
+          final mapFilter = state is HomeTabSelected ? state.mapServiceFilter : null;
 
-          final pawCircleInitialTab =
-              state is HomeTabSelected ? state.pawCircleInitialTab : null;
+          final pawCircleInitialTab = state is HomeTabSelected ? state.pawCircleInitialTab : null;
           return Scaffold(
             backgroundColor: AppColors.white,
-            body: _getTabContent(currentIndex,
-                mapFilter: mapFilter, pawCircleInitialTab: pawCircleInitialTab),
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerDocked,
-            floatingActionButton: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: smoothDecoration(
-                cornerRadius: 24,
-                color: AppColors.grey1000,
-                side: const BorderSide(width: 0.6, color: AppColors.grey600),
-                shadows: [
-                  BoxShadow(
-                    color: AppColors.navBarShadow.withValues(alpha: 0.98),
-                    offset: const Offset(0, 3),
-                    blurRadius: 7,
-                  ),
-                  BoxShadow(
-                    color: AppColors.navBarShadow.withValues(alpha: 0.85),
-                    offset: const Offset(0, 12),
-                    blurRadius: 12,
-                  ),
-                  BoxShadow(
-                    color: AppColors.navBarShadow.withValues(alpha: 0.50),
-                    offset: const Offset(0, 27),
-                    blurRadius: 16,
-                  ),
-                  BoxShadow(
-                    color: AppColors.navBarShadow.withValues(alpha: 0.15),
-                    offset: const Offset(0, 48),
-                    blurRadius: 19,
-                  ),
-                  BoxShadow(
-                    color: AppColors.navBarShadow.withValues(alpha: 0.02),
-                    offset: const Offset(0, 76),
-                    blurRadius: 21,
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                child: SizedBox(
-                  height: 72,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      _buildNavItem(
-                        context: context,
-                        icon: AppIcons.dashboardHomeIcon,
-                        label: AppStrings.homeTab,
-                        index: 0,
-                        isSelected: currentIndex == 0,
-                      ),
-                      _buildNavItem(
-                        context: context,
-                        icon: AppIcons.dashboardExploreIcon,
-                        label: AppStrings.explore,
-                        index: 1,
-                        isSelected: currentIndex == 1,
-                      ),
-                      _buildNavItem(
-                        context: context,
-                        icon: AppIcons.dashboardPawCircleIcon,
-                        label: AppStrings.pawCircle,
-                        index: 2,
-                        isSelected: currentIndex == 2,
-                      ),
-                      _buildNavItem(
-                        context: context,
-                        // TODO: swap for the Sitter SVG once designs land
-                        materialIcon: Icons.volunteer_activism_outlined,
-                        label: AppStrings.sitter,
-                        index: 3,
-                        isSelected: currentIndex == 3,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+            body: _getTabContent(currentIndex, mapFilter: mapFilter, pawCircleInitialTab: pawCircleInitialTab),
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+            floatingActionButton: DashboardBottomNav(
+              currentIndex: currentIndex,
+              onTabSelected: (index) => context.read<HomeBloc>().add(HomeTabChanged(index)),
             ),
           );
         },
@@ -171,8 +98,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget _getTabContent(int currentIndex,
-      {ServiceType? mapFilter, int? pawCircleInitialTab}) {
+  Widget _getTabContent(int currentIndex, {ServiceType? mapFilter, int? pawCircleInitialTab}) {
     switch (currentIndex) {
       case 0:
         return const HomeScreen();
@@ -181,7 +107,7 @@ class _DashboardState extends State<Dashboard> {
       case 2:
         return PawCircleScreen(initialTab: pawCircleInitialTab);
       case 3:
-        return const SitterScreen();
+        return _buildSitterTab();
       case 4:
         return const ProfileScreen();
       default:
@@ -189,52 +115,17 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  Widget _buildNavItem({
-    required BuildContext context,
-    String? icon,
-    IconData? materialIcon,
-    required String label,
-    required int index,
-    required bool isSelected,
-  }) {
-    assert(icon != null || materialIcon != null,
-        'Provide either an SVG asset path or a materialIcon');
-    final color =
-        isSelected ? AppColors.primary : AppColors.navigationInactive;
-    return Expanded(
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () {
-          // Update BLoC state
-          context.read<HomeBloc>().add(HomeTabChanged(index));
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (icon != null)
-              SvgPicture.asset(
-                icon,
-                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
-                height: 24,
-                width: 24,
-              )
-            else
-              Icon(materialIcon, color: color, size: 24),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: isSelected
-                  ? AppTextStyles.semiBoldStyle600(
-                      fontSize: 12, fontColor: AppColors.primary)
-                  : AppTextStyles.mediumStyle500(
-                      fontSize: 12, fontColor: AppColors.navigationInactive),
-            ),
-          ],
-        ),
-      ),
+  /// Once an address exists, Book Sitters is this tab's real destination —
+  /// no address yet shows SitterScreen's onboarding/empty state instead.
+  Widget _buildSitterTab() {
+    return BlocBuilder<AddressBloc, AddressState>(
+      builder: (context, state) {
+        final addresses = state is AddressLoaded ? state.addresses : const <AddressModel>[];
+        if (addresses.isNotEmpty) {
+          return BookSittersScreen(address: addresses.first);
+        }
+        return const SitterScreen();
+      },
     );
   }
 }

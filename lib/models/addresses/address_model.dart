@@ -61,6 +61,14 @@ class AddressModel extends Equatable {
     );
   }
 
+  /// Building/Floor, Street and Area joined together — the full address as
+  /// the user entered it on the details form, not just the raw
+  /// reverse-geocoded [formattedAddress].
+  String get fullAddress {
+    final parts = [buildingFloor, street, area].where((p) => p.trim().isNotEmpty);
+    return parts.isEmpty ? formattedAddress : parts.join(', ');
+  }
+
   @override
   List<Object?> get props => [
         id,

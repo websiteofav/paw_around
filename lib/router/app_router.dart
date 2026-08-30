@@ -61,8 +61,7 @@ class AuthNotifier extends ChangeNotifier {
   AuthNotifier() {
     sl<AuthRepository>().authStateChanges.listen((user) async {
       if (user != null) {
-        _isProfileComplete =
-            await sl<UserRepository>().isProfileComplete(user.uid);
+        _isProfileComplete = await sl<UserRepository>().isProfileComplete(user.uid);
       } else {
         _isProfileComplete = true; // logged out — reset; redirect won't apply
       }
@@ -82,32 +81,26 @@ class AppRouter {
   static late final GoRouter _router;
 
   /// Call this from UserProfileSetupScreen after saving profile.
-  static void setProfileComplete(bool value) =>
-      _authNotifier.setProfileComplete(value);
+  static void setProfileComplete(bool value) => _authNotifier.setProfileComplete(value);
 
   /// Initialize the router with the correct initial location.
   /// This MUST be called before [AppRouter.router] is accessed.
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
-      initialLocation:
-          hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+      initialLocation: hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],
       redirect: (context, state) {
         final isLoggedIn = sl<AuthRepository>().isLoggedIn;
         final path = state.matchedLocation;
-        final isAuthRoute =
-            path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
-        final isPublicRoute =
-            path == AppRoutes.intro || path == AppRoutes.onboarding;
+        final isAuthRoute = path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
+        final isPublicRoute = path == AppRoutes.intro || path == AppRoutes.onboarding;
         final isProfileSetup = path == AppRoutes.profileSetup;
 
         // Logged in on an auth route → route based on profile completeness
         if (isLoggedIn && isAuthRoute) {
-          return _authNotifier.isProfileComplete
-              ? AppRoutes.home
-              : AppRoutes.profileSetup;
+          return _authNotifier.isProfileComplete ? AppRoutes.home : AppRoutes.profileSetup;
         }
 
         // Not logged in trying to access protected routes
@@ -231,14 +224,17 @@ class AppRouter {
             ),
 
             // Pick Location Route (Step 1) - Accepts optional
-            // autoUseCurrentLocation flag as extra
+            // PickLocationArgs as extra
             GoRoute(
               path: AppRoutes.pickLocation,
               name: AppRoutes.pickLocation,
               builder: (context, state) {
-                final autoUseCurrentLocation = state.extra as bool? ?? false;
+                final args = state.extra as PickLocationArgs? ?? const PickLocationArgs();
                 return PickLocationScreen(
-                  autoUseCurrentLocation: autoUseCurrentLocation,
+                  autoUseCurrentLocation: args.autoUseCurrentLocation,
+                  initialLatitude: args.initialLatitude,
+                  initialLongitude: args.initialLongitude,
+                  initialAddress: args.initialAddress,
                 );
               },
             ),
@@ -311,8 +307,7 @@ class AppRouter {
             GoRoute(
               path: AppRoutes.momentPreview,
               name: AppRoutes.momentPreview,
-              builder: (context, state) =>
-                  MomentPreviewScreen(draft: state.extra as MomentDraft),
+              builder: (context, state) => MomentPreviewScreen(draft: state.extra as MomentDraft),
             ),
 
             // Community - Post Detail Route
@@ -334,8 +329,7 @@ class AppRouter {
                 if (extra is Map) {
                   final pet = extra['pet'] as PetModel;
                   final groomingType = extra['groomingType'] as String?;
-                  return GroomingSettingsScreen(
-                      pet: pet, groomingType: groomingType);
+                  return GroomingSettingsScreen(pet: pet, groomingType: groomingType);
                 }
                 return GroomingSettingsScreen(pet: extra as PetModel);
               },
