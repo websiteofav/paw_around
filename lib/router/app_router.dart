@@ -16,6 +16,7 @@ import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/models/addresses/picked_location.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/models/sitters/upcoming_session_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/address_repository.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
@@ -45,6 +46,7 @@ import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/pets/pet_qr_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
+import 'package:paw_around/ui/sitter/upcoming_session_screen.dart';
 import 'package:paw_around/ui/profile/profile_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
 import 'package:paw_around/ui/profile/my_posts_screen.dart';
@@ -350,6 +352,16 @@ class AppRouter {
               builder: (context, state) {
                 final data = state.extra as ActionCardData;
                 return ActionCardDetailScreen(data: data);
+              },
+            ),
+
+            // Upcoming Session Route
+            GoRoute(
+              path: AppRoutes.upcomingSession,
+              name: AppRoutes.upcomingSession,
+              builder: (context, state) {
+                final session = state.extra as UpcomingSessionModel;
+                return UpcomingSessionScreen(session: session);
               },
             ),
 

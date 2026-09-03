@@ -25,6 +25,9 @@ class AppRoutes {
   static const String vaccinesSetup = '/pets/vaccines-setup';
   static const String actionDetail = '/action-detail';
 
+  // Sitter / Booking Routes
+  static const String upcomingSession = '/sitter/upcoming-session';
+
   // Location Picker Routes
   static const String pickLocation = '/pick-location';
   static const String locationDetails = '/pick-location/details';

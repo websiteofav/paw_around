@@ -83,5 +83,13 @@ class AppIcons {
   static const String petNoActivityIcon =
       "assets/profile/pet_no_activity_icon.png";
 
+  // Sitter Icons
+  static const String sitterClockIcon = "assets/sitter/clock_icon.png";
+  static const String sitterCardIcon = "assets/sitter/card_icon.png";
+  static const String sitterHomePinIcon = "assets/sitter/home_pin_icon.png";
+  static const String sitterCalendarEditIcon =
+      "assets/sitter/calendar_edit_icon.png";
+  static const String sitterDeleteIcon = "assets/sitter/delete_icon.png";
+
   AppIcons._();
 }

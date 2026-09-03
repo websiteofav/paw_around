@@ -3,12 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:paw_around/bloc/addresses/address/address_bloc.dart';
 import 'package:paw_around/bloc/addresses/address/address_state.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
+import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/addresses/address_model.dart';
+import 'package:paw_around/models/sitters/upcoming_session_model.dart';
 import 'package:paw_around/ui/location/pick_location_screen.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_day_selector.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_location_section.dart';
@@ -23,8 +26,7 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 ///
 /// UI only — no sitter/professional/pricing/availability/booking backend
 /// exists anywhere in this app yet, so every selector here updates purely
-/// local state and "Book Sitters" has no real submission target. See the
-/// TODO on [_onBookSitters].
+/// local state and "Book Sitters" just opens the mock UpcomingSessionScreen.
 class BookSittersScreen extends StatefulWidget {
   final AddressModel address;
 
@@ -67,7 +69,45 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
   }
 
   void _onBookSitters() {
-    // TODO: submit booking once a booking backend exists.
+    if (_selectedProfessionalId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.pleaseSelectProfessional),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+    // No booking backend exists yet — navigate to the mock Upcoming Session
+    // screen, using the real selected pet's name/breed/photo when available
+    // so the mock at least reflects the actual pet. See
+    // UpcomingSessionModel's doc comment.
+    final petListState = context.read<PetListBloc>().state;
+    final selectedPet =
+        petListState is PetListLoaded ? petListState.selectedPet : null;
+    const mock = UpcomingSessionModel.mockAssignedSession;
+    context.pushNamed(
+      AppRoutes.upcomingSession,
+      extra: selectedPet == null
+          ? mock
+          : UpcomingSessionModel(
+              petName: selectedPet.name,
+              petBreed: selectedPet.breed,
+              petAgeLabel: selectedPet.ageString,
+              petImagePath: selectedPet.imagePath,
+              sitterName: mock.sitterName,
+              sitterRole: mock.sitterRole,
+              sitterRating: mock.sitterRating,
+              sitterReviewCount: mock.sitterReviewCount,
+              confirmedDateLabel: mock.confirmedDateLabel,
+              sessionDayLabel: mock.sessionDayLabel,
+              sessionTimeLabel: mock.sessionTimeLabel,
+              startsInLabel: mock.startsInLabel,
+              locationLabel: mock.locationLabel,
+              locationAddress: mock.locationAddress,
+              totalAmount: mock.totalAmount,
+            ),
+    );
   }
 
   @override
@@ -98,12 +138,15 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
               AppSpacing.vertical20,
               BookSittersScheduleToggle(
                 isScheduleSelected: _isScheduleSelected,
-                onChanged: (value) => setState(() => _isScheduleSelected = value),
+                onChanged: (value) =>
+                    setState(() => _isScheduleSelected = value),
               ),
               AppSpacing.vertical36,
               BlocBuilder<AddressBloc, AddressState>(
                 builder: (context, state) {
-                  final addresses = state is AddressLoaded ? state.addresses : <AddressModel>[_activeAddress];
+                  final addresses = state is AddressLoaded
+                      ? state.addresses
+                      : <AddressModel>[_activeAddress];
                   return BookSittersLocationSection(
                     selectedAddress: _activeAddress,
                     addresses: addresses,
@@ -143,7 +186,8 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
                 text: AppStrings.bookSittersButton,
                 onPressed: _onBookSitters,
                 customColor: AppColors.primary,
-                textStyle: AppTextStyles.interBoldStyle700(fontSize: 16, fontColor: AppColors.grey1000),
+                textStyle: AppTextStyles.interBoldStyle700(
+                    fontSize: 16, fontColor: AppColors.grey1000),
                 customTextColor: AppColors.grey1000,
               ),
               // Clears Dashboard's floating bottom nav bar shown here too.

@@ -100,5 +100,6 @@ flutter:
     - assets/posts/
     - assets/actions/
     - assets/profile/
+    - assets/sitter/
     - assets/web/
     - .env

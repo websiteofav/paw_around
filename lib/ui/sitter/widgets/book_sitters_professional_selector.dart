@@ -67,7 +67,8 @@ class _ProfessionalCard extends StatelessWidget {
       child: Container(
         height: 180,
         decoration: smoothDecoration(
-            side: BorderSide(color: isSelected ? AppColors.secondaryCTA : AppColors.grey100),
+            side: BorderSide(
+                color: isSelected ? AppColors.secondaryCTA : AppColors.grey100),
             borderRadius: AppSmoothRadius.custom(24)),
         width: 110,
         child: Column(
@@ -80,7 +81,9 @@ class _ProfessionalCard extends StatelessWidget {
                     Icon(
                       Icons.person,
                       size: 116,
-                      color: isAvailable ? AppColors.primary : AppColors.textDisabled,
+                      color: isAvailable
+                          ? AppColors.secondaryCTA
+                          : AppColors.textDisabled,
                     ),
                     const SizedBox(height: 8),
                     Text(
