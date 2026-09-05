@@ -33,6 +33,7 @@ class AppColors {
   static const Color deepRed = Color(0xFFAD0500);
   static const Color requiredIndicator = Color(0xFFFF2720);
   static const Color success = Color(0xFF22C55E);
+  static const Color confirmedGreen = Color(0xFF00B117);
   static const Color warning = Color(0xFFF59E0B);
 
   // Premium / Accent Colors

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:paw_around/bloc/addresses/address/address_bloc.dart';
 import 'package:paw_around/bloc/community/community_bloc.dart';
 import 'package:paw_around/bloc/moments/pet_moments_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
@@ -12,9 +13,12 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/bloc/home/home_bloc.dart';
+import 'package:paw_around/models/addresses/picked_location.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/models/sitters/upcoming_session_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
+import 'package:paw_around/repositories/address_repository.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/repositories/user_repository.dart';
 import 'package:paw_around/repositories/community_repository.dart';
@@ -28,6 +32,8 @@ import 'package:paw_around/ui/moments/create_moment_screen.dart';
 import 'package:paw_around/ui/moments/moment_preview_screen.dart';
 import 'package:paw_around/ui/moments/widgets/create_moment/moment_draft.dart';
 import 'package:paw_around/ui/home/dashboard.dart';
+import 'package:paw_around/ui/location/location_details_screen.dart';
+import 'package:paw_around/ui/location/pick_location_screen.dart';
 import 'package:paw_around/ui/auth/phone_login_screen.dart';
 import 'package:paw_around/ui/auth/otp_screen.dart';
 import 'package:paw_around/ui/auth/user_profile_setup_screen.dart';
@@ -40,6 +46,7 @@ import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/pets/pet_qr_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
+import 'package:paw_around/ui/sitter/upcoming_session_screen.dart';
 import 'package:paw_around/ui/profile/profile_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
 import 'package:paw_around/ui/profile/my_posts_screen.dart';
@@ -56,8 +63,7 @@ class AuthNotifier extends ChangeNotifier {
   AuthNotifier() {
     sl<AuthRepository>().authStateChanges.listen((user) async {
       if (user != null) {
-        _isProfileComplete =
-            await sl<UserRepository>().isProfileComplete(user.uid);
+        _isProfileComplete = await sl<UserRepository>().isProfileComplete(user.uid);
       } else {
         _isProfileComplete = true; // logged out — reset; redirect won't apply
       }
@@ -77,32 +83,26 @@ class AppRouter {
   static late final GoRouter _router;
 
   /// Call this from UserProfileSetupScreen after saving profile.
-  static void setProfileComplete(bool value) =>
-      _authNotifier.setProfileComplete(value);
+  static void setProfileComplete(bool value) => _authNotifier.setProfileComplete(value);
 
   /// Initialize the router with the correct initial location.
   /// This MUST be called before [AppRouter.router] is accessed.
   static void init({required bool hasCompletedOnboarding}) {
     _router = GoRouter(
-      initialLocation:
-          hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
+      initialLocation: hasCompletedOnboarding ? AppRoutes.phoneLogin : AppRoutes.onboarding,
       debugLogDiagnostics: false,
       refreshListenable: _authNotifier,
       observers: [AnalyticsService.observer],
       redirect: (context, state) {
         final isLoggedIn = sl<AuthRepository>().isLoggedIn;
         final path = state.matchedLocation;
-        final isAuthRoute =
-            path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
-        final isPublicRoute =
-            path == AppRoutes.intro || path == AppRoutes.onboarding;
+        final isAuthRoute = path == AppRoutes.phoneLogin || path == AppRoutes.otpVerification;
+        final isPublicRoute = path == AppRoutes.intro || path == AppRoutes.onboarding;
         final isProfileSetup = path == AppRoutes.profileSetup;
 
         // Logged in on an auth route → route based on profile completeness
         if (isLoggedIn && isAuthRoute) {
-          return _authNotifier.isProfileComplete
-              ? AppRoutes.home
-              : AppRoutes.profileSetup;
+          return _authNotifier.isProfileComplete ? AppRoutes.home : AppRoutes.profileSetup;
         }
 
         // Not logged in trying to access protected routes
@@ -183,6 +183,11 @@ class AppRouter {
                 BlocProvider<HomeBloc>(
                   create: (_) => HomeBloc(),
                 ),
+                BlocProvider<AddressBloc>(
+                  create: (_) => AddressBloc(
+                    addressRepository: sl<AddressRepository>(),
+                  ),
+                ),
               ],
               child: child,
             );
@@ -217,6 +222,32 @@ class AppRouter {
               builder: (context, state) {
                 final pet = state.extra as PetModel;
                 return AddPetDetailsScreen(pet: pet);
+              },
+            ),
+
+            // Pick Location Route (Step 1) - Accepts optional
+            // PickLocationArgs as extra
+            GoRoute(
+              path: AppRoutes.pickLocation,
+              name: AppRoutes.pickLocation,
+              builder: (context, state) {
+                final args = state.extra as PickLocationArgs? ?? const PickLocationArgs();
+                return PickLocationScreen(
+                  autoUseCurrentLocation: args.autoUseCurrentLocation,
+                  initialLatitude: args.initialLatitude,
+                  initialLongitude: args.initialLongitude,
+                  initialAddress: args.initialAddress,
+                );
+              },
+            ),
+
+            // Location Details Route (Step 2)
+            GoRoute(
+              path: AppRoutes.locationDetails,
+              name: AppRoutes.locationDetails,
+              builder: (context, state) {
+                final pickedLocation = state.extra as PickedLocation;
+                return LocationDetailsScreen(pickedLocation: pickedLocation);
               },
             ),
 
@@ -278,8 +309,7 @@ class AppRouter {
             GoRoute(
               path: AppRoutes.momentPreview,
               name: AppRoutes.momentPreview,
-              builder: (context, state) =>
-                  MomentPreviewScreen(draft: state.extra as MomentDraft),
+              builder: (context, state) => MomentPreviewScreen(draft: state.extra as MomentDraft),
             ),
 
             // Community - Post Detail Route
@@ -301,8 +331,7 @@ class AppRouter {
                 if (extra is Map) {
                   final pet = extra['pet'] as PetModel;
                   final groomingType = extra['groomingType'] as String?;
-                  return GroomingSettingsScreen(
-                      pet: pet, groomingType: groomingType);
+                  return GroomingSettingsScreen(pet: pet, groomingType: groomingType);
                 }
                 return GroomingSettingsScreen(pet: extra as PetModel);
               },
@@ -323,6 +352,16 @@ class AppRouter {
               builder: (context, state) {
                 final data = state.extra as ActionCardData;
                 return ActionCardDetailScreen(data: data);
+              },
+            ),
+
+            // Upcoming Session Route
+            GoRoute(
+              path: AppRoutes.upcomingSession,
+              name: AppRoutes.upcomingSession,
+              builder: (context, state) {
+                final session = state.extra as UpcomingSessionModel;
+                return UpcomingSessionScreen(session: session);
               },
             ),
 

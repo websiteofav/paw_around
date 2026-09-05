@@ -674,6 +674,80 @@ class AppStrings {
   static const String yourPost = 'Your post';
   static const String pawCircle = 'Paw Circle';
   static const String explore = 'Explore';
+  static const String sitter = 'Sitter';
+
+  // Sitter
+  static const String petSittersTitle = 'Pet Sitters';
+  static const String petSittersComingSoonTitle = 'Pet Sitters — Coming Soon';
+  static const String petSittersComingSoonSubtitle =
+      "We're putting the finishing touches on trusted pet sitting near you. Check back soon!";
+  static const String sitterLocationRequiredTitle =
+      'We need your location first to help you';
+  static const String sitterSearchLocationHint = 'Search for your location';
+  static const String addNewAddress = 'Add new Address';
+  static const String savedAddress = 'Saved Address';
+
+  // Location Picker
+  static const String currentLocationPillLabel = 'Current location';
+  static const String placePinBannerText =
+      'Place the pin at your exact location';
+  static const String confirmAndProceed = 'Confirm and Proceed';
+  static const String resolvingAddress = 'Locating address...';
+  static const String searchOrDragPinPrompt =
+      'Search or drag the map to set a location';
+  static const String locationDetailsTitle = 'Location Details';
+  static const String changeLabel = 'Change';
+  static const String buildingFloorLabel = 'Building';
+  static const String buildingFloorHint = 'Building / Floor';
+  static const String streetLabel = 'Street';
+  static const String streetHint = 'Street (Recommended)';
+  static const String areaLabel = 'Area';
+  static const String saveAddressAsLabel = 'Save address as';
+  static const String saveAddressAsHint = 'Ex: Second home';
+  static const String saveAddressButton = 'Save Address';
+  static const String failedToSaveAddress =
+      'Failed to save address. Please try again.';
+
+  // Book Sitters
+  static const String scheduleTab = 'Schedule';
+  static const String multiDayTab = 'Multi-day';
+  static const String locationLabel = 'Location';
+  static const String timeHoursLabel = 'Time (Hours)';
+  static const String discountOffLabel = '35% OFF';
+  static const String earliestAvailableSlot =
+      'Earliest available slot: Today, 7:00 AM';
+  static const String selectYourPreferredDay = 'Select your preferred day';
+  static const String selectStartTimeOfService =
+      'Select start time of service';
+  static const String selectProfessional = 'Select Professional';
+  static const String bestAvailableProfessional = 'Best available\nprofessional';
+  static const String unavailable = 'Unavailable';
+  static const String bookSittersButton = 'Book Sitters';
+  static const String pleaseSelectProfessional = 'Please select a professional';
+  static const String noPetToBookSitterFor = 'Add a pet before booking a sitter';
+  static const String failedToBookSitter = 'Failed to book sitter. Please try again.';
+  static const String selectASavedAddress = 'Select a saved address';
+
+  // Upcoming Session
+  static const String upcomingSessionTitle = 'Upcoming session';
+  static const String confirmedForPrefix = 'Confirmed for';
+  static const String sessionForPrefix = 'Session for';
+  static const String petCareProfessional = 'Pet Care Professional';
+  static const String reviewsSuffix = 'reviews';
+  static const String call = 'Call';
+  static const String message = 'Message';
+  static const String assigningYourSitter = 'Assigning your sitter';
+  static const String assigningSitterSubtitlePrefix = "We'll match";
+  static const String assigningSitterSubtitleSuffix =
+      'with the best available professional before the session';
+  static const String viewOnMap = 'View on map';
+  static const String totalAmountSuffix = 'total amount';
+  static const String viewBreakdown = 'View breakdown';
+  static const String sitterWillArriveSuffix = 'will arrive at the scheduled time';
+  static const String sitterAssignmentNotice =
+      "You'll be notified once your sitter is assigned";
+  static const String reschedule = 'Reschedule';
+  static const String cancelBooking = 'Cancel Booking';
 
   // Share
   static const String sharePost = 'Share Post';

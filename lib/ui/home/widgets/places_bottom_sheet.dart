@@ -2,6 +2,7 @@ import 'package:figma_squircle/figma_squircle.dart';
 import 'package:flutter/material.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_decorations.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/places/places_model.dart';
@@ -61,10 +62,12 @@ class PlacesBottomSheet extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.location_on_rounded,
+          Image.asset(
+            AppIcons.locationPinIcon,
             color: AppColors.primary,
-            size: 20,
+            colorBlendMode: BlendMode.srcIn,
+            height: 20,
+            width: 20,
           ),
           const SizedBox(width: 8),
           Text(

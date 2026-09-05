@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_constants.dart';
+import 'package:paw_around/constants/app_icons.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
@@ -625,10 +626,12 @@ class _LastSeenLocationRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          Icons.location_on_outlined,
-          size: 18,
+        Image.asset(
+          AppIcons.locationPinIcon,
+          height: 18,
+          width: 18,
           color: AppColors.textSecondary,
+          colorBlendMode: BlendMode.srcIn,
         ),
         const SizedBox(width: 8),
         Expanded(

@@ -103,7 +103,11 @@ class CommonButton extends StatelessWidget {
       return Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Image.asset(imagePath!),
+          Image.asset(
+            imagePath!,
+            width: _getIconSize(),
+            height: _getIconSize(),
+          ),
           const SizedBox(width: 8),
           Text(text, style: textStyle ?? _getTextStyle()),
         ],

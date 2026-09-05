@@ -1,3 +1,4 @@
+import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
 enum LocationStatus {
@@ -5,6 +6,19 @@ enum LocationStatus {
   serviceDisabled,
   permissionDenied,
   permissionDeniedForever,
+}
+
+/// Result of reverse-geocoding a lat/lng into a human-readable address.
+class GeocodedAddress {
+  final String formattedAddress;
+  final String? area;
+  final String? street;
+
+  const GeocodedAddress({
+    required this.formattedAddress,
+    this.area,
+    this.street,
+  });
 }
 
 class LocationResult {
@@ -123,5 +137,37 @@ class LocationService {
       return '${distanceInMeters.round()} m';
     }
     return '${(distanceInMeters / 1000).toStringAsFixed(1)} km';
+  }
+
+  /// Reverse-geocodes a lat/lng into a human-readable address.
+  /// Returns null if no placemark could be resolved.
+  Future<GeocodedAddress?> reverseGeocode(double lat, double lng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(lat, lng);
+      if (placemarks.isEmpty) return null;
+      final place = placemarks.first;
+
+      final parts = <String>[];
+      String? area;
+      if (place.subLocality?.isNotEmpty == true) {
+        area = place.subLocality;
+        parts.add(place.subLocality!);
+      } else if (place.street?.isNotEmpty == true) {
+        parts.add(place.street!);
+      }
+      if (place.locality?.isNotEmpty == true) {
+        parts.add(place.locality!);
+        area ??= place.locality;
+      }
+      if (parts.isEmpty) return null;
+
+      return GeocodedAddress(
+        formattedAddress: parts.join(', '),
+        area: area,
+        street: place.street,
+      );
+    } catch (_) {
+      return null;
+    }
   }
 }

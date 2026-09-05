@@ -32,6 +32,16 @@ class AppIcons {
   static const String homeCatDogAffectionIcon =
       'assets/home/home_cat_dog_affection_icon.png';
 
+  static const String gpsIcon = 'assets/home/gps_icon.png';
+  static const String gpsOutlineIcon = 'assets/home/gps_outline_icon.png';
+  static const String addSquareIcon = 'assets/home/add_square_icon.png';
+  static const String tagIcon = 'assets/home/tag_icon.png';
+  static const String locationPinIcon = 'assets/home/location_pin_icon.png';
+  static const String locationPinBoldIcon =
+      'assets/home/location_pin_bold_icon.png';
+  static const String mapPinConfirmIcon =
+      'assets/home/map_pin_confirm_icon.png';
+
   static const String dashboardHomeIcon = 'assets/home/dashboard_home_icon.svg';
   static const String dashboardExploreIcon =
       'assets/home/dashboard_explore_icon.svg';
@@ -72,6 +82,14 @@ class AppIcons {
 
   static const String petNoActivityIcon =
       "assets/profile/pet_no_activity_icon.png";
+
+  // Sitter Icons
+  static const String sitterClockIcon = "assets/sitter/clock_icon.png";
+  static const String sitterCardIcon = "assets/sitter/card_icon.png";
+  static const String sitterHomePinIcon = "assets/sitter/home_pin_icon.png";
+  static const String sitterCalendarEditIcon =
+      "assets/sitter/calendar_edit_icon.png";
+  static const String sitterDeleteIcon = "assets/sitter/delete_icon.png";
 
   AppIcons._();
 }

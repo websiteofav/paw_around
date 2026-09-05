@@ -11,6 +11,7 @@ class AppRoutes {
   static const String homeTab = '/home';
   static const String mapTab = '/home/map';
   static const String communityTab = '/home/community';
+  static const String sitterTab = '/home/sitter';
   static const String profileTab = '/home/profile';
 
   // Pet Management Routes
@@ -23,6 +24,13 @@ class AppRoutes {
   static const String tickFleaSettings = '/pets/tick-flea-settings';
   static const String vaccinesSetup = '/pets/vaccines-setup';
   static const String actionDetail = '/action-detail';
+
+  // Sitter / Booking Routes
+  static const String upcomingSession = '/sitter/upcoming-session';
+
+  // Location Picker Routes
+  static const String pickLocation = '/pick-location';
+  static const String locationDetails = '/pick-location/details';
 
   // Profile Sub-routes
   static const String editProfile = '/profile/edit';
