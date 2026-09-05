@@ -5,13 +5,20 @@ import 'package:paw_around/bloc/addresses/address/address_bloc.dart';
 import 'package:paw_around/bloc/addresses/address/address_state.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
+import 'package:paw_around/bloc/sitters/booking_form/booking_form_bloc.dart';
+import 'package:paw_around/bloc/sitters/booking_form/booking_form_event.dart';
+import 'package:paw_around/bloc/sitters/booking_form/booking_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
+import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/addresses/address_model.dart';
+import 'package:paw_around/models/sitters/booking_model.dart';
+import 'package:paw_around/models/sitters/professional_model.dart';
 import 'package:paw_around/models/sitters/upcoming_session_model.dart';
+import 'package:paw_around/repositories/booking_repository.dart';
 import 'package:paw_around/ui/location/pick_location_screen.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_day_selector.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_location_section.dart';
@@ -24,9 +31,10 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 /// Booking/scheduling screen shown once an address has been picked (either
 /// from the saved-address list or right after adding a new one).
 ///
-/// UI only — no sitter/professional/pricing/availability/booking backend
-/// exists anywhere in this app yet, so every selector here updates purely
-/// local state and "Book Sitters" just opens the mock UpcomingSessionScreen.
+/// "Book Sitters" persists a real BookingModel to Firestore via
+/// BookingFormBloc, then opens the mock UpcomingSessionScreen — the
+/// Upcoming Session screen itself doesn't read from Firestore yet, that's
+/// a follow-up. See BookingModel's doc comment.
 class BookSittersScreen extends StatefulWidget {
   final AddressModel address;
 
@@ -47,7 +55,16 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
   // but "Switch address" below can override it for this session.
   AddressModel? _selectedAddress;
 
+  late final BookingFormBloc _bookingFormBloc =
+      BookingFormBloc(bookingRepository: sl<BookingRepository>());
+
   AddressModel get _activeAddress => _selectedAddress ?? widget.address;
+
+  @override
+  void dispose() {
+    _bookingFormBloc.close();
+    super.dispose();
+  }
 
   void _onEditLocation() {
     context.pushNamed(
@@ -78,10 +95,52 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
       );
       return;
     }
-    // No booking backend exists yet — navigate to the mock Upcoming Session
-    // screen, using the real selected pet's name/breed/photo when available
-    // so the mock at least reflects the actual pet. See
-    // UpcomingSessionModel's doc comment.
+    final petListState = context.read<PetListBloc>().state;
+    final selectedPet =
+        petListState is PetListLoaded ? petListState.selectedPet : null;
+    if (selectedPet == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(AppStrings.noPetToBookSitterFor),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
+    final professional = ProfessionalModel.mockProfessionals
+        .firstWhere((p) => p.id == _selectedProfessionalId);
+    final scheduledDate = DateTime.now().add(Duration(days: _selectedDayIndex));
+    final totalAmount = (BookSittersTimeSlider.ratePerHour *
+            _hours *
+            (1 - BookSittersTimeSlider.discount))
+        .round();
+
+    final booking = BookingModel.create(
+      petId: selectedPet.id,
+      petName: selectedPet.name,
+      petBreed: selectedPet.breed,
+      petAgeLabel: selectedPet.ageString,
+      petImagePath: selectedPet.imagePath,
+      professionalId: professional.id,
+      professionalName: professional.name,
+      professionalRole: professional.role,
+      professionalRating: professional.rating,
+      professionalReviewCount: professional.reviewCount,
+      addressLabel: _activeAddress.label,
+      addressText: _activeAddress.fullAddress,
+      scheduledDate: scheduledDate,
+      scheduledTimeSlot: _selectedTimeSlot ?? '7:00 AM',
+      durationHours: _hours,
+      totalAmount: totalAmount,
+    );
+
+    _bookingFormBloc.add(SubmitBooking(booking: booking));
+  }
+
+  // The Upcoming Session screen doesn't read from Firestore yet (follow-up
+  // task) — it still takes a client-only UpcomingSessionModel, built here
+  // from the same real pet used for the just-persisted BookingModel.
+  void _navigateToUpcomingSession() {
     final petListState = context.read<PetListBloc>().state;
     final selectedPet =
         petListState is PetListLoaded ? petListState.selectedPet : null;
@@ -112,6 +171,27 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: _bookingFormBloc,
+      child: BlocListener<BookingFormBloc, BookingFormState>(
+        listener: (context, state) {
+          if (state is BookingFormSuccess) {
+            _navigateToUpcomingSession();
+          } else if (state is BookingFormError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(AppStrings.failedToBookSitter),
+                backgroundColor: AppColors.error,
+              ),
+            );
+          }
+        },
+        child: _buildScaffold(),
+      ),
+    );
+  }
+
+  Widget _buildScaffold() {
     return Scaffold(
       backgroundColor: AppColors.white,
       appBar: AppBar(
@@ -182,13 +262,19 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
                 onSelect: (id) => setState(() => _selectedProfessionalId = id),
               ),
               AppSpacing.vertical32,
-              CommonButton(
-                text: AppStrings.bookSittersButton,
-                onPressed: _onBookSitters,
-                customColor: AppColors.primary,
-                textStyle: AppTextStyles.interBoldStyle700(
-                    fontSize: 16, fontColor: AppColors.grey1000),
-                customTextColor: AppColors.grey1000,
+              BlocBuilder<BookingFormBloc, BookingFormState>(
+                builder: (context, state) {
+                  final isSubmitting = state is BookingFormSubmitting;
+                  return CommonButton(
+                    text: AppStrings.bookSittersButton,
+                    onPressed: _onBookSitters,
+                    isLoading: isSubmitting,
+                    customColor: AppColors.primary,
+                    textStyle: AppTextStyles.interBoldStyle700(
+                        fontSize: 16, fontColor: AppColors.grey1000),
+                    customTextColor: AppColors.grey1000,
+                  );
+                },
               ),
               // Clears Dashboard's floating bottom nav bar shown here too.
               const SizedBox(height: 120),

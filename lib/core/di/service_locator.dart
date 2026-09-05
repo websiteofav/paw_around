@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import 'package:paw_around/repositories/address_repository.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/repositories/booking_repository.dart';
 import 'package:paw_around/repositories/community_repository.dart';
 import 'package:paw_around/repositories/pet_moments_repository.dart';
 import 'package:paw_around/repositories/places_repository.dart';
@@ -31,5 +32,8 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<AddressRepository>(
     () => AddressRepository(authRepository: sl<AuthRepository>()),
+  );
+  sl.registerLazySingleton<BookingRepository>(
+    () => BookingRepository(authRepository: sl<AuthRepository>()),
   );
 }

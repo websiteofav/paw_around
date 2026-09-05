@@ -17,6 +17,12 @@ class BookSittersTimeSlider extends StatefulWidget {
   final double hours;
   final ValueChanged<double> onChanged;
 
+  // Mock hourly rate + a fixed 35% promo discount — no real pricing engine
+  // exists yet. Public so BookSittersScreen can compute the same
+  // totalAmount to persist on a booking.
+  static const double ratePerHour = 720;
+  static const double discount = 0.35;
+
   const BookSittersTimeSlider({
     super.key,
     required this.hours,
@@ -31,11 +37,6 @@ class _BookSittersTimeSliderState extends State<BookSittersTimeSlider> {
   static const int _minHours = 1;
   static const int _maxHours = 6;
   static const double _step = 0.5;
-
-  // Mock hourly rate + a fixed 35% promo discount — no real pricing
-  // engine exists yet.
-  static const double _ratePerHour = 720;
-  static const double _discount = 0.35;
 
   late RulerPickerController _controller;
 
@@ -61,8 +62,11 @@ class _BookSittersTimeSliderState extends State<BookSittersTimeSlider> {
 
   @override
   Widget build(BuildContext context) {
-    final originalPrice = (_ratePerHour * widget.hours).round();
-    final discountedPrice = (_ratePerHour * widget.hours * (1 - _discount)).round();
+    final originalPrice = (BookSittersTimeSlider.ratePerHour * widget.hours).round();
+    final discountedPrice = (BookSittersTimeSlider.ratePerHour *
+            widget.hours *
+            (1 - BookSittersTimeSlider.discount))
+        .round();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

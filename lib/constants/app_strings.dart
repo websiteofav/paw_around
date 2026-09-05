@@ -721,6 +721,8 @@ class AppStrings {
   static const String unavailable = 'Unavailable';
   static const String bookSittersButton = 'Book Sitters';
   static const String pleaseSelectProfessional = 'Please select a professional';
+  static const String noPetToBookSitterFor = 'Add a pet before booking a sitter';
+  static const String failedToBookSitter = 'Failed to book sitter. Please try again.';
   static const String selectASavedAddress = 'Select a saved address';
 
   // Upcoming Session

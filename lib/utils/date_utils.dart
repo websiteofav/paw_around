@@ -36,6 +36,19 @@ class AppDateUtils {
 
   static const List<String> _shortDayNames = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
+  static const List<String> _dayNames = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+
+  /// Full weekday name (e.g., "Sunday")
+  static String fullWeekdayName(DateTime date) => _dayNames[date.weekday - 1];
+
   /// Format date to readable string (e.g., "January 15, 2024")
   static String formatDateLong(DateTime date) {
     return '${_monthNames[date.month - 1]} ${date.day}, ${date.year}';
