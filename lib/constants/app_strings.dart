@@ -678,6 +678,9 @@ class AppStrings {
 
   // Sitter
   static const String petSittersTitle = 'Pet Sitters';
+  static const String petSittersComingSoonTitle = 'Pet Sitters — Coming Soon';
+  static const String petSittersComingSoonSubtitle =
+      "We're putting the finishing touches on trusted pet sitting near you. Check back soon!";
   static const String sitterLocationRequiredTitle =
       'We need your location first to help you';
   static const String sitterSearchLocationHint = 'Search for your location';
