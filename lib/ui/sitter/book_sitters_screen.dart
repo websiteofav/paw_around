@@ -46,7 +46,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
   double _hours = 2.5;
   int _selectedDayIndex = 0;
   String? _selectedTimeSlot = '7:00 AM';
-  String? _selectedProfessionalId;
+  ProfessionalModel? _selectedProfessional;
 
   // Defaults to whatever address Dashboard picked (most recently added),
   // but "Switch address" below can override it for this session.
@@ -83,7 +83,8 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
   }
 
   void _onBookSitters() {
-    if (_selectedProfessionalId == null) {
+    final professional = _selectedProfessional;
+    if (professional == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(AppStrings.pleaseSelectProfessional),
@@ -104,8 +105,6 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
       );
       return;
     }
-    final professional = ProfessionalModel.mockProfessionals
-        .firstWhere((p) => p.id == _selectedProfessionalId);
     final scheduledDate = DateTime.now().add(Duration(days: _selectedDayIndex));
     final totalAmount = (BookSittersTimeSlider.ratePerHour *
             _hours *
@@ -227,8 +226,9 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
               const Divider(color: AppColors.grey100),
               AppSpacing.vertical36,
               BookSittersProfessionalSelector(
-                selectedId: _selectedProfessionalId,
-                onSelect: (id) => setState(() => _selectedProfessionalId = id),
+                selected: _selectedProfessional,
+                onSelect: (professional) =>
+                    setState(() => _selectedProfessional = professional),
               ),
               AppSpacing.vertical32,
               BlocBuilder<BookingFormBloc, BookingFormState>(

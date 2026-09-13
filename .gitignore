@@ -60,4 +60,9 @@ ios/Runner/Secrets.xcconfig
 android/key.properties
 android/app/paw-around-release.keystore
 
+# Firebase Admin SDK service account keys (used by tool/ scripts) — never commit
+*firebase-adminsdk*.json
+*service-account*.json
+serviceAccountKey.json
+
 CLAUDE.md

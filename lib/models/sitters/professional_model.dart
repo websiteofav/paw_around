@@ -1,10 +1,8 @@
-import 'package:paw_around/constants/app_strings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-/// Mock-only professional/sitter entry for the Book Sitters screen. No
-/// professionals backend/marketplace exists yet — see BookSittersScreen's
-/// doc comment. `role`/`rating`/`reviewCount` are snapshotted onto a
-/// BookingModel when a booking is created, so they need real-looking
-/// values even though the roster itself stays hardcoded.
+/// A pet-sitting professional available for booking, stored at
+/// `sitters/{id}`. `role`/`rating`/`reviewCount` are snapshotted onto a
+/// BookingModel when a booking is created.
 class ProfessionalModel {
   final String id;
   final String name;
@@ -16,18 +14,21 @@ class ProfessionalModel {
   const ProfessionalModel({
     required this.id,
     required this.name,
-    this.isAvailable = true,
-    this.role = 'Pet Care Professional',
-    this.rating = 4.8,
-    this.reviewCount = 203,
+    required this.isAvailable,
+    required this.role,
+    required this.rating,
+    required this.reviewCount,
   });
 
-  static const List<ProfessionalModel> mockProfessionals = [
-    ProfessionalModel(id: 'best-available', name: "Malikka"),
-    ProfessionalModel(
-      id: 'stella',
-      name: 'Stella',
-      isAvailable: false,
-    ),
-  ];
+  factory ProfessionalModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return ProfessionalModel(
+      id: doc.id,
+      name: data['name'] as String? ?? '',
+      isAvailable: data['isAvailable'] as bool? ?? true,
+      role: data['role'] as String? ?? 'Pet Care Professional',
+      rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
+      reviewCount: (data['reviewCount'] as num?)?.toInt() ?? 0,
+    );
+  }
 }
