@@ -732,22 +732,25 @@ class AppStrings {
   static const String upcomingSessionTitle = 'Upcoming session';
   static const String confirmedForPrefix = 'Confirmed for';
   static const String sessionForPrefix = 'Session for';
-  static const String petCareProfessional = 'Pet Care Professional';
   static const String reviewsSuffix = 'reviews';
   static const String call = 'Call';
   static const String message = 'Message';
-  static const String assigningYourSitter = 'Assigning your sitter';
-  static const String assigningSitterSubtitlePrefix = "We'll match";
-  static const String assigningSitterSubtitleSuffix =
-      'with the best available professional before the session';
   static const String viewOnMap = 'View on map';
   static const String totalAmountSuffix = 'total amount';
   static const String viewBreakdown = 'View breakdown';
   static const String sitterWillArriveSuffix = 'will arrive at the scheduled time';
-  static const String sitterAssignmentNotice =
-      "You'll be notified once your sitter is assigned";
   static const String reschedule = 'Reschedule';
   static const String cancelBooking = 'Cancel Booking';
+  static const String cancelBookingConfirmationTitle = 'Cancel this booking?';
+  static const String cancelBookingConfirmationMessage =
+      'This session will be cancelled and cannot be undone.';
+  static const String keepBooking = "Don't cancel";
+  static const String failedToCancelBooking =
+      'Failed to cancel booking. Please try again.';
+  static const String bookingCancelledLabel = 'Booking cancelled';
+  static const String rescheduleComingSoon =
+      'Rescheduling isn\'t available yet';
+  static const String bookingNotFound = 'This booking could not be found';
 
   // Share
   static const String sharePost = 'Share Post';

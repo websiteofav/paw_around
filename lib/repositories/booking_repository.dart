@@ -26,4 +26,16 @@ class BookingRepository {
     final docRef = await _bookingsRef.add(booking.toFirestore());
     return docRef.id;
   }
+
+  // Live updates for a single booking, e.g. for the Upcoming Session screen
+  Stream<BookingModel> bookingStream(String bookingId) {
+    return _bookingsRef.doc(bookingId).snapshots().map(BookingModel.fromFirestore);
+  }
+
+  Future<void> cancelBooking(String bookingId) {
+    return _bookingsRef.doc(bookingId).update({
+      'status': BookingStatus.cancelled.name,
+      'updatedAt': Timestamp.fromDate(DateTime.now()),
+    });
+  }
 }

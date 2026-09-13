@@ -3,15 +3,13 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
-import 'package:paw_around/models/sitters/upcoming_session_model.dart';
+import 'package:paw_around/models/sitters/booking_model.dart';
 
-/// Shows the matched sitter (name, role, rating, Call/Message actions), or an
-/// "Assigning your sitter" placeholder while [UpcomingSessionModel.sitterName]
-/// is still null.
+/// Shows the matched sitter's name, role, rating, and Call/Message actions.
 class UpcomingSessionSitterSection extends StatelessWidget {
-  final UpcomingSessionModel session;
+  final BookingModel booking;
 
-  const UpcomingSessionSitterSection({super.key, required this.session});
+  const UpcomingSessionSitterSection({super.key, required this.booking});
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +25,11 @@ class UpcomingSessionSitterSection extends StatelessWidget {
               child: Icon(Icons.person, color: AppColors.primaryDark),
             ),
             AppSpacing.horizontal12,
-            Expanded(
-              child: session.isSitterAssigned
-                  ? _buildAssignedInfo()
-                  : _buildAssigningInfo(),
-            ),
+            Expanded(child: _buildAssignedInfo()),
           ],
         ),
-        if (session.isSitterAssigned) ...[
-          AppSpacing.vertical12,
-          _buildActionPills(),
-        ],
+        AppSpacing.vertical12,
+        _buildActionPills(),
       ],
     );
   }
@@ -47,7 +39,7 @@ class UpcomingSessionSitterSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          session.sitterName!,
+          booking.professionalName,
           style: AppTextStyles.interBoldStyle700(
               fontSize: 16, fontColor: AppColors.grey1000),
         ),
@@ -55,38 +47,18 @@ class UpcomingSessionSitterSection extends StatelessWidget {
           spacing: 4,
           children: [
             Text(
-              session.sitterRole ?? AppStrings.petCareProfessional,
+              booking.professionalRole,
               style: AppTextStyles.interRegularStyle400(
                   fontSize: 12, fontColor: AppColors.grey600),
             ),
             const SizedBox(width: 8),
             const Icon(Icons.star, size: 16, color: AppColors.ratingColor),
             Text(
-              '${session.sitterRating} (${session.sitterReviewCount} ${AppStrings.reviewsSuffix})',
+              '${booking.professionalRating} (${booking.professionalReviewCount} ${AppStrings.reviewsSuffix})',
               style: AppTextStyles.interRegularStyle400(
                   fontSize: 12, fontColor: AppColors.grey600),
             ),
           ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAssigningInfo() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          AppStrings.assigningYourSitter,
-          style: AppTextStyles.interBoldStyle700(
-              fontSize: 16, fontColor: AppColors.grey1000),
-        ),
-        AppSpacing.vertical4,
-        Text(
-          '${AppStrings.assigningSitterSubtitlePrefix} ${session.petName} '
-          '${AppStrings.assigningSitterSubtitleSuffix}',
-          style: AppTextStyles.interRegularStyle400(
-              fontSize: 12, fontColor: AppColors.grey600),
         ),
       ],
     );

@@ -17,7 +17,6 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/addresses/address_model.dart';
 import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/models/sitters/professional_model.dart';
-import 'package:paw_around/models/sitters/upcoming_session_model.dart';
 import 'package:paw_around/repositories/booking_repository.dart';
 import 'package:paw_around/ui/location/pick_location_screen.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_day_selector.dart';
@@ -32,9 +31,7 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 /// from the saved-address list or right after adding a new one).
 ///
 /// "Book Sitters" persists a real BookingModel to Firestore via
-/// BookingFormBloc, then opens the mock UpcomingSessionScreen — the
-/// Upcoming Session screen itself doesn't read from Firestore yet, that's
-/// a follow-up. See BookingModel's doc comment.
+/// BookingFormBloc, then opens UpcomingSessionScreen for the new booking.
 class BookSittersScreen extends StatefulWidget {
   final AddressModel address;
 
@@ -137,36 +134,8 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
     _bookingFormBloc.add(SubmitBooking(booking: booking));
   }
 
-  // The Upcoming Session screen doesn't read from Firestore yet (follow-up
-  // task) — it still takes a client-only UpcomingSessionModel, built here
-  // from the same real pet used for the just-persisted BookingModel.
-  void _navigateToUpcomingSession() {
-    final petListState = context.read<PetListBloc>().state;
-    final selectedPet =
-        petListState is PetListLoaded ? petListState.selectedPet : null;
-    const mock = UpcomingSessionModel.mockAssignedSession;
-    context.pushNamed(
-      AppRoutes.upcomingSession,
-      extra: selectedPet == null
-          ? mock
-          : UpcomingSessionModel(
-              petName: selectedPet.name,
-              petBreed: selectedPet.breed,
-              petAgeLabel: selectedPet.ageString,
-              petImagePath: selectedPet.imagePath,
-              sitterName: mock.sitterName,
-              sitterRole: mock.sitterRole,
-              sitterRating: mock.sitterRating,
-              sitterReviewCount: mock.sitterReviewCount,
-              confirmedDateLabel: mock.confirmedDateLabel,
-              sessionDayLabel: mock.sessionDayLabel,
-              sessionTimeLabel: mock.sessionTimeLabel,
-              startsInLabel: mock.startsInLabel,
-              locationLabel: mock.locationLabel,
-              locationAddress: mock.locationAddress,
-              totalAmount: mock.totalAmount,
-            ),
-    );
+  void _navigateToUpcomingSession(String bookingId) {
+    context.pushNamed(AppRoutes.upcomingSession, extra: bookingId);
   }
 
   @override
@@ -176,7 +145,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
       child: BlocListener<BookingFormBloc, BookingFormState>(
         listener: (context, state) {
           if (state is BookingFormSuccess) {
-            _navigateToUpcomingSession();
+            _navigateToUpcomingSession(state.bookingId);
           } else if (state is BookingFormError) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(

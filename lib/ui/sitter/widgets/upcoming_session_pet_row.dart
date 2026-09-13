@@ -6,13 +6,13 @@ import 'package:paw_around/constants/app_decorations.dart';
 import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
-import 'package:paw_around/models/sitters/upcoming_session_model.dart';
+import 'package:paw_around/models/sitters/booking_model.dart';
 
 /// Pill row showing which pet the session is for.
 class UpcomingSessionPetRow extends StatelessWidget {
-  final UpcomingSessionModel session;
+  final BookingModel booking;
 
-  const UpcomingSessionPetRow({super.key, required this.session});
+  const UpcomingSessionPetRow({super.key, required this.booking});
 
   @override
   Widget build(BuildContext context) {
@@ -32,12 +32,12 @@ class UpcomingSessionPetRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${AppStrings.sessionForPrefix} ${session.petName}',
+                  '${AppStrings.sessionForPrefix} ${booking.petName}',
                   style: AppTextStyles.interBoldStyle700(
                       fontSize: 16, fontColor: AppColors.grey1000),
                 ),
                 Text(
-                  '${session.petBreed} · ${session.petAgeLabel}',
+                  '${booking.petBreed} · ${booking.petAgeLabel}',
                   style: AppTextStyles.interRegularStyle400(
                       fontSize: 12, fontColor: AppColors.grey600),
                 ),
@@ -50,7 +50,7 @@ class UpcomingSessionPetRow extends StatelessWidget {
   }
 
   Widget _buildAvatar() {
-    final imagePath = session.petImagePath;
+    final imagePath = booking.petImagePath;
     if (imagePath == null || imagePath.isEmpty || !imagePath.startsWith('http')) {
       return const CircleAvatar(
         radius: 28,

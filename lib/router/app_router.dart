@@ -16,7 +16,6 @@ import 'package:paw_around/bloc/home/home_bloc.dart';
 import 'package:paw_around/models/addresses/picked_location.dart';
 import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
-import 'package:paw_around/models/sitters/upcoming_session_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/address_repository.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
@@ -360,8 +359,8 @@ class AppRouter {
               path: AppRoutes.upcomingSession,
               name: AppRoutes.upcomingSession,
               builder: (context, state) {
-                final session = state.extra as UpcomingSessionModel;
-                return UpcomingSessionScreen(session: session);
+                final bookingId = state.extra as String;
+                return UpcomingSessionScreen(bookingId: bookingId);
               },
             ),
 
