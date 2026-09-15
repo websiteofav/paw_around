@@ -38,4 +38,12 @@ class BookingRepository {
       'updatedAt': Timestamp.fromDate(DateTime.now()),
     });
   }
+
+  // Marks a booking as reviewed so it isn't prompted for a review again
+  Future<void> markReviewed(String bookingId) {
+    return _bookingsRef.doc(bookingId).update({
+      'hasReview': true,
+      'updatedAt': Timestamp.fromDate(DateTime.now()),
+    });
+  }
 }

@@ -11,6 +11,7 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/ui/sitter/widgets/cancel_booking_dialog.dart';
+import 'package:paw_around/ui/sitter/widgets/rate_sitter_prompt.dart';
 import 'package:paw_around/ui/sitter/widgets/upcoming_session_bottom_bar.dart';
 import 'package:paw_around/ui/sitter/widgets/upcoming_session_detail_row.dart';
 import 'package:paw_around/ui/sitter/widgets/upcoming_session_pet_row.dart';
@@ -99,7 +100,7 @@ class UpcomingSessionCard extends StatelessWidget {
                     trailingLabel: AppStrings.viewBreakdown,
                     onTrailingTap: () {},
                   ),
-                  if (!booking.isCancelled) ...[
+                  if (booking.isUpcoming) ...[
                     _divider(),
                     AppSpacing.vertical16,
                     InfoBanner(
@@ -108,7 +109,15 @@ class UpcomingSessionCard extends StatelessWidget {
                     ),
                   ],
                   AppSpacing.vertical24,
-                  if (!booking.isCancelled)
+                  if (booking.canReview)
+                    RateSitterPrompt(
+                      professionalId: booking.professionalId,
+                      professionalName: booking.professionalName,
+                      bookingId: booking.id,
+                    )
+                  else if (booking.hasReview)
+                    const InfoBanner(text: AppStrings.reviewAlreadySubmitted)
+                  else if (!booking.isCancelled)
                     UpcomingSessionBottomBar(
                       isCancelling: state.isCancelling,
                       onReschedule: () {

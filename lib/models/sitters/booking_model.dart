@@ -29,6 +29,7 @@ class BookingModel extends Equatable {
   final double durationHours;
   final int totalAmount;
   final BookingStatus status;
+  final bool hasReview;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -51,6 +52,7 @@ class BookingModel extends Equatable {
     required this.durationHours,
     required this.totalAmount,
     required this.status,
+    this.hasReview = false,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -119,6 +121,7 @@ class BookingModel extends Equatable {
       'durationHours': durationHours,
       'totalAmount': totalAmount,
       'status': status.name,
+      'hasReview': hasReview,
       'createdAt': Timestamp.fromDate(createdAt),
       'updatedAt': Timestamp.fromDate(updatedAt),
     };
@@ -145,12 +148,24 @@ class BookingModel extends Equatable {
       durationHours: (data['durationHours'] as num?)?.toDouble() ?? 0.0,
       totalAmount: (data['totalAmount'] as num?)?.toInt() ?? 0,
       status: BookingStatus.values.byName(data['status'] as String? ?? 'confirmed'),
+      hasReview: data['hasReview'] as bool? ?? false,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       updatedAt: (data['updatedAt'] as Timestamp).toDate(),
     );
   }
 
   bool get isCancelled => status == BookingStatus.cancelled;
+
+  /// Whether the session is still ahead of us — governs whether it still
+  /// makes sense to show "sitter will arrive" / reschedule / cancel.
+  bool get isUpcoming =>
+      !isCancelled && DateTime.now().isBefore(scheduledDateTime);
+
+  /// A session can be reviewed once it's actually happened and hasn't
+  /// already been reviewed — there's no separate "completed" status, so
+  /// this just checks the scheduled time has passed.
+  bool get canReview =>
+      !isCancelled && !hasReview && DateTime.now().isAfter(scheduledDateTime);
 
   String get confirmedDateLabel => AppDateUtils.formatDateCard(scheduledDate);
 
@@ -204,6 +219,7 @@ class BookingModel extends Equatable {
         durationHours,
         totalAmount,
         status,
+        hasReview,
         createdAt,
         updatedAt,
       ];
