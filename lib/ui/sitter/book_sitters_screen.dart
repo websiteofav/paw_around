@@ -9,15 +9,16 @@ import 'package:paw_around/bloc/sitters/booking_form/booking_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
-import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/addresses/address_model.dart';
 import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/models/sitters/professional_model.dart';
 import 'package:paw_around/repositories/booking_repository.dart';
 import 'package:paw_around/ui/location/pick_location_screen.dart';
+import 'package:paw_around/ui/sitter/widgets/book_sitters_app_bar.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_form.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_time_slider.dart';
+import 'package:paw_around/ui/sitter/widgets/booking_reminder_helper.dart';
 
 /// Booking/scheduling screen shown once an address has been picked (either
 /// from the saved-address list or right after adding a new one).
@@ -39,6 +40,10 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
   int _selectedDayIndex = 0;
   String? _selectedTimeSlot = '7:00 AM';
   ProfessionalModel? _selectedProfessional;
+
+  // Snapshot of the booking just submitted — the BookingFormBloc listener
+  // uses it to schedule a reminder once BookingFormSuccess reports the id.
+  BookingModel? _pendingBooking;
 
   // Defaults to whatever address Dashboard picked (most recently added),
   // but "Switch address" below can override it for this session.
@@ -122,7 +127,20 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
       totalAmount: totalAmount,
     );
 
+    _pendingBooking = booking;
     _bookingFormBloc.add(SubmitBooking(booking: booking));
+  }
+
+  Future<void> _onBookingSuccess(String bookingId) async {
+    final booking = _pendingBooking;
+    if (booking != null && mounted) {
+      await BookingReminderHelper.scheduleForBooking(
+        context: context,
+        booking: booking,
+        bookingId: bookingId,
+      );
+    }
+    if (mounted) _navigateToUpcomingSession(bookingId);
   }
 
   void _navigateToUpcomingSession(String bookingId) {
@@ -136,7 +154,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
       child: BlocListener<BookingFormBloc, BookingFormState>(
         listener: (context, state) {
           if (state is BookingFormSuccess) {
-            _navigateToUpcomingSession(state.bookingId);
+            _onBookingSuccess(state.bookingId);
           } else if (state is BookingFormError) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -148,7 +166,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
         },
         child: Scaffold(
           backgroundColor: AppColors.white,
-          appBar: _buildAppBar(),
+          appBar: const BookSittersAppBar(),
           body: BookSittersForm(
             isScheduleSelected: _isScheduleSelected,
             onScheduleChanged: (value) =>
@@ -171,24 +189,6 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
           ),
         ),
       ),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: AppColors.white,
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      surfaceTintColor: Colors.transparent,
-      automaticallyImplyLeading: false,
-      title: Text(
-        AppStrings.petSittersTitle,
-        style: AppTextStyles.semiBoldStyle600(
-          fontSize: 18,
-          fontColor: AppColors.textPrimary,
-        ),
-      ),
-      centerTitle: true,
     );
   }
 }

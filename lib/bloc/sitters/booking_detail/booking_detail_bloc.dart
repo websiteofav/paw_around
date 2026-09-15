@@ -5,6 +5,7 @@ import 'package:paw_around/bloc/sitters/booking_detail/booking_detail_event.dart
 import 'package:paw_around/bloc/sitters/booking_detail/booking_detail_state.dart';
 import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/repositories/booking_repository.dart';
+import 'package:paw_around/services/notification_service.dart';
 
 class _BookingUpdated extends BookingDetailEvent {
   final BookingModel booking;
@@ -63,6 +64,7 @@ class BookingDetailBloc extends Bloc<BookingDetailEvent, BookingDetailState> {
     emit(BookingDetailLoaded(booking: current.booking, isCancelling: true));
     try {
       await _bookingRepository.cancelBooking(bookingId);
+      await NotificationService().cancelBookingReminder(bookingId: bookingId);
     } catch (e) {
       emit(BookingDetailLoaded(
         booking: current.booking,
