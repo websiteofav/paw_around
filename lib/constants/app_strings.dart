@@ -727,6 +727,8 @@ class AppStrings {
   static const String failedToBookSitter = 'Failed to book sitter. Please try again.';
   static const String noProfessionalsAvailable = 'No professionals available right now';
   static const String failedToLoadProfessionals = 'Failed to load professionals';
+  static const String selectProfessionalForPricing =
+      'Select a professional above to see pricing';
   static const String selectASavedAddress = 'Select a saved address';
 
   // Upcoming Session

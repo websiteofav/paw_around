@@ -24,6 +24,7 @@ const _sitters = <String, Map<String, Object>>{
     'isAvailable': true,
     'rating': 4.8,
     'reviewCount': 203,
+    'hourlyRate': 720.0,
   },
   'arjun-mehta': {
     'name': 'Arjun Mehta',
@@ -31,6 +32,7 @@ const _sitters = <String, Map<String, Object>>{
     'isAvailable': true,
     'rating': 4.6,
     'reviewCount': 128,
+    'hourlyRate': 650.0,
   },
   'stella-fernandes': {
     'name': 'Stella Fernandes',
@@ -38,6 +40,7 @@ const _sitters = <String, Map<String, Object>>{
     'isAvailable': false,
     'rating': 4.9,
     'reviewCount': 311,
+    'hourlyRate': 850.0,
   },
 };
 

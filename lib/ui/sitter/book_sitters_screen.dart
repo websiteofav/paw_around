@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:paw_around/bloc/addresses/address/address_bloc.dart';
-import 'package:paw_around/bloc/addresses/address/address_state.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_state.dart';
 import 'package:paw_around/bloc/sitters/booking_form/booking_form_bloc.dart';
@@ -10,7 +8,6 @@ import 'package:paw_around/bloc/sitters/booking_form/booking_form_event.dart';
 import 'package:paw_around/bloc/sitters/booking_form/booking_form_state.dart';
 import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
-import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
@@ -19,13 +16,8 @@ import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/models/sitters/professional_model.dart';
 import 'package:paw_around/repositories/booking_repository.dart';
 import 'package:paw_around/ui/location/pick_location_screen.dart';
-import 'package:paw_around/ui/sitter/widgets/book_sitters_day_selector.dart';
-import 'package:paw_around/ui/sitter/widgets/book_sitters_location_section.dart';
-import 'package:paw_around/ui/sitter/widgets/book_sitters_professional_selector.dart';
-import 'package:paw_around/ui/sitter/widgets/book_sitters_schedule_toggle.dart';
+import 'package:paw_around/ui/sitter/widgets/book_sitters_form.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_time_slider.dart';
-import 'package:paw_around/ui/sitter/widgets/book_sitters_time_slot_grid.dart';
-import 'package:paw_around/ui/widgets/common_button.dart';
 
 /// Booking/scheduling screen shown once an address has been picked (either
 /// from the saved-address list or right after adding a new one).
@@ -106,7 +98,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
       return;
     }
     final scheduledDate = DateTime.now().add(Duration(days: _selectedDayIndex));
-    final totalAmount = (BookSittersTimeSlider.ratePerHour *
+    final totalAmount = (professional.hourlyRate *
             _hours *
             (1 - BookSittersTimeSlider.discount))
         .round();
@@ -154,103 +146,49 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
             );
           }
         },
-        child: _buildScaffold(),
+        child: Scaffold(
+          backgroundColor: AppColors.white,
+          appBar: _buildAppBar(),
+          body: BookSittersForm(
+            isScheduleSelected: _isScheduleSelected,
+            onScheduleChanged: (value) =>
+                setState(() => _isScheduleSelected = value),
+            activeAddress: _activeAddress,
+            onEditLocation: _onEditLocation,
+            onAddNewAddress: _onAddNewAddress,
+            onSwitchAddress: _onSwitchAddress,
+            selectedDayIndex: _selectedDayIndex,
+            onDaySelect: (index) => setState(() => _selectedDayIndex = index),
+            selectedTimeSlot: _selectedTimeSlot,
+            onTimeSlotSelect: (slot) =>
+                setState(() => _selectedTimeSlot = slot),
+            selectedProfessional: _selectedProfessional,
+            onProfessionalSelect: (professional) =>
+                setState(() => _selectedProfessional = professional),
+            hours: _hours,
+            onHoursChanged: (value) => setState(() => _hours = value),
+            onBookSitters: _onBookSitters,
+          ),
+        ),
       ),
     );
   }
 
-  Widget _buildScaffold() {
-    return Scaffold(
+  PreferredSizeWidget _buildAppBar() {
+    return AppBar(
       backgroundColor: AppColors.white,
-      appBar: AppBar(
-        backgroundColor: AppColors.white,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        surfaceTintColor: Colors.transparent,
-        automaticallyImplyLeading: false,
-        title: Text(
-          AppStrings.petSittersTitle,
-          style: AppTextStyles.semiBoldStyle600(
-            fontSize: 18,
-            fontColor: AppColors.textPrimary,
-          ),
-        ),
-        centerTitle: true,
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: AppEdgeInsets.horizontalLarge,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppSpacing.vertical20,
-              BookSittersScheduleToggle(
-                isScheduleSelected: _isScheduleSelected,
-                onChanged: (value) =>
-                    setState(() => _isScheduleSelected = value),
-              ),
-              AppSpacing.vertical36,
-              BlocBuilder<AddressBloc, AddressState>(
-                builder: (context, state) {
-                  final addresses = state is AddressLoaded
-                      ? state.addresses
-                      : <AddressModel>[_activeAddress];
-                  return BookSittersLocationSection(
-                    selectedAddress: _activeAddress,
-                    addresses: addresses,
-                    onEdit: _onEditLocation,
-                    onAddNewAddress: _onAddNewAddress,
-                    onSwitchAddress: _onSwitchAddress,
-                  );
-                },
-              ),
-              AppSpacing.vertical24,
-              BookSittersTimeSlider(
-                hours: _hours,
-                onChanged: (value) => setState(() => _hours = value),
-              ),
-              AppSpacing.vertical36,
-              const Divider(color: AppColors.grey100),
-              AppSpacing.vertical36,
-
-              BookSittersDaySelector(
-                selectedIndex: _selectedDayIndex,
-                onSelect: (index) => setState(() => _selectedDayIndex = index),
-              ),
-              AppSpacing.vertical36,
-              BookSittersTimeSlotGrid(
-                selected: _selectedTimeSlot,
-                onSelect: (slot) => setState(() => _selectedTimeSlot = slot),
-              ),
-              AppSpacing.vertical36,
-              const Divider(color: AppColors.grey100),
-              AppSpacing.vertical36,
-              BookSittersProfessionalSelector(
-                selected: _selectedProfessional,
-                onSelect: (professional) =>
-                    setState(() => _selectedProfessional = professional),
-              ),
-              AppSpacing.vertical32,
-              BlocBuilder<BookingFormBloc, BookingFormState>(
-                builder: (context, state) {
-                  final isSubmitting = state is BookingFormSubmitting;
-                  return CommonButton(
-                    text: AppStrings.bookSittersButton,
-                    onPressed: _onBookSitters,
-                    isLoading: isSubmitting,
-                    customColor: AppColors.primary,
-                    textStyle: AppTextStyles.interBoldStyle700(
-                        fontSize: 16, fontColor: AppColors.grey1000),
-                    customTextColor: AppColors.grey1000,
-                  );
-                },
-              ),
-              // Clears Dashboard's floating bottom nav bar shown here too.
-              const SizedBox(height: 120),
-            ],
-          ),
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
+      automaticallyImplyLeading: false,
+      title: Text(
+        AppStrings.petSittersTitle,
+        style: AppTextStyles.semiBoldStyle600(
+          fontSize: 18,
+          fontColor: AppColors.textPrimary,
         ),
       ),
+      centerTitle: true,
     );
   }
 }

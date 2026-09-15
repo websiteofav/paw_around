@@ -7,25 +7,26 @@ import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 
-/// "Time (Hours)" ruler + mock pricing on the Book Sitters screen. No
-/// pricing backend exists yet — see BookSittersScreen's doc comment.
+/// "Time (Hours)" ruler + pricing on the Book Sitters screen, priced off
+/// the selected professional's hourly rate.
 ///
 /// Uses the same RulerPicker pattern as PetRulerField
 /// (lib/ui/pets/widgets/pet_form_selectors.dart) for consistency with the
 /// app's other drag-to-pick-a-number fields.
 class BookSittersTimeSlider extends StatefulWidget {
   final double hours;
+  final double ratePerHour;
   final ValueChanged<double> onChanged;
 
-  // Mock hourly rate + a fixed 35% promo discount — no real pricing engine
-  // exists yet. Public so BookSittersScreen can compute the same
+  // Fixed 35% promo discount — a marketing lever independent of any one
+  // sitter's rate. Public so BookSittersScreen can compute the same
   // totalAmount to persist on a booking.
-  static const double ratePerHour = 720;
   static const double discount = 0.35;
 
   const BookSittersTimeSlider({
     super.key,
     required this.hours,
+    required this.ratePerHour,
     required this.onChanged,
   });
 
@@ -62,8 +63,8 @@ class _BookSittersTimeSliderState extends State<BookSittersTimeSlider> {
 
   @override
   Widget build(BuildContext context) {
-    final originalPrice = (BookSittersTimeSlider.ratePerHour * widget.hours).round();
-    final discountedPrice = (BookSittersTimeSlider.ratePerHour *
+    final originalPrice = (widget.ratePerHour * widget.hours).round();
+    final discountedPrice = (widget.ratePerHour *
             widget.hours *
             (1 - BookSittersTimeSlider.discount))
         .round();
