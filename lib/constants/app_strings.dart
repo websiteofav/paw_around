@@ -754,6 +754,16 @@ class AppStrings {
   static const String rescheduleComingSoon =
       'Rescheduling isn\'t available yet';
   static const String bookingNotFound = 'This booking could not be found';
+  static const String rateYourSitterTitle = 'How was your session?';
+  static const String rateYourSitterSubtitlePrefix = 'Rate your session with';
+  static const String addACommentOptional = 'Add a comment (optional)';
+  static const String submitReview = 'Submit Review';
+  static const String rateSitterButton = 'Rate Sitter';
+  static const String pleaseSelectRating = 'Please select a rating';
+  static const String failedToSubmitReview =
+      'Failed to submit review. Please try again.';
+  static const String reviewSubmittedThanks = 'Thanks for your feedback!';
+  static const String reviewAlreadySubmitted = "You've rated this session";
 
   // Share
   static const String sharePost = 'Share Post';
