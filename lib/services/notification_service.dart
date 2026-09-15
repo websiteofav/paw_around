@@ -13,6 +13,7 @@ enum ReminderType {
   vaccine,
   grooming,
   tickFlea,
+  sitterBooking,
 }
 
 extension ReminderTypeExtension on ReminderType {
@@ -24,6 +25,8 @@ extension ReminderTypeExtension on ReminderType {
         return 'grooming';
       case ReminderType.tickFlea:
         return 'tick & flea treatment';
+      case ReminderType.sitterBooking:
+        return 'sitter visit';
     }
   }
 
@@ -35,6 +38,8 @@ extension ReminderTypeExtension on ReminderType {
         return 10000000;
       case ReminderType.tickFlea:
         return 20000000;
+      case ReminderType.sitterBooking:
+        return 30000000;
     }
   }
 }
@@ -422,6 +427,49 @@ class NotificationService {
   }) async {
     final baseId = _careBaseId(petId, type);
     await _cancelCountdownReminders(baseId);
+  }
+
+  // ============ SITTER BOOKING REMINDERS ============
+
+  /// Generate a stable notification id for a booking
+  int _bookingReminderId(String bookingId) {
+    return (bookingId.hashCode.abs() % 1000000) + ReminderType.sitterBooking.typeOffset;
+  }
+
+  /// Schedule a single "sitter arriving soon" reminder, 1 hour before the
+  /// session — skipped if that time has already passed.
+  Future<void> scheduleBookingReminder({
+    required String bookingId,
+    required String petName,
+    required String professionalName,
+    required DateTime sessionDateTime,
+  }) async {
+    final scheduledDate = sessionDateTime.subtract(const Duration(hours: 1));
+    if (scheduledDate.isBefore(DateTime.now())) return;
+
+    try {
+      final payload = {'bookingId': bookingId, 'reminderType': ReminderType.sitterBooking.name};
+      await _scheduleNotification(
+        id: _bookingReminderId(bookingId),
+        title: 'Sitter arriving soon',
+        body: "$professionalName will arrive for $petName's session in about an hour",
+        scheduledDate: scheduledDate,
+        payload: jsonEncode(payload),
+      );
+    } catch (e) {
+      debugPrint('Error scheduling booking reminder: $e');
+      // Don't rethrow - allow app to continue even if notification fails
+    }
+  }
+
+  /// Cancel a sitter booking reminder, e.g. when the booking is cancelled
+  Future<void> cancelBookingReminder({required String bookingId}) async {
+    try {
+      await _plugin.cancel(_bookingReminderId(bookingId));
+    } catch (e) {
+      debugPrint('Error cancelling booking reminder: $e');
+      // Don't rethrow - allow app to continue
+    }
   }
 
   // ============ BULK OPERATIONS ============

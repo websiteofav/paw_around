@@ -166,6 +166,24 @@ class BookingModel extends Equatable {
     return 'Starts in $days day${days > 1 ? 's' : ''}';
   }
 
+  /// [scheduledDate] combined with the parsed [scheduledTimeSlot] (e.g.
+  /// "7:00 AM") into a single DateTime — falls back to [scheduledDate] at
+  /// midnight if the slot string doesn't match the expected "h:mm AM/PM"
+  /// format.
+  DateTime get scheduledDateTime {
+    final match =
+        RegExp(r'^(\d{1,2}):(\d{2})\s*(AM|PM)$', caseSensitive: false)
+            .firstMatch(scheduledTimeSlot.trim());
+    if (match == null) return scheduledDate;
+    var hour = int.parse(match.group(1)!);
+    final minute = int.parse(match.group(2)!);
+    final isPm = match.group(3)!.toUpperCase() == 'PM';
+    if (isPm && hour != 12) hour += 12;
+    if (!isPm && hour == 12) hour = 0;
+    return DateTime(
+        scheduledDate.year, scheduledDate.month, scheduledDate.day, hour, minute);
+  }
+
   @override
   List<Object?> get props => [
         id,
