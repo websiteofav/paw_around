@@ -99,12 +99,14 @@ class UpcomingSessionCard extends StatelessWidget {
                     trailingLabel: AppStrings.viewBreakdown,
                     onTrailingTap: () {},
                   ),
-                  _divider(),
-                  AppSpacing.vertical16,
-                  InfoBanner(
-                    text:
-                        '${booking.professionalName} ${AppStrings.sitterWillArriveSuffix}',
-                  ),
+                  if (!booking.isCancelled) ...[
+                    _divider(),
+                    AppSpacing.vertical16,
+                    InfoBanner(
+                      text:
+                          '${booking.professionalName} ${AppStrings.sitterWillArriveSuffix}',
+                    ),
+                  ],
                   AppSpacing.vertical24,
                   if (!booking.isCancelled)
                     UpcomingSessionBottomBar(

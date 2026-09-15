@@ -127,25 +127,29 @@ class _ProfessionalCard extends StatelessWidget {
                 color: isSelected ? AppColors.secondaryCTA : AppColors.grey100),
             borderRadius: AppSmoothRadius.custom(24)),
         width: 110,
+        padding: const EdgeInsets.symmetric(horizontal: 4),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.person,
-              size: 116,
+              size: 72,
               color:
                   isAvailable ? AppColors.secondaryCTA : AppColors.textDisabled,
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               professional.name,
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
               style: AppTextStyles.interBoldStyle700(
                 fontSize: 16,
                 fontColor: AppColors.grey1000,
               ),
             ),
-            const SizedBox(height: 8),
-            if (!isAvailable)
+            if (!isAvailable) ...[
+              const SizedBox(height: 6),
               Text(
                 AppStrings.unavailable,
                 style: AppTextStyles.interMediumStyle500(
@@ -153,6 +157,7 @@ class _ProfessionalCard extends StatelessWidget {
                   fontColor: AppColors.grey1000,
                 ).copyWith(decoration: TextDecoration.underline),
               ),
+            ],
           ],
         ),
       ),
