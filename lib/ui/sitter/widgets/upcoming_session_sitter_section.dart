@@ -54,7 +54,7 @@ class UpcomingSessionSitterSection extends StatelessWidget {
             const SizedBox(width: 8),
             const Icon(Icons.star, size: 16, color: AppColors.ratingColor),
             Text(
-              '${booking.professionalRating} (${booking.professionalReviewCount} ${AppStrings.reviewsSuffix})',
+              '${booking.professionalRating.toStringAsFixed(2)} (${booking.professionalReviewCount} ${AppStrings.reviewsSuffix})',
               style: AppTextStyles.interRegularStyle400(
                   fontSize: 12, fontColor: AppColors.grey600),
             ),

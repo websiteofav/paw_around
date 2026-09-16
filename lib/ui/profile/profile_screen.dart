@@ -177,6 +177,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ProfileAccountSection(
                           onMyPostsTap: () =>
                               context.pushNamed(AppRoutes.myPosts),
+                          onMyBookingsTap: () =>
+                              context.pushNamed(AppRoutes.myBookings),
                           onAccountSettingsTap: () =>
                               _showComingSoon(AppStrings.accountSettings),
                           onNotificationsTap: () =>
