@@ -32,6 +32,13 @@ class BookingRepository {
     return _bookingsRef.doc(bookingId).snapshots().map(BookingModel.fromFirestore);
   }
 
+  // Live updates for all of the current user's bookings, most recently
+  // made first, e.g. for the My Bookings list
+  Stream<List<BookingModel>> bookingsStream() {
+    return _bookingsRef.orderBy('createdAt', descending: true).snapshots().map(
+        (snapshot) => snapshot.docs.map(BookingModel.fromFirestore).toList());
+  }
+
   Future<void> cancelBooking(String bookingId) {
     return _bookingsRef.doc(bookingId).update({
       'status': BookingStatus.cancelled.name,

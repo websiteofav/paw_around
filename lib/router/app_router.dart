@@ -45,6 +45,7 @@ import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/pets/pet_qr_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
+import 'package:paw_around/ui/sitter/my_bookings_screen.dart';
 import 'package:paw_around/ui/sitter/upcoming_session_screen.dart';
 import 'package:paw_around/ui/profile/profile_screen.dart';
 import 'package:paw_around/ui/profile/edit_profile_screen.dart';
@@ -362,6 +363,13 @@ class AppRouter {
                 final bookingId = state.extra as String;
                 return UpcomingSessionScreen(bookingId: bookingId);
               },
+            ),
+
+            // My Bookings Route
+            GoRoute(
+              path: AppRoutes.myBookings,
+              name: AppRoutes.myBookings,
+              builder: (context, state) => const MyBookingsScreen(),
             ),
 
             // Profile Route

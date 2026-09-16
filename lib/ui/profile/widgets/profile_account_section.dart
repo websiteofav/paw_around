@@ -9,6 +9,7 @@ import 'package:paw_around/ui/widgets/scale_button.dart';
 
 class ProfileAccountSection extends StatelessWidget {
   final VoidCallback onMyPostsTap;
+  final VoidCallback onMyBookingsTap;
   final VoidCallback onAccountSettingsTap;
   final VoidCallback onNotificationsTap;
   final VoidCallback onPrivacyTap;
@@ -19,6 +20,7 @@ class ProfileAccountSection extends StatelessWidget {
   const ProfileAccountSection({
     super.key,
     required this.onMyPostsTap,
+    required this.onMyBookingsTap,
     required this.onAccountSettingsTap,
     required this.onNotificationsTap,
     required this.onPrivacyTap,
@@ -54,6 +56,13 @@ class ProfileAccountSection extends StatelessWidget {
             assetPath: AppIcons.myPostsIcon,
             title: AppStrings.myPosts,
             onTap: onMyPostsTap,
+          ),
+          const Divider(height: 1, color: AppColors.border),
+          _buildItem(
+            assetPath: AppIcons.sitterCalendarEditIcon,
+            title: AppStrings.myBookingsTitle,
+            onTap: onMyBookingsTap,
+            isPng: true,
           ),
           const Divider(height: 1, color: AppColors.border),
           _buildItem(

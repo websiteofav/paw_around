@@ -764,6 +764,12 @@ class AppStrings {
       'Failed to submit review. Please try again.';
   static const String reviewSubmittedThanks = 'Thanks for your feedback!';
   static const String reviewAlreadySubmitted = "You've rated this session";
+  static const String myBookingsTitle = 'My Bookings';
+  static const String noBookingsYetTitle = 'No bookings yet';
+  static const String noBookingsYetSubtitle =
+      "Sessions you book with a sitter will show up here";
+  static const String confirmedLabel = 'Confirmed';
+  static const String failedToLoadBookings = 'Failed to load bookings';
 
   // Share
   static const String sharePost = 'Share Post';

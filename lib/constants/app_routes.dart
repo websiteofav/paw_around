@@ -27,6 +27,7 @@ class AppRoutes {
 
   // Sitter / Booking Routes
   static const String upcomingSession = '/sitter/upcoming-session';
+  static const String myBookings = '/sitter/my-bookings';
 
   // Location Picker Routes
   static const String pickLocation = '/pick-location';
