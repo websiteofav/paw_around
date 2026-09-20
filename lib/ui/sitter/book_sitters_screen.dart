@@ -119,6 +119,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
       professionalRole: professional.role,
       professionalRating: professional.rating,
       professionalReviewCount: professional.reviewCount,
+      professionalPhone: professional.phoneNumber,
       addressLabel: _activeAddress.label,
       addressText: _activeAddress.fullAddress,
       scheduledDate: scheduledDate,

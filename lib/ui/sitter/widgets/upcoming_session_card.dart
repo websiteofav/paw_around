@@ -12,6 +12,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/ui/sitter/widgets/cancel_booking_dialog.dart';
 import 'package:paw_around/ui/sitter/widgets/rate_sitter_prompt.dart';
+import 'package:paw_around/ui/sitter/widgets/reschedule_bottom_sheet.dart';
 import 'package:paw_around/ui/sitter/widgets/upcoming_session_bottom_bar.dart';
 import 'package:paw_around/ui/sitter/widgets/upcoming_session_detail_row.dart';
 import 'package:paw_around/ui/sitter/widgets/upcoming_session_pet_row.dart';
@@ -120,12 +121,11 @@ class UpcomingSessionCard extends StatelessWidget {
                   else if (!booking.isCancelled)
                     UpcomingSessionBottomBar(
                       isCancelling: state.isCancelling,
-                      onReschedule: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text(AppStrings.rescheduleComingSoon)),
-                        );
-                      },
+                      isRescheduling: state.isRescheduling,
+                      onReschedule: () => RescheduleBottomSheet.show(
+                        context: context,
+                        booking: booking,
+                      ),
                       onCancel: () => CancelBookingDialog.show(
                         context: context,
                         onConfirm: () => context

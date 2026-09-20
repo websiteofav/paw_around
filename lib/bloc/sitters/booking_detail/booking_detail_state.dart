@@ -16,15 +16,20 @@ class BookingDetailLoaded extends BookingDetailState {
   final BookingModel booking;
   final bool isCancelling;
   final String? cancelError;
+  final bool isRescheduling;
+  final String? rescheduleError;
 
   const BookingDetailLoaded({
     required this.booking,
     this.isCancelling = false,
     this.cancelError,
+    this.isRescheduling = false,
+    this.rescheduleError,
   });
 
   @override
-  List<Object?> get props => [booking, isCancelling, cancelError];
+  List<Object?> get props =>
+      [booking, isCancelling, cancelError, isRescheduling, rescheduleError];
 }
 
 class BookingDetailError extends BookingDetailState {

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 /// A pet-sitting professional available for booking, stored at
-/// `sitters/{id}`. `role`/`rating`/`reviewCount`/`hourlyRate` are
-/// snapshotted onto a BookingModel when a booking is created.
+/// `sitters/{id}`. `role`/`rating`/`reviewCount`/`hourlyRate`/`phoneNumber`
+/// are snapshotted onto a BookingModel when a booking is created.
 class ProfessionalModel {
   final String id;
   final String name;
@@ -11,6 +11,7 @@ class ProfessionalModel {
   final double rating;
   final int reviewCount;
   final double hourlyRate;
+  final String phoneNumber;
 
   const ProfessionalModel({
     required this.id,
@@ -20,6 +21,7 @@ class ProfessionalModel {
     required this.rating,
     required this.reviewCount,
     required this.hourlyRate,
+    required this.phoneNumber,
   });
 
   factory ProfessionalModel.fromFirestore(DocumentSnapshot doc) {
@@ -32,6 +34,7 @@ class ProfessionalModel {
       rating: (data['rating'] as num?)?.toDouble() ?? 0.0,
       reviewCount: (data['reviewCount'] as num?)?.toInt() ?? 0,
       hourlyRate: (data['hourlyRate'] as num?)?.toDouble() ?? 0.0,
+      phoneNumber: data['phoneNumber'] as String? ?? '',
     );
   }
 }

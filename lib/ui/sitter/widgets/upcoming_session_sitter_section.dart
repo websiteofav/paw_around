@@ -4,8 +4,10 @@ import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/sitters/booking_model.dart';
+import 'package:paw_around/utils/url_utils.dart';
 
-/// Shows the matched sitter's name, role, rating, and Call/Message actions.
+/// Shows the matched sitter's name, role, rating, and a Call action.
+/// (Message is hidden until in-app chat exists.)
 class UpcomingSessionSitterSection extends StatelessWidget {
   final BookingModel booking;
 
@@ -65,11 +67,15 @@ class UpcomingSessionSitterSection extends StatelessWidget {
   }
 
   Widget _buildActionPills() {
-    return const Row(
+    return Row(
       children: [
-        _ActionPill(icon: Icons.call_outlined, label: AppStrings.call),
-        AppSpacing.horizontal12,
-        _ActionPill(icon: Icons.chat_bubble_outline, label: AppStrings.message),
+        _ActionPill(
+          icon: Icons.call_outlined,
+          label: AppStrings.call,
+          onPressed: booking.professionalPhone.isEmpty
+              ? null
+              : () => UrlUtils.openPhone(booking.professionalPhone),
+        ),
       ],
     );
   }
@@ -78,13 +84,14 @@ class UpcomingSessionSitterSection extends StatelessWidget {
 class _ActionPill extends StatelessWidget {
   final IconData icon;
   final String label;
+  final VoidCallback? onPressed;
 
-  const _ActionPill({required this.icon, required this.label});
+  const _ActionPill({required this.icon, required this.label, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return OutlinedButton.icon(
-      onPressed: null,
+      onPressed: onPressed,
       icon: Icon(icon, size: 18, color: AppColors.secondaryCTA),
       label: Text(
         label,

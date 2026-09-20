@@ -10,3 +10,16 @@ abstract class BookingDetailEvent extends Equatable {
 class CancelBookingRequested extends BookingDetailEvent {
   const CancelBookingRequested();
 }
+
+class RescheduleBookingRequested extends BookingDetailEvent {
+  final DateTime scheduledDate;
+  final String scheduledTimeSlot;
+
+  const RescheduleBookingRequested({
+    required this.scheduledDate,
+    required this.scheduledTimeSlot,
+  });
+
+  @override
+  List<Object?> get props => [scheduledDate, scheduledTimeSlot];
+}

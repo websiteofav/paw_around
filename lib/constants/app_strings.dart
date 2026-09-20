@@ -737,7 +737,6 @@ class AppStrings {
   static const String sessionForPrefix = 'Session for';
   static const String reviewsSuffix = 'reviews';
   static const String call = 'Call';
-  static const String message = 'Message';
   static const String viewOnMap = 'View on map';
   static const String totalAmountSuffix = 'total amount';
   static const String viewBreakdown = 'View breakdown';
@@ -751,9 +750,12 @@ class AppStrings {
   static const String failedToCancelBooking =
       'Failed to cancel booking. Please try again.';
   static const String bookingCancelledLabel = 'Booking cancelled';
-  static const String rescheduleComingSoon =
-      'Rescheduling isn\'t available yet';
   static const String bookingNotFound = 'This booking could not be found';
+  static const String rescheduleTitle = 'Reschedule session';
+  static const String confirmReschedule = 'Confirm Reschedule';
+  static const String rescheduleSuccessMessage = 'Booking rescheduled';
+  static const String failedToReschedule =
+      'Failed to reschedule booking. Please try again.';
   static const String rateYourSitterTitle = 'How was your session?';
   static const String rateYourSitterSubtitlePrefix = 'Rate your session with';
   static const String addACommentOptional = 'Add a comment (optional)';

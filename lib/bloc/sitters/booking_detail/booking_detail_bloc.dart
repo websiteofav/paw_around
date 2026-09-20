@@ -42,6 +42,7 @@ class BookingDetailBloc extends Bloc<BookingDetailEvent, BookingDetailState> {
     on<_BookingUpdated>(_onBookingUpdated);
     on<_BookingStreamFailed>(_onBookingStreamFailed);
     on<CancelBookingRequested>(_onCancelRequested);
+    on<RescheduleBookingRequested>(_onRescheduleRequested);
 
     _subscription = _bookingRepository.bookingStream(bookingId).listen(
           (booking) => add(_BookingUpdated(booking)),
@@ -69,6 +70,36 @@ class BookingDetailBloc extends Bloc<BookingDetailEvent, BookingDetailState> {
       emit(BookingDetailLoaded(
         booking: current.booking,
         cancelError: e.toString(),
+      ));
+    }
+  }
+
+  Future<void> _onRescheduleRequested(RescheduleBookingRequested event,
+      Emitter<BookingDetailState> emit) async {
+    final current = state;
+    if (current is! BookingDetailLoaded || current.isRescheduling) return;
+    emit(BookingDetailLoaded(booking: current.booking, isRescheduling: true));
+    try {
+      await _bookingRepository.rescheduleBooking(
+        bookingId: bookingId,
+        scheduledDate: event.scheduledDate,
+        scheduledTimeSlot: event.scheduledTimeSlot,
+      );
+      final rescheduled = current.booking.copyWithSchedule(
+        scheduledDate: event.scheduledDate,
+        scheduledTimeSlot: event.scheduledTimeSlot,
+      );
+      await NotificationService().cancelBookingReminder(bookingId: bookingId);
+      await NotificationService().scheduleBookingReminder(
+        bookingId: bookingId,
+        petName: rescheduled.petName,
+        professionalName: rescheduled.professionalName,
+        sessionDateTime: rescheduled.scheduledDateTime,
+      );
+    } catch (e) {
+      emit(BookingDetailLoaded(
+        booking: current.booking,
+        rescheduleError: e.toString(),
       ));
     }
   }
