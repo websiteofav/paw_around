@@ -4,6 +4,8 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 const db = admin.firestore();
 
+export {createRazorpayOrder, verifyRazorpayPayment} from "./payments";
+
 /**
  * Syncs a public pet profile document in `publicPetProfiles/{petPublicId}`
  * whenever a pet document under `users/{userId}/pets/{petId}` is

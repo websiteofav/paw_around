@@ -729,7 +729,12 @@ class AppStrings {
   static const String failedToLoadProfessionals = 'Failed to load professionals';
   static const String selectProfessionalForPricing =
       'Select a professional above to see pricing';
+  static const String paymentFailed = 'Payment failed. Please try again.';
+  static const String paymentVerificationFailed =
+      "We couldn't verify your payment. Please try again.";
+  static const String processingPayment = 'Processing payment...';
   static const String selectASavedAddress = 'Select a saved address';
+  static String payAmount(int amount) => 'Pay ₹$amount';
 
   // Upcoming Session
   static const String upcomingSessionTitle = 'Upcoming session';

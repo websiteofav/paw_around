@@ -6,6 +6,7 @@ import 'package:paw_around/repositories/community_repository.dart';
 import 'package:paw_around/repositories/pet_moments_repository.dart';
 import 'package:paw_around/repositories/places_repository.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/repositories/payment_repository.dart';
 import 'package:paw_around/repositories/professional_repository.dart';
 import 'package:paw_around/repositories/review_repository.dart';
 import 'package:paw_around/repositories/user_repository.dart';
@@ -43,5 +44,8 @@ Future<void> init() async {
   );
   sl.registerLazySingleton<ReviewRepository>(
     () => ReviewRepository(),
+  );
+  sl.registerLazySingleton<PaymentRepository>(
+    () => PaymentRepository(),
   );
 }

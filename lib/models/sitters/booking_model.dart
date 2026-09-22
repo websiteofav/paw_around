@@ -29,6 +29,8 @@ class BookingModel extends Equatable {
   final String scheduledTimeSlot;
   final double durationHours;
   final int totalAmount;
+  final String paymentId;
+  final String razorpayOrderId;
   final BookingStatus status;
   final bool hasReview;
   final DateTime createdAt;
@@ -53,6 +55,8 @@ class BookingModel extends Equatable {
     required this.scheduledTimeSlot,
     required this.durationHours,
     required this.totalAmount,
+    required this.paymentId,
+    required this.razorpayOrderId,
     required this.status,
     this.hasReview = false,
     required this.createdAt,
@@ -79,6 +83,8 @@ class BookingModel extends Equatable {
     required String scheduledTimeSlot,
     required double durationHours,
     required int totalAmount,
+    required String paymentId,
+    required String razorpayOrderId,
   }) {
     final now = DateTime.now();
     return BookingModel(
@@ -100,6 +106,8 @@ class BookingModel extends Equatable {
       scheduledTimeSlot: scheduledTimeSlot,
       durationHours: durationHours,
       totalAmount: totalAmount,
+      paymentId: paymentId,
+      razorpayOrderId: razorpayOrderId,
       status: BookingStatus.confirmed,
       createdAt: now,
       updatedAt: now,
@@ -131,6 +139,8 @@ class BookingModel extends Equatable {
       scheduledTimeSlot: scheduledTimeSlot,
       durationHours: durationHours,
       totalAmount: totalAmount,
+      paymentId: paymentId,
+      razorpayOrderId: razorpayOrderId,
       status: status,
       hasReview: hasReview,
       createdAt: createdAt,
@@ -157,6 +167,8 @@ class BookingModel extends Equatable {
       'scheduledTimeSlot': scheduledTimeSlot,
       'durationHours': durationHours,
       'totalAmount': totalAmount,
+      'paymentId': paymentId,
+      'razorpayOrderId': razorpayOrderId,
       'status': status.name,
       'hasReview': hasReview,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -185,6 +197,8 @@ class BookingModel extends Equatable {
       scheduledTimeSlot: data['scheduledTimeSlot'] as String? ?? '',
       durationHours: (data['durationHours'] as num?)?.toDouble() ?? 0.0,
       totalAmount: (data['totalAmount'] as num?)?.toInt() ?? 0,
+      paymentId: data['paymentId'] as String? ?? '',
+      razorpayOrderId: data['razorpayOrderId'] as String? ?? '',
       status: BookingStatus.values.byName(data['status'] as String? ?? 'confirmed'),
       hasReview: data['hasReview'] as bool? ?? false,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
@@ -257,6 +271,8 @@ class BookingModel extends Equatable {
         scheduledTimeSlot,
         durationHours,
         totalAmount,
+        paymentId,
+        razorpayOrderId,
         status,
         hasReview,
         createdAt,
