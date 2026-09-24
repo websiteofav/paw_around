@@ -53,4 +53,16 @@ class BookingRepository {
       'updatedAt': Timestamp.fromDate(DateTime.now()),
     });
   }
+
+  Future<void> rescheduleBooking({
+    required String bookingId,
+    required DateTime scheduledDate,
+    required String scheduledTimeSlot,
+  }) {
+    return _bookingsRef.doc(bookingId).update({
+      'scheduledDate': Timestamp.fromDate(scheduledDate),
+      'scheduledTimeSlot': scheduledTimeSlot,
+      'updatedAt': Timestamp.fromDate(DateTime.now()),
+    });
+  }
 }

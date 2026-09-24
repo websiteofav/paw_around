@@ -22,12 +22,15 @@ class BookingModel extends Equatable {
   final String professionalRole;
   final double professionalRating;
   final int professionalReviewCount;
+  final String professionalPhone;
   final String addressLabel;
   final String addressText;
   final DateTime scheduledDate;
   final String scheduledTimeSlot;
   final double durationHours;
   final int totalAmount;
+  final String paymentId;
+  final String razorpayOrderId;
   final BookingStatus status;
   final bool hasReview;
   final DateTime createdAt;
@@ -45,12 +48,15 @@ class BookingModel extends Equatable {
     required this.professionalRole,
     required this.professionalRating,
     required this.professionalReviewCount,
+    required this.professionalPhone,
     required this.addressLabel,
     required this.addressText,
     required this.scheduledDate,
     required this.scheduledTimeSlot,
     required this.durationHours,
     required this.totalAmount,
+    required this.paymentId,
+    required this.razorpayOrderId,
     required this.status,
     this.hasReview = false,
     required this.createdAt,
@@ -70,12 +76,15 @@ class BookingModel extends Equatable {
     required String professionalRole,
     required double professionalRating,
     required int professionalReviewCount,
+    required String professionalPhone,
     required String addressLabel,
     required String addressText,
     required DateTime scheduledDate,
     required String scheduledTimeSlot,
     required double durationHours,
     required int totalAmount,
+    required String paymentId,
+    required String razorpayOrderId,
   }) {
     final now = DateTime.now();
     return BookingModel(
@@ -90,15 +99,52 @@ class BookingModel extends Equatable {
       professionalRole: professionalRole,
       professionalRating: professionalRating,
       professionalReviewCount: professionalReviewCount,
+      professionalPhone: professionalPhone,
       addressLabel: addressLabel,
       addressText: addressText,
       scheduledDate: DateTime(scheduledDate.year, scheduledDate.month, scheduledDate.day),
       scheduledTimeSlot: scheduledTimeSlot,
       durationHours: durationHours,
       totalAmount: totalAmount,
+      paymentId: paymentId,
+      razorpayOrderId: razorpayOrderId,
       status: BookingStatus.confirmed,
       createdAt: now,
       updatedAt: now,
+    );
+  }
+
+  /// Only the fields a reschedule can change — everything else about a
+  /// booking is fixed once made.
+  BookingModel copyWithSchedule({
+    required DateTime scheduledDate,
+    required String scheduledTimeSlot,
+  }) {
+    return BookingModel(
+      id: id,
+      petId: petId,
+      petName: petName,
+      petBreed: petBreed,
+      petAgeLabel: petAgeLabel,
+      petImagePath: petImagePath,
+      professionalId: professionalId,
+      professionalName: professionalName,
+      professionalRole: professionalRole,
+      professionalRating: professionalRating,
+      professionalReviewCount: professionalReviewCount,
+      professionalPhone: professionalPhone,
+      addressLabel: addressLabel,
+      addressText: addressText,
+      scheduledDate: scheduledDate,
+      scheduledTimeSlot: scheduledTimeSlot,
+      durationHours: durationHours,
+      totalAmount: totalAmount,
+      paymentId: paymentId,
+      razorpayOrderId: razorpayOrderId,
+      status: status,
+      hasReview: hasReview,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
     );
   }
 
@@ -114,12 +160,15 @@ class BookingModel extends Equatable {
       'professionalRole': professionalRole,
       'professionalRating': professionalRating,
       'professionalReviewCount': professionalReviewCount,
+      'professionalPhone': professionalPhone,
       'addressLabel': addressLabel,
       'addressText': addressText,
       'scheduledDate': Timestamp.fromDate(scheduledDate),
       'scheduledTimeSlot': scheduledTimeSlot,
       'durationHours': durationHours,
       'totalAmount': totalAmount,
+      'paymentId': paymentId,
+      'razorpayOrderId': razorpayOrderId,
       'status': status.name,
       'hasReview': hasReview,
       'createdAt': Timestamp.fromDate(createdAt),
@@ -141,12 +190,15 @@ class BookingModel extends Equatable {
       professionalRole: data['professionalRole'] as String? ?? '',
       professionalRating: (data['professionalRating'] as num?)?.toDouble() ?? 0.0,
       professionalReviewCount: (data['professionalReviewCount'] as num?)?.toInt() ?? 0,
+      professionalPhone: data['professionalPhone'] as String? ?? '',
       addressLabel: data['addressLabel'] as String? ?? '',
       addressText: data['addressText'] as String? ?? '',
       scheduledDate: (data['scheduledDate'] as Timestamp).toDate(),
       scheduledTimeSlot: data['scheduledTimeSlot'] as String? ?? '',
       durationHours: (data['durationHours'] as num?)?.toDouble() ?? 0.0,
       totalAmount: (data['totalAmount'] as num?)?.toInt() ?? 0,
+      paymentId: data['paymentId'] as String? ?? '',
+      razorpayOrderId: data['razorpayOrderId'] as String? ?? '',
       status: BookingStatus.values.byName(data['status'] as String? ?? 'confirmed'),
       hasReview: data['hasReview'] as bool? ?? false,
       createdAt: (data['createdAt'] as Timestamp).toDate(),
@@ -212,12 +264,15 @@ class BookingModel extends Equatable {
         professionalRole,
         professionalRating,
         professionalReviewCount,
+        professionalPhone,
         addressLabel,
         addressText,
         scheduledDate,
         scheduledTimeSlot,
         durationHours,
         totalAmount,
+        paymentId,
+        razorpayOrderId,
         status,
         hasReview,
         createdAt,

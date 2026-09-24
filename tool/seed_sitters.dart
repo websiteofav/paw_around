@@ -25,6 +25,7 @@ const _sitters = <String, Map<String, Object>>{
     'rating': 4.8,
     'reviewCount': 203,
     'hourlyRate': 720.0,
+    'phoneNumber': '+919876543210',
   },
   'arjun-mehta': {
     'name': 'Arjun Mehta',
@@ -33,6 +34,7 @@ const _sitters = <String, Map<String, Object>>{
     'rating': 4.6,
     'reviewCount': 128,
     'hourlyRate': 650.0,
+    'phoneNumber': '+919876543211',
   },
   'stella-fernandes': {
     'name': 'Stella Fernandes',
@@ -41,6 +43,7 @@ const _sitters = <String, Map<String, Object>>{
     'rating': 4.9,
     'reviewCount': 311,
     'hourlyRate': 850.0,
+    'phoneNumber': '+919876543212',
   },
 };
 

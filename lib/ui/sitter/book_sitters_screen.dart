@@ -13,12 +13,15 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/addresses/address_model.dart';
 import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/models/sitters/professional_model.dart';
+import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/repositories/booking_repository.dart';
 import 'package:paw_around/ui/location/pick_location_screen.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_app_bar.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_form.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_time_slider.dart';
 import 'package:paw_around/ui/sitter/widgets/booking_reminder_helper.dart';
+import 'package:paw_around/ui/sitter/widgets/booking_submit_helper.dart';
+import 'package:paw_around/ui/sitter/widgets/upcoming_booking_banner.dart';
 
 /// Booking/scheduling screen shown once an address has been picked (either
 /// from the saved-address list or right after adding a new one).
@@ -40,6 +43,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
   int _selectedDayIndex = 0;
   String? _selectedTimeSlot = '7:00 AM';
   ProfessionalModel? _selectedProfessional;
+  bool _isProcessingPayment = false;
 
   // Snapshot of the booking just submitted — the BookingFormBloc listener
   // uses it to schedule a reminder once BookingFormSuccess reports the id.
@@ -79,27 +83,23 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
     setState(() => _selectedAddress = address);
   }
 
-  void _onBookSitters() {
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: AppColors.error),
+    );
+  }
+
+  Future<void> _onBookSitters() async {
     final professional = _selectedProfessional;
     if (professional == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AppStrings.pleaseSelectProfessional),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      _showError(AppStrings.pleaseSelectProfessional);
       return;
     }
     final petListState = context.read<PetListBloc>().state;
     final selectedPet =
         petListState is PetListLoaded ? petListState.selectedPet : null;
     if (selectedPet == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AppStrings.noPetToBookSitterFor),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      _showError(AppStrings.noPetToBookSitterFor);
       return;
     }
     final scheduledDate = DateTime.now().add(Duration(days: _selectedDayIndex));
@@ -108,24 +108,21 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
             (1 - BookSittersTimeSlider.discount))
         .round();
 
-    final booking = BookingModel.create(
-      petId: selectedPet.id,
-      petName: selectedPet.name,
-      petBreed: selectedPet.breed,
-      petAgeLabel: selectedPet.ageString,
-      petImagePath: selectedPet.imagePath,
-      professionalId: professional.id,
-      professionalName: professional.name,
-      professionalRole: professional.role,
-      professionalRating: professional.rating,
-      professionalReviewCount: professional.reviewCount,
-      addressLabel: _activeAddress.label,
-      addressText: _activeAddress.fullAddress,
+    setState(() => _isProcessingPayment = true);
+    final booking = await BookingSubmitHelper.collectBookingAfterPayment(
+      context: context,
+      address: _activeAddress,
+      professional: professional,
+      pet: selectedPet,
       scheduledDate: scheduledDate,
       scheduledTimeSlot: _selectedTimeSlot ?? '7:00 AM',
-      durationHours: _hours,
+      hours: _hours,
       totalAmount: totalAmount,
+      contactPhone: sl<AuthRepository>().currentUser?.phoneNumber,
     );
+    if (!mounted) return;
+    setState(() => _isProcessingPayment = false);
+    if (booking == null) return;
 
     _pendingBooking = booking;
     _bookingFormBloc.add(SubmitBooking(booking: booking));
@@ -140,11 +137,9 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
         bookingId: bookingId,
       );
     }
-    if (mounted) _navigateToUpcomingSession(bookingId);
-  }
-
-  void _navigateToUpcomingSession(String bookingId) {
-    context.pushNamed(AppRoutes.upcomingSession, extra: bookingId);
+    if (mounted) {
+      context.pushNamed(AppRoutes.upcomingSession, extra: bookingId);
+    }
   }
 
   @override
@@ -156,36 +151,40 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
           if (state is BookingFormSuccess) {
             _onBookingSuccess(state.bookingId);
           } else if (state is BookingFormError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(AppStrings.failedToBookSitter),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            _showError(AppStrings.failedToBookSitter);
           }
         },
         child: Scaffold(
           backgroundColor: AppColors.white,
           appBar: const BookSittersAppBar(),
-          body: BookSittersForm(
-            isScheduleSelected: _isScheduleSelected,
-            onScheduleChanged: (value) =>
-                setState(() => _isScheduleSelected = value),
-            activeAddress: _activeAddress,
-            onEditLocation: _onEditLocation,
-            onAddNewAddress: _onAddNewAddress,
-            onSwitchAddress: _onSwitchAddress,
-            selectedDayIndex: _selectedDayIndex,
-            onDaySelect: (index) => setState(() => _selectedDayIndex = index),
-            selectedTimeSlot: _selectedTimeSlot,
-            onTimeSlotSelect: (slot) =>
-                setState(() => _selectedTimeSlot = slot),
-            selectedProfessional: _selectedProfessional,
-            onProfessionalSelect: (professional) =>
-                setState(() => _selectedProfessional = professional),
-            hours: _hours,
-            onHoursChanged: (value) => setState(() => _hours = value),
-            onBookSitters: _onBookSitters,
+          body: Column(
+            children: [
+              const UpcomingBookingBanner(),
+              Expanded(
+                child: BookSittersForm(
+                  isScheduleSelected: _isScheduleSelected,
+                  onScheduleChanged: (value) =>
+                      setState(() => _isScheduleSelected = value),
+                  activeAddress: _activeAddress,
+                  onEditLocation: _onEditLocation,
+                  onAddNewAddress: _onAddNewAddress,
+                  onSwitchAddress: _onSwitchAddress,
+                  selectedDayIndex: _selectedDayIndex,
+                  onDaySelect: (index) =>
+                      setState(() => _selectedDayIndex = index),
+                  selectedTimeSlot: _selectedTimeSlot,
+                  onTimeSlotSelect: (slot) =>
+                      setState(() => _selectedTimeSlot = slot),
+                  selectedProfessional: _selectedProfessional,
+                  onProfessionalSelect: (professional) =>
+                      setState(() => _selectedProfessional = professional),
+                  hours: _hours,
+                  onHoursChanged: (value) => setState(() => _hours = value),
+                  isProcessingPayment: _isProcessingPayment,
+                  onBookSitters: _onBookSitters,
+                ),
+              ),
+            ],
           ),
         ),
       ),

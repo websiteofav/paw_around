@@ -37,6 +37,7 @@ class BookSittersForm extends StatelessWidget {
   final double hours;
   final ValueChanged<double> onHoursChanged;
   final VoidCallback onBookSitters;
+  final bool isProcessingPayment;
 
   const BookSittersForm({
     super.key,
@@ -55,6 +56,7 @@ class BookSittersForm extends StatelessWidget {
     required this.hours,
     required this.onHoursChanged,
     required this.onBookSitters,
+    required this.isProcessingPayment,
   });
 
   @override
@@ -122,11 +124,14 @@ class BookSittersForm extends StatelessWidget {
             AppSpacing.vertical32,
             BlocBuilder<BookingFormBloc, BookingFormState>(
               builder: (context, state) {
-                final isSubmitting = state is BookingFormSubmitting;
+                final isBusy =
+                    isProcessingPayment || state is BookingFormSubmitting;
                 return CommonButton(
-                  text: AppStrings.bookSittersButton,
-                  onPressed: onBookSitters,
-                  isLoading: isSubmitting,
+                  text: isProcessingPayment
+                      ? AppStrings.processingPayment
+                      : AppStrings.bookSittersButton,
+                  onPressed: isBusy ? null : onBookSitters,
+                  isLoading: isBusy,
                   customColor: AppColors.primary,
                   textStyle: AppTextStyles.interBoldStyle700(
                       fontSize: 16, fontColor: AppColors.grey1000),

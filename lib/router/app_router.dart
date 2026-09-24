@@ -45,6 +45,7 @@ import 'package:paw_around/ui/pets/tick_flea_settings_screen.dart';
 import 'package:paw_around/ui/pets/pet_overview_screen.dart';
 import 'package:paw_around/ui/pets/pet_qr_screen.dart';
 import 'package:paw_around/ui/home/action_card_detail_screen.dart';
+import 'package:paw_around/ui/sitter/booking_summary_screen.dart';
 import 'package:paw_around/ui/sitter/my_bookings_screen.dart';
 import 'package:paw_around/ui/sitter/upcoming_session_screen.dart';
 import 'package:paw_around/ui/profile/profile_screen.dart';
@@ -352,6 +353,16 @@ class AppRouter {
               builder: (context, state) {
                 final data = state.extra as ActionCardData;
                 return ActionCardDetailScreen(data: data);
+              },
+            ),
+
+            // Booking Summary / Pay Route
+            GoRoute(
+              path: AppRoutes.bookingSummary,
+              name: AppRoutes.bookingSummary,
+              builder: (context, state) {
+                final args = state.extra as BookingSummaryArgs;
+                return BookingSummaryScreen(args: args);
               },
             ),
 

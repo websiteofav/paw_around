@@ -10,18 +10,21 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 /// already cancelled.
 class UpcomingSessionBottomBar extends StatelessWidget {
   final bool isCancelling;
+  final bool isRescheduling;
   final VoidCallback onReschedule;
   final VoidCallback onCancel;
 
   const UpcomingSessionBottomBar({
     super.key,
     required this.isCancelling,
+    required this.isRescheduling,
     required this.onReschedule,
     required this.onCancel,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isBusy = isCancelling || isRescheduling;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -30,7 +33,8 @@ class UpcomingSessionBottomBar extends StatelessWidget {
           imagePath: AppIcons.sitterCalendarEditIcon,
           customColor: AppColors.secondaryCTA,
           customTextColor: AppColors.white,
-          onPressed: isCancelling ? null : onReschedule,
+          isLoading: isRescheduling,
+          onPressed: isBusy ? null : onReschedule,
           borderRadius: 44,
         ),
         AppSpacing.vertical12,
@@ -42,7 +46,7 @@ class UpcomingSessionBottomBar extends StatelessWidget {
           customTextColor: AppColors.error,
           borderRadius: 44,
           isLoading: isCancelling,
-          onPressed: isCancelling ? null : onCancel,
+          onPressed: isBusy ? null : onCancel,
         ),
       ],
     );
