@@ -709,8 +709,6 @@ class AppStrings {
       'Failed to save address. Please try again.';
 
   // Book Sitters
-  static const String scheduleTab = 'Schedule';
-  static const String multiDayTab = 'Multi-day';
   static const String locationLabel = 'Location';
   static const String timeHoursLabel = 'Time (Hours)';
   static const String discountOffLabel = '35% OFF';

@@ -13,7 +13,6 @@ import 'package:paw_around/models/sitters/professional_model.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_day_selector.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_location_section.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_professional_selector.dart';
-import 'package:paw_around/ui/sitter/widgets/book_sitters_schedule_toggle.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_time_slider.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_time_slot_grid.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
@@ -22,8 +21,6 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 /// day/time, professional, and pricing sections. Price only shows once a
 /// professional is picked, since rates are per-professional.
 class BookSittersForm extends StatelessWidget {
-  final bool isScheduleSelected;
-  final ValueChanged<bool> onScheduleChanged;
   final AddressModel activeAddress;
   final VoidCallback onEditLocation;
   final VoidCallback onAddNewAddress;
@@ -41,8 +38,6 @@ class BookSittersForm extends StatelessWidget {
 
   const BookSittersForm({
     super.key,
-    required this.isScheduleSelected,
-    required this.onScheduleChanged,
     required this.activeAddress,
     required this.onEditLocation,
     required this.onAddNewAddress,
@@ -68,11 +63,6 @@ class BookSittersForm extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppSpacing.vertical20,
-            BookSittersScheduleToggle(
-              isScheduleSelected: isScheduleSelected,
-              onChanged: onScheduleChanged,
-            ),
-            AppSpacing.vertical36,
             BlocBuilder<AddressBloc, AddressState>(
               builder: (context, state) {
                 final addresses = state is AddressLoaded

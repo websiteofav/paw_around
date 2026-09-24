@@ -38,7 +38,6 @@ class BookSittersScreen extends StatefulWidget {
 }
 
 class _BookSittersScreenState extends State<BookSittersScreen> {
-  bool _isScheduleSelected = true;
   double _hours = 2.5;
   int _selectedDayIndex = 0;
   String? _selectedTimeSlot = '7:00 AM';
@@ -162,9 +161,6 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
               const UpcomingBookingBanner(),
               Expanded(
                 child: BookSittersForm(
-                  isScheduleSelected: _isScheduleSelected,
-                  onScheduleChanged: (value) =>
-                      setState(() => _isScheduleSelected = value),
                   activeAddress: _activeAddress,
                   onEditLocation: _onEditLocation,
                   onAddNewAddress: _onAddNewAddress,
