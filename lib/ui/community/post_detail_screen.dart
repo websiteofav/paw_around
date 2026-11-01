@@ -21,6 +21,7 @@ import 'package:paw_around/ui/community/widgets/post_detail/post_detail_hero_sec
 import 'package:paw_around/ui/community/widgets/post_detail/post_detail_identity_card.dart';
 import 'package:paw_around/ui/community/widgets/post_detail/post_detail_location_section.dart';
 import 'package:paw_around/ui/community/widgets/post_detail/post_detail_owner_actions.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/utils/share_utils.dart';
 
 class PostDetailScreen extends StatefulWidget {
@@ -86,31 +87,19 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
         if (state is PostDeleted) {
           Navigator.of(context, rootNavigator: true).pop();
           HapticFeedback.mediumImpact();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text(AppStrings.postDeletedSuccessfully)),
-          );
+          AppUtils.showSuccessSnackBar(context, AppStrings.postDeletedSuccessfully);
           context.go(AppRoutes.home);
         } else if (state is PostResolved) {
           HapticFeedback.mediumImpact();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(AppStrings.postMarkedAsResolved),
-                backgroundColor: AppColors.success),
-          );
+          AppUtils.showSuccessSnackBar(context, AppStrings.postMarkedAsResolved);
           context.pop();
         } else if (state is PostUnresolved) {
           HapticFeedback.mediumImpact();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-                content: Text(AppStrings.postReopenedSuccessfully),
-                backgroundColor: AppColors.success),
-          );
+          AppUtils.showSuccessSnackBar(context, AppStrings.postReopenedSuccessfully);
           context.pop();
         } else if (state is CommunityError) {
           Navigator.of(context, rootNavigator: true).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message)),
-          );
+          AppUtils.showErrorSnackBar(context, state.message);
         }
       },
       child: Scaffold(

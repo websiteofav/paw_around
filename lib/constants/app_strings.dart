@@ -33,7 +33,7 @@ class AppStrings {
   static const String loginSignupButton = 'Login / Signup';
 
   // Authentication Screen - Phone Login
-  static const String welcomeToPawAround = 'Welcome to Paw Around';
+  static const String welcomeToPawAround = 'Welcome to PawAround';
   static const String authSubtitle =
       "Caring for your pet's health, every step of the way";
   static const String loginTitle = "Let's get started";
@@ -522,7 +522,7 @@ class AppStrings {
   static const String accountSettings = 'Account settings';
   static const String logOutConfirmTitle = 'Log out?';
   static const String logOutConfirmMessage =
-      'You will need to sign in again to access Paw Around.';
+      'You will need to sign in again to access PawAround.';
   static const String daysOld = 'days old';
   static const String monthsOld = 'months old';
   static const String yearsOld = 'years old';
@@ -876,7 +876,7 @@ class AppStrings {
 
   // Web Landing Page - Feature Section
   static const String landingFeatureSectionTitle =
-      'Why Pet Parents Love Paw Around';
+      'Why Pet Parents Love PawAround';
   static const String landingFeatureSectionSubtitle =
       'Everything your pet needs in one app';
 
@@ -891,7 +891,7 @@ class AppStrings {
   static const String landingStaySafeCta = 'Stay Safe';
 
   // Web Landing Page - Download Section
-  static const String landingDownloadHeading = 'Get Paw Around Today!';
+  static const String landingDownloadHeading = 'Get PawAround Today!';
   static const String landingDownloadSubheading =
       'Join 10,000+ pet parents keeping their furry friends safe';
   static const String landingDownloadOrScan = 'Or scan to download';
@@ -909,7 +909,7 @@ class AppStrings {
   static const String landingFooterPrivacyPolicy = 'Privacy Policy';
   static const String landingFooterTermsOfService = 'Terms of Service';
   static const String landingFooterCopyright =
-      '© 2026 Paw Around. All rights reserved.';
+      '© 2026 PawAround. All rights reserved.';
   static const String landingFooterFacebook = 'Facebook';
   static const String landingFooterInstagram = 'Instagram';
   static const String landingFooterTwitter = 'Twitter';
@@ -917,9 +917,9 @@ class AppStrings {
 
   /// One-liner for meta, manifest, and footer. QR first.
   static const String appShortDescription =
-      'Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
+      'PawAround – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
   static const String landingFooterCompanyDescription =
-      'Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
+      'PawAround – QR pet ID, smart pet care reminders, nearby vets, lost & found.';
   static const String landingFooterProduct = 'Product';
   static const String landingFooterFeatures = 'Features';
   static const String landingFooterHowItWorks = 'How it Works';
@@ -946,10 +946,10 @@ class AppStrings {
   static const String landingPlayStoreOpenError =
       'Unable to open Google Play Store right now. Please try again later.';
   static const String landingIosComingSoonMessage =
-      'Paw Around is coming soon to iOS. Stay tuned!';
+      'PawAround is coming soon to iOS. Stay tuned!';
 
   // Public Pet Profile (web /p/:petId)
-  static const String publicProfileAppTitle = 'Paw Around';
+  static const String publicProfileAppTitle = 'PawAround';
   static const String publicPetTopBarTagline = 'Pet Safety & Care';
   static const String publicPetTopBarDownloadApp = 'Download App';
   static const String publicPetTopBarTrustBadge = '10,000+ users';
@@ -967,9 +967,9 @@ class AppStrings {
   static const String vaccinationStatus = 'Vaccination Status';
   static const String vaccinationUpToDate = 'Up-to-date';
   static const String primaryOwner = 'Primary Owner';
-  static const String copyrightPawAround2026 = '© 2026 Paw Around';
+  static const String copyrightPawAround2026 = '© 2026 PawAround';
   static const String petNotFound = 'Pet not found';
-  static const String contactViaPawAround = 'Contact via Paw Around app';
+  static const String contactViaPawAround = 'Contact via PawAround app';
   static const String youFoundThisPetShareLocation =
       'You found this pet. You can share your location.';
 

@@ -11,6 +11,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/pets/widgets/mark_lost_bottom_sheet.dart';
 
@@ -150,12 +151,7 @@ class PetOverviewActions {
         Navigator.of(dialogContext).pop();
         context.read<PetListBloc>().add(const LoadPetList());
         HapticFeedback.mediumImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.petDeletedSuccessfully),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        AppUtils.showSuccessSnackBar(context, AppStrings.petDeletedSuccessfully);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (context.mounted) {
             context.pop();
@@ -167,12 +163,7 @@ class PetOverviewActions {
         Navigator.of(dialogContext).pop();
       }
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     }
   }
@@ -195,21 +186,11 @@ class PetOverviewActions {
       if (context.mounted) {
         context.read<PetListBloc>().add(const LoadPetList());
         HapticFeedback.mediumImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.petMarkedAsLost),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        AppUtils.showSuccessSnackBar(context, AppStrings.petMarkedAsLost);
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     }
   }

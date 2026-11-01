@@ -12,6 +12,7 @@ import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/services/animation_service.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/utils/url_utils.dart';
 
 class PhoneLoginScreen extends StatefulWidget {
@@ -61,9 +62,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
       onError: (error) {
         if (mounted) {
           setState(() => _isLoading = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error), backgroundColor: AppColors.error),
-          );
+          AppUtils.showErrorSnackBar(context, error);
         }
       },
       onAutoVerified: (credential) async {
@@ -84,12 +83,7 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
           );
           if (mounted) {
             setState(() => _isLoading = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(e.toString()),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            AppUtils.showErrorSnackBar(context, e.toString());
           }
         }
       },

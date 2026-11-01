@@ -27,14 +27,12 @@ class UserRepository {
     final name = data['name'] as String?;
     final state = data['state'] as String?;
     final city = data['city'] as String?;
-    final photoUrl = data['photoUrl'] as String?;
     return name != null &&
         name.isNotEmpty &&
         state != null &&
         state.isNotEmpty &&
         city != null &&
-        city.isNotEmpty &&
-        photoUrl != null;
+        city.isNotEmpty;
   }
 
   /// Fetches the user profile document. Returns null if not found.

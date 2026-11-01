@@ -10,6 +10,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/booking_repository.dart';
 import 'package:paw_around/ui/sitter/widgets/upcoming_session_card.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 /// Shows the booking summary after "Book Sitters" is tapped, live from
 /// Firestore via [BookingDetailBloc].
@@ -28,12 +29,7 @@ class UpcomingSessionScreen extends StatelessWidget {
       child: BlocListener<BookingDetailBloc, BookingDetailState>(
         listener: (context, state) {
           if (state is BookingDetailLoaded && state.cancelError != null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(AppStrings.failedToCancelBooking),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            AppUtils.showErrorSnackBar(context, AppStrings.failedToCancelBooking);
           }
         },
         child: Scaffold(

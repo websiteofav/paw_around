@@ -24,6 +24,7 @@ class PostDetailLocationSection extends StatelessWidget {
         Container(
           decoration: smoothDecoration(
             cornerRadius: 20,
+            side: const BorderSide(color: AppColors.grey100),
             shadows: [
               BoxShadow(
                   color: AppColors.shadowOverlay.withValues(alpha: 0.05),

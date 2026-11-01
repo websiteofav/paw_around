@@ -148,6 +148,14 @@ class _ProfessionalCard extends StatelessWidget {
                 fontColor: AppColors.grey1000,
               ),
             ),
+            const SizedBox(height: 4),
+            Text(
+              '₹${professional.hourlyRate.round()}/hr',
+              style: AppTextStyles.interMediumStyle500(
+                fontSize: 13,
+                fontColor: AppColors.grey600,
+              ),
+            ),
             if (!isAvailable) ...[
               const SizedBox(height: 6),
               Text(

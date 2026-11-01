@@ -22,6 +22,7 @@ import 'package:paw_around/ui/community/widgets/create_post/create_post_submit_b
 import 'package:paw_around/ui/community/widgets/create_post/create_post_submit_service.dart';
 import 'package:paw_around/ui/community/widgets/create_post/last_seen_picker.dart';
 import 'package:paw_around/ui/community/widgets/create_post/pet_type_selector.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 class CreatePostScreen extends StatefulWidget {
   final PostType? initialType;
@@ -81,9 +82,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Future<void> _submitPost() async {
     if (!_formKey.currentState!.validate()) return;
     if (_latitude == null || _longitude == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.pleaseSetLocation)),
-      );
+      AppUtils.showErrorSnackBar(context, AppStrings.pleaseSetLocation);
       return;
     }
 
@@ -104,9 +103,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
     if (post == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(AppStrings.failedToUploadImage)),
-        );
+        AppUtils.showErrorSnackBar(context, AppStrings.failedToUploadImage);
         setState(() => _isSubmitting = false);
       }
       return;

@@ -10,6 +10,7 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/moments/widgets/create_moment/create_moment_submit_service.dart';
 import 'package:paw_around/ui/moments/widgets/create_moment/moment_draft.dart';
 import 'package:paw_around/ui/moments/widgets/create_moment/moment_preview_card.dart';
@@ -35,12 +36,7 @@ class _MomentPreviewScreenState extends State<MomentPreviewScreen> {
 
     if (moment == null) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.failedToUploadImage),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, AppStrings.failedToUploadImage);
         setState(() => _isSubmitting = false);
       }
       return;
@@ -57,17 +53,11 @@ class _MomentPreviewScreenState extends State<MomentPreviewScreen> {
       listener: (context, state) {
         if (state is MomentCreated) {
           HapticFeedback.mediumImpact();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text(AppStrings.momentPosted)),
-          );
+          AppUtils.showSuccessSnackBar(context, AppStrings.momentPosted);
           context.pop(true);
         } else if (state is PetMomentsError) {
           setState(() => _isSubmitting = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(state.message),
-                backgroundColor: AppColors.error),
-          );
+          AppUtils.showErrorSnackBar(context, state.message);
         }
       },
       child: Scaffold(

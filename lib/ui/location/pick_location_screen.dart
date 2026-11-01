@@ -14,6 +14,7 @@ import 'package:paw_around/ui/location/widgets/current_location_pill.dart';
 import 'package:paw_around/ui/location/widgets/map_center_pin.dart';
 import 'package:paw_around/ui/location/widgets/pick_location_bottom_panel.dart';
 import 'package:paw_around/ui/location/widgets/pick_location_search_bar.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 /// Args passed via GoRouter's `extra:` to [PickLocationScreen].
 class PickLocationArgs {
@@ -155,11 +156,8 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
       }
       await _reverseGeocodeTarget();
     } else if (showErrors) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content:
-                Text(result.errorMessage ?? AppStrings.somethingWentWrong)),
-      );
+      AppUtils.showErrorSnackBar(
+          context, result.errorMessage ?? AppStrings.somethingWentWrong);
     }
   }
 

@@ -1,4 +1,4 @@
-/// Date utility functions for the Paw Around app
+/// Date utility functions for the PawAround app
 class AppDateUtils {
   // Private constructor to prevent instantiation
   AppDateUtils._();

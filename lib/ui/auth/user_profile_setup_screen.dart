@@ -16,6 +16,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/user_repository.dart';
 import 'package:paw_around/router/app_router.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/auth/widgets/location_search_sheet.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:figma_squircle/figma_squircle.dart';
@@ -96,10 +97,7 @@ class _UserProfileSetupScreenState extends State<UserProfileSetupScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(e.toString()), backgroundColor: AppColors.error),
-        );
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     }
   }
@@ -130,10 +128,7 @@ class _UserProfileSetupScreenState extends State<UserProfileSetupScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(e.toString()), backgroundColor: AppColors.error),
-        );
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     }
   }

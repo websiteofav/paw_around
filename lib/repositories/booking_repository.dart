@@ -39,6 +39,13 @@ class BookingRepository {
         (snapshot) => snapshot.docs.map(BookingModel.fromFirestore).toList());
   }
 
+  // Whether the user has ever made a booking before — used to decide
+  // whether to show the professional picker or auto-assign one.
+  Future<bool> hasAnyBooking() async {
+    final snap = await _bookingsRef.limit(1).get();
+    return snap.docs.isNotEmpty;
+  }
+
   Future<void> cancelBooking(String bookingId) {
     return _bookingsRef.doc(bookingId).update({
       'status': BookingStatus.cancelled.name,

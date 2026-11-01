@@ -90,7 +90,7 @@ class _ActionCard extends StatelessWidget {
         width: 170,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: smoothDecoration(
-            cornerRadius: 20, color: bgColor),
+            cornerRadius: 16, color: bgColor),
         child: Stack(
           children: [
             Positioned(
@@ -132,7 +132,7 @@ class _ActionCard extends StatelessWidget {
               child: Container(
                 height: 36,
                 decoration: smoothDecoration(
-                  cornerRadius: 18,
+                  cornerRadius: 16,
                   color: AppColors.grey1000,
                 ),
                 alignment: Alignment.center,

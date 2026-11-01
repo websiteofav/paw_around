@@ -43,6 +43,13 @@ class PillToggleNavRow extends StatelessWidget {
         decoration: smoothDecoration(
           color: AppColors.grey1100,
           cornerRadius: 54,
+          shadows: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.35),
+              blurRadius: 16,
+              spreadRadius: 1,
+            ),
+          ],
         ),
         child: Row(
           children: [
@@ -60,7 +67,7 @@ class PillToggleNavRow extends StatelessWidget {
     return GestureDetector(
       onTap: () => tabController.animateTo(index),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Text(
           label,
           textAlign: TextAlign.center,

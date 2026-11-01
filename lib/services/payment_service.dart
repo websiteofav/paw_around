@@ -75,7 +75,7 @@ class PaymentService {
       'key': keyId,
       'order_id': orderId,
       'amount': amountInPaise,
-      'name': 'Paw Around',
+      'name': 'PawAround',
       'description': description,
       if (contactPhone != null && contactPhone.isNotEmpty)
         'prefill': {'contact': contactPhone},

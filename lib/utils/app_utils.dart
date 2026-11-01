@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/utils/app_toast.dart';
 
-/// Utility functions for the Paw Around app
+/// Utility functions for the PawAround app
 class AppUtils {
   // Private constructor to prevent instantiation
   AppUtils._();
@@ -29,51 +31,35 @@ class AppUtils {
     }).join(' ');
   }
 
-  /// Show a snackbar with custom styling
+  /// Show a message as a toast at the top of the screen
   static void showSnackBar(
     BuildContext context, {
     required String message,
     Color? backgroundColor,
     Duration duration = const Duration(seconds: 3),
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-        duration: duration,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-      ),
+    AppToast.show(
+      context,
+      message: message,
+      color: backgroundColor ?? AppColors.primary,
+      icon: Icons.info_outline,
+      duration: duration,
     );
   }
 
-  /// Show success snackbar
+  /// Show success message as a toast at the top of the screen
   static void showSuccessSnackBar(BuildContext context, String message) {
-    showSnackBar(
-      context,
-      message: message,
-      backgroundColor: Colors.green,
-    );
+    AppToast.showSuccess(context, message);
   }
 
-  /// Show error snackbar
+  /// Show error message as a toast at the top of the screen
   static void showErrorSnackBar(BuildContext context, String message) {
-    showSnackBar(
-      context,
-      message: message,
-      backgroundColor: Colors.red,
-    );
+    AppToast.showError(context, message);
   }
 
-  /// Show info snackbar
+  /// Show info message as a toast at the top of the screen
   static void showInfoSnackBar(BuildContext context, String message) {
-    showSnackBar(
-      context,
-      message: message,
-      backgroundColor: Colors.blue,
-    );
+    AppToast.showInfo(context, message);
   }
 
   /// Get relative time string (e.g., "2 days ago", "in 3 hours")

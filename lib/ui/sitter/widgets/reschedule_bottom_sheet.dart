@@ -12,6 +12,7 @@ import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_day_selector.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_time_slot_grid.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 /// Bottom sheet for picking a new day/time for an existing booking, reusing
 /// the same day/time pickers from the Book Sitters form. Dispatches
@@ -77,12 +78,7 @@ class _RescheduleBottomSheetState extends State<RescheduleBottomSheet> {
       listener: (context, state) {
         final loaded = state as BookingDetailLoaded;
         if (loaded.rescheduleError != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.failedToReschedule),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          AppUtils.showErrorSnackBar(context, AppStrings.failedToReschedule);
         } else {
           Navigator.of(context).pop();
         }

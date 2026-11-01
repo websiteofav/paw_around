@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:paw_around/constants/app_colors.dart';
+import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
-import 'package:paw_around/ui/community/widgets/community_action_bottom_sheet.dart';
+import 'package:paw_around/models/community/lost_found_post.dart';
 import 'package:paw_around/ui/community/widgets/lost_found_tab.dart';
 import 'package:paw_around/ui/community/widgets/moments_tab.dart';
 import 'package:paw_around/ui/widgets/pill_toggle_nav_row.dart';
@@ -66,7 +68,9 @@ class _PawCircleScreenState extends State<PawCircleScreen>
       secondTabLabel: AppStrings.lostAndFoundTab,
       leading: const SizedBox(width: 40),
       trailing: GestureDetector(
-        onTap: () => CommunityActionBottomSheet.show(context),
+        onTap: () => _tabController.index == 0
+            ? context.pushNamed(AppRoutes.createMoment)
+            : context.push(AppRoutes.createPost, extra: PostType.lost),
         child: Container(
           width: 40,
           height: 40,

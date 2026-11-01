@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/payment_repository.dart';
 import 'package:paw_around/services/payment_service.dart';
+import 'package:paw_around/utils/app_toast.dart';
+
+/// Kicks off order creation as soon as the review screen loads, instead of
+/// waiting for the user to tap "Pay" — the createRazorpayOrder round-trip
+/// (Cloud Function cold start + Razorpay API call) was previously the
+/// visible delay before Checkout opened, which read as "Razorpay is slow"
+/// even though Checkout itself opens instantly once the order is ready.
+Future<RazorpayOrder> prefetchRazorpayOrder({required int totalAmount}) {
+  return sl<PaymentRepository>().createOrder(amountInPaise: totalAmount * 100);
+}
 
 class PaymentFlowResult {
   final String paymentId;
@@ -28,13 +37,13 @@ class PaymentFlowHelper {
     required int totalAmount,
     required String description,
     String? contactPhone,
+    Future<RazorpayOrder>? prefetchedOrder,
   }) async {
     final paymentRepository = sl<PaymentRepository>();
     final paymentService = PaymentService();
     try {
-      final order = await paymentRepository.createOrder(
-        amountInPaise: totalAmount * 100,
-      );
+      final order = await (prefetchedOrder ??
+          paymentRepository.createOrder(amountInPaise: totalAmount * 100));
 
       final result = await paymentService.openCheckout(
         keyId: order.keyId,
@@ -74,8 +83,6 @@ class PaymentFlowHelper {
 
   static void _showError(BuildContext context, String message) {
     if (!context.mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: AppColors.error),
-    );
+    AppToast.showError(context, message);
   }
 }

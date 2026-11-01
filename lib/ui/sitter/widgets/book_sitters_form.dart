@@ -31,6 +31,7 @@ class BookSittersForm extends StatelessWidget {
   final ValueChanged<String> onTimeSlotSelect;
   final ProfessionalModel? selectedProfessional;
   final ValueChanged<ProfessionalModel> onProfessionalSelect;
+  final bool showProfessionalSelector;
   final double hours;
   final ValueChanged<double> onHoursChanged;
   final VoidCallback onBookSitters;
@@ -48,6 +49,7 @@ class BookSittersForm extends StatelessWidget {
     required this.onTimeSlotSelect,
     required this.selectedProfessional,
     required this.onProfessionalSelect,
+    required this.showProfessionalSelector,
     required this.hours,
     required this.onHoursChanged,
     required this.onBookSitters,
@@ -89,13 +91,15 @@ class BookSittersForm extends StatelessWidget {
               selected: selectedTimeSlot,
               onSelect: onTimeSlotSelect,
             ),
-            AppSpacing.vertical36,
-            const Divider(color: AppColors.grey100),
-            AppSpacing.vertical36,
-            BookSittersProfessionalSelector(
-              selected: selectedProfessional,
-              onSelect: onProfessionalSelect,
-            ),
+            if (showProfessionalSelector) ...[
+              AppSpacing.vertical36,
+              const Divider(color: AppColors.grey100),
+              AppSpacing.vertical36,
+              BookSittersProfessionalSelector(
+                selected: selectedProfessional,
+                onSelect: onProfessionalSelect,
+              ),
+            ],
             AppSpacing.vertical36,
             const Divider(color: AppColors.grey100),
             AppSpacing.vertical36,

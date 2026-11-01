@@ -12,6 +12,7 @@ import 'package:paw_around/models/places/place_prediction.dart';
 import 'package:paw_around/repositories/places_repository.dart';
 import 'package:paw_around/services/location_service.dart';
 import 'package:paw_around/ui/widgets/common_text_field.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 /// Callback when a place is selected
 typedef OnPlaceSelected = void Function(
@@ -299,10 +300,8 @@ class _LocationAutocompleteFieldState extends State<LocationAutocompleteField> {
       }
     } else {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text(result.errorMessage ?? 'Failed to get location')),
-        );
+        AppUtils.showErrorSnackBar(
+            context, result.errorMessage ?? 'Failed to get location');
       }
     }
 

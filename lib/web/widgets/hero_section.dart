@@ -183,7 +183,7 @@ class HeroSection extends StatelessWidget {
             Semantics(
               button: true,
               label: AppStrings.landingDownloadOnAndroid,
-              hint: 'Opens Google Play Store page for Paw Around',
+              hint: 'Opens Google Play Store page for PawAround',
               child: CommonButton(
                 text: AppStrings.landingDownloadOnAndroid,
                 onPressed: () => _launchPlayStore(context),
@@ -220,7 +220,7 @@ class HeroSection extends StatelessWidget {
 
     return Semantics(
       label:
-          'Illustration of the Paw Around app showing pet care, safety, and community features',
+          'Illustration of the PawAround app showing pet care, safety, and community features',
       child: ConstrainedBox(
         constraints: BoxConstraints(
           maxHeight: maxSize,

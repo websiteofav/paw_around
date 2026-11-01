@@ -13,6 +13,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/storage_service.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/pets/widgets/pet_details_form_body.dart';
 import 'package:paw_around/ui/pets/widgets/pet_image_picker_sheet.dart';
 
@@ -109,11 +110,7 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
             .uploadPetImage(localPath: _imagePath!, petId: widget.pet.id);
         if (finalImagePath == null) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                  content: Text('Failed to upload pet image'),
-                  backgroundColor: AppColors.error),
-            );
+            AppUtils.showErrorSnackBar(context, 'Failed to upload pet image');
           }
           setState(() => _isSaving = false);
           return;
@@ -144,11 +141,7 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text('Failed to save: $e'),
-              backgroundColor: AppColors.error),
-        );
+        AppUtils.showErrorSnackBar(context, 'Failed to save: $e');
         setState(() => _isSaving = false);
       }
     }
@@ -244,11 +237,7 @@ class _AddPetDetailsViewState extends State<_AddPetDetailsView> {
     } catch (e) {
       if (!mounted) return;
       setState(() => _isImageLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content: Text('Failed to pick image: $e'),
-            backgroundColor: AppColors.error),
-      );
+      AppUtils.showErrorSnackBar(context, 'Failed to pick image: $e');
     }
   }
 }

@@ -88,8 +88,8 @@ class PlaceCard extends StatelessWidget {
                   ScaleButton(
                     onPressed: onDirectionsTap,
                     child: Container(
-                      height: 36,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 12),
                       decoration: smoothDecoration(
                         cornerRadius: 999,
                         color: AppColors.grey1000,

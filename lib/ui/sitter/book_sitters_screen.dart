@@ -15,6 +15,7 @@ import 'package:paw_around/models/sitters/booking_model.dart';
 import 'package:paw_around/models/sitters/professional_model.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/repositories/booking_repository.dart';
+import 'package:paw_around/repositories/professional_repository.dart';
 import 'package:paw_around/ui/location/pick_location_screen.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_app_bar.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_form.dart';
@@ -22,6 +23,7 @@ import 'package:paw_around/ui/sitter/widgets/book_sitters_time_slider.dart';
 import 'package:paw_around/ui/sitter/widgets/booking_reminder_helper.dart';
 import 'package:paw_around/ui/sitter/widgets/booking_submit_helper.dart';
 import 'package:paw_around/ui/sitter/widgets/upcoming_booking_banner.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 /// Booking/scheduling screen shown once an address has been picked (either
 /// from the saved-address list or right after adding a new one).
@@ -44,6 +46,11 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
   ProfessionalModel? _selectedProfessional;
   bool _isProcessingPayment = false;
 
+  // Defaults to showing the picker; flips to false only once we've
+  // confirmed the user has no prior bookings AND successfully
+  // auto-assigned an available professional for them.
+  bool _showProfessionalSelector = true;
+
   // Snapshot of the booking just submitted — the BookingFormBloc listener
   // uses it to schedule a reminder once BookingFormSuccess reports the id.
   BookingModel? _pendingBooking;
@@ -56,6 +63,36 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
       BookingFormBloc(bookingRepository: sl<BookingRepository>());
 
   AddressModel get _activeAddress => _selectedAddress ?? widget.address;
+
+  @override
+  void initState() {
+    super.initState();
+    _initProfessionalDefault();
+  }
+
+  // First-time users (no prior bookings) skip the picker and get
+  // auto-assigned the first available professional; returning users still
+  // choose, so they can pick the same sitter again or try someone new.
+  Future<void> _initProfessionalDefault() async {
+    final hasPrevious = await sl<BookingRepository>().hasAnyBooking();
+    if (!mounted || hasPrevious) return;
+
+    final professionals = await sl<ProfessionalRepository>().getAllProfessionals();
+    if (!mounted) return;
+    ProfessionalModel? autoAssigned;
+    for (final p in professionals) {
+      if (p.isAvailable) {
+        autoAssigned = p;
+        break;
+      }
+    }
+    if (autoAssigned == null) return; // fall back to manual selection
+
+    setState(() {
+      _showProfessionalSelector = false;
+      _selectedProfessional = autoAssigned;
+    });
+  }
 
   @override
   void dispose() {
@@ -83,9 +120,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: AppColors.error),
-    );
+    AppUtils.showErrorSnackBar(context, message);
   }
 
   Future<void> _onBookSitters() async {
@@ -174,6 +209,7 @@ class _BookSittersScreenState extends State<BookSittersScreen> {
                   selectedProfessional: _selectedProfessional,
                   onProfessionalSelect: (professional) =>
                       setState(() => _selectedProfessional = professional),
+                  showProfessionalSelector: _showProfessionalSelector,
                   hours: _hours,
                   onHoursChanged: (value) => setState(() => _hours = value),
                   isProcessingPayment: _isProcessingPayment,

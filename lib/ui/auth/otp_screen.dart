@@ -12,6 +12,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/repositories/auth_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/auth/widgets/otp_input_field.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
@@ -103,12 +104,8 @@ class _OTPScreenState extends State<OTPScreen> {
       );
       if (mounted) {
         setState(() => _isVerifying = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(sl<AuthRepository>().getAuthErrorMessage(e)),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(
+            context, sl<AuthRepository>().getAuthErrorMessage(e));
       }
     } catch (e) {
       AnalyticsService.logEvent(
@@ -120,12 +117,7 @@ class _OTPScreenState extends State<OTPScreen> {
       );
       if (mounted) {
         setState(() => _isVerifying = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     }
   }
@@ -145,23 +137,13 @@ class _OTPScreenState extends State<OTPScreen> {
           });
           _startResendCountdown();
           HapticFeedback.mediumImpact();
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.otpSentSuccessfully),
-              backgroundColor: AppColors.success,
-            ),
-          );
+          AppUtils.showSuccessSnackBar(context, AppStrings.otpSentSuccessfully);
         }
       },
       onError: (error) {
         if (mounted) {
           setState(() => _isResending = false);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(error),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          AppUtils.showErrorSnackBar(context, error);
         }
       },
       onAutoVerified: (credential) async {
@@ -181,12 +163,7 @@ class _OTPScreenState extends State<OTPScreen> {
           );
           if (mounted) {
             setState(() => _isResending = false);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(e.toString()),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            AppUtils.showErrorSnackBar(context, e.toString());
           }
         }
       },

@@ -16,6 +16,7 @@ import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_master_data.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/pets/widgets/vaccine_actions.dart';
 import 'package:paw_around/ui/pets/widgets/vaccine_date_field.dart';
 import 'package:paw_around/ui/pets/widgets/vaccine_form_helper.dart';
@@ -165,17 +166,15 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
       if (!mounted) return;
       context.read<PetListBloc>().add(const LoadPetList());
       HapticFeedback.mediumImpact();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(_isEditMode
-            ? AppStrings.vaccineSaved
-            : AppStrings.vaccineAddedSuccessfully),
-        backgroundColor: AppColors.success,
-      ));
+      AppUtils.showSuccessSnackBar(
+          context,
+          _isEditMode
+              ? AppStrings.vaccineSaved
+              : AppStrings.vaccineAddedSuccessfully);
       context.pop(vaccine);
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(e.toString()), backgroundColor: AppColors.error));
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     } finally {
       if (mounted) setState(() => _isSaving = false);

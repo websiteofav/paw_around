@@ -1,11 +1,11 @@
 {
-    "name": "Paw Around",
-    "short_name": "Paw Around",
+    "name": "PawAround",
+    "short_name": "PawAround",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#00C8A6",
-    "description": "Paw Around – QR pet ID, smart pet care reminders, nearby vets, lost & found.",
+    "description": "PawAround – QR pet ID, smart pet care reminders, nearby vets, lost & found.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

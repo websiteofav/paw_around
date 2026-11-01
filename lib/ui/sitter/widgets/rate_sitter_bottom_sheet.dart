@@ -12,6 +12,7 @@ import 'package:paw_around/repositories/booking_repository.dart';
 import 'package:paw_around/repositories/review_repository.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/common_text_field.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 /// Bottom sheet for rating a sitter after a session — pops `true` once the
 /// review is saved, so the caller can show its own confirmation.
@@ -67,12 +68,7 @@ class _RateSitterBottomSheetState extends State<RateSitterBottomSheet> {
 
   void _onSubmit() {
     if (_rating == 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AppStrings.pleaseSelectRating),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AppUtils.showErrorSnackBar(context, AppStrings.pleaseSelectRating);
       return;
     }
     _bloc.add(SubmitReview(
@@ -94,12 +90,7 @@ class _RateSitterBottomSheetState extends State<RateSitterBottomSheet> {
           if (state is ReviewFormSuccess) {
             Navigator.of(context).pop(true);
           } else if (state is ReviewFormError) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(AppStrings.failedToSubmitReview),
-                backgroundColor: AppColors.error,
-              ),
-            );
+            AppUtils.showErrorSnackBar(context, AppStrings.failedToSubmitReview);
           }
         },
         child: Padding(

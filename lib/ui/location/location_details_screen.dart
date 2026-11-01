@@ -12,6 +12,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/addresses/address_model.dart';
 import 'package:paw_around/models/addresses/picked_location.dart';
 import 'package:paw_around/ui/location/widgets/location_change_thumbnail.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/common_form_field.dart';
 
@@ -82,9 +83,7 @@ class _LocationDetailsScreenState extends State<LocationDetailsScreen> {
       }
     } else if (state is AddressSaveError) {
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.failedToSaveAddress)),
-      );
+      AppUtils.showErrorSnackBar(context, AppStrings.failedToSaveAddress);
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:paw_around/constants/app_spacing.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/addresses/address_model.dart';
+import 'package:paw_around/repositories/payment_repository.dart';
 import 'package:paw_around/ui/sitter/widgets/book_sitters_location_card.dart';
 import 'package:paw_around/ui/sitter/widgets/booking_summary_date_row.dart';
 import 'package:paw_around/ui/sitter/widgets/payment_flow_helper.dart';
@@ -48,6 +49,11 @@ class BookingSummaryScreen extends StatefulWidget {
 class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
   bool _isProcessingPayment = false;
 
+  // Started as soon as this screen loads so the Razorpay order is likely
+  // already ready by the time the user taps "Pay" — see prefetchRazorpayOrder.
+  late final Future<RazorpayOrder> _orderFuture =
+      prefetchRazorpayOrder(totalAmount: widget.args.totalAmount);
+
   Future<void> _handlePay() async {
     setState(() => _isProcessingPayment = true);
     final payment = await PaymentFlowHelper.collectPayment(
@@ -55,6 +61,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
       totalAmount: widget.args.totalAmount,
       description: widget.args.description,
       contactPhone: widget.args.contactPhone,
+      prefetchedOrder: _orderFuture,
     );
     if (!mounted) return;
     setState(() => _isProcessingPayment = false);
@@ -72,6 +79,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
       backgroundColor: AppColors.white,
       appBar: AppBar(
         backgroundColor: AppColors.white,
+        foregroundColor: AppColors.textPrimary,
         elevation: 0,
         scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,

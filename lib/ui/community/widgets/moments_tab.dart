@@ -16,6 +16,7 @@ import 'package:paw_around/ui/moments/widgets/moment_card.dart';
 import 'package:paw_around/ui/moments/widgets/moment_comments.dart';
 import 'package:paw_around/ui/profile/widgets/profile_dialogs.dart';
 import 'package:paw_around/ui/home/widgets/skeleton_card.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 class MomentsTab extends StatefulWidget {
   const MomentsTab({super.key});
@@ -83,20 +84,10 @@ class _MomentsTabState extends State<MomentsTab>
     return BlocListener<PetMomentsBloc, PetMomentsState>(
       listener: (context, state) {
         if (state is MomentCreated) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.momentPosted),
-              backgroundColor: AppColors.success,
-            ),
-          );
+          AppUtils.showSuccessSnackBar(context, AppStrings.momentPosted);
         }
         if (state is MomentDeleted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppStrings.momentDeleted),
-              backgroundColor: AppColors.success,
-            ),
-          );
+          AppUtils.showSuccessSnackBar(context, AppStrings.momentDeleted);
           context.read<PetMomentsBloc>().add(const LoadMoments());
         }
       },

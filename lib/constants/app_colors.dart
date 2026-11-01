@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Primary Colors (Green theme)
-  static const Color primary = Color(0xFF00F3AE);
+  static const Color primary = Color(0xFF27725D);
   static const Color secondaryCTA = Color(0xFF27725D);
+  // Original brand teal — kept only for the bottom navigation bar's selected state.
+  static const Color navBarAccent = Color(0xFF00F3AE);
   static const Color navColor = Color(0xFF1A4C3E);
   static const Color primaryLight = Color(0xFF8DD4A0);
   static const Color background3 = Color(0xFFECF8F5);

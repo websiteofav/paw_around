@@ -29,6 +29,11 @@ class DashboardBottomNav extends StatelessWidget {
         side: const BorderSide(width: 0.6, color: AppColors.grey600),
         shadows: [
           BoxShadow(
+            color: AppColors.navBarAccent.withValues(alpha: 0.25),
+            blurRadius: 24,
+            spreadRadius: 1,
+          ),
+          BoxShadow(
             color: AppColors.navBarShadow.withValues(alpha: 0.98),
             offset: const Offset(0, 3),
             blurRadius: 7,
@@ -117,7 +122,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isSelected ? AppColors.primary : AppColors.navigationInactive;
+    final color = isSelected ? AppColors.navBarAccent : AppColors.navigationInactive;
     return Expanded(
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -141,7 +146,7 @@ class _NavItem extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: isSelected
-                  ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.primary)
+                  ? AppTextStyles.semiBoldStyle600(fontSize: 12, fontColor: AppColors.navBarAccent)
                   : AppTextStyles.mediumStyle500(fontSize: 12, fontColor: AppColors.navigationInactive),
             ),
           ],

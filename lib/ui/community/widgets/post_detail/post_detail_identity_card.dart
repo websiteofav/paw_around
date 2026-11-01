@@ -37,6 +37,8 @@ class PostDetailIdentityCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(post.petName,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.interBoldStyle700(
                         fontSize: 24, fontColor: AppColors.grey1100)),
                 if (subtitle.isNotEmpty) ...[

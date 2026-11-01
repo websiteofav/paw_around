@@ -141,6 +141,7 @@ class _LostPetCard extends StatelessWidget {
                               bottomLeft: Radius.circular(12),
                               bottomRight: Radius.circular(12))),
                       child: RichText(
+                        textAlign: TextAlign.center,
                         text: TextSpan(
                           children: [
                             TextSpan(

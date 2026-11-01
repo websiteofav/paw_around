@@ -27,6 +27,7 @@ import 'package:paw_around/ui/profile/widgets/profile_header.dart';
 import 'package:paw_around/ui/profile/widgets/profile_pets_section.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/loading_overlay.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/utils/url_utils.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -60,14 +61,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showComingSoon(String feature) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('$feature coming soon!'),
-        behavior: SnackBarBehavior.floating,
-        duration: const Duration(seconds: 1),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
+    AppUtils.showInfoSnackBar(context, '$feature coming soon!');
   }
 
   Future<void> _handleDeleteAccount() async {
@@ -117,9 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: AppColors.error),
-    );
+    AppUtils.showErrorSnackBar(context, message);
   }
 
   @override

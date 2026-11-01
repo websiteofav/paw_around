@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_bloc.dart';
 import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
-import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
@@ -11,6 +10,7 @@ import 'package:paw_around/models/vaccines/vaccine_master_data.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/notification_service.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 class VaccineFormHelper {
   VaccineFormHelper._();
@@ -100,14 +100,12 @@ class VaccineFormHelper {
       if (context.mounted) {
         context.read<PetListBloc>().add(const LoadPetList());
         HapticFeedback.mediumImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(AppStrings.reminderUnsnoozed), backgroundColor: AppColors.success));
+        AppUtils.showSuccessSnackBar(context, AppStrings.reminderUnsnoozed);
         onSuccess();
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: AppColors.error));
+        AppUtils.showErrorSnackBar(context, 'Error: $e');
         onError();
       }
     }

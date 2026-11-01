@@ -182,9 +182,9 @@ class PostCard extends StatelessWidget {
   Widget _buildYourPostBadge() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
+      decoration: smoothDecoration(
         color: AppColors.secondary,
-        borderRadius: BorderRadius.circular(20),
+        cornerRadius: 20,
       ),
       child: Text(AppStrings.yourPost,
           style: AppTextStyles.interBoldStyle700(

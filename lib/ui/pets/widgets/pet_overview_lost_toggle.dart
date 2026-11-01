@@ -10,6 +10,7 @@ import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/pets/widgets/mark_lost_bottom_sheet.dart';
 
 class PetOverviewLostToggle extends StatelessWidget {
@@ -83,21 +84,11 @@ class _LostToggleRowState extends State<_LostToggleRow> {
       );
       if (mounted) {
         context.read<PetListBloc>().add(const LoadPetList());
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppStrings.petMarkedAsLost),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        AppUtils.showSuccessSnackBar(context, AppStrings.petMarkedAsLost);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     } finally {
       if (mounted) {
@@ -120,21 +111,12 @@ class _LostToggleRowState extends State<_LostToggleRow> {
       );
       if (mounted) {
         context.read<PetListBloc>().add(const LoadPetList());
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppStrings.petNoLongerMarkedAsLost),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        AppUtils.showSuccessSnackBar(
+            context, AppStrings.petNoLongerMarkedAsLost);
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(e.toString()),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     } finally {
       if (mounted) {

@@ -23,7 +23,7 @@ class ShareUtils {
   static Future<void> shareMoment(PetMoment moment) async {
     final url = getMomentUrl(moment);
     final text = '''
-${moment.petName}'s moment on Paw Around
+${moment.petName}'s moment on PawAround
 
 ${moment.caption}
 

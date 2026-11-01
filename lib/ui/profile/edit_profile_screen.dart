@@ -16,6 +16,8 @@ import 'package:paw_around/services/storage_service.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 import 'package:paw_around/ui/widgets/common_text_field.dart';
 import 'package:paw_around/ui/widgets/scale_button.dart';
+import 'package:paw_around/utils/app_toast.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/utils/utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -138,12 +140,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to pick image: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, 'Failed to pick image: $e');
       }
     } finally {
       if (mounted) {
@@ -176,12 +173,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         );
 
         if (photoUrl == null && mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Failed to upload image. Please try again.'),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          AppUtils.showErrorSnackBar(
+              context, 'Failed to upload image. Please try again.');
           setState(() => _isSaving = false);
           return;
         }
@@ -209,32 +202,21 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       if (mounted) {
         HapticFeedback.mediumImpact();
         if (emailChanged) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.emailVerificationSent),
-              backgroundColor: AppColors.success,
-              duration: Duration(seconds: 5),
-            ),
+          AppToast.showSuccess(
+            context,
+            AppStrings.emailVerificationSent,
+            duration: const Duration(seconds: 5),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(AppStrings.profileUpdatedSuccessfully),
-              backgroundColor: AppColors.success,
-            ),
-          );
+          AppUtils.showSuccessSnackBar(
+              context, AppStrings.profileUpdatedSuccessfully);
         }
         context.pop();
       }
     } catch (e) {
       debugPrint('Failed to update profile: $e');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Failed to update profile: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, 'Failed to update profile: $e');
       }
     } finally {
       if (mounted) {

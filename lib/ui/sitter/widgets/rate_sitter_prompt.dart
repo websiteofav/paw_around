@@ -6,6 +6,7 @@ import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/ui/sitter/widgets/rate_sitter_bottom_sheet.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
+import 'package:paw_around/utils/app_utils.dart';
 
 /// Shown on the Upcoming Session card once a session has happened and
 /// hasn't been reviewed yet — opens RateSitterBottomSheet.
@@ -29,9 +30,7 @@ class RateSitterPrompt extends StatelessWidget {
       bookingId: bookingId,
     );
     if (submitted == true && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.reviewSubmittedThanks)),
-      );
+      AppUtils.showSuccessSnackBar(context, AppStrings.reviewSubmittedThanks);
     }
   }
 

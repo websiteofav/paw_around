@@ -15,6 +15,7 @@ import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/constants/text_styles.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/pets/widgets/circular_photo_picker.dart';
 import 'package:paw_around/ui/pets/widgets/pet_type_selector.dart';
 import 'package:paw_around/ui/pets/widgets/birthdate_age_selector.dart';
@@ -74,11 +75,7 @@ class _AddPetViewState extends State<_AddPetView> {
                 }
               } else if (state.status == PetFormStatus.error &&
                   state.errorMessage != null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text(state.errorMessage!),
-                      backgroundColor: AppColors.error),
-                );
+                AppUtils.showErrorSnackBar(context, state.errorMessage!);
               }
             },
             child: BlocBuilder<PetFormBloc, PetFormState>(
@@ -268,7 +265,6 @@ class _AddPetViewState extends State<_AddPetView> {
 
   Future<void> _pickImage(BuildContext context, ImageSource source) async {
     final bloc = context.read<PetFormBloc>();
-    final messenger = ScaffoldMessenger.of(context);
     bloc.add(const SetImageLoading(true));
     try {
       final picker = ImagePicker();
@@ -283,11 +279,7 @@ class _AddPetViewState extends State<_AddPetView> {
     } catch (e) {
       if (!mounted) return;
       bloc.add(const SetImageLoading(false));
-      messenger.showSnackBar(
-        SnackBar(
-            content: Text('Failed to pick image: $e'),
-            backgroundColor: AppColors.error),
-      );
+      AppUtils.showErrorSnackBar(context, 'Failed to pick image: $e');
     }
   }
 }

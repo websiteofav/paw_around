@@ -15,6 +15,7 @@ import 'package:paw_around/bloc/pets/pet_list/pet_list_event.dart';
 import 'package:paw_around/models/addresses/address_model.dart';
 import 'package:paw_around/models/places/service_type.dart';
 import 'package:paw_around/services/deep_link_service.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/home/home_screen.dart';
 import 'package:paw_around/ui/home/map_screen.dart';
 import 'package:paw_around/ui/home/paw_circle_screen.dart';
@@ -59,17 +60,7 @@ class _DashboardState extends State<Dashboard> {
     if (_lastBackPressTime == null ||
         now.difference(_lastBackPressTime!) > const Duration(seconds: 2)) {
       _lastBackPressTime = now;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text(AppStrings.pressBackAgainToExit),
-          duration: const Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: AppColors.textPrimary,
-          margin: const EdgeInsets.all(16),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        ),
-      );
+      AppUtils.showInfoSnackBar(context, AppStrings.pressBackAgainToExit);
       return true; // Handled - don't pop
     }
     SystemNavigator.pop();

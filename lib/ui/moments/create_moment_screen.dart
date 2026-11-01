@@ -7,6 +7,7 @@ import 'package:paw_around/constants/app_colors.dart';
 import 'package:paw_around/constants/app_routes.dart';
 import 'package:paw_around/constants/app_strings.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/community/widgets/create_post/create_post_pet_selector.dart';
 import 'package:paw_around/ui/moments/widgets/create_moment/create_moment_app_bar.dart';
 import 'package:paw_around/ui/moments/widgets/create_moment/create_moment_details_section.dart';
@@ -50,21 +51,11 @@ class _CreateMomentScreenState extends State<CreateMomentScreen> {
   Future<void> _onPreview() async {
     if (!_formKey.currentState!.validate()) return;
     if (_imagePath == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AppStrings.pleaseSelectImage),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AppUtils.showErrorSnackBar(context, AppStrings.pleaseSelectImage);
       return;
     }
     if (_selectedPet == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(AppStrings.pleaseSelectPet),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AppUtils.showErrorSnackBar(context, AppStrings.pleaseSelectPet);
       return;
     }
 

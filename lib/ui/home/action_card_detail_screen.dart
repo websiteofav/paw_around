@@ -20,6 +20,7 @@ import 'package:paw_around/constants/vaccine_constants.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
 import 'package:paw_around/services/analytics_service.dart';
 import 'package:paw_around/services/notification_service.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/home/widgets/action_info_card.dart';
 import 'package:paw_around/ui/home/widgets/action_cta_card.dart';
 import 'package:paw_around/ui/home/widgets/action_card_timeline.dart';
@@ -271,23 +272,13 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
 
         context.read<PetListBloc>().add(const LoadPetList());
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.markedAsDone),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        AppUtils.showSuccessSnackBar(context, AppStrings.markedAsDone);
 
         context.pop();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, 'Error: $e');
       }
     } finally {
       if (mounted) {
@@ -336,23 +327,13 @@ class _ActionCardDetailScreenState extends State<ActionCardDetailScreen> {
 
         context.read<PetListBloc>().add(const LoadPetList());
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Snoozed for $days days'),
-            backgroundColor: AppColors.primary,
-          ),
-        );
+        AppUtils.showInfoSnackBar(context, 'Snoozed for $days days');
 
         context.pop();
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AppUtils.showErrorSnackBar(context, 'Error: $e');
       }
     } finally {
       if (mounted) {

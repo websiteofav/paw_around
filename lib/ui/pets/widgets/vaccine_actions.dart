@@ -11,6 +11,7 @@ import 'package:paw_around/core/di/service_locator.dart';
 import 'package:paw_around/models/pets/pet_model.dart';
 import 'package:paw_around/models/vaccines/vaccine_model.dart';
 import 'package:paw_around/repositories/pet_repository.dart';
+import 'package:paw_around/utils/app_utils.dart';
 import 'package:paw_around/ui/widgets/common_button.dart';
 
 class VaccineActions {
@@ -104,20 +105,14 @@ class VaccineActions {
         Navigator.of(dialogContext).pop();
         context.read<PetListBloc>().add(const LoadPetList());
         HapticFeedback.mediumImpact();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(AppStrings.vaccineDeletedSuccessfully),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        AppUtils.showSuccessSnackBar(
+            context, AppStrings.vaccineDeletedSuccessfully);
         context.pop({'deleted': true, 'vaccineId': vaccine.id, 'petId': pet.id});
       }
     } catch (e) {
       if (dialogContext.mounted) Navigator.of(dialogContext).pop();
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.error),
-        );
+        AppUtils.showErrorSnackBar(context, e.toString());
       }
     }
   }

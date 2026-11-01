@@ -53,7 +53,7 @@ class PushMessageService {
     }
 
     await NotificationService().showInstantNotification(
-      title: message.notification?.title ?? 'Paw Around',
+      title: message.notification?.title ?? 'PawAround',
       body: message.notification?.body ?? '',
       payload: localPayload,
     );
