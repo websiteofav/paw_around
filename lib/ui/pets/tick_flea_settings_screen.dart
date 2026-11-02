@@ -273,7 +273,7 @@ class _TickFleaSettingsScreenState extends State<TickFleaSettingsScreen> {
               variant: ButtonVariant.primary,
               textStyle: AppTextStyles.interBoldStyle700(
                 fontSize: 16,
-                fontColor: AppColors.grey1000,
+                fontColor: AppColors.white,
               ),
               borderRadius: 44,
             ),

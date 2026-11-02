@@ -307,11 +307,11 @@ class _EmptyState extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(Icons.add_circle_outline,
-                      size: 18, color: AppColors.grey1000),
+                      size: 18, color: AppColors.white),
                   const SizedBox(width: 8),
                   Text(AppStrings.addPet,
                       style: AppTextStyles.interBoldStyle700(
-                          fontSize: 16, fontColor: AppColors.grey1000)),
+                          fontSize: 16, fontColor: AppColors.white)),
                 ],
               ),
             ),

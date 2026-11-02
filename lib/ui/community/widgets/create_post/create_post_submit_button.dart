@@ -33,9 +33,9 @@ class CreatePostSubmitButton extends StatelessWidget {
               : AppStrings.reportFoundPetNow,
           onPressed: isLoading ? null : onPressed,
           isLoading: isLoading,
-          customTextColor: AppColors.grey1000,
+          customTextColor: AppColors.white,
           textStyle: AppTextStyles.interBoldStyle700(
-              fontSize: 16, fontColor: AppColors.grey1000),
+              fontSize: 16, fontColor: AppColors.white),
           borderRadius: 999,
         );
       },

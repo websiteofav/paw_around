@@ -93,9 +93,9 @@ class CommunityEmptyState extends StatelessWidget {
           CommonButton(
             text: ctaText,
             onPressed: onCta,
-            customTextColor: AppColors.grey1000,
+            customTextColor: AppColors.white,
             textStyle: AppTextStyles.interBoldStyle700(
-                fontSize: 16, fontColor: AppColors.grey1000),
+                fontSize: 16, fontColor: AppColors.white),
             borderRadius: AppConstants.radiusFull,
           ),
         ],

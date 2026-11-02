@@ -308,7 +308,7 @@ class _Step2Content extends StatelessWidget {
               onPressed: isSaving ? null : onContinue,
               isLoading: isSaving,
               textStyle: AppTextStyles.interBoldStyle700(
-                fontColor: AppColors.black,
+                fontColor: AppColors.white,
                 fontSize: 16,
               ),
             )

@@ -128,8 +128,8 @@ class BookSittersForm extends StatelessWidget {
                   isLoading: isBusy,
                   customColor: AppColors.primary,
                   textStyle: AppTextStyles.interBoldStyle700(
-                      fontSize: 16, fontColor: AppColors.grey1000),
-                  customTextColor: AppColors.grey1000,
+                      fontSize: 16, fontColor: AppColors.white),
+                  customTextColor: AppColors.white,
                 );
               },
             ),

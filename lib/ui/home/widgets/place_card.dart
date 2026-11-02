@@ -25,7 +25,7 @@ class PlaceCard extends StatelessWidget {
     return ScaleButton(
       onPressed: onTap,
       child: Container(
-        height: 140,
+        height: 152,
         padding: const EdgeInsets.all(12),
         decoration: smoothDecoration(
           cornerRadius: 24,

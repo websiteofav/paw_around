@@ -41,12 +41,13 @@ class PillToggleNavRow extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 6),
         decoration: smoothDecoration(
-          color: AppColors.grey1100,
+          color: AppColors.grey1000,
           cornerRadius: 54,
+          side: const BorderSide(width: 0.6, color: AppColors.grey600),
           shadows: [
             BoxShadow(
-              color: AppColors.primary.withValues(alpha: 0.35),
-              blurRadius: 16,
+              color: AppColors.navBarAccent.withValues(alpha: 0.25),
+              blurRadius: 24,
               spreadRadius: 1,
             ),
           ],
@@ -73,7 +74,7 @@ class PillToggleNavRow extends StatelessWidget {
           textAlign: TextAlign.center,
           style: AppTextStyles.interBoldStyle700(
             fontSize: 16,
-            fontColor: isActive ? AppColors.primary : AppColors.white,
+            fontColor: isActive ? AppColors.navBarAccent : AppColors.white,
           ),
         ),
       ),

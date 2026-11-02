@@ -122,7 +122,7 @@ class _BookingSummaryScreenState extends State<BookingSummaryScreen> {
                 customColor: AppColors.primary,
                 textStyle: AppTextStyles.interBoldStyle700(
                   fontSize: 16,
-                  fontColor: AppColors.grey1000,
+                  fontColor: AppColors.white,
                 ),
                 customTextColor: AppColors.grey1000,
               ),

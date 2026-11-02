@@ -316,7 +316,7 @@ class _AddVaccineScreenState extends State<AddVaccineScreen> {
                 variant: ButtonVariant.primary,
                 textStyle: AppTextStyles.interBoldStyle700(
                   fontSize: 16,
-                  fontColor: AppColors.grey1000,
+                  fontColor: AppColors.white,
                 ),
                 isLoading: _isSaving),
             if (_isEditMode && widget.vaccineToEdit != null) ...[

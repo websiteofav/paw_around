@@ -322,7 +322,7 @@ class _GroomingSettingsScreenState extends State<GroomingSettingsScreen> {
               variant: ButtonVariant.primary,
               textStyle: AppTextStyles.interBoldStyle700(
                 fontSize: 16,
-                fontColor: AppColors.grey1000,
+                fontColor: AppColors.white,
               ),
             ),
             const SizedBox(height: 24),
